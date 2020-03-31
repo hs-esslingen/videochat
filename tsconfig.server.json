@@ -4,6 +4,7 @@
     "outDir": "./out-tsc/app-server",
     "module": "commonjs"
   },
+  "sourceMap": true,
   "files": [
     "src/main.server.ts"
   ],

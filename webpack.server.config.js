@@ -5,10 +5,10 @@ const webpack = require('webpack');
 
 module.exports = {
   mode: 'none',
-  entry: {
-    // This is our Express server for Dynamic universal
+  entry:  {
     server: './server.ts'
   },
+  devtool: 'eval-source-map',
   externals: {
     './dist/server/main': 'require("./server/main")'
   },
@@ -25,7 +25,8 @@ module.exports = {
   module: {
     noParse: /polyfills-.*\.js/,
     rules: [
-      { test: /\.ts$/, loader: 'ts-loader' },
+      { test: /\.ts$/, loader: 'ts-loader', options: {
+      } },
       {
         // Mark files inside `@angular/core` as using SystemJS style dynamic imports.
         // Removing this will cause deprecation warnings to appear.
