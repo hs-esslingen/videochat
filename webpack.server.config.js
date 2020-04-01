@@ -6,17 +6,14 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: 'none',
-  entry:  {
-    server: './server.ts'
+  entry: {
+    server: './src-server/server.ts'
   },
   devtool: 'eval-source-map',
-  externals: {
-    './dist/server/main': 'require("./server/main")'
-  },
   target: 'node',
-  resolve: { 
+  resolve: {
     extensions: ['.ts', '.js'],
-   },
+  },
   optimization: {
     minimize: false
   },
@@ -28,27 +25,21 @@ module.exports = {
   module: {
     noParse: /polyfills-.*\.js/,
     rules: [
-      { test: /\.ts$/, loader: 'ts-loader', options: {
-      } },
       {
-        // Mark files inside `@angular/core` as using SystemJS style dynamic imports.
-        // Removing this will cause deprecation warnings to appear.
-        test: /(\\|\/)@angular(\\|\/)core(\\|\/).+\.js$/,
-        parser: { system: true },
+        test: /\.ts$/, loader: 'ts-loader', options: {
+        }
       },
     ]
   },
+  node: {
+    __dirname: false
+  },
   plugins: [
-    new webpack.ContextReplacementPlugin(
-      // fixes WARNING Critical dependency: the request of a dependency is an expression
-      /(.+)?angular(\\|\/)core(.+)?/,
-      path.join(__dirname, 'src'), // location of your src
-      {} // a map of your routes
-    ),
+
     new webpack.ContextReplacementPlugin(
       // fixes WARNING Critical dependency: the request of a dependency is an expression
       /(.+)?express(\\|\/)(.+)?/,
-      path.join(__dirname, 'src'),
+      path.join(__dirname, 'src-server'),
       {}
     ),
     new webpack.DefinePlugin({

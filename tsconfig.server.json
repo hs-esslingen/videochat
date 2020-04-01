@@ -1,14 +1,18 @@
 {
-  "extends": "./tsconfig.app.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./out-tsc/app-server",
-    "module": "commonjs"
+    "target": "esnext",
+    "module": "commonjs",
+    "outDir": "dist/server",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
-  "sourceMap": true,
-  "files": [
-    "src/main.server.ts"
+  "include": [
+    "src-server/**/*.ts"
   ],
-  "angularCompilerOptions": {
-    "entryModule": "./src/app/app.server.module#AppServerModule"
-  }
+  "exclude": [
+    "src/test.ts",
+    "src/**/*.spec.ts"
+  ]
 }
