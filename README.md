@@ -4,7 +4,8 @@
 
 ## Install dependencies
 
-check requirements: [mediasoup installation requirements](https://mediasoup.org/documentation/v3/mediasoup/installation/)
+check requirements: [mediasoup installation requirements](https://mediasoup.org/documentation/v3/mediasoup/installation/)  
+
 Windows:
  - Add python.exe to `$PYTHON`
  - Add msbuild.exe to `$PATH`  
