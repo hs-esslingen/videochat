@@ -13,7 +13,7 @@
     "watch-debug:server": "webpack -w --config webpack.server.config.js --define process.env.NODE_ENV='\"developement\"' --colors",
     "build-debug:server": "webpack --config webpack.server.config.js --define process.env.NODE_ENV='\"developement\"' --colors",
     "angular": "ng serve",
-    "serve-debug:server": "cross-env MEDIASOUP_WORKER_BIN=dist/worker/mediasoup-worker nodemon --watch dist --inspect dist/server.js",
+    "serve-debug:server": "cross-env MEDIASOUP_WORKER_BIN=dist/worker/mediasoup-worker nodemon --watch dist/server.js --inspect dist/server.js",
     "serve:ssr": "cross-env MEDIASOUP_WORKER_BIN=worker/mediasoup-worker node dist/server",
     "build:ssr": "npm run build:client-and-server-bundles && npm run compile:server",
     "build:client-and-server-bundles": "ng build --prod && ng run videochat:server:production --bundleDependencies all"
