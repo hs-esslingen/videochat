@@ -4,7 +4,7 @@ import { MeetingPageComponent } from './pages/meeting-page/meeting-page.componen
 
 
 const routes: Routes = [
-  { path: 'j/:id', component: MeetingPageComponent },
+  { path: 'chat', component: MeetingPageComponent },
 ];
 
 @NgModule({

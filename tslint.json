@@ -62,6 +62,7 @@
     "no-switch-case-fall-through": true,
     "no-use-before-declare": true,
     "no-var-requires": false,
+    "triple-equals": [true, "allow-undefined-check"],
     "object-literal-key-quotes": [
       true,
       "as-needed"

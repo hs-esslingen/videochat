@@ -1,2 +1,3 @@
-<p>meeting-page works!</p>
-<video #local></video>
+<button (click)="addConsumer()">receive</button>
+<video *ngFor="let consumer of consumers" autoplay playinline [srcObject]="getMediaStream(consumer)"></video>
+<video #local autoplay playinline></video>
