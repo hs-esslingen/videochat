@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "start": "cross-env MEDIASOUP_WORKER_BIN=dist/worker/mediasoup-worker node dist/server.js",
-    "build-frontend": "ng build",
+    "build-frontend": "ng build --prod",
     "build-server": "webpack --config webpack.server.config.js",
     "watch-build-server": "webpack -w --config webpack.server.config.js",
     "watch-server": "cross-env MEDIASOUP_WORKER_BIN=dist/worker/mediasoup-worker nodemon --watch dist/server.js --inspect dist/server.js",
