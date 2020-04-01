@@ -3,10 +3,12 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { MeetingPageComponent } from './pages/meeting-page/meeting-page.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    MeetingPageComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),

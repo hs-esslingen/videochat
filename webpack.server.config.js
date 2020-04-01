@@ -2,6 +2,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: 'none',
@@ -13,7 +14,9 @@ module.exports = {
     './dist/server/main': 'require("./server/main")'
   },
   target: 'node',
-  resolve: { extensions: ['.ts', '.js'] },
+  resolve: { 
+    extensions: ['.ts', '.js'],
+   },
   optimization: {
     minimize: false
   },
@@ -47,6 +50,12 @@ module.exports = {
       /(.+)?express(\\|\/)(.+)?/,
       path.join(__dirname, 'src'),
       {}
-    )
+    ),
+    new webpack.DefinePlugin({
+      'process.env.MEDIASOUP_WORKER_BIN': "worker/mediasoup-worker",
+    }),
+    new CopyPlugin([
+      { from: 'node_modules/mediasoup/worker/out/Release', to: 'worker' },
+    ]),
   ]
 };
