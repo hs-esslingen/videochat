@@ -11,7 +11,7 @@ Windows:
  - Add msbuild.exe to `$PATH`  
 
 
-Run `npm i` to install all requied dependencies
+Run `npm i` to install all requied dependencies.
 
 ## Development server
 
