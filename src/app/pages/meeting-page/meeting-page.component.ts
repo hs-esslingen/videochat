@@ -5,16 +5,8 @@ import {
   AfterViewInit,
   ElementRef
 } from "@angular/core";
-import { Device } from "mediasoup-client";
-import { Http2ServerRequest } from "http2";
-import { HttpClient } from "@angular/common/http";
 import {
-  TransportOptions,
-  Transport,
   Consumer,
-  Producer,
-  RtpParameters,
-  MediaKind
 } from "mediasoup-client/lib/types";
 import { MediaService } from 'src/app/helper/media.service';
 
