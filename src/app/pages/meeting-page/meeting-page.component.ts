@@ -29,17 +29,67 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
   localStream: MediaStream;
   localVideoProducer: Producer;
   localAudioProducer: Producer;
-  consumers: Consumer[] = [];
+  videoConsumers: {
+    consumer: Consumer;
+    stream: MediaStream;
+  }[] = [];
+  audioConsumers: {
+    consumer: Consumer;
+    stream: MediaStream;
+  }[] = [];
   recvTransport: Transport;
   sendTransport: Transport;
-  constructor(private http: HttpClient) {}
+  websocket: WebSocket;
 
-  ngOnInit(): void {
-    console.log(this.local);
+  constructor(private http: HttpClient) {
+    const url = new URL(window.location.href);
+    console.log(url.host);
   }
 
-  getMediaStream(consumer: Consumer) {
-    return new MediaStream([consumer.track]);
+  ngOnInit(): void {
+    this.websocket = new WebSocket("ws://localhost:4000/ws");
+
+    this.websocket.onopen = event => {
+      console.log("websocket opened");
+    };
+    this.websocket.addEventListener("message", ev => {
+      const data = JSON.parse(ev.data);
+      switch (data.type) {
+        case "new-producer":
+          this.addConsumer(data.data.producerId, data.data.kind);
+          break;
+        case "remove-producer":
+          this.removeConsumer(data.data.id, data.data.kind);
+          break;
+
+        default:
+          break;
+      }
+      console.log(data);
+    });
+  }
+
+  removeConsumer(id: string, kind: string) {
+    console.log(kind);
+    let list = kind === "video" ? this.videoConsumers : this.audioConsumers;
+    console.log(list.length);
+    list = list.filter(item => item.consumer.producerId !== id);
+    console.log(list.length);
+    if (kind === "video") {
+      this.videoConsumers = list;
+      //@ts-ignore
+      window.test = list;
+    } else {
+      this.audioConsumers = list;
+    }
+  }
+
+  trackByFn(index, item) {
+    console.log("trackFn:");
+    console.log(item);
+    if (!item) return null;
+    console.log(item.consumer.producerId);
+    return item.consumer.producerId; // or item.id
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -63,6 +113,8 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
       await this.createSendTransport();
       await this.createRecvTransport();
 
+      await this.addExistingConsumers();
+
       await this.sendVideo();
       await this.sendAudio();
     } catch (err) {
@@ -70,49 +122,76 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  async addConsumer() {
+  async addExistingConsumers() {
     console.log("GET CONSUMER");
     const producers = (await this.http.get("/api/producers").toPromise()) as {
       kind: MediaKind;
       producerId: string;
     }[];
-    producers.forEach(async prod => {
+    for (const prod of producers) {
       if (
-        prod.kind === "video" &&
-        this.consumers.find(
-          conumer => conumer.producerId === prod.producerId
+        this.videoConsumers.find(
+          item => item.consumer.id === prod.producerId
+        ) == undefined &&
+        this.audioConsumers.find(
+          item => item.consumer.id === prod.producerId
         ) == undefined
       ) {
-        console.log("ADDING");
-        const consume = (await this.http
-          .post("/api/add-consumer", {
-            id: this.recvTransport.id,
-            rtpCapabilities: this.device.rtpCapabilities,
-            producerId: prod.producerId
-          })
-          .toPromise()) as { id: string; rtpParameters: RtpParameters };
-
-        const consumer = await this.recvTransport.consume({
-          id: consume.id,
-          kind: prod.kind,
-          producerId: prod.producerId,
-          rtpParameters: consume.rtpParameters
-        });
-
-        await this.http
-          .post("/api/resume", {
-            id: consume.id
-          })
-          .toPromise();
-
-        this.consumers.push(consumer);
-        consumer.on("close", () => {
-          this.consumers = this.consumers.filter(cons => cons !== consumer);
-        });
-        console.log(consumer);
+        await this.addConsumer(prod.producerId, prod.kind);
       }
+    }
+  }
+
+  async addConsumer(producerId, kind) {
+    console.log("ADDING");
+
+    if (
+      producerId === this.localVideoProducer?.id ||
+      producerId === this.localAudioProducer?.id
+    )
+      return;
+    const consume = (await this.http
+      .post("/api/add-consumer", {
+        id: this.recvTransport.id,
+        rtpCapabilities: this.device.rtpCapabilities,
+        producerId
+      })
+      .toPromise()) as { id: string; rtpParameters: RtpParameters };
+
+    const consumer = await this.recvTransport.consume({
+      id: consume.id,
+      kind,
+      producerId,
+      rtpParameters: consume.rtpParameters
     });
 
+    await this.http
+      .post("/api/resume", {
+        id: consume.id
+      })
+      .toPromise();
+
+    if (consumer.kind === "video")
+      this.videoConsumers.push({
+        consumer,
+        stream: new MediaStream([consumer.track])
+      });
+    else {
+      this.audioConsumers.push({
+        consumer,
+        stream: new MediaStream([consumer.track])
+      });
+    }
+
+    consumer.on("transportclose", () => {
+      console.log("track close");
+      this.removeConsumer(consumer.id, consumer.kind);
+    });
+    consumer.on("trackended", () => {
+      console.log("track ended");
+      this.removeConsumer(consumer.id, consumer.kind);
+    });
+    console.log(consumer);
   }
 
   async createSendTransport() {
@@ -166,6 +245,7 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
         errback(error);
       }
     });
+
     transport.on("produce", async (parameters, callback, errback) => {
       console.log("PRODUCE");
       const { id } = (await this.http

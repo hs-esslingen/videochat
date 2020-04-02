@@ -2,165 +2,214 @@ import * as express from "express";
 import * as mediasoup from "mediasoup";
 import * as bodyParser from "body-parser";
 import { IceState } from "mediasoup/lib/types";
+import * as WebSocket from 'ws';
+import { MyWebSocket as CustomWebSocket } from './server';
 
-export const api = express.Router();
-let worker: mediasoup.types.Worker;
-let router: mediasoup.types.Router;
-const transports: { [id: string]: mediasoup.types.WebRtcTransport } = {};
-const consumers: { [id: string]: mediasoup.types.Consumer } = {};
-let producers: mediasoup.types.Producer[] = [];
 
-api.use(bodyParser.json());
+export class Api {
+  readonly api = express.Router();
+  worker: mediasoup.types.Worker;
+  router: mediasoup.types.Router;
+  transports: { [id: string]: mediasoup.types.WebRtcTransport } = {};
+  consumers: { [id: string]: mediasoup.types.Consumer } = {};
+  producers: mediasoup.types.Producer[] = [];
+  
 
-api.get("/create-worker", async (req, res) => {
-  if (worker) worker.close();
-  worker = await mediasoup.createWorker();
-  res.send("It Works!");
-});
 
-async function createWorker() {
-  if (worker == undefined) worker = await mediasoup.createWorker();
-}
+  constructor(wss: WebSocket.Server) {
+    
+    this.api.use(bodyParser.json());
 
-async function createRouter() {
-  await createWorker();
-  if (router == undefined)
-    router = await worker.createRouter({
-      mediaCodecs: [
-        {
-          kind: "audio",
-          mimeType: "audio/opus",
-          clockRate: 48000,
-          channels: 2
-        },
-        {
-          kind: "video",
-          mimeType: "video/VP8",
-          clockRate: 90000
-        },
-        {
-          kind: "video",
-          mimeType: "video/h264",
-          clockRate: 90000,
-          parameters: {
-            "packetization-mode": 1,
-            "profile-level-id": "4d0032",
-            "level-asymmetry-allowed": 1
-          }
-        },
-        {
-          kind: "video",
-          mimeType: "video/h264",
-          clockRate: 90000,
-          parameters: {
-            "packetization-mode": 1,
-            "profile-level-id": "42e01f",
-            "level-asymmetry-allowed": 1
-          }
-        }
-      ]
+
+    this.api.get("/create-worker", async (req, res) => {
+      if (this.worker) this.worker.close();
+      this.worker = await mediasoup.createWorker();
+      res.send("It Works!");
     });
+
+
+    this.api.get("/capabilities", async (req, res) => {
+      await this.createRouter();
+      res.json(this.router.rtpCapabilities);
+    });
+
+    this.api.get("/get-media", async (req, res) => {
+      await this.createRouter();
+      let trans = await this.router.createWebRtcTransport({
+        listenIps: [{ ip: "127.0.0.1", announcedIp: null }],
+        enableUdp: true,
+        enableTcp: true,
+        preferUdp: true,
+        initialAvailableOutgoingBitrate: 800000
+      });
+
+      this.transports[trans.id] = trans;
+
+      trans.observer.on("close", () => delete this.transports[trans.id]);
+
+      trans.on("icestatechange", (iceState: IceState) => {
+        if (iceState === "disconnected") {
+          trans.close();
+        }
+        console.log("ICE state changed to %s", iceState);
+      });
+
+      res.json({
+        id: trans.id,
+        iceParameters: trans.iceParameters,
+        iceCandidates: trans.iceCandidates,
+        dtlsParameters: trans.dtlsParameters,
+        sctpParameters: trans.sctpParameters
+      });
+    });
+
+    this.api.post("/connect", async (req, res) => {
+      console.log("CONNECT");
+      const trans = this.transports[req.body.id];
+      await trans.connect({
+        dtlsParameters: req.body.dtlsParameters
+      });
+      res.status(201).send();
+    });
+
+    this.api.post("/produce", async (req, res) => {
+      console.log("CONNECT");
+      const trans = this.transports[req.body.id];
+      const producer = await trans.produce({
+        kind: req.body.kind,
+        rtpParameters: req.body.rtpParameters
+      });
+
+      this.producers.push(producer);
+
+      
+      wss.clients.forEach(function each(ws: CustomWebSocket) {
+        setTimeout(() => {
+          
+          ws.send(JSON.stringify({
+            type: "new-producer",
+            data: {
+              producerId: producer.id,
+              kind: producer.kind,
+            }
+          }));
+        }, 200);
+      });
+
+      producer.on("transportclose", () => {
+        this.producers = this.producers.filter(prod => prod.id !== producer.id);
+        wss.clients.forEach(function each(ws: CustomWebSocket) {
+          ws.send(JSON.stringify({
+            type: "remove-producer",
+            data: {
+              id: producer.id,
+              kind: producer.kind
+            }
+          }));
+        });
+        producer.close();
+      });
+
+      producer.observer.on("close", () => {
+        this.producers = this.producers.filter(prod => prod.id !== producer.id);
+      });
+
+
+      res.json({ id: producer.id });
+    });
+
+    this.api.get("/producers", async (req, res) => {
+      res.json(
+        this.producers.map(prod => {
+          return {
+            producerId: prod.id,
+            kind: prod.kind
+          };
+        })
+      );
+    });
+
+    this.api.post("/add-consumer", async (req, res) => {
+      const trans = this.transports[req.body.id];
+      const consumer = await trans.consume({
+        producerId: req.body.producerId,
+        rtpCapabilities: req.body.rtpCapabilities,
+        paused: true
+      });
+      this.consumers[consumer.id] = consumer;
+      consumer.on("transportclose", () => {
+        console.log("transport close");
+        consumer.close();
+        delete this.consumers[consumer.id];
+      });
+      consumer.on("producerclose", () => {
+        console.log("producer close");
+        consumer.close();
+        delete this.consumers[consumer.id];
+      });
+      consumer.observer.on("close", () => {
+        delete this.consumers[consumer.id];
+      });
+
+      res.json({
+        id: consumer.id,
+        rtpParameters: consumer.rtpParameters
+      });
+    });
+
+    this.api.post("/resume", async (req, res) => {
+      const consumer = this.consumers[req.body.id];
+      await consumer.resume();
+      res.status(201).send();
+    });
+  }
+
+  getApi() {
+    return this.api;
+  }
+
+  
+  private async createWorker() {
+    if (this.worker == undefined) this.worker = await mediasoup.createWorker();
+  }
+
+  private async createRouter() {
+    await this.createWorker();
+    if (this.router == undefined)
+      this.router = await this.worker.createRouter({
+        mediaCodecs: [
+          {
+            kind: "audio",
+            mimeType: "audio/opus",
+            clockRate: 48000,
+            channels: 2
+          },
+          {
+            kind: "video",
+            mimeType: "video/VP8",
+            clockRate: 90000
+          },
+          {
+            kind: "video",
+            mimeType: "video/h264",
+            clockRate: 90000,
+            parameters: {
+              "packetization-mode": 1,
+              "profile-level-id": "4d0032",
+              "level-asymmetry-allowed": 1
+            }
+          },
+          {
+            kind: "video",
+            mimeType: "video/h264",
+            clockRate: 90000,
+            parameters: {
+              "packetization-mode": 1,
+              "profile-level-id": "42e01f",
+              "level-asymmetry-allowed": 1
+            }
+          }
+        ]
+      });
+  }
 }
-
-api.get("/capabilities", async (req, res) => {
-  await createRouter();
-  console.log(router.rtpCapabilities);
-  res.json(router.rtpCapabilities);
-});
-
-api.get("/get-media", async (req, res) => {
-  await createRouter();
-  let trans = await router.createWebRtcTransport({
-    listenIps: [{ ip: "127.0.0.1", announcedIp: null }],
-    enableUdp: true,
-    enableTcp: true,
-    preferUdp: true,
-    initialAvailableOutgoingBitrate: 800000
-  });
-
-  transports[trans.id] = trans;
-
-  trans.observer.on("close", () => delete transports[trans.id]);
-
-  trans.on("icestatechange", (iceState: IceState) => {
-    if (iceState === "disconnected") {
-      trans.close();
-    }
-    console.log("ICE state changed to %s", iceState);
-  });
-
-  res.json({
-    id: trans.id,
-    iceParameters: trans.iceParameters,
-    iceCandidates: trans.iceCandidates,
-    dtlsParameters: trans.dtlsParameters,
-    sctpParameters: trans.sctpParameters
-  });
-});
-
-api.post("/connect", async (req, res) => {
-  console.log("CONNECT");
-  const trans = transports[req.body.id];
-  await trans.connect({
-    dtlsParameters: req.body.dtlsParameters
-  });
-  res.status(201).send();
-});
-
-api.post("/produce", async (req, res) => {
-  console.log("CONNECT");
-  const trans = transports[req.body.id];
-  const producer = await trans.produce({
-    kind: req.body.kind,
-    rtpParameters: req.body.rtpParameters
-  });
-
-  producers.push(producer);
-  producer.on("transportclose", () => {
-    producers = producers.filter(prod => prod.id !== producer.id);
-  });
-
-  producer.observer.on("close", () => {
-    producers = producers.filter(prod => prod.id !== producer.id);
-  });
-
-  res.json({ id: producer.id });
-});
-
-api.get("/producers", async (req, res) => {
-  res.json(
-    producers.map(prod => {
-      return {
-        producerId: prod.id,
-        kind: prod.kind
-      };
-    })
-  );
-});
-
-api.post("/add-consumer", async (req, res) => {
-  const trans = transports[req.body.id];
-  const consumer = await trans.consume({
-    producerId: req.body.producerId,
-    rtpCapabilities: req.body.rtpCapabilities,
-    paused: true
-  });
-  consumers[consumer.id] = consumer;
-  consumer.on("transportclose", () => {
-    delete consumers[consumer.id];
-  });
-  consumer.observer.on("close", () => {
-    delete consumers[consumer.id];
-  });
-
-  res.json({
-    id: consumer.id,
-    rtpParameters: consumer.rtpParameters
-  });
-});
-
-api.post("/resume", async (req, res) => {
-  const consumer = consumers[req.body.id];
-  await consumer.resume();
-  res.status(201).send();
-});

@@ -1,0 +1,45 @@
+#local {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: 200px;
+}
+
+#streams {
+  display: flex;
+  height: 100vh;
+  width: calc(100% - 16px);
+  margin-left: 16px;
+  justify-content: center;
+  align-content: center;
+
+  flex-wrap: wrap;
+
+  video {
+    flex-shrink: 1;
+    margin-right: 16px;
+    margin-bottom: 16px;
+    height: calc(100% - 16px);
+    max-width: calc(50% - 16px);
+  }
+
+
+  video:nth-last-child(n+3),
+  video:nth-last-child(n+3) ~ video {
+    max-height: calc(40% - 16px);
+  }
+  video:nth-last-child(n+5),
+  video:nth-last-child(n+5) ~ video {
+    max-width: calc(32% - 16px);
+  }
+  video:nth-last-child(n+7),
+  video:nth-last-child(n+7) ~ video {
+    max-height: calc(32% - 16px);
+  }
+  video:nth-last-child(n+10),
+  video:nth-last-child(n+10) ~ video {
+    max-height: calc(25% - 16px);
+  }
+  
+
+}
