@@ -3,7 +3,7 @@ import * as mediasoup from "mediasoup";
 import * as bodyParser from "body-parser";
 import { IceState } from "mediasoup/lib/types";
 import * as WebSocket from 'ws';
-import { MyWebSocket as CustomWebSocket } from './server';
+import { MyWebSocket as CustomWebSocket, MyWebSocket } from './server';
 
 
 export class Api {
@@ -36,7 +36,7 @@ export class Api {
     this.api.get("/get-media", async (req, res) => {
       await this.createRouter();
       let trans = await this.router.createWebRtcTransport({
-        listenIps: [{ ip: "127.0.0.1", announcedIp: null }],
+        listenIps: [{ ip: process.env.IP || "127.0.0.1", announcedIp: null }],
         enableUdp: true,
         enableTcp: true,
         preferUdp: true,
@@ -97,6 +97,7 @@ export class Api {
       });
 
       producer.on("transportclose", () => {
+        console.log("producer transport close");
         this.producers = this.producers.filter(prod => prod.id !== producer.id);
         wss.clients.forEach(function each(ws: CustomWebSocket) {
           ws.send(JSON.stringify({
@@ -111,7 +112,17 @@ export class Api {
       });
 
       producer.observer.on("close", () => {
+        console.log("producer close");
         this.producers = this.producers.filter(prod => prod.id !== producer.id);
+        wss.clients.forEach(function each(ws: CustomWebSocket) {
+          ws.send(JSON.stringify({
+            type: "remove-producer",
+            data: {
+              id: producer.id,
+              kind: producer.kind
+            }
+          }));
+        });
       });
 
 
@@ -161,6 +172,29 @@ export class Api {
       const consumer = this.consumers[req.body.id];
       await consumer.resume();
       res.status(201).send();
+    });
+
+    const transports = this.transports;
+    wss.on("connection", function connection(ws: MyWebSocket) {
+      ws.on("message", (e) => {
+        const data = JSON.parse(e.toString());
+        switch (data.type) {
+          case "init":
+            ws.transports = data.data.transports;
+            break;
+        
+          default:
+            break;
+        }
+      });
+      ws.on("close", (e) => {
+        console.log("ws closed");
+        if (ws.transports) {
+          for (const transport of ws.transports) {
+            if (transports[transport]) transports[transport].close();
+          }
+        }
+      });
     });
   }
 

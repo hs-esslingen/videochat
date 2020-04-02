@@ -55,4 +55,5 @@ server.listen(PORT, () => {
 
 export interface MyWebSocket extends WebSocket {
   isAlive: boolean;
+  transports: string[];
 }
