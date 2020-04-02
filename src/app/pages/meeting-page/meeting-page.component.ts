@@ -17,6 +17,7 @@ import {
   MediaKind
 } from "mediasoup-client/lib/types";
 import { RtpCapabilities } from "mediasoup/lib/types";
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: "app-meeting-page",
@@ -47,7 +48,12 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.websocket = new WebSocket("ws://localhost:4000/ws");
+    if (environment.production) {
+      const url = new URL(window.location.href);
+      this.websocket = new WebSocket("wss://"+url.host+"/ws");
+    } else {
+      this.websocket = new WebSocket("ws://localhost:4000/ws");
+    }
 
     this.websocket.onopen = event => {
       console.log("websocket opened");
@@ -117,6 +123,16 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
 
       await this.sendVideo();
       await this.sendAudio();
+
+      this.websocket.send(JSON.stringify({
+        type: "init",
+        data: {
+          transports: [
+            this.sendTransport.id,
+            this.recvTransport.id
+          ]
+        }
+      }))
     } catch (err) {
       console.error(err);
     }
