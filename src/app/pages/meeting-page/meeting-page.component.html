@@ -1,3 +1,9 @@
-<button (click)="addConsumer()">receive</button>
-<video *ngFor="let consumer of consumers" autoplay playinline [srcObject]="getMediaStream(consumer)"></video>
-<video #local autoplay playinline></video>
+<div id="streams">
+  <video *ngFor="let consumer of videoConsumers; trackBy: trackByFn;" autoplay playinline [srcObject]="consumer.stream"></video>
+</div>
+<div id="audio">
+  <audio *ngFor="let consumer of audioConsumers; trackBy: trackByFn;" autoplay playinline [srcObject]="consumer.stream"></audio>
+</div>
+
+
+<video id="local" #local autoplay playinline></video>
