@@ -13,11 +13,11 @@ export class Api {
   transports: { [id: string]: mediasoup.types.WebRtcTransport } = {};
   consumers: { [id: string]: mediasoup.types.Consumer } = {};
   producers: mediasoup.types.Producer[] = [];
-  
+
 
 
   constructor(wss: WebSocket.Server) {
-    
+
     this.api.use(bodyParser.json());
 
 
@@ -69,18 +69,14 @@ export class Api {
     });
 
     this.api.post("/produce", async (req, res) => {
-      console.log("PRODUCE");
       const trans = this.transports[req.body.id];
-      console.log("PRODUCE2");
       const producer = await trans.produce({
         kind: req.body.kind,
         rtpParameters: req.body.rtpParameters
       });
-      console.log("PRODUCE3");
 
       this.producers.push(producer);
 
-      console.log(wss.clients);
       wss.clients.forEach((ws: CustomWebSocket) => {
         setTimeout(() => {
           console.log("sending new producer");
@@ -191,7 +187,7 @@ export class Api {
     return this.api;
   }
 
-  
+
   private async createWorker() {
     if (this.worker == undefined) this.worker = await mediasoup.createWorker();
   }

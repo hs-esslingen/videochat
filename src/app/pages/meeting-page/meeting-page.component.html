@@ -1,5 +1,6 @@
 
 <div id="videochat">
+  <video id="local" #local autoplay playinline></video>
   <div id="streams">
     <video *ngFor="let consumer of videoConsumers;" autoplay playinline [srcObject]="consumer.stream"></video>
   </div>
@@ -7,7 +8,6 @@
     <audio *ngFor="let consumer of audioConsumers;" autoplay playinline [srcObject]="consumer.stream"></audio>
   </div>
 
-  <video id="local" #local autoplay playinline></video>
   <div id="toolbar">
     <div class="right"></div>
     <div class="center">
