@@ -127,6 +127,16 @@ export class MediaService {
           this.cameraState = CameraState.ENABLED;
           this.updateObserver();
           await this.sendVideo(mediaStream);
+
+          this.websocket.send(
+            JSON.stringify({
+              type: "update",
+              data: {
+                transports: [this.sendTransport?.id, this.recvTransport?.id],
+              },
+            })
+          );
+
           setTimeout(() => {
             this.startingCameraStream = false;
           }, 500);
@@ -184,7 +194,7 @@ export class MediaService {
         JSON.stringify({
           type: "init",
           data: {
-            transports: [this.sendTransport.id, this.recvTransport.id],
+            transports: [this.sendTransport?.id, this.recvTransport?.id],
           },
         })
       );

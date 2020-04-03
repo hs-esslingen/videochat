@@ -179,6 +179,9 @@ export class Api {
           case "init":
             ws.transports = data.data.transports;
             break;
+          case "update":
+            ws.transports = data.data.transports;
+            break;
 
           default:
             break;
