@@ -1,3 +1,6 @@
+@import '~@angular/cdk/overlay-prebuilt.css';
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
 /* You can add global styles to this file, and also import other style files */
 body {
   margin: 0px;
@@ -35,4 +38,9 @@ button {
 
   /* Corrects inability to style clickable `input` types in iOS */
   -webkit-appearance: none;
+}
+
+.mat-menu-content {
+  background-color: white;
+  color: black;
 }

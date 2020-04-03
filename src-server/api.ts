@@ -114,6 +114,19 @@ export class Api {
       res.json({ id: producer.id });
     });
 
+    this.api.post("/producer-close", async (req, res) => {
+      console.log(req.body.id);
+      console.log(this.producers);
+      if (req.body.id) {
+        const producer = this.producers.find((prod) => prod.id === req.body.id);
+        if (producer) {
+          console.log("closing producer");
+          producer.close();
+        }
+      }
+      res.status(201).send();
+    });
+
     this.api.get("/producers", async (req, res) => {
       res.json(
         this.producers.map(prod => {
