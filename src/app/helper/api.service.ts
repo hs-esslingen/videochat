@@ -11,8 +11,22 @@ import {
   providedIn: "root"
 })
 export class ApiService {
+  public currentUser: string;
+
+
   constructor(private http: HttpClient) {
   }
+
+
+  public getLogin(): string {
+    return this.currentUser;
+  }
+
+  public login(email) {
+    this.currentUser = email;
+  }
+
+  
 
   public getCapabilities(): Promise<RtpCapabilities> {
     return this.http.get("/api/capabilities").toPromise() as Promise<
