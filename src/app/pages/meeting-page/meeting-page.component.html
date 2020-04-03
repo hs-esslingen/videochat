@@ -1,8 +1,8 @@
 <div id="streams">
-  <video *ngFor="let consumer of videoConsumers; trackBy: trackByFn;" autoplay playinline [srcObject]="consumer.stream"></video>
+  <video *ngFor="let consumer of videoConsumers;" autoplay playinline [srcObject]="consumer.stream"></video>
 </div>
 <div id="audio">
-  <audio *ngFor="let consumer of audioConsumers; trackBy: trackByFn;" autoplay playinline [srcObject]="consumer.stream"></audio>
+  <audio *ngFor="let consumer of audioConsumers;" autoplay playinline [srcObject]="consumer.stream"></audio>
 </div>
 
 

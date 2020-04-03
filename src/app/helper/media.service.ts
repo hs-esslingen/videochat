@@ -4,10 +4,11 @@ import {
   Consumer,
   Producer,
   Device,
-  Transport,
+  Transport
 } from "mediasoup-client/lib/types";
 import { environment } from "src/environments/environment";
 import { ApiService } from "./api.service";
+import { Observer, Observable, Subscriber } from 'rxjs';
 
 @Injectable({
   providedIn: "root"
@@ -16,14 +17,9 @@ export class MediaService {
   device: Device;
   localVideoProducer: Producer;
   localAudioProducer: Producer;
-  videoConsumers: {
-    consumer: Consumer;
-    stream: MediaStream;
-  }[] = [];
-  audioConsumers: {
-    consumer: Consumer;
-    stream: MediaStream;
-  }[] = [];
+  videoConsumers: Stream[] = [];
+  audioConsumers: Stream[] = [];
+  consumerSubscriber: Subscriber<{videoConsumers: Stream[], audioConsumers: Stream[]}>;
   recvTransport: Transport;
   sendTransport: Transport;
   websocket: WebSocket;
@@ -44,8 +40,9 @@ export class MediaService {
   }
 
   public async connectToRoom(
-    roomId, localStream: MediaStream
-  ): Promise<{ videoConsumers: Stream[]; audioConsumers: Stream[] }> {
+    roomId,
+    localStream: MediaStream
+  ): Promise<Observable<{videoConsumers: Stream[], audioConsumers: Stream[]}>> {
     await this.setupDevice();
 
     await this.createSendTransport();
@@ -54,15 +51,27 @@ export class MediaService {
     await this.addExistingConsumers();
 
     if (localStream.getVideoTracks().length > 0)
-    await this.sendVideo(localStream);
+      await this.sendVideo(localStream);
     if (localStream.getAudioTracks().length > 0)
       await this.sendAudio(localStream);
     this.setupWebsocket();
 
-    return {
-      videoConsumers: this.videoConsumers,
-      audioConsumers: this.audioConsumers
-    };
+    const observable: Observable<{videoConsumers: Stream[], audioConsumers: Stream[]}> = new Observable((sub) => {
+      this.consumerSubscriber = sub;
+    });
+    setTimeout(() => {
+      this.updateObserver();
+    }, 100);
+    return observable;
+  }
+
+  updateObserver()  {
+    console.log("push data");
+    if (this.consumerSubscriber)
+      this.consumerSubscriber.next({
+        videoConsumers: this.videoConsumers,
+        audioConsumers: this.audioConsumers
+      })
   }
 
   async setupDevice() {
@@ -81,6 +90,15 @@ export class MediaService {
 
     this.websocket.onopen = event => {
       console.log("websocket opened");
+      this.websocket.send(JSON.stringify({
+        type: "init",
+        data: {
+          transports: [
+            this.sendTransport.id,
+            this.recvTransport.id
+          ]
+        }
+      }));
     };
     this.websocket.addEventListener("message", ev => {
       const data = JSON.parse(ev.data);
@@ -89,6 +107,7 @@ export class MediaService {
           this.addConsumer(data.data.producerId, data.data.kind);
           break;
         case "remove-producer":
+          console.log("remove producer");
           this.removeConsumer(data.data.id, data.data.kind);
           break;
 
@@ -96,6 +115,8 @@ export class MediaService {
           break;
       }
     });
+
+
   }
 
   async addExistingConsumers() {
@@ -150,6 +171,8 @@ export class MediaService {
       });
     }
 
+    this.updateObserver();
+
     consumer.on("transportclose", () => {
       console.log("track close");
       this.removeConsumer(consumer.id, consumer.kind);
@@ -161,25 +184,27 @@ export class MediaService {
   }
 
   removeConsumer(id: string, kind: string) {
-    console.log(kind);
     const list = kind === "video" ? this.videoConsumers : this.audioConsumers;
-    const index = list.findIndex(item => item.consumer.producerId !== id);
-    if (index >= 0)
+    const index = list.findIndex(item => item.consumer.producerId === id);
+    if (index >= 0) {
       if (kind === "video") {
         this.videoConsumers.splice(index, 1);
       } else {
         this.audioConsumers.splice(index, 1);
       }
+      this.updateObserver();
+    }
+
   }
 
   async createSendTransport() {
-    const params = await this.api.getMedia();
+    const params = await this.api.getCreateTransport();
     this.sendTransport = this.device.createSendTransport(params);
     this.addProduceCallbacks(this.sendTransport);
   }
 
   async createRecvTransport() {
-    const params = await this.api.getMedia();
+    const params = await this.api.getCreateTransport();
     this.recvTransport = this.device.createRecvTransport(params);
     this.addProduceCallbacks(this.recvTransport);
   }
