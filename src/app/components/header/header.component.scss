@@ -1,0 +1,42 @@
+header { 
+  width: calc(100% - 16px);
+  height: 52px;
+  background-color: #193058;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 0px 0 16px;
+  color: white;
+  font-size: 18px;  
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+
+  .right {
+    position: absolute;
+    right: 8px;
+  }
+
+  .left {
+    position: absolute;
+    left: 8px;
+  }
+
+  #logo {
+    height: 42px;
+
+    img {
+      height: 42px;
+    }
+  }
+
+  #user_status {
+    line-height: 42px;
+    margin-right: 5px;
+    padding-right: 8px;
+    padding-left: 8px;
+    border: none;
+    background-color: inherit;
+    color: inherit;
+    font-size: inherit;
+    border-radius: 8px;
+  }
+}

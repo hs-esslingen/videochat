@@ -1,0 +1,10 @@
+<div id="content">
+    <h1>Willkommen zum Online Videochat der HSE</h1>
+    <p id="description">Der Login funktioniert für alle Mitglieder der Hochschule Esslingen über ihre Hochschuladresse.</p>
+    <div id="login">
+        <label for="email">E-Mail</label>
+        <input id="email" class="textbox form-element" name="tbx_mail" [(ngModel)]="email"  type="email" placeholder="mamuit00@hs-esslingen.de"/>
+    
+        <button type="submit" id="btn_login" class="form-element" name="btn_login" (click)="onLogin()">Login</button>
+    </div>
+</div>
