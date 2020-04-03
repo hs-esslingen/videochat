@@ -15,6 +15,7 @@ export class ApiService {
 
 
   constructor(private http: HttpClient) {
+    this.currentUser = window.localStorage.getItem("email");
   }
 
 
@@ -23,6 +24,7 @@ export class ApiService {
   }
 
   public login(email) {
+    window.localStorage.setItem("email", email);
     this.currentUser = email;
   }
 
