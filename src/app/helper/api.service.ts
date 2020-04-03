@@ -58,6 +58,14 @@ export class ApiService {
       .toPromise() as Promise<{ id: string }>;
   }
 
+  public producerClose(id) {
+    return this.http
+      .post("/api/producer-close", {
+        id,
+      })
+      .toPromise() as Promise<object>;
+  }
+
   public getProducers(): Promise<
     {
       kind: MediaKind;

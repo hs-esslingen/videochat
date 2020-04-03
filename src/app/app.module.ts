@@ -1,7 +1,10 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule } from "@angular/forms";
 import { NgModule, Inject, PLATFORM_ID, APP_ID } from "@angular/core";
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatMenuModule} from '@angular/material/menu';
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { MeetingPageComponent } from "./pages/meeting-page/meeting-page.component";
@@ -12,10 +15,13 @@ import { HeaderComponent } from './components/header/header.component';
 @NgModule({
   declarations: [AppComponent, MeetingPageComponent, LoginPageComponent, HeaderComponent],
   imports: [
-    BrowserModule.withServerTransition({ appId: "videochat" }),
+    BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    MatMenuModule,
+    BrowserAnimationsModule,
+    MatCheckboxModule
   ],
   providers: [],
   bootstrap: [AppComponent]

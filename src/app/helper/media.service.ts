@@ -10,26 +10,47 @@ import { environment } from "src/environments/environment";
 import { ApiService } from "./api.service";
 import { Observable, Subscriber } from "rxjs";
 
+export enum CameraState {
+  ENABLED = "videocam",
+  DISABLED = "videocam_off",
+}
+
+export enum MicrophoneState {
+  ENABLED = "mic",
+  DISABLED = "mic_off",
+}
+
 @Injectable({
   providedIn: "root",
 })
 export class MediaService {
-  device: Device;
-  localVideoProducer: Producer;
-  localAudioProducer: Producer;
-  videoConsumers: Stream[] = [];
-  audioConsumers: Stream[] = [];
-  addingProducers: string[] = [];
-  consumerSubscriber: Subscriber<{
+  private device: Device;
+  private localVideoProducer: Producer;
+  private localAudioProducer: Producer;
+  private videoConsumers: Stream[] = [];
+  private audioConsumers: Stream[] = [];
+  private addingProducers: string[] = [];
+  private consumerSubscriber: Subscriber<{
     videoConsumers: Stream[];
     audioConsumers: Stream[];
+    autoGainControl: boolean;
+    cameraState: CameraState;
+    microphoneState: MicrophoneState;
+    localStream: MediaStream;
   }>;
-  recvTransport: Transport;
-  sendTransport: Transport;
-  websocket: WebSocket;
-  status: Status;
+  private recvTransport: Transport;
+  private sendTransport: Transport;
+  private websocket: WebSocket;
+  private status: Status;
+  private autoGainControl: boolean;
+  private microphoneState: MicrophoneState;
+  private cameraState: CameraState;
+  private localStream: MediaStream;
+  private startingCameraStream = false;
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService) {
+    this.autoGainControl = localStorage.getItem("autoGainControl") !== "false";
+  }
 
   public async getUserMedia(): Promise<MediaStream> {
     const capabilities = await navigator.mediaDevices.enumerateDevices();
@@ -38,7 +59,7 @@ export class MediaService {
     return await navigator.mediaDevices.getUserMedia({
       video,
       audio: {
-        autoGainControl: false,
+        autoGainControl: this.autoGainControl,
       },
     });
   }
@@ -46,34 +67,85 @@ export class MediaService {
   public async connectToRoom(
     roomId,
     localStream: MediaStream
-  ): Promise<
-    Observable<{ videoConsumers: Stream[]; audioConsumers: Stream[] }>
-  > {
-    console.log(localStream);
+  ): Promise<MediaObservable> {
+    this.localStream = localStream;
     await this.setupDevice();
 
     await this.createSendTransport();
     await this.createRecvTransport();
 
-    if (localStream.getVideoTracks().length > 0)
+    if (localStream.getVideoTracks().length > 0) {
+      this.cameraState = CameraState.ENABLED;
       await this.sendVideo(localStream);
-    if (localStream.getAudioTracks().length > 0)
+    } else {
+      this.cameraState = CameraState.DISABLED;
+    }
+
+    if (localStream.getAudioTracks().length > 0) {
+      this.microphoneState = MicrophoneState.ENABLED;
       await this.sendAudio(localStream);
+    } else {
+      this.microphoneState = MicrophoneState.DISABLED;
+    }
 
     this.setupWebsocket();
 
-    const observable: Observable<{
-      videoConsumers: Stream[];
-      audioConsumers: Stream[];
-    }> = new Observable((sub) => {
+    const observable: MediaObservable = new Observable((sub) => {
       this.consumerSubscriber = sub;
     });
     return observable;
   }
 
-  toggleMirophone() {}
+  toggleMirophone() {
+    if (this.localAudioProducer.paused) {
+      this.localAudioProducer.resume();
+      this.microphoneState = MicrophoneState.ENABLED;
+    } else {
+      this.localAudioProducer.pause();
+      this.microphoneState = MicrophoneState.DISABLED;
+    }
+    this.updateObserver();
+  }
 
-  toggleCamera() {}
+  async toggleCamera() {
+    if (
+      this.localVideoProducer != undefined &&
+      !this.localVideoProducer?.closed
+    ) {
+      this.localVideoProducer.close();
+      await this.api.producerClose(this.localVideoProducer.id);
+      this.cameraState = CameraState.DISABLED;
+      this.localStream = undefined;
+    } else {
+      if (!this.startingCameraStream)
+        try {
+          this.startingCameraStream = true;
+          const mediaStream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+          });
+          this.localStream = mediaStream;
+          this.cameraState = CameraState.ENABLED;
+          this.updateObserver();
+          await this.sendVideo(mediaStream);
+          setTimeout(() => {
+            this.startingCameraStream = false;
+          }, 500);
+        } catch (e) {
+          console.error(e);
+          setTimeout(() => {
+            this.startingCameraStream = false;
+          }, 500);
+          this.localStream = undefined;
+        }
+    }
+    this.updateObserver();
+  }
+
+  toggleAutoGainControl() {
+    console.log("toggle: autoGainControl");
+    localStorage.setItem("autoGainControl", (!this.autoGainControl).toString());
+    this.autoGainControl = !this.autoGainControl;
+  }
 
   updateObserver() {
     console.log("push data");
@@ -81,6 +153,10 @@ export class MediaService {
       this.consumerSubscriber.next({
         videoConsumers: this.videoConsumers,
         audioConsumers: this.audioConsumers,
+        autoGainControl: this.autoGainControl,
+        microphoneState: this.microphoneState,
+        cameraState: this.cameraState,
+        localStream: this.localStream,
       });
   }
 
@@ -100,6 +176,7 @@ export class MediaService {
 
     this.websocket.onopen = async (event) => {
       console.log("websocket opened");
+      this.updateObserver();
 
       await this.addExistingConsumers();
 
@@ -150,9 +227,9 @@ export class MediaService {
 
   private async addConsumer(producerId, kind) {
     if (this.addingProducers.includes(producerId)) {
-      console.log("duplicate")
+      console.log("duplicate");
       return;
-    };
+    }
     this.addingProducers.push(producerId);
 
     if (
@@ -235,7 +312,6 @@ export class MediaService {
   }
 
   private async sendVideo(localStream: MediaStream) {
-    const track = localStream.getVideoTracks()[0];
     this.localVideoProducer = await this.sendTransport.produce({
       track: localStream.getVideoTracks()[0],
       encodings: [
@@ -294,12 +370,11 @@ export enum Status {
   CONNECTED,
 }
 
-export enum CameraState {
-  ENABLED = "videocam",
-  DISABLED = "videocam_off",
-}
-
-export enum MicState {
-  ENABLED = "mic",
-  DISABLED = "mic_off",
-}
+export type MediaObservable = Observable<{
+  videoConsumers: Stream[];
+  audioConsumers: Stream[];
+  autoGainControl: boolean;
+  cameraState: CameraState;
+  microphoneState: MicrophoneState;
+  localStream: MediaStream;
+}>;
