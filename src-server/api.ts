@@ -21,13 +21,6 @@ export class Api {
     this.api.use(bodyParser.json());
 
 
-    this.api.get("/create-worker", async (req, res) => {
-      if (this.worker) this.worker.close();
-      this.worker = await mediasoup.createWorker();
-      res.send("It Works!");
-    });
-
-
     this.api.get("/capabilities", async (req, res) => {
       await this.createRouter();
       res.json(this.router.rtpCapabilities);
@@ -35,7 +28,7 @@ export class Api {
 
     this.api.get("/get-media", async (req, res) => {
       await this.createRouter();
-      let trans = await this.router.createWebRtcTransport({
+      const trans = await this.router.createWebRtcTransport({
         listenIps: [{ ip: process.env.IP || "127.0.0.1", announcedIp: null }],
         enableUdp: true,
         enableTcp: true,
@@ -45,7 +38,10 @@ export class Api {
 
       this.transports[trans.id] = trans;
 
-      trans.observer.on("close", () => delete this.transports[trans.id]);
+      trans.observer.on("close", () => {
+        console.log("transport closed");
+        delete this.transports[trans.id]
+      });
 
       trans.on("icestatechange", (iceState: IceState) => {
         if (iceState === "disconnected") {
@@ -73,19 +69,21 @@ export class Api {
     });
 
     this.api.post("/produce", async (req, res) => {
-      console.log("CONNECT");
+      console.log("PRODUCE");
       const trans = this.transports[req.body.id];
+      console.log("PRODUCE2");
       const producer = await trans.produce({
         kind: req.body.kind,
         rtpParameters: req.body.rtpParameters
       });
+      console.log("PRODUCE3");
 
       this.producers.push(producer);
 
-      
-      wss.clients.forEach(function each(ws: CustomWebSocket) {
+      console.log(wss.clients);
+      wss.clients.forEach((ws: CustomWebSocket) => {
         setTimeout(() => {
-          
+          console.log("sending new producer");
           ws.send(JSON.stringify({
             type: "new-producer",
             data: {
@@ -99,15 +97,6 @@ export class Api {
       producer.on("transportclose", () => {
         console.log("producer transport close");
         this.producers = this.producers.filter(prod => prod.id !== producer.id);
-        wss.clients.forEach(function each(ws: CustomWebSocket) {
-          ws.send(JSON.stringify({
-            type: "remove-producer",
-            data: {
-              id: producer.id,
-              kind: producer.kind
-            }
-          }));
-        });
         producer.close();
       });
 
@@ -174,15 +163,14 @@ export class Api {
       res.status(201).send();
     });
 
-    const transports = this.transports;
-    wss.on("connection", function connection(ws: MyWebSocket) {
+    wss.on("connection", (ws: MyWebSocket) => {
       ws.on("message", (e) => {
         const data = JSON.parse(e.toString());
         switch (data.type) {
           case "init":
             ws.transports = data.data.transports;
             break;
-        
+
           default:
             break;
         }
@@ -190,8 +178,9 @@ export class Api {
       ws.on("close", (e) => {
         console.log("ws closed");
         if (ws.transports) {
-          for (const transport of ws.transports) {
-            if (transports[transport]) transports[transport].close();
+          console.log(ws.transports);
+          for (const transportId of ws.transports) {
+            if (this.transports[transportId]) this.transports[transportId].close();
           }
         }
       });
