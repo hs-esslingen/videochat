@@ -1,9 +1,20 @@
-<div id="streams">
-  <video *ngFor="let consumer of videoConsumers;" autoplay playinline [srcObject]="consumer.stream"></video>
-</div>
-<div id="audio">
-  <audio *ngFor="let consumer of audioConsumers;" autoplay playinline [srcObject]="consumer.stream"></audio>
-</div>
 
+<div id="videochat">
+  <div id="streams">
+    <video *ngFor="let consumer of videoConsumers;" autoplay playinline [srcObject]="consumer.stream"></video>
+  </div>
+  <div id="audio">
+    <audio *ngFor="let consumer of audioConsumers;" autoplay playinline [srcObject]="consumer.stream"></audio>
+  </div>
 
-<video id="local" #local autoplay playinline></video>
+  <video id="local" #local autoplay playinline></video>
+  <div id="toolbar">
+    <div class="right"></div>
+    <div class="center">
+      <button class="mic"><i class="material-icons">mic</i></button>
+      <button class="end-call"><i class="material-icons">call_end</i></button>
+      <button class="video"><i class="material-icons">videocam</i></button>
+    </div>
+    <div class="left"></div>
+  </div>
+</div>

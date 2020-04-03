@@ -8,7 +8,7 @@ import {
 } from "mediasoup-client/lib/types";
 import { environment } from "src/environments/environment";
 import { ApiService } from "./api.service";
-import { Observer, Observable, Subscriber } from 'rxjs';
+import { Observable, Subscriber } from 'rxjs';
 
 @Injectable({
   providedIn: "root"
@@ -43,6 +43,7 @@ export class MediaService {
     roomId,
     localStream: MediaStream
   ): Promise<Observable<{videoConsumers: Stream[], audioConsumers: Stream[]}>> {
+    console.log(localStream);
     await this.setupDevice();
 
     await this.createSendTransport();
@@ -59,10 +60,15 @@ export class MediaService {
     const observable: Observable<{videoConsumers: Stream[], audioConsumers: Stream[]}> = new Observable((sub) => {
       this.consumerSubscriber = sub;
     });
-    setTimeout(() => {
-      this.updateObserver();
-    }, 100);
     return observable;
+  }
+
+  toggleMirophone() {
+    
+  }
+  
+  toggleCamera() {
+    
   }
 
   updateObserver()  {
@@ -74,13 +80,13 @@ export class MediaService {
       })
   }
 
-  async setupDevice() {
+  private async setupDevice() {
     this.device = new Device();
     const routerRtpCapabilities = await this.api.getCapabilities();
     this.device.load({ routerRtpCapabilities });
   }
 
-  setupWebsocket() {
+  private setupWebsocket() {
     if (environment.production) {
       const url = new URL(window.location.href);
       this.websocket = new WebSocket("wss://" + url.host + "/ws");
@@ -119,7 +125,7 @@ export class MediaService {
 
   }
 
-  async addExistingConsumers() {
+  private async addExistingConsumers() {
     console.log("GET CONSUMER");
     const producers = await this.api.getProducers();
     for (const prod of producers) {
@@ -136,7 +142,7 @@ export class MediaService {
     }
   }
 
-  async addConsumer(producerId, kind) {
+  private async addConsumer(producerId, kind) {
     console.log("ADDING");
 
     if (
@@ -183,7 +189,7 @@ export class MediaService {
     });
   }
 
-  removeConsumer(id: string, kind: string) {
+  private removeConsumer(id: string, kind: string) {
     const list = kind === "video" ? this.videoConsumers : this.audioConsumers;
     const index = list.findIndex(item => item.consumer.producerId === id);
     if (index >= 0) {
@@ -197,19 +203,20 @@ export class MediaService {
 
   }
 
-  async createSendTransport() {
+  private async createSendTransport() {
     const params = await this.api.getCreateTransport();
     this.sendTransport = this.device.createSendTransport(params);
     this.addProduceCallbacks(this.sendTransport);
   }
 
-  async createRecvTransport() {
+  private async createRecvTransport() {
     const params = await this.api.getCreateTransport();
     this.recvTransport = this.device.createRecvTransport(params);
     this.addProduceCallbacks(this.recvTransport);
   }
 
-  async sendVideo(localStream: MediaStream) {
+  private async sendVideo(localStream: MediaStream) {
+    const track = localStream.getVideoTracks()[0];
     this.localVideoProducer = await this.sendTransport.produce({
       track: localStream.getVideoTracks()[0],
       encodings: [
@@ -219,13 +226,19 @@ export class MediaService {
     });
   }
 
-  async sendAudio(localStream: MediaStream) {
+  private async sendAudio(localStream: MediaStream) {
+    const track = localStream.getAudioTracks()[0];
+    await track.applyConstraints({
+      echoCancellation: false,
+      noiseSuppression: false,
+      autoGainControl: false,
+    });
     this.localAudioProducer = await this.sendTransport.produce({
-      track: localStream.getAudioTracks()[0].clone()
+      track,
     });
   }
 
-  addProduceCallbacks(transport: Transport) {
+  private addProduceCallbacks(transport: Transport) {
     transport.on("connect", async ({ dtlsParameters }, callback, errback) => {
       // Signal local DTLS parameters to the server side transport.
       try {
@@ -266,4 +279,14 @@ export type Stream = {
 export enum Status {
   DISCONNECTED,
   CONNECTED
+};
+
+export enum CameraState {
+  ENABLED =  "videocam",
+  DISABLED = "videocam_off"
+}
+
+export enum MicState {
+  ENABLED =  "mic",
+  DISABLED = "mic_off"
 }

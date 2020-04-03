@@ -39,7 +39,8 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
         console.log("update");
         this.audioConsumers = data.audioConsumers;
         this.videoConsumers = data.videoConsumers;
-      },()=>{}, ()=> {})
+      })
+      this.mediaService.updateObserver();
     } catch (err) {
       console.error(err);
     }
