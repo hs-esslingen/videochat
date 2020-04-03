@@ -7,10 +7,9 @@ import { ApiService } from 'src/app/helper/api.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  loggedIn: boolean = false;
   title = 'videochat';
 
-  constructor(private readonly api: ApiService) {
+  constructor(readonly api: ApiService) {
 
   }
 }

@@ -1,49 +1,65 @@
 #videochat {
-  position: relative;
-  display: flex;
   height: calc(100vh - 52px);
-  width: calc(100% - 16px);
-  margin-left: 16px;
-  justify-content: center;
-  align-content: center;
-  flex-wrap: wrap;
+  width: 100%;
+  position: relative;
+
 
   #local {
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     position: absolute;
     right: 16px;
     top: 16px;
-    width: 200px;
+    max-width: 200px;
+    width: 20%;
+    border-radius: 4px;
   }
 
-  #streams video {
-    flex-shrink: 1;
-    padding-right: 16px;
-    padding-bottom: 16px;
-    height: calc(100% - 16px);
-    max-width: calc(50% - 16px);
+  #streams {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: wrap;
+    height: 100%;
+
+    video {
+      border-radius: 4px;
+      flex-shrink: 1;
+      margin-bottom: 16px;
+      height: calc(100% - 16px);
+      max-width: 100%;
+    }
+
+    video:nth-last-child(n+2),
+    video:nth-last-child(n+2)~video {
+      max-width: calc(50% - 16px);
+
+      margin-left: 8px;
+      margin-right: 8px;
+    }
+
+    video:nth-last-child(n+3),
+    video:nth-last-child(n+3)~video {
+      max-height: calc(40% - 16px);
+    }
+
+    video:nth-last-child(n+5),
+    video:nth-last-child(n+5)~video {
+      max-width: calc(32% - 16px);
+    }
+
+    video:nth-last-child(n+7),
+    video:nth-last-child(n+7)~video {
+      max-height: calc(32% - 16px);
+    }
+
+    video:nth-last-child(n+10),
+    video:nth-last-child(n+10)~video {
+      max-height: calc(25% - 16px);
+    }
   }
 
 
-  video:nth-last-child(n+3),
-  video:nth-last-child(n+3)~video {
-    max-height: calc(40% - 16px);
-  }
 
-  video:nth-last-child(n+5),
-  video:nth-last-child(n+5)~video {
-    max-width: calc(32% - 16px);
-  }
-
-  video:nth-last-child(n+7),
-  video:nth-last-child(n+7)~video {
-    max-height: calc(32% - 16px);
-  }
-
-  video:nth-last-child(n+10),
-  video:nth-last-child(n+10)~video {
-    max-height: calc(25% - 16px);
-  }
 
   #toolbar {
     position: absolute;

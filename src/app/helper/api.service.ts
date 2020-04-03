@@ -4,20 +4,18 @@ import {
   TransportOptions,
   RtpParameters,
   MediaKind,
-  RtpCapabilities
+  RtpCapabilities,
 } from "mediasoup-client/lib/types";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class ApiService {
   public currentUser: string;
 
-
   constructor(private http: HttpClient) {
     this.currentUser = window.localStorage.getItem("email");
   }
-
 
   public getLogin(): string {
     return this.currentUser;
@@ -27,8 +25,6 @@ export class ApiService {
     window.localStorage.setItem("email", email);
     this.currentUser = email;
   }
-
-  
 
   public getCapabilities(): Promise<RtpCapabilities> {
     return this.http.get("/api/capabilities").toPromise() as Promise<
@@ -46,7 +42,7 @@ export class ApiService {
     return this.http
       .post("/api/connect", {
         id,
-        dtlsParameters
+        dtlsParameters,
       })
       .toPromise();
   }
@@ -57,7 +53,7 @@ export class ApiService {
         id,
         kind,
         rtpParameters,
-        appData
+        appData,
       })
       .toPromise() as Promise<{ id: string }>;
   }
@@ -85,7 +81,7 @@ export class ApiService {
       .post("/api/add-consumer", {
         id,
         rtpCapabilities,
-        producerId
+        producerId,
       })
       .toPromise() as Promise<{ id: string; rtpParameters: RtpParameters }>;
   }
@@ -93,7 +89,7 @@ export class ApiService {
   public resume(id): Promise<object> {
     return this.http
       .post("/api/resume", {
-        id
+        id,
       })
       .toPromise();
   }
