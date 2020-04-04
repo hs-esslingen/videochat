@@ -10,6 +10,7 @@ import { environment } from "src/environments/environment";
 import { ApiService } from "./api.service";
 import { Observable, Subscriber } from "rxjs";
 
+
 export enum CameraState {
   ENABLED = "videocam",
   DISABLED = "videocam_off",
@@ -20,12 +21,18 @@ export enum MicrophoneState {
   DISABLED = "mic_off",
 }
 
+export enum ScreenshareState {
+  ENABLED = "screen",
+  DISABLED = "screen_off",
+}
+
 @Injectable({
   providedIn: "root",
 })
 export class MediaService {
   private device: Device;
   private localVideoProducer: Producer;
+  private localScreenProducer: Producer;
   private localAudioProducer: Producer;
   private videoConsumers: Stream[] = [];
   private audioConsumers: Stream[] = [];
@@ -48,6 +55,8 @@ export class MediaService {
   private localStream: MediaStream;
   private startingCameraStream = false;
 
+
+
   constructor(private api: ApiService) {
     this.autoGainControl = localStorage.getItem("autoGainControl") !== "false";
   }
@@ -63,6 +72,9 @@ export class MediaService {
       },
     });
   }
+
+
+
 
   public async connectToRoom(
     roomId,
@@ -155,6 +167,35 @@ export class MediaService {
     console.log("toggle: autoGainControl");
     localStorage.setItem("autoGainControl", (!this.autoGainControl).toString());
     this.autoGainControl = !this.autoGainControl;
+  }
+
+  async openScreenshare() {
+    console.log("start screenshare");
+    try {
+      // @ts-ignore
+      const localScreen = await navigator.mediaDevices.getDisplayMedia({
+      }) as MediaStream;
+      console.log(localScreen)
+      if (!this.localVideoProducer) {
+        console.log("No local Video Producer");
+
+
+      } else {
+        // const localscreen = localScreen.getVideoTracks()[0];
+        await this.sendScreen(localScreen);
+        this.localScreenProducer.track.onended = async () => {
+          await this.api.producerClose(this.localScreenProducer.id);
+        }
+        // await this.localVideoProducer.replaceTrack({ track: localscreen })
+        // console.log(localscreen);
+        // this.localStream = localScreen;
+        // this.updateObserver();
+      }
+
+    } catch (e) {
+      console.error(e);
+    }
+
   }
 
   updateObserver() {
@@ -328,6 +369,13 @@ export class MediaService {
         { maxBitrate: 96000, scaleResolutionDownBy: 4 },
         { maxBitrate: 680000, scaleResolutionDownBy: 1 },
       ],
+    });
+  }  
+
+  private async sendScreen(localStream: MediaStream) {
+    this.localScreenProducer = await this.sendTransport.produce({
+      track: localStream.getVideoTracks()[0],
+      encodings: null,
     });
   }
 
