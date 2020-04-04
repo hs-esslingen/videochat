@@ -10,7 +10,6 @@ import { environment } from "src/environments/environment";
 import { ApiService } from "./api.service";
 import { Observable, Subscriber } from "rxjs";
 
-
 export enum CameraState {
   ENABLED = "videocam",
   DISABLED = "videocam_off",
@@ -54,8 +53,7 @@ export class MediaService {
   private cameraState: CameraState;
   private localStream: MediaStream;
   private startingCameraStream = false;
-
-
+  private roomId: string;
 
   constructor(private api: ApiService) {
     this.autoGainControl = localStorage.getItem("autoGainControl") !== "false";
@@ -73,13 +71,11 @@ export class MediaService {
     });
   }
 
-
-
-
   public async connectToRoom(
     roomId,
     localStream: MediaStream
   ): Promise<MediaObservable> {
+    this.roomId = roomId;
     this.localStream = localStream;
     await this.setupDevice();
 
@@ -125,7 +121,7 @@ export class MediaService {
       !this.localVideoProducer?.closed
     ) {
       this.localVideoProducer.close();
-      await this.api.producerClose(this.localVideoProducer.id);
+      await this.api.producerClose(this.roomId, this.localVideoProducer.id);
       this.cameraState = CameraState.DISABLED;
       this.localStream = undefined;
     } else {
@@ -171,31 +167,20 @@ export class MediaService {
 
   async openScreenshare() {
     console.log("start screenshare");
-    try {
-      // @ts-ignore
-      const localScreen = await navigator.mediaDevices.getDisplayMedia({
-      }) as MediaStream;
-      console.log(localScreen)
-      if (!this.localVideoProducer) {
-        console.log("No local Video Producer");
+    if (!this.localScreenProducer || this.localAudioProducer.closed)
+      try {
+        // @ts-ignore
+        const localScreen = (await navigator.mediaDevices.getDisplayMedia(
+          {}
+        )) as MediaStream;
 
-
-      } else {
-        // const localscreen = localScreen.getVideoTracks()[0];
         await this.sendScreen(localScreen);
         this.localScreenProducer.track.onended = async () => {
-          await this.api.producerClose(this.localScreenProducer.id);
-        }
-        // await this.localVideoProducer.replaceTrack({ track: localscreen })
-        // console.log(localscreen);
-        // this.localStream = localScreen;
-        // this.updateObserver();
+          await this.api.producerClose(this.roomId, this.localScreenProducer.id);
+        };
+      } catch (e) {
+        console.error(e);
       }
-
-    } catch (e) {
-      console.error(e);
-    }
-
   }
 
   updateObserver() {
@@ -213,7 +198,7 @@ export class MediaService {
 
   private async setupDevice() {
     this.device = new Device();
-    const routerRtpCapabilities = await this.api.getCapabilities();
+    const routerRtpCapabilities = await this.api.getCapabilities(this.roomId);
     this.device.load({ routerRtpCapabilities });
   }
 
@@ -236,6 +221,7 @@ export class MediaService {
           type: "init",
           data: {
             transports: [this.sendTransport?.id, this.recvTransport?.id],
+            roomId: this.roomId,
           },
         })
       );
@@ -260,7 +246,7 @@ export class MediaService {
 
   private async addExistingConsumers() {
     console.log("GET CONSUMER");
-    const producers = await this.api.getProducers();
+    const producers = await this.api.getProducers(this.roomId);
     for (const prod of producers) {
       if (
         this.videoConsumers.find(
@@ -294,6 +280,7 @@ export class MediaService {
     console.log("ADDING: " + kind);
 
     const consume = await this.api.addConsumer(
+      this.roomId, 
       this.recvTransport.id,
       this.device.rtpCapabilities,
       producerId
@@ -306,7 +293,7 @@ export class MediaService {
       rtpParameters: consume.rtpParameters,
     });
 
-    await this.api.resume(consume.id);
+    await this.api.resume(this.roomId, consume.id);
     console.log("resume");
 
     if (consumer.kind === "video")
@@ -351,13 +338,13 @@ export class MediaService {
   }
 
   private async createSendTransport() {
-    const params = await this.api.getCreateTransport();
+    const params = await this.api.getCreateTransport(this.roomId);
     this.sendTransport = this.device.createSendTransport(params);
     this.addProduceCallbacks(this.sendTransport);
   }
 
   private async createRecvTransport() {
-    const params = await this.api.getCreateTransport();
+    const params = await this.api.getCreateTransport(this.roomId);
     this.recvTransport = this.device.createRecvTransport(params);
     this.addProduceCallbacks(this.recvTransport);
   }
@@ -370,7 +357,7 @@ export class MediaService {
         { maxBitrate: 680000, scaleResolutionDownBy: 1 },
       ],
     });
-  }  
+  }
 
   private async sendScreen(localStream: MediaStream) {
     this.localScreenProducer = await this.sendTransport.produce({
@@ -390,7 +377,7 @@ export class MediaService {
     transport.on("connect", async ({ dtlsParameters }, callback, errback) => {
       // Signal local DTLS parameters to the server side transport.
       try {
-        await this.api.connect(transport.id, dtlsParameters);
+        await this.api.connect(this.roomId, transport.id, dtlsParameters);
         // Tell the transport that parameters were transmitted.
         callback();
       } catch (error) {
@@ -404,6 +391,7 @@ export class MediaService {
       console.log("PRODUCE");
       try {
         const { id } = await this.api.produce(
+          this.roomId,
           transport.id,
           parameters.kind,
           parameters.rtpParameters,
