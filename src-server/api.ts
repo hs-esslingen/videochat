@@ -4,6 +4,7 @@ import * as bodyParser from "body-parser";
 import { IceState } from "mediasoup/lib/types";
 import * as WebSocket from 'ws';
 import { MyWebSocket as CustomWebSocket, MyWebSocket } from './server';
+import * as jwt from 'jsonwebtoken';
 
 
 export class Api {
@@ -19,7 +20,27 @@ export class Api {
   constructor(wss: WebSocket.Server) {
 
     this.api.use(bodyParser.json());
+    this.api.post("/login", (req, res) => {
+      const secretkey = "mysecretkey";
 
+      const EmailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if (req.body.email !== undefined && EmailRegExp.test(req.body.email) && req.body.email.endsWith("hs-esslingen.de")) {
+        const token = jwt.sign({ email: req.body.email }, secretkey);
+        // send encoded token
+        res.send(token);
+      }
+      else {
+        const error = "email is invalid";
+        console.log(error);
+        res.status(400).send(error);
+      }
+
+    });
+
+    this.api.use("/", (req, res, next) => {
+      console.log("Token: " + req.headers.token);
+      next();
+    });
 
     this.api.get("/capabilities", async (req, res) => {
       await this.createRouter();
