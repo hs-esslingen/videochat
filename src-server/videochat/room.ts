@@ -18,17 +18,15 @@ export class Room {
   private consumers: { [id: string]: mediasoup.types.Consumer } = {};
   private producers: mediasoup.types.Producer[] = [];
   private websockets: WebSocket[] = [];
-  private users: User[];
+  private users: User[] = [];
 
-  private constructor(private roomId: string) {
-
-  }
+  private constructor(private roomId: string) {}
 
   static getRoom(roomId) {
     if (this.rooms[roomId] == undefined) {
-      console.log("Creating Room " + roomId)
+      console.log("Creating Room " + roomId);
       this.rooms[roomId] = new Room(roomId);
-    };
+    }
     return this.rooms[roomId];
   }
 
@@ -67,7 +65,7 @@ export class Room {
     trans.on("icestatechange", (iceState: IceState) => {
       if (iceState === "disconnected") {
         trans.close();
-      };
+      }
     });
 
     return {
@@ -98,7 +96,7 @@ export class Room {
 
       setTimeout(() => {
         this.broadcastMessage({
-          type: "new-producer",
+          type: "add-producer",
           data: {
             producerId: producer.id,
             kind,
@@ -177,12 +175,20 @@ export class Room {
     await consumer?.resume();
   }
 
+  getUsers() {
+    return this.users.map(({ id, nickname, producers }) => {
+      return { id, nickname, producers };
+    });
+  }
+
+
   initWebsocket(
     ws: WebSocket,
-    initData: { nickname: string; producers: string[]; transports: string[] }
+    initData: WebsocketUserInfo
   ) {
     let transports: string[] = initData.transports;
     const user: User = {
+      id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
       nickname: initData.nickname,
       producers: initData.producers,
     };
@@ -195,13 +201,28 @@ export class Room {
             this.transports[transportId].close();
         }
       }
+
+      this.broadcastMessage({
+        type: "remove-user",
+        data: user,
+      }, ws);
+
+      this.websockets = this.websockets.filter(item => item !== ws);
+      this.users = this.users.filter(item => item !== user);
     });
 
     ws.on("message", (e) => {
       const msg = JSON.parse(e.toString());
       switch (msg.type) {
         case "update":
-          transports = msg.data.transports;
+          const data: WebsocketUserInfo = msg.data;
+          if(data.nickname) user.nickname = data.nickname;
+          if(data.producers) user.producers = data.producers;
+
+          this.broadcastMessage({
+            type: "update-user",
+            data: user,
+          }, ws);
           break;
 
         default:
@@ -209,11 +230,18 @@ export class Room {
       }
     });
 
+    this.broadcastMessage({
+      type: "add-user",
+      data: user,
+    }, ws);
+
+    this.users.push(user);
     this.websockets.push(ws);
   }
 
-  private broadcastMessage(message: { type: string; data: any }) {
+  private broadcastMessage(message: { type: string; data: any }, excludeWs?: WebSocket) {
     this.websockets.forEach((ws: MyWebSocket) => {
+      if (ws === excludeWs) return;
       ws.send(JSON.stringify(message));
     });
   }
@@ -221,7 +249,6 @@ export class Room {
   private async getRouter(): Promise<Router> {
     await Room.createWorker();
     if (this.router == undefined) {
-
       this.router = await Room.worker.createRouter({
         mediaCodecs: [
           {
@@ -234,6 +261,9 @@ export class Room {
             kind: "video",
             mimeType: "video/VP8",
             clockRate: 90000,
+            parameters: {
+              "x-google-start-bitrate": 1000,
+            },
           },
           {
             kind: "video",
@@ -243,6 +273,7 @@ export class Room {
               "packetization-mode": 1,
               "profile-level-id": "4d0032",
               "level-asymmetry-allowed": 1,
+              "x-google-start-bitrate": 1000,
             },
           },
           {
@@ -253,6 +284,7 @@ export class Room {
               "packetization-mode": 1,
               "profile-level-id": "42e01f",
               "level-asymmetry-allowed": 1,
+              "x-google-start-bitrate": 1000,
             },
           },
         ],
@@ -263,6 +295,21 @@ export class Room {
 }
 
 export interface User {
+  id: string;
   nickname: string;
-  producers: string[];
+  producers: {
+    audio?: string,
+    video?: string,
+    screen?: string,
+  };
+}
+
+export interface WebsocketUserInfo {
+  nickname?: string;
+  producers: {
+    audio?: string,
+    video?: string,
+    screen?: string,
+  };
+  transports?: string[];
 }

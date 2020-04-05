@@ -6,6 +6,7 @@ import {
   MediaKind,
   RtpCapabilities,
 } from "mediasoup-client/lib/types";
+import { User } from './media.service';
 
 @Injectable({
   providedIn: "root",
@@ -109,5 +110,11 @@ export class ApiService {
         id,
       })
       .toPromise();
+  }
+
+  public getUsers(roomId): Promise<User[]> {
+    return this.http
+      .get(`/api/room/${roomId}/users`)
+      .toPromise() as Promise<User[]>;
   }
 }

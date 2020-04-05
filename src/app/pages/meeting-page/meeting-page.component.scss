@@ -21,39 +21,40 @@
     flex-wrap: wrap;
     height: 100%;
 
-    video {
+    .user {
       border-radius: 4px;
       flex-shrink: 1;
       margin-bottom: 16px;
       height: calc(100% - 16px);
       max-width: 100%;
+      width: 100%;
     }
 
-    video:nth-last-child(n+2),
-    video:nth-last-child(n+2)~video {
+    .user:nth-last-child(n+2),
+    .user:nth-last-child(n+2)~.user {
       max-width: calc(50% - 16px);
 
       margin-left: 8px;
       margin-right: 8px;
     }
 
-    video:nth-last-child(n+3),
-    video:nth-last-child(n+3)~video {
+    .user:nth-last-child(n+3),
+    .user:nth-last-child(n+3)~.user {
       max-height: calc(40% - 16px);
     }
 
-    video:nth-last-child(n+5),
-    video:nth-last-child(n+5)~video {
+    .user:nth-last-child(n+5),
+    .user:nth-last-child(n+5)~.user {
       max-width: calc(32% - 16px);
     }
 
-    video:nth-last-child(n+7),
-    video:nth-last-child(n+7)~video {
+    .user:nth-last-child(n+7),
+    .user:nth-last-child(n+7)~.user {
       max-height: calc(32% - 16px);
     }
 
-    video:nth-last-child(n+10),
-    video:nth-last-child(n+10)~video {
+    .user:nth-last-child(n+10),
+    .user:nth-last-child(n+10)~.user {
       max-height: calc(25% - 16px);
     }
   }
@@ -98,8 +99,7 @@
         line-height: 56px;
       }
 
-      &.microphone,
-      &.camera {
+      &.toggle {
         background-color: rgba(0, 0, 0, 0.38);
 
         &:hover {

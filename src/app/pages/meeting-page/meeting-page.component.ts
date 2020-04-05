@@ -10,8 +10,15 @@ import {
   Stream,
   MicrophoneState,
   CameraState,
+  ScreenshareState,
+  User,
 } from "src/app/helper/media.service";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+
+enum Layout {
+  GRID = "GRID",
+  SINGLE = "SINGLE",
+}
 
 @Component({
   selector: "app-meeting-page",
@@ -24,8 +31,13 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
   audioConsumers: Stream[];
   autoGainControl: boolean;
   microphoneState: MicrophoneState = MicrophoneState.ENABLED;
-  cameraState: CameraState = CameraState.ENABLED;
+  cameraState: CameraState = CameraState.DISABLED;
+  screenshareState: ScreenshareState = ScreenshareState.DISABLED;
   localStream: MediaStream;
+  localSchreenshareStream: MediaStream;
+  videoLayout: Layout = Layout.SINGLE;
+  users: User[];
+
 
   constructor(
     readonly mediaService: MediaService,
@@ -40,15 +52,20 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
       this.route.paramMap.subscribe(async (params) => {
         const localStream = await this.mediaService.getUserMedia();
 
-        const observer = await this.mediaService.connectToRoom(params.get("roomId"), localStream);
+        const observer = await this.mediaService.connectToRoom(
+          params.get("roomId"),
+          localStream
+        );
         observer.subscribe((data) => {
-          console.log("update");
           this.audioConsumers = data.audioConsumers;
           this.videoConsumers = data.videoConsumers;
           this.autoGainControl = data.autoGainControl;
           this.cameraState = data.cameraState;
           this.microphoneState = data.microphoneState;
+          this.screenshareState = data.screenshareState;
           this.localStream = data.localStream;
+          this.localSchreenshareStream = data.localScreenshareStream;
+          this.users = data.users;
         });
       });
     } catch (err) {
@@ -56,8 +73,8 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  async disconnect(){
-    this.mediaService.disconnect();
-    this.router.navigate(['/thank-you'])
+  async disconnect() {
+    await this.mediaService.disconnect();
+    this.router.navigate(["/thank-you"]);
   }
 }
