@@ -11,9 +11,10 @@ import { MeetingPageComponent } from "./pages/meeting-page/meeting-page.componen
 import { HttpClientModule } from "@angular/common/http";
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { HeaderComponent } from './components/header/header.component';
+import { ThankYouPageComponent } from './pages/thank-you-page/thank-you-page.component';
 
 @NgModule({
-  declarations: [AppComponent, MeetingPageComponent, LoginPageComponent, HeaderComponent],
+  declarations: [AppComponent, MeetingPageComponent, LoginPageComponent, HeaderComponent, ThankYouPageComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
