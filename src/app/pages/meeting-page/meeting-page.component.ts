@@ -11,7 +11,7 @@ import {
   MicrophoneState,
   CameraState,
 } from "src/app/helper/media.service";
-import { ActivatedRoute, ParamMap } from "@angular/router";
+import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 
 @Component({
   selector: "app-meeting-page",
@@ -29,7 +29,8 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
 
   constructor(
     readonly mediaService: MediaService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {}
@@ -53,5 +54,10 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  async disconnect(){
+    this.mediaService.disconnect();
+    this.router.navigate(['/thank-you'])
   }
 }

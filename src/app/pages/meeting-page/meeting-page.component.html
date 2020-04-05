@@ -14,10 +14,10 @@
       <button class="screen-share" (click)="mediaService.openScreenshare()"><i class="material-icons">screen_share</i></button></div>
     <div class="center">
       <button class="microphone" (click)="mediaService.toggleMirophone()" [class.disabled]="microphoneState === 'mic_off'"><i class="material-icons">{{microphoneState}}</i></button>
-      <button class="end-call"><i class="material-icons">call_end</i></button>
+      <button class="end-call" (click)="disconnect()"><i class="material-icons">call_end</i></button>
       <button class="camera" (click)="mediaService.toggleCamera()" [class.disabled]="cameraState === 'videocam_off'"><i class="material-icons">{{cameraState}}</i></button>
     </div>
-    <div class="left">  
+    <div class="left">
       <mat-menu #aboveMenu="matMenu" yPosition="above">
         <button mat-menu-item (click)="$event.stopPropagation()"><mat-checkbox [checked]="autoGainControl" (change)="mediaService.toggleAutoGainControl()">Automatic gain control</mat-checkbox></button>
       </mat-menu>

@@ -404,6 +404,12 @@ export class MediaService {
       }
     });
   }
+
+  public async disconnect(){
+    this.websocket.close();
+    this.recvTransport.close();
+    this.sendTransport.close();
+  }
 }
 
 export type Stream = {
