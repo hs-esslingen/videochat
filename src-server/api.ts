@@ -68,6 +68,10 @@ export class Api {
       res.json(Room.getRoom(req.params.roomId).getProducers());
     });
 
+    this.api.get("/room/:roomId/users", async (req, res) => {
+      res.json(Room.getRoom(req.params.roomId).getUsers());
+    });
+
     this.api.post("/room/:roomId/add-consumer", async (req, res) => {
       res.json(await Room.getRoom(req.params.roomId).addConsumer(req.body.id, req.body.producerId, req.body.rtpCapabilities));
     });

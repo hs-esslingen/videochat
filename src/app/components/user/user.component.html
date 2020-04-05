@@ -1,0 +1,10 @@
+<video *ngIf="videoStream" [srcObject]="videoStream" autoplay playinline></video>
+<div class="no-video-wrapper" *ngIf="!videoStream">
+  <div class="no-video" *ngIf="!videoStream">
+    <div class="no-video-inner">
+
+      <img src="/assets/img/person.svg">
+    </div>
+  </div>
+</div>
+<audio [srcObject]="audioStream" autoplay></audio>
