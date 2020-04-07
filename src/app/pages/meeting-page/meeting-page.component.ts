@@ -37,6 +37,7 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
   localSchreenshareStream: MediaStream;
   videoLayout: Layout = Layout.SINGLE;
   users: User[];
+  roomId: string;
 
 
   constructor(
@@ -52,6 +53,7 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
       this.route.paramMap.subscribe(async (params) => {
         const localStream = await this.mediaService.getUserMedia();
 
+        this.roomId = params.get("roomId");
         const observer = await this.mediaService.connectToRoom(
           params.get("roomId"),
           localStream
@@ -75,6 +77,6 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
 
   async disconnect() {
     await this.mediaService.disconnect();
-    this.router.navigate(["/thank-you"]);
+    this.router.navigate(["/" + this.roomId + "/thank-you"]);
   }
 }
