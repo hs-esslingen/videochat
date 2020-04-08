@@ -216,10 +216,8 @@ export class MediaService {
         this.screenshareState = ScreenshareState.ENABLED;
 
         this.localScreenProducer.track.onended = async () => {
-          await this.api.producerClose(
-            this.roomId,
-            this.localScreenProducer.id
-          );
+          if (this.screenshareState !== ScreenshareState.DISABLED)
+            this.toggleScreenshare();
         };
         this.updateObserver();
       } catch (e) {
@@ -367,12 +365,12 @@ export class MediaService {
     const users = await this.api.getUsers(this.roomId);
     const newUsers: User[] = [];
     for (const user of users) {
-      const foundUser = this.users.find(item => item.id === user.id);
+      const foundUser = this.users.find((item) => item.id === user.id);
       if (foundUser) {
         foundUser.nickname = user.nickname;
         foundUser.producers = user.producers;
       } else {
-        newUsers.push(user)
+        newUsers.push(user);
       }
     }
     this.users.push(...newUsers);
