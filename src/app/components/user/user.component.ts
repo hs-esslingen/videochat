@@ -13,10 +13,12 @@ export class UserComponent implements OnInit, DoCheck {
 
   videoStream: MediaStream;
   audioStream: MediaStream;
-  iterableDiffer: IterableDiffer<Stream>;
+  iterableDifferVideo: IterableDiffer<Stream>;
+  iterableDifferAudio: IterableDiffer<Stream>;
 
   constructor(private iterableDiffers: IterableDiffers) {
-    this.iterableDiffer = iterableDiffers.find([]).create(null);
+    this.iterableDifferVideo = iterableDiffers.find([]).create(null);
+    this.iterableDifferAudio = iterableDiffers.find([]).create(null);
 
   }
 
@@ -26,13 +28,18 @@ export class UserComponent implements OnInit, DoCheck {
   }
 
   ngDoCheck(): void {
-    const changes = this.iterableDiffer.diff(this.videoConsumers);
-    if (changes) {
+    const videoChanges = this.iterableDifferVideo.diff(this.videoConsumers);
+    if (videoChanges) {
       this.videoStream = this.videoConsumers.find((item) => item.consumer.producerId === this.user.producers.video)?.stream;
       let screenshareStream;
       if (this.user.producers.screen) screenshareStream = this.videoConsumers.find((item) => item.consumer.producerId === this.user.producers.screen)?.stream;
       if (screenshareStream != undefined) this.videoStream = screenshareStream;
     }
+    const audioChanges = this.iterableDifferAudio.diff(this.audioConsumers);
+    if (audioChanges) {
+      this.audioStream = this.audioConsumers.find((item) => item.consumer.producerId === this.user.producers.audio)?.stream;
+    }
+
   }
 
 }
