@@ -21,6 +21,34 @@
     flex-wrap: wrap;
     height: 100%;
 
+    #no-user {
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+      background-color: #193058;
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+      margin-right: 16px;
+      margin-left: 16px;
+
+      h2 {
+        margin: 0px 0px 16px 0px;
+      }
+      input {
+        color: white;
+        background-color: #0c1729;
+        width: calc(100% - 12px);
+        border-radius: 4px;
+        border: none;
+        outline: none;
+        padding: 8px 4px 8px 4px;
+        text-align: center;
+        margin: 0 auto 0 auto;
+        font-size: 20px;
+        -webkit-user-select: all;
+        user-select: all;
+      }
+    }
+
     .user {
       border-radius: 4px;
       flex-shrink: 1;
@@ -64,12 +92,18 @@
 
   #toolbar {
     position: absolute;
+    opacity: 1;
     bottom: 0px;
     right: 32px;
     left: 32px;
     width: calc(100% - 64px);
     display: flex;
     justify-content: space-between;
+    transition: opacity 0.25s ease-in-out;
+
+    &.hidden {
+      opacity: 0;
+    }
 
     @media (max-width: 768px) {
       justify-content: center;
