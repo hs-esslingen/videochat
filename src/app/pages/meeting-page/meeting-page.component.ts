@@ -76,7 +76,7 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
   }
 
   async disconnect() {
-    await this.mediaService.disconnect();
+    this.mediaService.disconnect();
     this.router.navigate(["/" + this.roomId + "/thank-you"]);
   }
 }
