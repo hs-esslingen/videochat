@@ -1,4 +1,4 @@
-<div id="videochat">
+<div id="videochat" (mousemove)="onMousemoove()">
   <video *ngIf="cameraState === 'videocam'" [srcObject]="localStream" [volume]="0" id="local" autoplay
     playinline></video>
 
@@ -13,7 +13,7 @@
     </ng-template>
   </div>
 
-  <div id="toolbar">
+  <div id="toolbar" [class.hidden]="isToolbarHidden">
     <div class="right">
       <button class="screen-share toggle" (click)="mediaService.toggleScreenshare()"
         [class.disabled]="screenshareState === 'stop_screen_share'"><i
