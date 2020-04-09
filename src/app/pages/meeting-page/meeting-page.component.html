@@ -4,10 +4,14 @@
 
 
   <div id="streams">
+    <div id="no-user" *ngIf="users != undefined && users.length === 0">
+      <h2>Zur Zeit befindet sich niemand in diesem Raum</h2>
+      <input type="text" readonly [value]="roomUrl" (click)="$event.target.focus();$event.target.select()">
+    </div>
     <ng-template [ngIf]="videoLayout === 'SINGLE'">
       <app-user class="user" *ngFor="let user of users" [user]="user" [audioConsumers]="audioConsumers"
         [videoConsumers]="videoConsumers"></app-user>
-      
+
       <video class="user" *ngIf="localSchreenshareStream" [srcObject]="localSchreenshareStream" [volume]="0" autoplay
       playinline></video>
     </ng-template>
