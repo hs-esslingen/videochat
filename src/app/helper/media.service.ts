@@ -216,8 +216,10 @@ export class MediaService {
         this.screenshareState = ScreenshareState.ENABLED;
 
         this.localScreenProducer.track.onended = async () => {
-          if (this.screenshareState !== ScreenshareState.DISABLED)
-            this.toggleScreenshare();
+          setTimeout(() => {
+            if (this.screenshareState !== ScreenshareState.DISABLED)
+              this.toggleScreenshare();
+          }, 0);
         };
         this.updateObserver();
       } catch (e) {
@@ -225,10 +227,10 @@ export class MediaService {
       }
     } else {
       this.screenshareState = ScreenshareState.DISABLED;
-      this.localScreenProducer.close();
-      await this.api.producerClose(this.roomId, this.localScreenProducer.id);
-      this.localScreenProducer = undefined;
       this.localScreenshareStream = undefined;
+      this.localScreenProducer.close();
+      this.api.producerClose(this.roomId, this.localScreenProducer.id);
+      this.localScreenProducer = undefined;
       this.updateWsProducers();
       this.updateObserver();
     }
