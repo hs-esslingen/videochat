@@ -5,6 +5,8 @@ import { MyWebSocket } from "./server";
 import * as jwt from "jsonwebtoken";
 import { Room } from "./videochat/room";
 import fetch from "node-fetch";
+import * as bodyParser from "body-parser";
+import { Email } from "./email";
 
 export class Api {
   readonly api = express.Router();
@@ -14,9 +16,15 @@ export class Api {
   consumers: { [id: string]: mediasoup.types.Consumer } = {};
   producers: mediasoup.types.Producer[] = [];
 
+  email: Email;
+
   constructor(wss: WebSocket.Server) {
+    this.api.use(bodyParser.json());
     this.api.post("/login", (req, res) => {
-      const secretkey = "mysecretkey";
+      let secretkey = "mysecretkey";
+      if (process.env.SECRETKEY !== undefined) {
+        secretkey = process.env.SECRETKEY;
+      }
 
       const EmailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       if (
@@ -25,15 +33,25 @@ export class Api {
         req.body.email.endsWith("hs-esslingen.de")
       ) {
         const token = jwt.sign({ email: req.body.email }, secretkey);
+        console.log("created token: " + token);
         // send encoded token
         res.json({
           token,
         });
+        //email senden
+        this.email = new Email();
+
+        res.send(token);
       } else {
         const error = "email is invalid";
         console.log(error);
         res.status(400).send(error);
       }
+    });
+
+    this.api.use("/", (req, res, next) => {
+      // console.log("Token: " + req.headers.token);
+      next();
     });
 
     this.api.get("/room/:roomId/capabilities", async (req, res) => {
@@ -111,33 +129,39 @@ export class Api {
 
     this.api.get("/moodle/courses", async (req, res) => {
       const params = new URLSearchParams();
-      params.append('wstoken', req.query.token);
-      params.append('moodlewssettingfilter', "true");
-      params.append('moodlewssettingfileurl', "true");
-      params.append('wsfunction', "core_webservice_get_site_info");
+      params.append("wstoken", req.query.token);
+      params.append("moodlewssettingfilter", "true");
+      params.append("moodlewssettingfileurl", "true");
+      params.append("wsfunction", "core_webservice_get_site_info");
 
-      const info = await fetch("https://moodle.hs-esslingen.de/moodle/webservice/rest/server.php?moodlewsrestformat=json", {
-        method: 'POST',
-        // @ts-ignore
-        body: params,
-      })
+      const info = await fetch(
+        "https://moodle.hs-esslingen.de/moodle/webservice/rest/server.php?moodlewsrestformat=json",
+        {
+          method: "POST",
+          // @ts-ignore
+          body: params,
+        }
+      );
       const infoData = await info.json();
       if (infoData.errorcode === "invalidtoken") {
         res.status(401).send(infoData.errorcode);
         return;
       }
 
-      params.append('userid', infoData.userid);
-      params.delete('wsfunction');
-      params.append('wsfunction', "core_enrol_get_users_courses");
+      params.append("userid", infoData.userid);
+      params.delete("wsfunction");
+      params.append("wsfunction", "core_enrol_get_users_courses");
 
-      const data = await fetch("https://moodle.hs-esslingen.de/moodle/webservice/rest/server.php?moodlewsrestformat=json", {
-        method: 'POST',
-        // @ts-ignore
-        body: params,
-      })
+      const data = await fetch(
+        "https://moodle.hs-esslingen.de/moodle/webservice/rest/server.php?moodlewsrestformat=json",
+        {
+          method: "POST",
+          // @ts-ignore
+          body: params,
+        }
+      );
       res.json(await data.json());
-    })
+    });
 
     wss.on("connection", (ws: MyWebSocket) => {
       function onMessage(e) {
