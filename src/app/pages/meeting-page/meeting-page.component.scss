@@ -64,6 +64,10 @@
       max-width: 100%;
       max-height: calc(90% - 16px);
       width: 100%;
+
+      ::ng-deep video {
+        width: 100%;
+      }
     }
 
     .user:nth-last-child(n+2),
@@ -79,6 +83,9 @@
       width: auto;
       min-width: 20%;
       height: calc(45% - 16px);
+      ::ng-deep video {
+        width: unset;
+      }
     }
 
     .user:nth-last-child(n+5),
