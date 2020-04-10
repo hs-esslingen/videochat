@@ -4,6 +4,7 @@ import {
   ViewChild,
   AfterViewInit,
   ElementRef,
+  Inject,
 } from "@angular/core";
 import {
   MediaService,
@@ -14,11 +15,17 @@ import {
   User,
 } from "src/app/helper/media.service";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 
 enum Layout {
   GRID = "GRID",
   SINGLE = "SINGLE",
 }
+
+export interface NicknameDialogData {
+  nickname: string;
+}
+
 
 @Component({
   selector: "app-meeting-page",
@@ -46,7 +53,8 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
   constructor(
     readonly mediaService: MediaService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -59,6 +67,9 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
       },
       this.isMobile ? 5000 : 1500
     ) as any) as number;
+    
+    if (this.mediaService.nickname == undefined)
+      this.openNicknameDialog();
   }
 
   ngAfterViewInit() {
@@ -92,6 +103,20 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
     this.router.navigate(["/" + this.roomId + "/thank-you"]);
   }
 
+  openNicknameDialog(): void {
+    const dialogRef = this.dialog.open(NicknameDialogComponent, {
+      width: '300px',
+      data: {nickname: this.mediaService.nickname,}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      console.log(result);
+      if (result != undefined || "")
+        this.mediaService.setNickname(result);
+    });
+  }
+
   onMousemoove() {
     this.isToolbarHidden = false;
     clearTimeout(this.moveTimout);
@@ -119,4 +144,21 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
     })(navigator.userAgent || navigator.vendor || window.opera);
     return check;
   }
+}
+@Component({
+  selector: 'app-nickname-dialog',
+  templateUrl: './choose-nickname.component.html',
+  styleUrls: ['./choose-nickname.component.scss']
+})
+export class NicknameDialogComponent {
+
+  constructor(
+    public dialogRef: MatDialogRef<NicknameDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: NicknameDialogData) {}
+
+  close(): void {
+    console.log(this.data.nickname)
+    this.dialogRef.close(this.data.nickname);
+  }
+
 }

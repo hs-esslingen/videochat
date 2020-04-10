@@ -1,10 +1,13 @@
-<video *ngIf="videoStream" [srcObject]="videoStream" autoplay playinline></video>
-<div class="no-video-wrapper" *ngIf="!videoStream">
-  <div class="no-video" *ngIf="!videoStream">
-    <div class="no-video-inner">
-
-      <img src="/assets/img/person.svg">
+<!-- <div class="user"> -->
+  <video *ngIf="videoStream" [srcObject]="videoStream" autoplay playinline></video>
+  <div class="no-video-wrapper" *ngIf="!videoStream">
+    <div class="no-video" *ngIf="!videoStream">
+      <div class="no-video-inner">
+        
+        <img src="/assets/img/person.svg">
+      </div>
     </div>
   </div>
-</div>
-<audio [srcObject]="audioStream" autoplay></audio>
+  <div *ngIf="user && user.nickname" class="nickname">{{user.nickname}}</div>
+  <audio [srcObject]="audioStream" autoplay></audio>
+<!-- </div> -->
