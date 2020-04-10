@@ -12,6 +12,7 @@
     max-width: 200px;
     width: 20%;
     border-radius: 4px;
+    z-index: 1000;
   }
 
   #streams {
@@ -46,6 +47,12 @@
         font-size: 20px;
         -webkit-user-select: all;
         user-select: all;
+
+        &::selection {
+          color: black;
+          background: #bed7ff;
+          // text-shadow: #1c3762;
+        }
       }
     }
 
@@ -53,22 +60,25 @@
       border-radius: 4px;
       flex-shrink: 1;
       margin-bottom: 16px;
-      height: calc(100% - 16px);
+      // height: calc(100% - 16px);
       max-width: 100%;
+      max-height: calc(90% - 16px);
       width: 100%;
     }
 
     .user:nth-last-child(n+2),
     .user:nth-last-child(n+2)~.user {
       max-width: calc(50% - 16px);
-
+      max-height: calc(100% - 16px);
       margin-left: 8px;
       margin-right: 8px;
     }
 
     .user:nth-last-child(n+3),
     .user:nth-last-child(n+3)~.user {
-      max-height: calc(40% - 16px);
+      width: auto;
+      min-width: 20%;
+      height: calc(45% - 16px);
     }
 
     .user:nth-last-child(n+5),

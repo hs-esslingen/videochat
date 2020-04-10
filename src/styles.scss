@@ -44,3 +44,39 @@ button {
   background-color: white;
   color: black;
 }
+
+.mat-dialog-container {
+  background-color: #193058;
+  color: white
+}
+
+input {
+  border-radius: 4px;
+  font-size: 14px;
+  color: white;
+  background-color: #0c1729;
+  border: none;
+  padding: 13px 12px;
+  width: calc(100% - 26px);
+  border: 1px solid #172c50;
+  outline: none;
+}
+
+.button {
+  border-radius: 4px;
+  font-size: 14px;
+  background: #B61601;
+  color: #ffffff;
+  outline: none;
+  cursor: pointer;
+  padding: 13px 12px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        
+  &:hover {
+      background: rgb(209, 24, 0);
+  }
+
+  &:active {
+      background: #B61601;
+  }
+}

@@ -65,8 +65,8 @@ export class MediaService {
   private localScreenshareStream: MediaStream;
   private startingCameraStream = false;
   private roomId: string;
-  private nickname: string;
   private users: User[] = [];
+  public nickname: string;
 
   constructor(private api: ApiService) {
     this.autoGainControl = localStorage.getItem("autoGainControl") !== "false";
@@ -129,17 +129,19 @@ export class MediaService {
     return observable;
   }
 
+
   setNickname(nickname: string) {
     this.nickname = nickname;
-    this.websocket.send(
-      JSON.stringify({
-        type: "update",
-        data: {
-          nickname,
-        },
-      })
-    );
     window.localStorage.setItem("nickname", nickname);
+    if (this.websocket)
+      this.websocket.send(
+        JSON.stringify({
+          type: "update",
+          data: {
+            nickname,
+          },
+        })
+      );
   }
 
   toggleMirophone() {
