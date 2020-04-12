@@ -524,9 +524,10 @@ export class MediaService {
   }
 
   public async disconnect() {
+
     this.status = Status.DISCONNECTED;
-    this.recvTransport.close();
-    this.sendTransport.close();
+    this.recvTransport?.close();
+    this.sendTransport?.close();
     this.users = [];
     this.videoConsumers = [];
     this.audioConsumers = [];
@@ -534,7 +535,7 @@ export class MediaService {
     this.localVideoProducer = undefined;
     this.localScreenshareStream = undefined;
     this.screenshareState = ScreenshareState.DISABLED;
-    this.websocket.close();
+    this.websocket?.close();
   }
 }
 
