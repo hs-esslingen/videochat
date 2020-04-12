@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, Validators, EmailValidator } from '@angular/forms';
 import { ApiService } from 'src/app/helper/api.service';
+import { promise } from 'protractor';
 
 @Component({
   selector: 'app-login-page',
@@ -7,8 +9,12 @@ import { ApiService } from 'src/app/helper/api.service';
   styleUrls: ['./login-page.component.scss']
 })
 export class LoginPageComponent implements OnInit {
+  isEmailSent = false;
 
-  email: string;
+  email: FormControl = new FormControl("", [
+    Validators.required,
+    Validators.pattern(/hs-esslingen.de$/)
+  ]);
 
   constructor(readonly api: ApiService) {
   }
@@ -16,8 +22,17 @@ export class LoginPageComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onLogin() {
-    this.api.login(this.email);
-  }
 
+  async onLogin() {
+
+    if (this.email.valid) {
+      this.isEmailSent = true;
+      const result = await this.api.login(this.email.value);
+      console.log(result);
+      if (result && result.token) {
+        window.localStorage.setItem("token", result.token);
+        this.api.token = result.token;
+      }
+    }
+  }
 }
