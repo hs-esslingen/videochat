@@ -12,19 +12,25 @@ import { User } from './media.service';
   providedIn: "root",
 })
 export class ApiService {
-  public currentUser: string;
+  public token: string;
 
   constructor(private http: HttpClient) {
-    this.currentUser = window.localStorage.getItem("email");
+    this.token = window.localStorage.getItem("token");
   }
 
   public getLogin(): string {
-    return this.currentUser;
+    return this.token;
   }
 
-  public login(email) {
-    window.localStorage.setItem("email", email);
-    this.currentUser = email;
+  public async login(email: string) {
+    return this.http
+      .post(`/api/login`, { email })
+      .toPromise() as Promise<{ token?: string }>;
+  }
+
+  public async logout() {
+    this.token = undefined;
+    window.localStorage.removeItem("token");
   }
 
   public getCapabilities(roomId: string): Promise<RtpCapabilities> {

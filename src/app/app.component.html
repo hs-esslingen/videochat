@@ -1,3 +1,3 @@
 <app-header></app-header>
-<app-login-page *ngIf="!api.currentUser"></app-login-page>
-<router-outlet *ngIf="api.currentUser"></router-outlet>
+<app-login-page *ngIf="!api.token"></app-login-page>
+<router-outlet *ngIf="api.token"></router-outlet>

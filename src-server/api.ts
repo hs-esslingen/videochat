@@ -27,7 +27,9 @@ export class Api {
       if (req.body.email !== undefined && EmailRegExp.test(req.body.email) && req.body.email.endsWith("hs-esslingen.de")) {
         const token = jwt.sign({ email: req.body.email }, secretkey);
         // send encoded token
-        res.send(token);
+        res.json({
+          token
+        });
       }
       else {
         const error = "email is invalid";
