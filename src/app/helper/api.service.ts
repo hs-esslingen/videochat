@@ -6,7 +6,7 @@ import {
   MediaKind,
   RtpCapabilities,
 } from "mediasoup-client/lib/types";
-import { User } from './media.service';
+import { User } from "./media.service";
 
 @Injectable({
   providedIn: "root",
@@ -21,11 +21,16 @@ export class ApiService {
   public getLogin(): string {
     return this.token;
   }
+  public async checkLogin() {
+    return this.http.get(`/login/check`).toPromise() as Promise<{
+      token?: string;
+    }>;
+  }
 
   public async login(email: string) {
-    return this.http
-      .post(`/api/login`, { email })
-      .toPromise() as Promise<{ token?: string }>;
+    return this.http.post(`/api/login`, { email }).toPromise() as Promise<{
+      token?: string;
+    }>;
   }
 
   public async logout() {
@@ -87,7 +92,9 @@ export class ApiService {
       producerId: string;
     }[]
   > {
-    return this.http.get(`/api/room/${roomId}/producers`).toPromise() as Promise<
+    return this.http
+      .get(`/api/room/${roomId}/producers`)
+      .toPromise() as Promise<
       {
         kind: MediaKind;
         producerId: string;
@@ -119,8 +126,8 @@ export class ApiService {
   }
 
   public getUsers(roomId): Promise<User[]> {
-    return this.http
-      .get(`/api/room/${roomId}/users`)
-      .toPromise() as Promise<User[]>;
+    return this.http.get(`/api/room/${roomId}/users`).toPromise() as Promise<
+      User[]
+    >;
   }
 }
