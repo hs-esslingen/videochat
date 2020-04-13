@@ -32,7 +32,8 @@ module.exports = {
     ]
   },
   node: {
-    __dirname: false
+    __dirname: false,
+    fs: false,
   },
   plugins: [
 
