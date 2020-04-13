@@ -523,10 +523,11 @@ export class MediaService {
   }
 
   public async disconnect() {
-
     this.status = Status.DISCONNECTED;
     this.recvTransport?.close();
     this.sendTransport?.close();
+    this.localAudioProducer?.close();
+    this.localVideoProducer?.close();
     this.users = [];
     this.videoConsumers = [];
     this.audioConsumers = [];

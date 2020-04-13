@@ -82,7 +82,7 @@ if (!process.env.DEBUG) {
     passport.authenticate("saml", { failureRedirect: "/login/fail" }),
     (req, res) => {
       console.log(req.isAuthenticated());
-      res.json(req);
+      res.json(req.isAuthenticated());
     }
   );
 

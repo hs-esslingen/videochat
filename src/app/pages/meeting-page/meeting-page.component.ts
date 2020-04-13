@@ -5,6 +5,7 @@ import {
   AfterViewInit,
   ElementRef,
   Inject,
+  OnDestroy,
 } from "@angular/core";
 import {
   MediaService,
@@ -32,7 +33,7 @@ export interface NicknameDialogData {
   templateUrl: "./meeting-page.component.html",
   styleUrls: ["./meeting-page.component.scss"],
 })
-export class MeetingPageComponent implements OnInit, AfterViewInit {
+export class MeetingPageComponent implements OnInit, OnDestroy,AfterViewInit {
   @ViewChild("local") local: ElementRef<HTMLVideoElement>;
   videoConsumers: Stream[];
   audioConsumers: Stream[];
@@ -72,6 +73,10 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
       this.openNicknameDialog();
   }
 
+  ngOnDestroy(): void {
+    this.mediaService.disconnect();
+  }
+
   ngAfterViewInit() {
     try {
       this.route.paramMap.subscribe(async (params) => {
@@ -99,7 +104,6 @@ export class MeetingPageComponent implements OnInit, AfterViewInit {
   }
 
   async disconnect() {
-    this.mediaService.disconnect();
     this.router.navigate(["/" + this.roomId + "/thank-you"]);
   }
 
