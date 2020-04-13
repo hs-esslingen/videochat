@@ -36,6 +36,9 @@ export class ApiService {
   public async logout() {
     this.token = undefined;
     window.localStorage.removeItem("token");
+    return this.http.get(`/login/logout`).toPromise() as Promise<{
+      token?: string;
+    }>;
   }
 
   public getCapabilities(roomId: string): Promise<RtpCapabilities> {

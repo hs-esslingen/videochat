@@ -119,6 +119,11 @@ app.get("/login/check", (req, res) => {
   else res.status(401).send("Unauthorized");
 });
 
+app.get("/login/logout", (req, res) => {
+  req.logout();
+  res.status(201).send();
+});
+
 app.use("/api", api.getApi());
 
 app.use("/", express.static(join(__dirname, "./browser")));
