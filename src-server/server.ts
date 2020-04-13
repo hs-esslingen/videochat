@@ -60,6 +60,9 @@ const api = new Api(wss);
 // bodyParser is definitely not deprecated
 // tslint:disable-next-line
 app.use(bodyParser.json());
+// bodyParser is definitely not deprecated
+// tslint:disable-next-line
+app.use(bodyParser.urlencoded({ extended: false }));
 
 if (!process.env.DEBUG) {
   app.use(session({ secret: process.env.SESSION_SECRET }));
