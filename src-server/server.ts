@@ -87,13 +87,16 @@ if (!process.env.DEBUG) {
   });
 
   app.get("/Shibboleth.sso/Metadata", (req, res) => {
+    const cert = readFileSync(__dirname + "/cert/cert.pem", "utf8");
+    const metadata = samlStrategy.generateServiceProviderMetadata(
+      cert,
+      cert
+    );
     res.type("application/xml");
     res
       .status(200)
       .send(
-        samlStrategy.generateServiceProviderMetadata(
-          readFileSync(__dirname + "/cert/cert.pem", "utf8")
-        )
+        metadata
       );
   });
 
