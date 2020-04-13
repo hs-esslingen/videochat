@@ -78,7 +78,8 @@ if (!process.env.DEBUG) {
     "/login/callback",
     passport.authenticate("saml", { failureRedirect: "/login/fail" }),
     (req, res) => {
-      res.redirect("/login/check-sso");
+      console.log(req.isAuthenticated());
+      res.json(req);
     }
   );
 
