@@ -1,7 +1,7 @@
 <!-- <div class="user"> -->
-  <video *ngIf="videoStream" [srcObject]="videoStream" autoplay playinline></video>
-  <div class="no-video-wrapper" *ngIf="!videoStream">
-    <div class="no-video" *ngIf="!videoStream">
+  <video #video *ngIf="showVideo" [srcObject]="videoStream" autoplay playinline></video>
+  <div class="no-video-wrapper" *ngIf="!showVideo">
+    <div class="no-video">
       <div class="no-video-inner">
         
         <img src="/assets/img/person.svg">
