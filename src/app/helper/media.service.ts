@@ -100,7 +100,7 @@ export class MediaService {
   ): Promise<MediaObservable> {
     this.status = Status.CONNECTING;
     this.roomId = roomId;
-    this.localStream = localStream;
+    this.localStream = new MediaStream(localStream.getVideoTracks());
     await this.setupDevice();
 
     await this.createSendTransport();
