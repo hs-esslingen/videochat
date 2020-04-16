@@ -4,16 +4,16 @@
         <h1>Willkommen zum Online Videochat der HSE</h1>
         <p id="description">Der Login funktioniert für alle Mitglieder der Hochschule Esslingen über ihre Hochschuladresse.</p>
         <div id="login">
-                <button type="submit" id="btn_login" class="form-element button" name="btn_login" (click)="onSSOLogin()">SSO Login</button>
-                <div class="oder">oder</div>
-                <label for="email">E-Mail</label>
-                <input  type="email" id="email" class="textbox form-element" placeholder="mamuit00@hs-esslingen.de" [formControl]="email" [email]="true" (keydown.enter)="onLogin()"/>
-                <div *ngIf="email.invalid && (email.touched) && email.errors && !email.errors.required">
-                    <div *ngIf="email.errors.email">Keine gültige Email-Adresse!</div>
-                    <div *ngIf="!email.errors.email">Keine Adresse der Hochschule Esslingen!</div>
-                </div>
-        
-                <button type="submit" id="btn_login" class="form-element button" name="btn_login" (click)="onLogin()">Login</button>
+            <label for="email">E-Mail</label>
+            <input  type="email" id="email" class="textbox form-element" placeholder="mamuit00@hs-esslingen.de" [formControl]="email" [email]="true" (keydown.enter)="onLogin()"/>
+            <div *ngIf="email.invalid && (email.touched) && email.errors && !email.errors.required">
+                <div *ngIf="email.errors.email">Keine gültige Email-Adresse!</div>
+                <div *ngIf="!email.errors.email">Keine Adresse der Hochschule Esslingen!</div>
+            </div>
+            
+            <button type="submit" id="btn_login" class="form-element button" name="btn_login" (click)="onLogin()">Login</button>
+            <div class="oder">oder</div>
+            <button type="submit" id="btn_login" class="form-element button" name="btn_login" (click)="onSSOLogin()">SSO Login (Test)</button>
         </div>
     </div>
     <div *ngIf="isEmailSent">
