@@ -132,7 +132,7 @@ if (!process.env.DEBUG) {
 }
 
 app.get("/auth/jwt", passport.authenticate("jwt"), (req, res) => {
-  res.send("authenticated");
+  res.status(201).send();
 });
 
 app.post("/auth/email", (req, res) => {
@@ -157,7 +157,7 @@ app.post("/auth/email", (req, res) => {
 });
 
 app.get("/auth/check", (req, res) => {
-  console.log(req);
+  console.log(req.user);
   if (req.isAuthenticated()) res.status(201).send();
   else res.status(401).send("Unauthorized");
 });

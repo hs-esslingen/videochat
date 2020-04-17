@@ -73,6 +73,7 @@ export class MediaService {
   }
 
   public async getUserMedia(): Promise<MediaStream> {
+    this.setStatusConnecting();
     const capabilities = await navigator.mediaDevices.enumerateDevices();
     const video =
       capabilities.find((cap) => cap.kind === "videoinput") != undefined;
@@ -94,17 +95,25 @@ export class MediaService {
     return stream;
   }
 
+  
+
   public async connectToRoom(
     roomId,
     localStream: MediaStream
   ): Promise<MediaObservable> {
-    this.status = Status.CONNECTING;
+    this.setStatusConnecting();
     this.roomId = roomId;
     this.localStream = new MediaStream(localStream.getVideoTracks());
     await this.setupDevice();
+    // @ts-ignore
+    if (this.status === Status.DISCONNECTED) return;
 
     await this.createSendTransport();
+    // @ts-ignore
+    if (this.status === Status.DISCONNECTED) return;
     await this.createRecvTransport();
+    // @ts-ignore
+    if (this.status === Status.DISCONNECTED) return;
 
     if (localStream.getVideoTracks().length > 0) {
       this.cameraState = CameraState.ENABLED;
@@ -112,6 +121,8 @@ export class MediaService {
     } else {
       this.cameraState = CameraState.DISABLED;
     }
+    // @ts-ignore
+    if (this.status === Status.DISCONNECTED) return;
 
     if (localStream.getAudioTracks().length > 0) {
       this.microphoneState = MicrophoneState.ENABLED;
@@ -119,6 +130,8 @@ export class MediaService {
     } else {
       this.microphoneState = MicrophoneState.DISABLED;
     }
+    // @ts-ignore
+    if (this.status === Status.DISCONNECTED) return;
 
     this.setupWebsocket();
 
@@ -252,6 +265,10 @@ export class MediaService {
       });
   }
 
+  private setStatusConnecting() {
+    this.status = Status.CONNECTING;
+  }
+
   private async setupDevice() {
     this.device = new Device();
     const routerRtpCapabilities = await this.api.getCapabilities(this.roomId);
@@ -267,12 +284,21 @@ export class MediaService {
     }
 
     this.websocket.onopen = async (event) => {
+      if (this.status === Status.DISCONNECTED) {
+        this.websocket.close();
+        return;
+      };
       console.log("websocket opened");
       this.updateObserver();
       this.status = Status.CONNECTED;
 
       await this.addExistingConsumers();
       await this.addExistingUsers();
+      //@ts-ignore
+      if (this.status === Status.DISCONNECTED) {
+        this.websocket.close();
+        return;
+      };
 
       this.websocket.send(
         JSON.stringify({

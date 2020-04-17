@@ -38,6 +38,8 @@ export class LoginPageComponent implements OnInit {
         await this.api.jwtLogin();
         if (this.api.redirectUrl)
           this.router.navigate([this.api.redirectUrl]);
+        else
+          this.router.navigate(['']);
       }
     }
   }

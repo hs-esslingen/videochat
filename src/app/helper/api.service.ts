@@ -14,6 +14,7 @@ import { Router } from "@angular/router";
 })
 export class ApiService {
   public token: string;
+  public initialLoading = true;
   public redirectUrl: string;
   public isLoggedIn: boolean;
 
@@ -28,6 +29,7 @@ export class ApiService {
   }
 
   public async checkLogin() {
+    this.initialLoading = false;
     try {
       await this.http.get(`/auth/check`).toPromise();
       this.isLoggedIn = true;
@@ -40,7 +42,6 @@ export class ApiService {
           return true;
         }
       } catch (e) {}
-      
       this.isLoggedIn = false;
       return false;
     }
