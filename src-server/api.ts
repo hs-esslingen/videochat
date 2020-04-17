@@ -35,11 +35,6 @@ export class Api {
       }
     });
 
-    this.api.use("/", (req, res, next) => {
-      // console.log("Token: " + req.headers.token);
-      next();
-    });
-
     this.api.get("/room/:roomId/capabilities", async (req, res) => {
       res.json(await Room.getRoom(req.params.roomId).getCapabilities());
     });

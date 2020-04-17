@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/helper/api.service';
 
 @Component({
@@ -6,10 +6,15 @@ import { ApiService } from 'src/app/helper/api.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'videochat';
+  loading = true;
 
-  constructor(readonly api: ApiService) {
+  constructor(private api: ApiService) {
 
+  }
+  async ngOnInit(): Promise<void> {
+    await this.api.checkLogin();
+    this.loading = false;
   }
 }

@@ -1,5 +1,5 @@
 <header>
   <a class="left" href="https://hs-esslingen.de" id="logo"><img src="/assets/img/logo_negative.png" alt="Logo der Hochschule Esslingen" /></a>
   <!-- <div>HSE-Videochat</div> -->
-  <button class="right" id="logout" *ngIf="api.token" (click)="logout()">Logout</button>
+  <button class="right" id="logout" *ngIf="api.isLoggedIn" (click)="logout()">Logout</button>
 </header>

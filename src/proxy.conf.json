@@ -6,7 +6,7 @@
     "changeOrigin": true,
     "ws":true
   },
-  "/login/*": {
+  "/auth/*": {
     "target": "http://localhost:4000",
     "secure": false,
     "logLevel": "debug",

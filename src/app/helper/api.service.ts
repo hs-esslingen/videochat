@@ -7,36 +7,72 @@ import {
   RtpCapabilities,
 } from "mediasoup-client/lib/types";
 import { User } from "./media.service";
+import { Router } from "@angular/router";
 
 @Injectable({
   providedIn: "root",
 })
 export class ApiService {
   public token: string;
+  public redirectUrl: string;
+  public isLoggedIn: boolean;
 
   constructor(private http: HttpClient) {
     this.token = window.localStorage.getItem("token");
   }
 
+
+
   public getLogin(): string {
     return this.token;
   }
+
   public async checkLogin() {
-    return this.http.get(`/login/check`).toPromise() as Promise<{
+    try {
+      await this.http.get(`/auth/check`).toPromise();
+      this.isLoggedIn = true;
+      return true;
+    } catch (e) {
+      try {
+        if (this.token) {
+          await this.jwtLogin();
+          this.isLoggedIn = true;
+          return true;
+        }
+      } catch (e) {}
+      
+      this.isLoggedIn = false;
+      return false;
+    }
+  }
+
+  public async emailLogin(email: string) {
+    return this.http.post(`/auth/email`, { email }).toPromise() as Promise<{
       token?: string;
     }>;
   }
 
-  public async login(email: string) {
-    return this.http.post(`/api/login`, { email }).toPromise() as Promise<{
-      token?: string;
-    }>;
+  public async jwtLogin() {
+    try {
+      await this.http
+        .get(`/auth/jwt`, {
+          headers: {
+            "x-token": this.token,
+          },
+        })
+        .toPromise();
+    } catch (error) {
+      return false;
+    }
+    this.isLoggedIn = true;
+    return true;
   }
 
   public async logout() {
     this.token = undefined;
+    this.isLoggedIn = false;
     window.localStorage.removeItem("token");
-    return this.http.get(`/login/logout`).toPromise() as Promise<{
+    return this.http.get(`/auth/logout`).toPromise() as Promise<{
       token?: string;
     }>;
   }
