@@ -16,7 +16,11 @@ import {
   User,
 } from "src/app/helper/media.service";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialog,
+} from "@angular/material/dialog";
 
 enum Layout {
   GRID = "GRID",
@@ -27,13 +31,12 @@ export interface NicknameDialogData {
   nickname: string;
 }
 
-
 @Component({
   selector: "app-meeting-page",
   templateUrl: "./meeting-page.component.html",
   styleUrls: ["./meeting-page.component.scss"],
 })
-export class MeetingPageComponent implements OnInit, OnDestroy,AfterViewInit {
+export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild("local") local: ElementRef<HTMLVideoElement>;
   videoConsumers: Stream[];
   audioConsumers: Stream[];
@@ -68,9 +71,8 @@ export class MeetingPageComponent implements OnInit, OnDestroy,AfterViewInit {
       },
       this.isMobile ? 5000 : 1500
     ) as any) as number;
-    
-    if (this.mediaService.nickname == undefined)
-      this.openNicknameDialog();
+
+    if (this.mediaService.nickname == undefined) this.openNicknameDialog();
   }
 
   ngOnDestroy(): void {
@@ -86,17 +88,18 @@ export class MeetingPageComponent implements OnInit, OnDestroy,AfterViewInit {
           params.get("roomId"),
           localStream
         );
-        observer.subscribe((data) => {
-          this.audioConsumers = data.audioConsumers;
-          this.videoConsumers = data.videoConsumers;
-          this.autoGainControl = data.autoGainControl;
-          this.cameraState = data.cameraState;
-          this.microphoneState = data.microphoneState;
-          this.screenshareState = data.screenshareState;
-          this.localStream = data.localStream;
-          this.localSchreenshareStream = data.localScreenshareStream;
-          this.users = data.users;
-        });
+        if (observer != undefined)
+          observer.subscribe((data) => {
+            this.audioConsumers = data.audioConsumers;
+            this.videoConsumers = data.videoConsumers;
+            this.autoGainControl = data.autoGainControl;
+            this.cameraState = data.cameraState;
+            this.microphoneState = data.microphoneState;
+            this.screenshareState = data.screenshareState;
+            this.localStream = data.localStream;
+            this.localSchreenshareStream = data.localScreenshareStream;
+            this.users = data.users;
+          });
       });
     } catch (err) {
       console.error(err);
@@ -109,15 +112,14 @@ export class MeetingPageComponent implements OnInit, OnDestroy,AfterViewInit {
 
   openNicknameDialog(): void {
     const dialogRef = this.dialog.open(NicknameDialogComponent, {
-      width: '300px',
-      data: {nickname: this.mediaService.nickname,}
+      width: "300px",
+      data: { nickname: this.mediaService.nickname },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log("The dialog was closed");
       console.log(result);
-      if (result != undefined || "")
-        this.mediaService.setNickname(result);
+      if (result != undefined || "") this.mediaService.setNickname(result);
     });
   }
 
@@ -150,19 +152,18 @@ export class MeetingPageComponent implements OnInit, OnDestroy,AfterViewInit {
   }
 }
 @Component({
-  selector: 'app-nickname-dialog',
-  templateUrl: './choose-nickname.component.html',
-  styleUrls: ['./choose-nickname.component.scss']
+  selector: "app-nickname-dialog",
+  templateUrl: "./choose-nickname.component.html",
+  styleUrls: ["./choose-nickname.component.scss"],
 })
 export class NicknameDialogComponent {
-
   constructor(
     public dialogRef: MatDialogRef<NicknameDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: NicknameDialogData) {}
+    @Inject(MAT_DIALOG_DATA) public data: NicknameDialogData
+  ) {}
 
   close(): void {
-    console.log(this.data.nickname)
+    console.log(this.data.nickname);
     this.dialogRef.close(this.data.nickname);
   }
-
 }

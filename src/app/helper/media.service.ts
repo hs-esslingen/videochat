@@ -101,19 +101,15 @@ export class MediaService {
     roomId,
     localStream: MediaStream
   ): Promise<MediaObservable> {
-    this.setStatusConnecting();
+    if (this.status === Status.DISCONNECTED) {
+      localStream.getTracks().forEach(track => track.stop());
+      return undefined;
+    }
     this.roomId = roomId;
     this.localStream = new MediaStream(localStream.getVideoTracks());
     await this.setupDevice();
-    // @ts-ignore
-    if (this.status === Status.DISCONNECTED) return;
-
     await this.createSendTransport();
-    // @ts-ignore
-    if (this.status === Status.DISCONNECTED) return;
     await this.createRecvTransport();
-    // @ts-ignore
-    if (this.status === Status.DISCONNECTED) return;
 
     if (localStream.getVideoTracks().length > 0) {
       this.cameraState = CameraState.ENABLED;
@@ -121,8 +117,6 @@ export class MediaService {
     } else {
       this.cameraState = CameraState.DISABLED;
     }
-    // @ts-ignore
-    if (this.status === Status.DISCONNECTED) return;
 
     if (localStream.getAudioTracks().length > 0) {
       this.microphoneState = MicrophoneState.ENABLED;
@@ -130,8 +124,6 @@ export class MediaService {
     } else {
       this.microphoneState = MicrophoneState.DISABLED;
     }
-    // @ts-ignore
-    if (this.status === Status.DISCONNECTED) return;
 
     this.setupWebsocket();
 
@@ -284,21 +276,13 @@ export class MediaService {
     }
 
     this.websocket.onopen = async (event) => {
-      if (this.status === Status.DISCONNECTED) {
-        this.websocket.close();
-        return;
-      };
       console.log("websocket opened");
       this.updateObserver();
-      this.status = Status.CONNECTED;
+      console.log(this.status);
+      if (this.status === Status.CONNECTING) this.status = Status.CONNECTED;
 
       await this.addExistingConsumers();
       await this.addExistingUsers();
-      //@ts-ignore
-      if (this.status === Status.DISCONNECTED) {
-        this.websocket.close();
-        return;
-      };
 
       this.websocket.send(
         JSON.stringify({
@@ -315,6 +299,12 @@ export class MediaService {
           },
         })
       );
+      // @ts-ignore
+      if (this.status === Status.DISCONNECTED) {
+        this.websocket.close();
+        this.disconnect()
+        return;
+      };
     };
 
     this.websocket.addEventListener("message", (ev) => {
@@ -549,19 +539,21 @@ export class MediaService {
   }
 
   public async disconnect() {
+    if (this.status !== Status.CONNECTING) {
+      this.recvTransport?.close();
+      this.sendTransport?.close();
+      this.localAudioProducer?.close();
+      this.localVideoProducer?.close();
+      this.users = [];
+      this.videoConsumers = [];
+      this.audioConsumers = [];
+      this.addingProducers = [];
+      this.localVideoProducer = undefined;
+      this.localScreenshareStream = undefined;
+      this.screenshareState = ScreenshareState.DISABLED;
+      this.websocket?.close();
+    }
     this.status = Status.DISCONNECTED;
-    this.recvTransport?.close();
-    this.sendTransport?.close();
-    this.localAudioProducer?.close();
-    this.localVideoProducer?.close();
-    this.users = [];
-    this.videoConsumers = [];
-    this.audioConsumers = [];
-    this.addingProducers = [];
-    this.localVideoProducer = undefined;
-    this.localScreenshareStream = undefined;
-    this.screenshareState = ScreenshareState.DISABLED;
-    this.websocket?.close();
   }
 }
 

@@ -7,7 +7,6 @@ import {
   RtpCapabilities,
 } from "mediasoup-client/lib/types";
 import { User } from "./media.service";
-import { Router } from "@angular/router";
 
 @Injectable({
   providedIn: "root",
@@ -29,7 +28,6 @@ export class ApiService {
   }
 
   public async checkLogin() {
-    this.initialLoading = false;
     try {
       await this.http.get(`/auth/check`).toPromise();
       this.isLoggedIn = true;
