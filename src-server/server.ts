@@ -17,7 +17,7 @@ const server = http.createServer(app);
 
 const PORT = process.env.PORT || 4000;
 
-const wss = new WebSocket.Server({ server: server, path: "/ws" }, () => {
+const wss = new WebSocket.Server({ server, path: "/ws" }, () => {
   console.log("websocket opened");
 });
 
