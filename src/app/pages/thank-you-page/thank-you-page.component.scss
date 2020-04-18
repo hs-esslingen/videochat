@@ -2,3 +2,21 @@
   text-align: center;
   font-size: xx-large;
 }
+
+#footer {
+  text-align: end;
+  font-size: medium;
+
+}
+
+a{
+  color: white;
+  text-decoration: none;
+}
+
+ul li {
+  list-style: none;
+  display: inline-block;
+  position: relative;
+  padding: 6px
+}
