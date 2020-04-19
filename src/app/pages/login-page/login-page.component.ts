@@ -60,6 +60,8 @@ export class LoginPageComponent implements OnInit {
             if (!this.loginWindow.closed) this.loginWindow.close();
             if (this.api.redirectUrl)
               this.router.navigate([this.api.redirectUrl]);
+            else
+              this.router.navigate(['']);
             this.loginWindow = undefined;
           }
         } catch (error) {
