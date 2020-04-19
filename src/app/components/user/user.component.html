@@ -1,6 +1,6 @@
 <!-- <div class="user"> -->
-  <video #video *ngIf="showVideo" [srcObject]="videoStream" autoplay playinline></video>
-  <div class="no-video-wrapper" *ngIf="!showVideo">
+  <video #video *ngIf="showVideo" [srcObject]="videoStream" autoplay playinline [class.small]="small" [class.selected]="selected"></video>
+  <div class="no-video-wrapper" *ngIf="!showVideo" [class.small]="small" [class.selected]="selected">
     <div class="no-video">
       <div class="no-video-inner">
         
@@ -8,6 +8,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="user && user.nickname" class="nickname">{{user.nickname}}</div>
+  <div *ngIf="small && selected" id="dark"></div>
+  <div *ngIf="user && user.nickname && (small || !selected)" class="nickname" [class.small]="small" [class.selected]="selected">{{user.nickname}}</div>
   <audio [srcObject]="audioStream" autoplay></audio>
 <!-- </div> -->

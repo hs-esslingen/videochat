@@ -7,6 +7,8 @@ import {
   IterableDiffer,
   ViewChild,
   ElementRef,
+  OnChanges,
+  SimpleChanges,
 } from "@angular/core";
 import { User, Stream } from "src/app/helper/media.service";
 
@@ -15,10 +17,12 @@ import { User, Stream } from "src/app/helper/media.service";
   templateUrl: "./user.component.html",
   styleUrls: ["./user.component.scss"],
 })
-export class UserComponent implements OnInit, DoCheck {
+export class UserComponent implements OnInit, DoCheck, OnChanges {
   @Input() user: User;
   @Input() audioConsumers: Stream[];
   @Input() videoConsumers: Stream[];
+  @Input() small: boolean;
+  @Input() selected: boolean;
 
   videoElement: ElementRef<HTMLVideoElement>;
 
@@ -43,51 +47,66 @@ export class UserComponent implements OnInit, DoCheck {
   }
 
   ngOnInit(): void {
-    this.videoStream = this.videoConsumers.find(
+    this.videoStream = this.videoConsumers?.find(
       (item) => item.consumer.producerId === this.user.producers.video
     )?.stream;
-    this.audioStream = this.audioConsumers.find(
+    this.audioStream = this.audioConsumers?.find(
       (item) => item.consumer.producerId === this.user.producers.audio
     )?.stream;
     this.calcShowVideo();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes.user && this.videoElement) {
+      this.updateAudio();
+      this.updateVideo();
+    }
+  }
+
   ngDoCheck(): void {
     const videoChanges = this.iterableDifferVideo.diff(this.videoConsumers);
     if (videoChanges) {
-      let videoStream = this.videoStream;
-      videoStream = this.videoConsumers.find(
-        (item) => item.consumer.producerId === this.user.producers.video
-      )?.stream;
-      if (this.user.producers.screen) {
-        let screenshareStream;
-        screenshareStream = this.videoConsumers.find(
-          (item) => item.consumer.producerId === this.user.producers.screen
-        )?.stream;
-        if (screenshareStream != undefined) {
-          videoStream = screenshareStream;
-        }
-      }
-      if (this.videoStream !== videoStream) {
-        this.videoStream = undefined;
-        if (this.showVideo === true) this.videoElement.nativeElement.pause();
-        setTimeout(() => {
-          this.videoStream = videoStream;
-          this.calcShowVideo();
-          if (videoStream != undefined) {
-            setTimeout(() => {
-              this.videoElement.nativeElement.play();
-            }, 50);
-          }
-        }, 100);
-      }
+      this.updateVideo();
     }
     const audioChanges = this.iterableDifferAudio.diff(this.audioConsumers);
     if (audioChanges) {
-      this.audioStream = this.audioConsumers.find(
-        (item) => item.consumer.producerId === this.user.producers.audio
-      )?.stream;
+      this.updateAudio();
     }
+  }
+
+  updateVideo() {
+    let videoStream = this.videoStream;
+    videoStream = this.videoConsumers?.find(
+      (item) => item.consumer.producerId === this.user.producers.video
+    )?.stream;
+    if (this.user.producers.screen) {
+      let screenshareStream;
+      screenshareStream = this.videoConsumers?.find(
+        (item) => item.consumer.producerId === this.user.producers.screen
+      )?.stream;
+      if (screenshareStream != undefined) {
+        videoStream = screenshareStream;
+      }
+    }
+    if (this.videoStream !== videoStream) {
+      this.videoStream = undefined;
+      // if (this.showVideo === true) this.videoElement.nativeElement.pause();
+      setTimeout(() => {
+        this.videoStream = videoStream;
+        this.calcShowVideo();
+        if (videoStream != undefined) {
+          setTimeout(() => {
+            // this.videoElement.nativeElement.play();
+          }, 50);
+        }
+      }, 100);
+    }
+  }
+
+  updateAudio() {
+    this.audioStream = this.audioConsumers?.find(
+      (item) => item.consumer.producerId === this.user.producers.audio
+    )?.stream;
   }
 
   calcShowVideo() {

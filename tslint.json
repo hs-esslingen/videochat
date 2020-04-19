@@ -71,7 +71,7 @@
     "ordered-imports": false,
     "quotemark": false,
     "trailing-comma": false,
-    "no-conflicting-lifecycle": true,
+    "no-conflicting-lifecycle": false,
     "no-host-metadata-property": true,
     "no-input-rename": true,
     "no-inputs-metadata-property": true,

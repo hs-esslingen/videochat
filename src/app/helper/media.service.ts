@@ -232,13 +232,19 @@ export class MediaService {
         console.error(e);
       }
     } else {
-      this.screenshareState = ScreenshareState.DISABLED;
-      this.localScreenshareStream = undefined;
-      this.localScreenProducer.close();
-      this.api.producerClose(this.roomId, this.localScreenProducer.id);
-      this.localScreenProducer = undefined;
-      this.updateWsProducers();
-      this.updateObserver();
+      const screenshareTracks = this.localScreenshareStream.getVideoTracks();
+      if (screenshareTracks.length > 0) {
+        screenshareTracks[0].stop();
+      }
+      setTimeout(async () => {
+        this.screenshareState = ScreenshareState.DISABLED;
+        this.localScreenshareStream = undefined;
+        await this.api.producerClose(this.roomId, this.localScreenProducer.id);
+        this.localScreenProducer.close();
+        this.localScreenProducer = undefined;
+        this.updateWsProducers();
+        this.updateObserver();
+      }, 100);
     }
   }
 
