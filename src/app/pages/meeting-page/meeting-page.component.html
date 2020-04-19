@@ -3,19 +3,23 @@
     playinline></video>
 
 
-  <div id="streams">
-    <div id="no-user" *ngIf="users != undefined && users.length === 0 && !localSchreenshareStream">
-      <h2>Zur Zeit befindet sich niemand in diesem Raum</h2>
-      <input type="text" readonly [value]="roomUrl" (click)="$event.target.focus();$event.target.select()">
-    </div>
-    <ng-template [ngIf]="videoLayout === 'SINGLE'">
-      <app-user class="user" *ngFor="let user of users" [user]="user" [audioConsumers]="audioConsumers"
-        [videoConsumers]="videoConsumers"></app-user>
-
-      <video class="user" *ngIf="localSchreenshareStream" [srcObject]="localSchreenshareStream" [volume]="0" autoplay
-      playinline></video>
-    </ng-template>
+  <div id="no-user" *ngIf="users != undefined && users.length === 0">
+    <h2>Zur Zeit befindet sich niemand in diesem Raum</h2>
+    <input type="text" readonly [value]="roomUrl" (click)="$event.target.focus();$event.target.select()">
   </div>
+
+  <app-user *ngIf="singleVideo" id="single-stream" [user]="singleVideo" [videoConsumers]="videoConsumers" (click)="toggleSingleGrid(singleVideo)"  [selected]="true"></app-user>
+
+  <div id="streams" [class.single]="singleVideo">
+    <app-user class="user" *ngFor="let user of users" (click)="toggleSingleGrid(user)" [user]="user" [audioConsumers]="audioConsumers"
+      [videoConsumers]="videoConsumers" [small]="singleVideo != undefined" [selected]="singleVideo == user"></app-user>
+
+    <video class="user" *ngIf="localSchreenshareStream" [srcObject]="localSchreenshareStream" [volume]="0" autoplay
+      playinline></video>
+  </div>
+
+
+
 
   <div id="toolbar" [class.hidden]="isToolbarHidden">
     <div class="right">
@@ -40,4 +44,5 @@
       <button class="settings" [matMenuTriggerFor]="aboveMenu"><i class="material-icons">settings</i></button>
     </div>
   </div>
+
 </div>

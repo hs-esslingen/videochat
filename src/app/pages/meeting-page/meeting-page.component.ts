@@ -53,6 +53,7 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
   isToolbarHidden = false;
   isMobile = false;
   roomUrl: string;
+  singleVideo: User;
 
   constructor(
     readonly mediaService: MediaService,
@@ -99,6 +100,9 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
             this.localStream = data.localStream;
             this.localSchreenshareStream = data.localScreenshareStream;
             this.users = data.users;
+
+            if (!this.users.includes(this.singleVideo)) this.singleVideo = undefined;
+            if (this.users.length <= 1) this.singleVideo = undefined;
           });
       });
     } catch (err) {
@@ -121,6 +125,12 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log(result);
       if (result != undefined || "") this.mediaService.setNickname(result);
     });
+  }
+
+  toggleSingleGrid(user: User) {
+    if (this.users.length <= 1) return;
+    if (this.singleVideo === user) this.singleVideo = undefined;
+    else this.singleVideo = user;
   }
 
   onMousemoove() {
