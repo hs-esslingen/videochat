@@ -16,10 +16,25 @@
     text-overflow: ellipsis;
     margin: 0 auto;
 
+    @media (max-width: 768px) {
+      max-width: 100%;
+      right: 0;
+      left: 0;
+      bottom: 16px;
+    }
+
     &.small {
       bottom: 8px;
       right: 8px;
       left: 8px;
+      max-width: calc(100% - 16px);
+
+      @media (max-width: 768px) {
+        right: 0;
+        left: 0;
+        top: calc(50% - 15px);
+        bottom: unset;
+      }
     }
 
     &.small.selected {
@@ -35,6 +50,10 @@
     right: 0;
     left: 0;
     background-color: #000000A0;
+
+    
+    border: 1px solid #376ac3;
+    
   }
 
   video {

@@ -36,17 +36,26 @@
     width: 100%;
 
     &.single {
+      flex-wrap: nowrap;
+      justify-content: flex-start;
       flex-direction: column;
       right: 16px;
-      max-width: 200px;
-      width: 20%;
+      max-width: 120px;
+      width: 18%;
+      bottom: 112px;
+      height: auto;
+      max-height: calc(100% - 300px);
+      overflow-y: auto;
 
-      
+      @media (max-width: 490px) {
+        max-height: calc(100% - 200px);
+      }
+
       .user {
+        cursor: pointer;
         border-radius: 4px;
         flex-shrink: 1;
-        margin-bottom: 16px;
-        // height: calc(100% - 16px);
+        margin-bottom: 4px;
         max-width: 100%;
         max-height: calc(90% - 16px);
         width: 100%;
@@ -54,6 +63,28 @@
         ::ng-deep video {
           width: 100%;
         }
+      }
+
+      /* width */
+      &::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      /* Track */
+      &::-webkit-scrollbar-track {
+        background: #0c1729;
+      }
+
+      /* Handle */
+      &::-webkit-scrollbar-thumb {
+        background: #2a5094;
+        border-radius: 5px;
+        border: 2px solid #0c1729;
+      }
+
+      /* Handle on hover */
+      &::-webkit-scrollbar-thumb:hover {
+        background: #555;
       }
     }
 
@@ -78,6 +109,15 @@
         max-height: calc(100% - 16px);
         margin-left: 8px;
         margin-right: 8px;
+
+        
+
+        @media (max-width: 768px) {
+          max-width: calc(50% - 2px);
+          max-height: calc(100% - 2px);
+          margin-left: 1px;
+          margin-right: 1px;
+        }
       }
 
       .user:nth-last-child(n+3),
