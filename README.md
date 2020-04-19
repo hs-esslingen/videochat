@@ -15,6 +15,8 @@ Run `npm i` to install all requied dependencies.
 
 ## Development server
 
+Copy `.env.example` to `.env`
+
 Run `npm run watch-debug` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ## Code scaffolding

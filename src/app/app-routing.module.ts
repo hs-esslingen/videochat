@@ -2,10 +2,17 @@ import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 import { MeetingPageComponent } from "./pages/meeting-page/meeting-page.component";
 import { ThankYouPageComponent } from './pages/thank-you-page/thank-you-page.component';
+import { OverviewPageComponent } from './pages/overview-page/overview-page.component';
+import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
+import { AuthGuard } from './helper/auth.guard';
+import { LoginPageComponent } from './pages/login-page/login-page.component';
 
 const routes: Routes = [
-  { path: ":roomId", component: MeetingPageComponent },
-  { path: ":roomId/thank-you", component: ThankYouPageComponent },
+  { path: "datenschutz", component: PrivacyPolicyComponent },
+  { path: "login", component: LoginPageComponent  },
+  { path: ":roomId", component: MeetingPageComponent, canActivate: [AuthGuard]  },
+  { path: ":roomId/thank-you", component: ThankYouPageComponent, canActivate: [AuthGuard] },
+  { path: "**", component: OverviewPageComponent, canActivate: [AuthGuard]  },
 ];
 
 @NgModule({

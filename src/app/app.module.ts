@@ -14,6 +14,8 @@ import { HeaderComponent } from "./components/header/header.component";
 import { ThankYouPageComponent } from "./pages/thank-you-page/thank-you-page.component";
 import { UserComponent } from "./components/user/user.component";
 import { MatDialogModule } from "@angular/material/dialog";
+import { OverviewPageComponent } from './pages/overview-page/overview-page.component';
+import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +26,8 @@ import { MatDialogModule } from "@angular/material/dialog";
     ThankYouPageComponent,
     UserComponent,
     NicknameDialogComponent,
+    OverviewPageComponent,
+    PrivacyPolicyComponent,
   ],
   imports: [
     BrowserModule,

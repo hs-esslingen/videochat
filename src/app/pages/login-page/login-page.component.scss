@@ -8,7 +8,7 @@
 
     @media (max-width: 768px) {
         padding-top: 64px;
-  
+
     }
 
     h1 {
@@ -35,7 +35,13 @@
         display: flex;
         flex-direction: column;
         margin: 0 auto 0 auto;
-    
+
+        .oder {
+            text-align: center;
+            margin-top: 16px;
+            margin-bottom: 16px;
+        }
+
         label {
             padding-bottom: 8px;
             font-weight: bold;
@@ -43,6 +49,7 @@
             line-height: 1.5;
             color: white;
         }
+
         .form-element {
             margin-bottom: 12px;
         }
@@ -50,11 +57,11 @@
         input::placeholder {
             color: #9e9e9e;
         }
-    
+
         .textbox {
             background-color: #172c50;
         }
-    
+
         #btn_login {
             margin-top: 18px;
 

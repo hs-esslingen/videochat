@@ -25,7 +25,6 @@ export class UserComponent implements OnInit, DoCheck {
   @ViewChild("video", { static: false }) set content(
     content: ElementRef<HTMLVideoElement>
   ) {
-    console.log("#######################################");
     if (content) {
       // initially setter gets called with undefined
       this.videoElement = content;
@@ -56,7 +55,6 @@ export class UserComponent implements OnInit, DoCheck {
   ngDoCheck(): void {
     const videoChanges = this.iterableDifferVideo.diff(this.videoConsumers);
     if (videoChanges) {
-      console.log("videochanges");
       let videoStream = this.videoStream;
       videoStream = this.videoConsumers.find(
         (item) => item.consumer.producerId === this.user.producers.video

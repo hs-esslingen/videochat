@@ -73,6 +73,7 @@ export class MediaService {
   }
 
   public async getUserMedia(): Promise<MediaStream> {
+    this.setStatusConnecting();
     const capabilities = await navigator.mediaDevices.enumerateDevices();
     const video =
       capabilities.find((cap) => cap.kind === "videoinput") != undefined;
@@ -94,15 +95,19 @@ export class MediaService {
     return stream;
   }
 
+  
+
   public async connectToRoom(
     roomId,
     localStream: MediaStream
   ): Promise<MediaObservable> {
-    this.status = Status.CONNECTING;
+    if (this.status === Status.DISCONNECTED) {
+      localStream.getTracks().forEach(track => track.stop());
+      return undefined;
+    }
     this.roomId = roomId;
-    this.localStream = localStream;
+    this.localStream = new MediaStream(localStream.getVideoTracks());
     await this.setupDevice();
-
     await this.createSendTransport();
     await this.createRecvTransport();
 
@@ -252,6 +257,10 @@ export class MediaService {
       });
   }
 
+  private setStatusConnecting() {
+    this.status = Status.CONNECTING;
+  }
+
   private async setupDevice() {
     this.device = new Device();
     const routerRtpCapabilities = await this.api.getCapabilities(this.roomId);
@@ -269,7 +278,8 @@ export class MediaService {
     this.websocket.onopen = async (event) => {
       console.log("websocket opened");
       this.updateObserver();
-      this.status = Status.CONNECTED;
+      console.log(this.status);
+      if (this.status === Status.CONNECTING) this.status = Status.CONNECTED;
 
       await this.addExistingConsumers();
       await this.addExistingUsers();
@@ -289,6 +299,12 @@ export class MediaService {
           },
         })
       );
+      // @ts-ignore
+      if (this.status === Status.DISCONNECTED) {
+        this.websocket.close();
+        this.disconnect()
+        return;
+      };
     };
 
     this.websocket.addEventListener("message", (ev) => {
@@ -523,18 +539,21 @@ export class MediaService {
   }
 
   public async disconnect() {
-
+    if (this.status !== Status.CONNECTING) {
+      this.recvTransport?.close();
+      this.sendTransport?.close();
+      this.localAudioProducer?.close();
+      this.localVideoProducer?.close();
+      this.users = [];
+      this.videoConsumers = [];
+      this.audioConsumers = [];
+      this.addingProducers = [];
+      this.localVideoProducer = undefined;
+      this.localScreenshareStream = undefined;
+      this.screenshareState = ScreenshareState.DISABLED;
+      this.websocket?.close();
+    }
     this.status = Status.DISCONNECTED;
-    this.recvTransport?.close();
-    this.sendTransport?.close();
-    this.users = [];
-    this.videoConsumers = [];
-    this.audioConsumers = [];
-    this.addingProducers = [];
-    this.localVideoProducer = undefined;
-    this.localScreenshareStream = undefined;
-    this.screenshareState = ScreenshareState.DISABLED;
-    this.websocket?.close();
   }
 }
 

@@ -1,15 +1,16 @@
-import { Component } from '@angular/core';
-import { ApiService } from 'src/app/helper/api.service';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'videochat';
 
-  constructor(readonly api: ApiService) {
+  constructor() {
 
+  }
+  async ngOnInit(): Promise<void> {
   }
 }
