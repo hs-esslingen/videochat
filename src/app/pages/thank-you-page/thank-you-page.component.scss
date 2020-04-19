@@ -6,7 +6,18 @@
 #footer {
   text-align: end;
   font-size: medium;
+  position: absolute;
+  bottom: 0;
+}
 
+#btn_back2room {
+  margin-top: 18px;
+
+  transition: background-color 100ms linear, border-color 100ms linear, color 100ms linear, box-shadow 100ms linear;
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 100ms, 100ms, 100ms, 100ms;
+  transition-timing-function: linear, linear, linear, linear;
+  transition-delay: 0s, 0s, 0s, 0s;
 }
 
 a{
