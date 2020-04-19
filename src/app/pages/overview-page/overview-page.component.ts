@@ -16,6 +16,7 @@ export class OverviewPageComponent implements OnInit {
   gotoRoom() {
     if (this.roomId !== "" && !this.roomId.includes("/")) {
       this.router.navigate([this.roomId])
+    
     }
   }
 }
