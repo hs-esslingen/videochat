@@ -12,6 +12,7 @@
 }
 
 #thankyou_img{
+  margin-top: 32px;
   max-width: 640px;
   max-height: 480px;
   display: block;
@@ -33,17 +34,12 @@
   width: 50%;
 }
 
-#btn_back2room {
+.button {
   margin-top: 18px;
   background-color: #193058;
   transition: background-color 100ms linear, border-color 100ms linear, color 100ms linear, box-shadow 100ms linear;
 }
 
-#btn_back2start{
-  margin-top: 18px;
-  background-color: #193058;
-  transition: background-color 100ms linear, border-color 100ms linear, color 100ms linear, box-shadow 100ms linear;
-}
 
 a{
   color: white;

@@ -25,9 +25,4 @@ export class ThankYouPageComponent implements OnInit {
       this.router.navigate([this.roomId], {replaceUrl:true});
     });
   }
-
-  backtostart(){
-    this.router.navigate(["hse-chat.app/login"],{replaceUrl:true})
-  }
-
 }
