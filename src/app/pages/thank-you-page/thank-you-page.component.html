@@ -1,40 +1,28 @@
-<img id="thankyou_img" src="assets/img/undraw_road_sign_mfpo.svg" alt="goodbye" class="center" />
+<main>
+  <div id="spacer"></div>
+  <img id="thankyou_img" src="assets/img/undraw_road_sign_mfpo.svg" alt="goodbye" />
 
-<p id="thankyou">
-  Danke fürs Benutzen des HSE Video-Chats! Was möchten Sie als nächstes tun?
-</p>
+  <p id="thankyou">
+    Danke fürs Benutzen des HSE Video-Chats!
+  </p>
+
+  <div id="functions">
+    <button type="submit" class="button" (click)="backtoroom()">
+      Zurück zum Meeting
+    </button>
+    <button type="submit" class="button" routerLink="/">
+      Zur Startseite
+    </button>
+  </div>
 
 
-<div>
-  <ul id="functions">
-    <li>
-      <button type="submit" class="button" (click)="backtoroom()">
-        Back to meeting
-      </button>
-    </li>
-    <li>
-      <button type="submit" class="button" routerLink="/">
-        Back to Frontpage
-      </button>
-    </li>
-  </ul>
-</div>
+</main>
 
-<div id="social">
-  <ul>
-    <li></li>
-  </ul>
-</div>
 <footer id="footer">
   <nav>
-    <ul>
-      <li><span id="Kontakt">Kontakt</span></li>
-      <li>
-        <span id="Datenschutz"><a href="/info/datenschutz">Datenschutz</a></span>
-      </li>
-      <li>
-        <span id="Impressum"><a href="/info/Impressum">Impressum</a></span>
-      </li>
-    </ul>
+    <div class="space"></div>
+    <a routerLink="/kontakt">Kontakt</a>
+    <a routerLink="/datenschutz">Datenschutz</a>
+    <a routerLink="/impressum">Impressum</a>
   </nav>
 </footer>

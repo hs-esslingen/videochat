@@ -1,56 +1,75 @@
-#thankyou {
-  text-align: center;
-  font-size: xx-large;
+
+#spacer {
+  height: 128px;
+
+  @media (max-height: 1024px) {
+    height: 64px;
+  }
 }
 
-#footer {
-  text-align: end;
-  font-size: medium;
-  position: absolute;
-  right: 16px;
-  bottom: 0;
-}
-
-#thankyou_img{
-  margin-top: 32px;
+#thankyou_img {
   max-width: 640px;
   max-height: 480px;
   display: block;
   margin-left: auto;
   margin-right: auto;
   width: 50%;
-}
 
-#functions{
-  margin-left: auto;
-  margin-right: auto;
-  width: 50%;
-}
+  width: 646px;
+  height: 480px;
 
-.center{
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 50%;
-}
+  @media (max-width: 1024px) {
+    width: 387px;
+    height: 288px;
+  }
 
-.button {
-  margin-top: 18px;
-  background-color: #193058;
-  transition: background-color 100ms linear, border-color 100ms linear, color 100ms linear, box-shadow 100ms linear;
-}
-
-
-a{
-  color: white;
-  text-decoration: none;
-}
-
-
-ul li {
-  list-style: none;
-  display: inline-block;
-  position: relative;
-  padding: 6px;
   
+  @media (max-width: 425px) {
+    width: 95%;
+    height: 30%;
+  }
+
+}
+
+
+#thankyou {
+  text-align: center;
+  font-size: xx-large;
+}
+
+
+#functions {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 18px;
+
+  button {
+    margin: 8px;
+    background-color: #193058;
+    transition: background-color 100ms linear, border-color 100ms linear,
+      color 100ms linear, box-shadow 100ms linear;
+  }
+}
+
+#footer {
+  text-align: end;
+  font-size: medium;
+  padding: 16px 16px;
+
+  nav {
+    display: flex;
+    padding: 6px;
+
+    .space {
+      flex-grow: 1;
+    }
+
+    a {
+      margin: 0 8px;
+      color: white;
+      text-decoration: none;
+    }
+  }
 }
