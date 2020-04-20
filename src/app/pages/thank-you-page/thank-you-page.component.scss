@@ -6,6 +6,43 @@
 #footer {
   text-align: end;
   font-size: medium;
+  position: absolute;
+  right: 16px;
+  bottom: 0;
+}
+
+#thankyou_img{
+  max-width: 640px;
+  max-height: 480px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+#functions{
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+.center{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+#btn_back2room {
+  margin-top: 18px;
+  background-color: #193058;
+  transition: background-color 100ms linear, border-color 100ms linear, color 100ms linear, box-shadow 100ms linear;
+}
+
+#btn_back2start{
+  margin-top: 18px;
+  background-color: #193058;
+  transition: background-color 100ms linear, border-color 100ms linear, color 100ms linear, box-shadow 100ms linear;
 }
 
 a{
@@ -13,9 +50,11 @@ a{
   text-decoration: none;
 }
 
+
 ul li {
   list-style: none;
   display: inline-block;
   position: relative;
-  padding: 6px
+  padding: 6px;
+  
 }

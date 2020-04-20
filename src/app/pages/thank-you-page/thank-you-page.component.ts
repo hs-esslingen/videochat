@@ -26,4 +26,8 @@ export class ThankYouPageComponent implements OnInit {
     });
   }
 
+  backtostart(){
+    this.router.navigate(["hse-chat.app/login"],{replaceUrl:true})
+  }
+
 }
