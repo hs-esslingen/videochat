@@ -185,31 +185,36 @@ export class Room {
 
   async addConsumer(transportId, producerId, rtpCapabilities) {
     const trans = this.transports[transportId];
-    const consumer = await trans.consume({
-      producerId,
-      rtpCapabilities,
-      paused: true,
-    });
-    this.consumers[consumer.id] = consumer;
+    if (trans) {
+      const consumer = await trans.consume({
+        producerId,
+        rtpCapabilities,
+        paused: true,
+      });
+      this.consumers[consumer.id] = consumer;
 
-    consumer.on("transportclose", () => {
-      consumer.close();
-      delete this.consumers[consumer.id];
-    });
+      consumer.on("transportclose", () => {
+        consumer.close();
+        delete this.consumers[consumer.id];
+      });
 
-    consumer.on("producerclose", () => {
-      consumer.close();
-      delete this.consumers[consumer.id];
-    });
+      consumer.on("producerclose", () => {
+        consumer.close();
+        delete this.consumers[consumer.id];
+      });
 
-    consumer.observer.on("close", () => {
-      delete this.consumers[consumer.id];
-    });
+      consumer.observer.on("close", () => {
+        delete this.consumers[consumer.id];
+      });
 
-    return {
-      id: consumer.id,
-      rtpParameters: consumer.rtpParameters,
-    };
+      return {
+        id: consumer.id,
+        rtpParameters: consumer.rtpParameters,
+      };
+    } else {
+      throw new Error("Transport not found");
+    }
+
   }
 
   async resumeConsumer(id) {

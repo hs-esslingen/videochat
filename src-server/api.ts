@@ -41,7 +41,9 @@ export class Api {
 
     this.api.get("/room/:roomId/create-transport", async (req, res) => {
       try {
-        const transport = await Room.getRoom(req.params.roomId).createTransport(req.sessionID)
+        const transport = await Room.getRoom(req.params.roomId).createTransport(
+          req.sessionID
+        );
         res.json(transport);
       } catch (e) {
         res.status(500).send(e);
@@ -70,8 +72,10 @@ export class Api {
 
     this.api.post("/room/:roomId/producer-close", async (req, res) => {
       try {
-
-        Room.getRoom(req.params.roomId).closeProducer(req.body.id, req.sessionID);
+        Room.getRoom(req.params.roomId).closeProducer(
+          req.body.id,
+          req.sessionID
+        );
         res.status(201).send();
       } catch (e) {
         res.status(500).send(e);
@@ -87,13 +91,16 @@ export class Api {
     });
 
     this.api.post("/room/:roomId/add-consumer", async (req, res) => {
-      res.json(
-        await Room.getRoom(req.params.roomId).addConsumer(
+      try {
+        const data = await Room.getRoom(req.params.roomId).addConsumer(
           req.body.id,
           req.body.producerId,
           req.body.rtpCapabilities
-        )
-      );
+        );
+        res.json(data);
+      } catch (error) {
+        res.status(400).send(error);
+      }
     });
 
     this.api.post("/room/:roomId/resume", async (req, res) => {
@@ -105,7 +112,12 @@ export class Api {
       function onMessage(e) {
         const msg = JSON.parse(e.data);
         if (msg.type === "init") {
-          Room.getRoom(msg.data.roomId).initWebsocket(ws, msg.data, ws.sessionID, ws.user);
+          Room.getRoom(msg.data.roomId).initWebsocket(
+            ws,
+            msg.data,
+            ws.sessionID,
+            ws.user
+          );
           ws.removeEventListener("message", onMessage);
         }
       }
