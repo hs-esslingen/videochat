@@ -248,7 +248,7 @@ export class Room {
       this.broadcastMessage(
         {
           type: "remove-user",
-          data: user,
+          data: { id: user.id, nickname: user.nickname, producers: user.producers },
         },
         ws
       );
