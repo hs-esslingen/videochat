@@ -26,12 +26,12 @@ export class Room {
   private constructor(private roomId: string) {
     // Delete Room if nobody has joined after 10 Seconds
     setTimeout(() => {
-      if (Object.keys(this.users).length === 0) {
+      if (Object.keys(Room.rooms[roomId].users).length === 0) {
         logger.info("Deleting Room " + this.roomId + " 10000 timeout");
         this.router?.close();
         delete Room.rooms[this.roomId];
       }
-    }, 10000);
+    }, 5000);
   }
 
   static getRoom(roomId) {
