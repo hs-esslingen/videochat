@@ -62,10 +62,11 @@ export class LoginPageComponent implements OnInit {
           else
             this.router.navigate(['']);
           this.loginWindow = undefined;
+          return;
         } catch (error) {
           //
         }
-        if (this.loginWindow && this.loginWindow.closed) {
+        if (!this.loginWindow || this.loginWindow.closed) {
           this.loginWindow = undefined;
           console.log("Error");
           return;
