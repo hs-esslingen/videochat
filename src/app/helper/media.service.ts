@@ -326,13 +326,15 @@ export class MediaService {
             res();
             break;
           case "add-producer":
-            this.addConsumer(msg.data.producerId, msg.data.kind);
+            if (this.recvTransport != undefined && this.recvTransport.id != undefined)
+              this.addConsumer(msg.data.producerId, msg.data.kind);
             break;
           case "remove-producer":
             this.removeConsumer(msg.data.id, msg.data.kind);
             break;
           case "add-user":
             {
+              if (this.recvTransport == undefined || this.recvTransport.id == undefined) return;
               const user: User = msg.data;
               if (!this.users.find((item) => item.id === user.id)) {
                 this.users.push(user);
