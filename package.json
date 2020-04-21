@@ -24,6 +24,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "jsonwebtoken": "^8.5.1",
+    "log4js": "^6.2.1",
     "mediasoup": "^3.5.6",
     "mediasoup-client": "^3.6.4",
     "passport": "^0.4.1",

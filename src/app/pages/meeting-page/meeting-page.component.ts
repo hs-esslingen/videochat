@@ -54,6 +54,7 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
   isMobile = false;
   roomUrl: string;
   singleVideo: User;
+  duplicateSession = false;
 
   constructor(
     readonly mediaService: MediaService,
@@ -66,12 +67,11 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
     const url = new URL(location.href);
     this.roomUrl = url.origin + url.pathname;
     this.isMobile = this.checkMobile();
-    this.moveTimout = (setTimeout(
-      () => {
+    if (!this.isMobile) {
+      this.moveTimout = (setTimeout(() => {
         this.isToolbarHidden = true;
-      },
-      this.isMobile ? 5000 : 1500
-    ) as any) as number;
+      }, 1500) as any) as number;
+    }
 
     if (this.mediaService.nickname == undefined) this.openNicknameDialog();
   }
@@ -81,8 +81,8 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    try {
-      this.route.paramMap.subscribe(async (params) => {
+    this.route.paramMap.subscribe(async (params) => {
+      try {
         const localStream = await this.mediaService.getUserMedia();
         this.roomId = params.get("roomId");
         const observer = await this.mediaService.connectToRoom(
@@ -101,13 +101,22 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
             this.localSchreenshareStream = data.localScreenshareStream;
             this.users = data.users;
 
-            if (!this.users.includes(this.singleVideo)) this.singleVideo = undefined;
+            if (!this.users.includes(this.singleVideo))
+              this.singleVideo = undefined;
             if (this.users.length <= 1) this.singleVideo = undefined;
           });
-      });
-    } catch (err) {
-      console.error(err);
-    }
+      } catch (err) {
+        if (err === "DUPLICATE SESSION") {
+          this.duplicateSession = true;
+        } else {
+          console.log(err);
+        }
+      }
+    });
+  }
+
+  reload() {
+    window.location.reload();
   }
 
   async disconnect() {
@@ -134,14 +143,16 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onMousemoove() {
-    this.isToolbarHidden = false;
-    clearTimeout(this.moveTimout);
-    this.moveTimout = (setTimeout(
-      () => {
-        this.isToolbarHidden = true;
-      },
-      this.isMobile ? 5000 : 1500
-    ) as any) as number;
+    if (!this.isMobile) {
+      this.isToolbarHidden = false;
+      clearTimeout(this.moveTimout);
+      this.moveTimout = (setTimeout(
+        () => {
+          this.isToolbarHidden = true;
+        },
+        1500
+      ) as any) as number;
+    }
   }
 
   checkMobile() {

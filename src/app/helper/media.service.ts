@@ -64,7 +64,9 @@ export class MediaService {
   private localScreenshareStream: MediaStream;
   private startingCameraStream = false;
   private roomId: string;
+  private userId: string;
   private users: User[] = [];
+
   public nickname: string;
 
   constructor(private api: ApiService) {
@@ -95,19 +97,21 @@ export class MediaService {
     return stream;
   }
 
-  
-
   public async connectToRoom(
     roomId,
     localStream: MediaStream
   ): Promise<MediaObservable> {
     if (this.status === Status.DISCONNECTED) {
-      localStream.getTracks().forEach(track => track.stop());
+      localStream.getTracks().forEach((track) => track.stop());
       return undefined;
     }
     this.roomId = roomId;
     this.localStream = new MediaStream(localStream.getVideoTracks());
     await this.setupDevice();
+
+    await this.setupWebsocket();
+
+
     await this.createSendTransport();
     await this.createRecvTransport();
 
@@ -125,14 +129,19 @@ export class MediaService {
       this.microphoneState = MicrophoneState.DISABLED;
     }
 
-    this.setupWebsocket();
+    this.addExistingConsumers();
+    this.addExistingUsers();
+
+    // Push an inital update
+    setTimeout(() => {
+      this.updateObserver();
+    }, 500);
 
     const observable: MediaObservable = new Observable((sub) => {
       this.consumerSubscriber = sub;
     });
     return observable;
   }
-
 
   setNickname(nickname: string) {
     this.nickname = nickname;
@@ -182,7 +191,6 @@ export class MediaService {
           this.localStream = mediaStream;
           this.updateObserver();
           await this.sendVideo(mediaStream);
-          this.updateWsProducers();
 
           setTimeout(() => {
             this.startingCameraStream = false;
@@ -218,7 +226,6 @@ export class MediaService {
         this.localScreenshareStream = localScreen;
 
         await this.sendScreen(localScreen);
-        this.updateWsProducers();
         this.screenshareState = ScreenshareState.ENABLED;
 
         this.localScreenProducer.track.onended = async () => {
@@ -234,15 +241,14 @@ export class MediaService {
     } else {
       const screenshareTracks = this.localScreenshareStream.getVideoTracks();
       if (screenshareTracks.length > 0) {
-        screenshareTracks[0].stop();
+        await this.api.producerClose(this.roomId, this.localScreenProducer.id);
       }
       setTimeout(async () => {
+        screenshareTracks[0].stop();
         this.screenshareState = ScreenshareState.DISABLED;
         this.localScreenshareStream = undefined;
-        await this.api.producerClose(this.roomId, this.localScreenProducer.id);
         this.localScreenProducer.close();
         this.localScreenProducer = undefined;
-        this.updateWsProducers();
         this.updateObserver();
       }, 100);
     }
@@ -274,98 +280,96 @@ export class MediaService {
   }
 
   private setupWebsocket() {
-    if (environment.production) {
-      const url = new URL(window.location.href);
-      this.websocket = new WebSocket("wss://" + url.host + "/ws");
-    } else {
-      this.websocket = new WebSocket("ws://localhost:4000/ws");
-    }
+    return new Promise((res, rej) => {
+      if (environment.production) {
+        const url = new URL(window.location.href);
+        this.websocket = new WebSocket("wss://" + url.host + "/ws");
+      } else {
+        this.websocket = new WebSocket("ws://localhost:4000/ws");
+      }
 
-    this.websocket.onopen = async (event) => {
-      console.log("websocket opened");
-      this.updateObserver();
-      console.log(this.status);
-      if (this.status === Status.CONNECTING) this.status = Status.CONNECTED;
+      this.websocket.onopen = async (event) => {
+        console.log("websocket opened");
+        this.updateObserver();
+        if (this.status === Status.CONNECTING) this.status = Status.CONNECTED;
 
-      await this.addExistingConsumers();
-      await this.addExistingUsers();
-
-      this.websocket.send(
-        JSON.stringify({
-          type: "init",
-          data: {
-            roomId: this.roomId,
-            nickname: this.nickname,
-            transports: [this.sendTransport?.id, this.recvTransport?.id],
-            producers: {
-              audio: this.localAudioProducer?.id,
-              video: this.localVideoProducer?.id,
-              screen: this.localScreenProducer?.id,
+        this.websocket.send(
+          JSON.stringify({
+            type: "init",
+            data: {
+              roomId: this.roomId,
+              nickname: this.nickname,
+              transports: [this.sendTransport?.id, this.recvTransport?.id],
+              producers: {
+                audio: this.localAudioProducer?.id,
+                video: this.localVideoProducer?.id,
+                screen: this.localScreenProducer?.id,
+              },
             },
-          },
-        })
-      );
-      // @ts-ignore
-      if (this.status === Status.DISCONNECTED) {
-        this.websocket.close();
-        this.disconnect()
-        return;
-      };
-    };
+          })
+        );
 
-    this.websocket.addEventListener("message", (ev) => {
-      const msg = JSON.parse(ev.data);
-      switch (msg.type) {
-        case "add-producer":
-          this.addConsumer(msg.data.producerId, msg.data.kind);
-          break;
-        case "remove-producer":
-          this.removeConsumer(msg.data.id, msg.data.kind);
-          break;
-        case "add-user":
-          {
-            const user: User = msg.data;
-            if (!this.users.find((item) => item.id === user.id)) {
-              this.users.push(user);
+        // @ts-ignore
+        if (this.status === Status.DISCONNECTED) {
+          this.websocket.close();
+          this.disconnect();
+          rej();
+          return;
+        }
+      };
+
+      this.websocket.addEventListener("message", (ev) => {
+        const msg = JSON.parse(ev.data);
+        switch (msg.type) {
+          case "init":
+            this.userId = msg.data.id;
+            res();
+            break;
+          case "add-producer":
+            if (this.recvTransport != undefined && this.recvTransport.id != undefined)
+              this.addConsumer(msg.data.producerId, msg.data.kind);
+            break;
+          case "remove-producer":
+            this.removeConsumer(msg.data.id, msg.data.kind);
+            break;
+          case "add-user":
+            {
+              if (this.recvTransport == undefined || this.recvTransport.id == undefined) return;
+              const user: User = msg.data;
+              if (!this.users.find((item) => item.id === user.id)) {
+                this.users.push(user);
+                this.updateObserver();
+              }
+            }
+            break;
+          case "update-user":
+            {
+              const user: User = msg.data;
+              const foundUser = this.users.find((item) => item.id === user.id);
+              if (foundUser) {
+                foundUser.nickname = user.nickname;
+                foundUser.producers = user.producers;
+              }
+            }
+            break;
+          case "remove-user":
+            {
+              const user: User = msg.data;
+              this.users = this.users.filter((item) => item.id !== user.id);
               this.updateObserver();
             }
-          }
-          break;
-        case "update-user":
-          {
-            const user: User = msg.data;
-            const foundUser = this.users.find((item) => item.id === user.id);
-            foundUser.nickname = user.nickname;
-            foundUser.producers = user.producers;
-          }
-          break;
-        case "remove-user":
-          {
-            const user: User = msg.data;
-            this.users = this.users.filter((item) => item.id !== user.id);
-            this.updateObserver();
-          }
-          break;
+            break;
+          case "error-duplicate-session":
+            this.status = Status.DISCONNECTED;
+            this.disconnect();
+            rej("DUPLICATE SESSION");
+            break;
 
-        default:
-          break;
-      }
+          default:
+            break;
+        }
+      });
     });
-  }
-
-  private updateWsProducers() {
-    this.websocket.send(
-      JSON.stringify({
-        type: "update",
-        data: {
-          producers: {
-            audio: this.localAudioProducer?.id,
-            video: this.localVideoProducer?.id,
-            screen: this.localScreenProducer?.id,
-          },
-        },
-      })
-    );
   }
 
   private async addExistingConsumers() {
@@ -390,6 +394,9 @@ export class MediaService {
     const users = await this.api.getUsers(this.roomId);
     const newUsers: User[] = [];
     for (const user of users) {
+      // Dont add yourself
+      if (user.id === this.userId) continue;
+
       const foundUser = this.users.find((item) => item.id === user.id);
       if (foundUser) {
         foundUser.nickname = user.nickname;
@@ -495,6 +502,7 @@ export class MediaService {
         { maxBitrate: 96000, scaleResolutionDownBy: 4 },
         { maxBitrate: 680000, scaleResolutionDownBy: 1 },
       ],
+      appData: { type: "video" },
     });
   }
 
@@ -502,6 +510,7 @@ export class MediaService {
     this.localScreenProducer = await this.sendTransport.produce({
       track: localStream.getVideoTracks()[0],
       encodings: null,
+      appData: { type: "screen" },
     });
   }
 
@@ -509,6 +518,7 @@ export class MediaService {
     const track = localStream.getAudioTracks()[0];
     this.localAudioProducer = await this.sendTransport.produce({
       track,
+      appData: { type: "audio" },
     });
   }
 

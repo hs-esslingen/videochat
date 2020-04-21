@@ -12,6 +12,12 @@ import * as jwt from "jsonwebtoken";
 import * as session from "express-session";
 import { readFileSync } from "fs";
 import * as bodyParser from "body-parser";
+import { getLogger } from "log4js";
+
+export const logger = getLogger();
+
+if (process.env.DEBUG) logger.level = "debug";
+else logger.level = process.env.LOGLEVEL || "info";
 
 // Express server
 const app = express();
@@ -19,9 +25,7 @@ const server = http.createServer(app);
 
 const PORT = process.env.PORT || 4000;
 
-const wss = new WebSocket.Server({ server, path: "/ws" }, () => {
-  console.log("websocket opened");
-});
+const wss = new WebSocket.Server({ noServer: true });
 
 wss.on("error", (err) => {
   console.error(err);
@@ -33,7 +37,6 @@ app.use(bodyParser.json());
 // bodyParser is definitely not deprecated
 // tslint:disable-next-line
 app.use(bodyParser.urlencoded({ extended: false }));
-
 
 passport.serializeUser((user, done) => {
   done(null, user);
@@ -49,7 +52,7 @@ const jwtStrategy = new jwtPassport.Strategy(
     jwtFromRequest: jwtPassport.ExtractJwt.fromHeader("x-token"),
   },
   (jwtPayload, done) => {
-    console.log(jwtPayload);
+    logger.debug("Parsing JWT", jwtPayload);
     done(null, jwtPayload);
   }
 );
@@ -70,8 +73,13 @@ if (!process.env.DEBUG) {
       disableRequestedAuthnContext: true,
     },
     (profile, done) => {
-      console.log(profile);
-      return done(null, profile);
+      logger.debug("Parsing SAML", profile);
+      const user = {
+        email: profile["urn:oid:0.9.2342.19200300.100.1.3"],
+        scope: profile["urn:oid:1.3.6.1.4.1.5923.1.1.1.9"],
+        displayName: profile["urn:oid:2.5.4.42"] + " " + profile["urn:oid:2.5.4.4"],
+      };
+      return done(null, user);
     }
   );
   passport.use(samlStrategy);
@@ -79,7 +87,8 @@ if (!process.env.DEBUG) {
 passport.use(jwtStrategy);
 
 const api = new Api(wss);
-app.use(session({ secret: process.env.SESSION_SECRET }));
+const expressSession = session({ secret: process.env.SESSION_SECRET });
+app.use(expressSession);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -96,16 +105,17 @@ if (!process.env.DEBUG) {
     "/auth/callback",
     passport.authenticate("saml", { failureRedirect: "/auth/fail" }),
     (req, res) => {
-      console.log(req.isAuthenticated());
+      logger.info("SSO Login", req.user);
       res.json(req.isAuthenticated());
     }
   );
 
+  // Backwards compatibility to old metadata configuration
   app.post(
     "/login/callback",
     passport.authenticate("saml", { failureRedirect: "/auth/fail" }),
     (req, res) => {
-      console.log(req.isAuthenticated());
+      logger.info("SSO Login", req.user);
       res.json(req.isAuthenticated());
     }
   );
@@ -132,7 +142,8 @@ if (!process.env.DEBUG) {
 }
 
 app.get("/auth/jwt", passport.authenticate("jwt"), (req, res) => {
-  res.status(201).send();
+  logger.info("JWT Login", req.user);
+  res.status(204).send();
 });
 
 app.post("/auth/email", (req, res) => {
@@ -151,27 +162,36 @@ app.post("/auth/email", (req, res) => {
     });
   } else {
     const error = "email is invalid";
-    console.log(error);
+    logger.error("Email is invalid: ", req.body.email);
     res.status(400).send(error);
   }
 });
 
+
 app.get("/auth/check", (req, res) => {
-  console.log(req.user);
-  if (req.isAuthenticated()) res.status(201).send();
+  // @ts-ignore email exists exists in user
+  if (req.isAuthenticated()) res.json({ email: req.user.email });
   else res.status(401).send("Unauthorized");
 });
 
 app.get("/auth/logout", (req, res) => {
   req.logout();
-  res.status(201).send();
+  res.status(204).send();
+});
+
+app.get("/ws", (req, res) => {
+  wss.handleUpgrade(req, res.socket, Buffer.from(""), (ws: MyWebSocket) => {
+    ws.sessionID = req.sessionID;
+    ws.user = req.user;
+    wss.emit('connection', ws, );
+  });
 });
 
 app.use("/api", api.getApi());
 
 app.use("/", express.static(join(__dirname, "./browser")));
+
 app.use("*", (req, res) => {
-  console.log(req.path);
   res.sendFile(join(__dirname, "./browser/index.html"));
 });
 
@@ -181,12 +201,13 @@ wss.on("connection", function connection(ws: MyWebSocket) {
 });
 
 const interval = setInterval(function ping() {
-  wss.clients.forEach(function each(ws: MyWebSocket) {
-    if (ws.isAlive === false) return ws.terminate();
+  if (wss.clients)
+    wss.clients.forEach(function each(ws: MyWebSocket) {
+      if (ws.isAlive === false) return ws.terminate();
 
-    ws.isAlive = false;
-    ws.ping(() => {});
-  });
+      ws.isAlive = false;
+      ws.ping(() => {});
+    });
 }, 10000);
 
 wss.on("close", function close() {
@@ -195,10 +216,11 @@ wss.on("close", function close() {
 
 // Start up the Node server
 server.listen(PORT, () => {
-  console.log(`Node Express server listening on http://localhost:${PORT}`);
+  logger.info(`Node Express server listening on http://0.0.0.0:${PORT}`);
 });
 
 export interface MyWebSocket extends WebSocket {
   isAlive: boolean;
-  transports: string[];
+  sessionID: string;
+  user: any;
 }

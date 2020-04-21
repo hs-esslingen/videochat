@@ -1,13 +1,16 @@
 import {
   Worker,
   Router,
-  IceState,
   MediaKind,
   RtpParameters,
+  Transport,
 } from "mediasoup/lib/types";
 import * as mediasoup from "mediasoup";
 import * as WebSocket from "ws";
 import { MyWebSocket } from "src-server/server";
+import { getLogger } from "log4js";
+
+const logger = getLogger("room");
 
 export class Room {
   static worker: Worker;
@@ -18,13 +21,31 @@ export class Room {
   private consumers: { [id: string]: mediasoup.types.Consumer } = {};
   private producers: mediasoup.types.Producer[] = [];
   private websockets: WebSocket[] = [];
-  private users: User[] = [];
+  private users: { [sessionId: string]: User } = {};
 
-  private constructor(private roomId: string) {}
+  private constructor(private roomId: string) {
+    // Delete Room if nobody has joined after 10 Seconds
+    setTimeout(() => {
+      if (
+        Room.rooms[roomId] &&
+        Object.keys(Room.rooms[roomId].users).length === 0 &&
+        this === Room.rooms[roomId]
+      ) {
+        logger.warn(
+          "Deleting Room " +
+            this.roomId +
+            " 5s timeout, this only happens if a user joined and left very fast \n" +
+            "without establishing a websocket connection"
+        );
+        this.router?.close();
+        delete Room.rooms[this.roomId];
+      }
+    }, 5000);
+  }
 
   static getRoom(roomId) {
     if (this.rooms[roomId] == undefined) {
-      console.log("Creating Room " + roomId);
+      logger.info("Creating Room " + roomId);
       this.rooms[roomId] = new Room(roomId);
     }
     return this.rooms[roomId];
@@ -32,7 +53,7 @@ export class Room {
 
   private static async createWorker() {
     // Create single worker, should be engough for now
-    // creating more workers would be rquired if the app runs at a bigger scale
+    // creating more workers would be required if the app runs at a bigger scale
     if (this.worker == undefined) this.worker = await mediasoup.createWorker();
   }
 
@@ -40,7 +61,10 @@ export class Room {
     return (await this.getRouter()).rtpCapabilities;
   }
 
-  async createTransport() {
+  async createTransport(sessionID: string) {
+    if (this.users[sessionID] == undefined)
+      throw new Error("User is not inizialized");
+
     await this.getRouter();
     const trans = await this.router.createWebRtcTransport({
       listenIps: [{ ip: process.env.IP || "127.0.0.1", announcedIp: null }],
@@ -50,22 +74,12 @@ export class Room {
       initialAvailableOutgoingBitrate: 800000,
     });
 
+    this.users[sessionID].transports.push(trans);
+
     this.transports[trans.id] = trans;
 
     trans.observer.on("close", () => {
       delete this.transports[trans.id];
-
-      if (Object.keys(this.transports).length === 0) {
-        console.log("Deleting Room " + this.roomId);
-        this.router.close();
-        delete Room.rooms[this.roomId];
-      }
-    });
-
-    trans.on("icestatechange", (iceState: IceState) => {
-      if (iceState === "disconnected") {
-        trans.close();
-      }
     });
 
     return {
@@ -84,13 +98,39 @@ export class Room {
     });
   }
 
-  async produce(transportId, kind: MediaKind, rtpParameters: RtpParameters) {
+  async produce(
+    transportId,
+    kind: MediaKind,
+    rtpParameters: RtpParameters,
+    appData: any,
+    sessionID: string
+  ) {
     const trans = this.transports[transportId];
     if (trans) {
+      if (this.users[sessionID] == undefined)
+        throw new Error("User is not inizialized");
       const producer = await trans.produce({
         kind,
         rtpParameters,
+        appData,
       });
+
+      // Close old Producer if it is still open
+      if (this.users[sessionID].producers[appData.type] != undefined) {
+        const oldProdId = this.users[sessionID].producers[appData.type];
+        if (this.producers[oldProdId] && !this.producers[oldProdId].closed) {
+          this.producers[oldProdId].close();
+        }
+      }
+
+      this.users[sessionID].producers[appData.type] = producer.id;
+      this.broadcastMessage(
+        {
+          type: "update-user",
+          data: this.users[sessionID],
+        },
+        sessionID
+      );
 
       this.producers.push(producer);
 
@@ -122,13 +162,24 @@ export class Room {
         });
       });
       return { id: producer.id };
+    } else {
+      throw new Error("Transport is not existing");
     }
   }
 
-  closeProducer(id) {
-    const producer = this.producers.find((prod) => prod.id === id);
-    if (producer) {
-      producer.close();
+  closeProducer(id, sessionID) {
+    if (this.users[sessionID] == undefined)
+      throw new Error("User is not inizialized");
+    for (const type in this.users[sessionID].producers) {
+      if (this.users[sessionID].producers.hasOwnProperty(type)) {
+        const producerId = this.users[sessionID].producers[type];
+        if (producerId === id) {
+          const producer = this.producers.find((prod) => prod.id === id);
+          if (producer) {
+            producer.close();
+          }
+        }
+      }
     }
   }
 
@@ -143,31 +194,35 @@ export class Room {
 
   async addConsumer(transportId, producerId, rtpCapabilities) {
     const trans = this.transports[transportId];
-    const consumer = await trans.consume({
-      producerId,
-      rtpCapabilities,
-      paused: true,
-    });
-    this.consumers[consumer.id] = consumer;
+    if (trans) {
+      const consumer = await trans.consume({
+        producerId,
+        rtpCapabilities,
+        paused: true,
+      });
+      this.consumers[consumer.id] = consumer;
 
-    consumer.on("transportclose", () => {
-      consumer.close();
-      delete this.consumers[consumer.id];
-    });
+      consumer.on("transportclose", () => {
+        consumer.close();
+        delete this.consumers[consumer.id];
+      });
 
-    consumer.on("producerclose", () => {
-      consumer.close();
-      delete this.consumers[consumer.id];
-    });
+      consumer.on("producerclose", () => {
+        consumer.close();
+        delete this.consumers[consumer.id];
+      });
 
-    consumer.observer.on("close", () => {
-      delete this.consumers[consumer.id];
-    });
+      consumer.observer.on("close", () => {
+        delete this.consumers[consumer.id];
+      });
 
-    return {
-      id: consumer.id,
-      rtpParameters: consumer.rtpParameters,
-    };
+      return {
+        id: consumer.id,
+        rtpParameters: consumer.rtpParameters,
+      };
+    } else {
+      throw new Error("Transport not found");
+    }
   }
 
   async resumeConsumer(id) {
@@ -176,39 +231,68 @@ export class Room {
   }
 
   getUsers() {
-    return this.users.map(({ id, nickname, producers }) => {
-      return { id, nickname, producers };
+    return Object.keys(this.users).map((sessionId) => {
+      const user = this.users[sessionId];
+      return {
+        id: user.id,
+        nickname: user.nickname,
+        producers: user.producers,
+      };
     });
   }
 
-
   initWebsocket(
     ws: WebSocket,
-    initData: WebsocketUserInfo
+    initData: WebsocketUserInfo,
+    sessionID: string,
+    { email }
   ) {
-    let transports: string[] = initData.transports;
+    const transports: Transport[] = [];
+    let init = false;
     const user: User = {
-      id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+      id:
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15),
       nickname: initData.nickname,
-      producers: initData.producers,
+      transports,
+      producers: {},
     };
 
     ws.on("close", (e) => {
-      console.log("user left " + this.roomId);
-      if (transports) {
-        for (const transportId of transports) {
-          if (this.transports[transportId])
-            this.transports[transportId].close();
-        }
+      if (init === false) return;
+      logger.info(`${this.roomId}: ${user.nickname || "User"} (${email}) left`);
+      delete this.users[sessionID];
+
+      for (const transport of transports) {
+        transport.close();
       }
 
-      this.broadcastMessage({
-        type: "remove-user",
-        data: user,
-      }, ws);
+      this.broadcastMessage(
+        {
+          type: "remove-user",
+          data: {
+            id: user.id,
+            nickname: user.nickname,
+            producers: user.producers,
+          },
+        },
+        ws
+      );
 
-      this.websockets = this.websockets.filter(item => item !== ws);
-      this.users = this.users.filter(item => item !== user);
+      this.websockets = this.websockets.filter((item) => item !== ws);
+
+      if (Object.keys(this.users).length === 0) {
+        logger.info("Deleting Room " + this.roomId);
+        this.router.close();
+        // Only delete room from rooms array if the room is the current room
+        if (this === Room.rooms[this.roomId]) {
+          delete Room.rooms[this.roomId];
+        } else {
+          logger.warn(
+            "Did not delete room globally, because it was overwritten"
+          );
+        }
+      }
     });
 
     ws.on("message", (e) => {
@@ -216,13 +300,19 @@ export class Room {
       switch (msg.type) {
         case "update":
           const data: WebsocketUserInfo = msg.data;
-          if(data.nickname) user.nickname = data.nickname;
-          if(data.producers) user.producers = data.producers;
+          if (data.nickname) user.nickname = data.nickname;
 
-          this.broadcastMessage({
-            type: "update-user",
-            data: user,
-          }, ws);
+          this.broadcastMessage(
+            {
+              type: "update-user",
+              data: {
+                id: user.id,
+                nickname: user.nickname,
+                producers: user.producers,
+              },
+            },
+            ws
+          );
           break;
 
         default:
@@ -230,18 +320,50 @@ export class Room {
       }
     });
 
-    this.broadcastMessage({
-      type: "add-user",
-      data: user,
-    }, ws);
-
-    this.users.push(user);
-    this.websockets.push(ws);
+    // Check if seesion id already exists
+    if (this.users[sessionID] == undefined) {
+      logger.info(
+        `${this.roomId}: ${user.nickname || "User"} (${email}) joined`
+      );
+      this.broadcastMessage(
+        {
+          type: "add-user",
+          data: {
+            id: user.id,
+            nickname: user.nickname,
+            producers: user.producers,
+          },
+        },
+        ws
+      );
+      this.users[sessionID] = user;
+      ws.send(
+        JSON.stringify({
+          type: "init",
+          data: {
+            id: user.id,
+          },
+        })
+      );
+      init = true;
+      this.websockets.push(ws);
+    } else {
+      ws.send(
+        JSON.stringify({
+          type: "error-duplicate-session",
+        })
+      );
+      ws.close();
+    }
   }
 
-  private broadcastMessage(message: { type: string; data: any }, excludeWs?: WebSocket) {
+  private broadcastMessage(
+    message: { type: string; data: any },
+    excludeWsOrSession?: any
+  ) {
     this.websockets.forEach((ws: MyWebSocket) => {
-      if (ws === excludeWs) return;
+      if (ws === excludeWsOrSession) return;
+      if (ws.sessionID === excludeWsOrSession) return;
       ws.send(JSON.stringify(message));
     });
   }
@@ -298,18 +420,19 @@ export interface User {
   id: string;
   nickname: string;
   producers: {
-    audio?: string,
-    video?: string,
-    screen?: string,
+    audio?: string;
+    video?: string;
+    screen?: string;
   };
+  transports?: Transport[];
 }
 
 export interface WebsocketUserInfo {
   nickname?: string;
   producers: {
-    audio?: string,
-    video?: string,
-    screen?: string,
+    audio?: string;
+    video?: string;
+    screen?: string;
   };
-  transports?: string[];
+  transports?: Transport[];
 }

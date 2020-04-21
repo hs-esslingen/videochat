@@ -40,7 +40,14 @@ export class Api {
     });
 
     this.api.get("/room/:roomId/create-transport", async (req, res) => {
-      res.json(await Room.getRoom(req.params.roomId).createTransport());
+      try {
+        const transport = await Room.getRoom(req.params.roomId).createTransport(
+          req.sessionID
+        );
+        res.json(transport);
+      } catch (e) {
+        res.status(500).send(e);
+      }
     });
 
     this.api.post("/room/:roomId/connect", async (req, res) => {
@@ -56,14 +63,23 @@ export class Api {
         await Room.getRoom(req.params.roomId).produce(
           req.body.id,
           req.body.kind,
-          req.body.rtpParameters
+          req.body.rtpParameters,
+          req.body.appData,
+          req.sessionID
         )
       );
     });
 
     this.api.post("/room/:roomId/producer-close", async (req, res) => {
-      Room.getRoom(req.params.roomId).closeProducer(req.body.id);
-      res.status(201).send();
+      try {
+        Room.getRoom(req.params.roomId).closeProducer(
+          req.body.id,
+          req.sessionID
+        );
+        res.status(201).send();
+      } catch (e) {
+        res.status(500).send(e);
+      }
     });
 
     this.api.get("/room/:roomId/producers", async (req, res) => {
@@ -75,13 +91,16 @@ export class Api {
     });
 
     this.api.post("/room/:roomId/add-consumer", async (req, res) => {
-      res.json(
-        await Room.getRoom(req.params.roomId).addConsumer(
+      try {
+        const data = await Room.getRoom(req.params.roomId).addConsumer(
           req.body.id,
           req.body.producerId,
           req.body.rtpCapabilities
-        )
-      );
+        );
+        res.json(data);
+      } catch (error) {
+        res.status(400).send(error);
+      }
     });
 
     this.api.post("/room/:roomId/resume", async (req, res) => {
@@ -93,8 +112,12 @@ export class Api {
       function onMessage(e) {
         const msg = JSON.parse(e.data);
         if (msg.type === "init") {
-          console.log("user joined " + msg.data.roomId);
-          Room.getRoom(msg.data.roomId).initWebsocket(ws, msg.data);
+          Room.getRoom(msg.data.roomId).initWebsocket(
+            ws,
+            msg.data,
+            ws.sessionID,
+            ws.user
+          );
           ws.removeEventListener("message", onMessage);
         }
       }
