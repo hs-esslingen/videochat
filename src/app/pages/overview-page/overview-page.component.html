@@ -1,6 +1,10 @@
-<h1 class="center">Willkommen zum Online Videochat der HSE</h1>
-<p class="center">Bitte gebe deinen gewünschten Raumnamen ein:</p>
-<div class="center">
-  <input id="chatroom" type="text" name="" [(ngModel)]="roomId">
-  <button class="button" (click)="gotoRoom()">GO</button>
-</div>
+<main>
+  <div id="spacer"></div>
+  <h1 class="center">Willkommen zum Online Videochat der HSE</h1>
+  <p class="center">Bitte gebe deinen gewünschten Raumnamen ein:</p>
+  <div class="center" id="input">
+    <input id="chatroom" type="text" name="" [(ngModel)]="roomId">
+    <button class="button" (click)="gotoRoom()">GO</button>
+  </div>
+</main>
+<app-footer></app-footer>

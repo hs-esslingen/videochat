@@ -53,23 +53,4 @@
   }
 }
 
-#footer {
-  text-align: end;
-  font-size: medium;
-  padding: 16px 16px;
 
-  nav {
-    display: flex;
-    padding: 6px;
-
-    .space {
-      flex-grow: 1;
-    }
-
-    a {
-      margin: 0 8px;
-      color: white;
-      text-decoration: none;
-    }
-  }
-}
