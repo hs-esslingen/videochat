@@ -187,6 +187,11 @@ app.get("/ws", (req, res) => {
   });
 });
 
+app.use("/api", (req, res, next) => {
+  if (req.isAuthenticated()) next();
+  else res.status(401).send("Unauthorized");
+});
+
 app.use("/api", api.getApi());
 
 app.use("/", express.static(join(__dirname, "./browser")));
