@@ -143,7 +143,7 @@ if (!process.env.DEBUG) {
 
 app.get("/auth/jwt", passport.authenticate("jwt"), (req, res) => {
   logger.info("JWT Login", req.user);
-  res.status(201).send();
+  res.status(204).send();
 });
 
 app.post("/auth/email", (req, res) => {
@@ -167,14 +167,16 @@ app.post("/auth/email", (req, res) => {
   }
 });
 
+
 app.get("/auth/check", (req, res) => {
-  if (req.isAuthenticated()) res.status(201).send();
+  // @ts-ignore email exists exists in user
+  if (req.isAuthenticated()) res.json({ email: req.user.email });
   else res.status(401).send("Unauthorized");
 });
 
 app.get("/auth/logout", (req, res) => {
   req.logout();
-  res.status(201).send();
+  res.status(204).send();
 });
 
 app.get("/ws", (req, res) => {
