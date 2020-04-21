@@ -108,13 +108,13 @@ export class MediaService {
     this.roomId = roomId;
     this.localStream = new MediaStream(localStream.getVideoTracks());
     await this.setupDevice();
-      
+
     await this.setupWebsocket();
 
-      
+
     await this.createSendTransport();
     await this.createRecvTransport();
-    
+
     if (localStream.getVideoTracks().length > 0) {
       this.cameraState = CameraState.ENABLED;
       await this.sendVideo(localStream);
@@ -131,6 +131,11 @@ export class MediaService {
 
     this.addExistingConsumers();
     this.addExistingUsers();
+
+    // Push an inital update
+    setTimeout(() => {
+      this.updateObserver();
+    }, 500);
 
     const observable: MediaObservable = new Observable((sub) => {
       this.consumerSubscriber = sub;

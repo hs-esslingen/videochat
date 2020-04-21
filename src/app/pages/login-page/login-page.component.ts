@@ -55,19 +55,17 @@ export class LoginPageComponent implements OnInit {
     const waitForAuthentication = () => {
       setTimeout(async () => {
         try {
-          const isLoggedIn = await this.api.checkLogin();
-          if (isLoggedIn) {
-            if (!this.loginWindow.closed) this.loginWindow.close();
-            if (this.api.redirectUrl)
-              this.router.navigate([this.api.redirectUrl]);
-            else
-              this.router.navigate(['']);
-            this.loginWindow = undefined;
-          }
+          await this.api.checkLogin();
+          if (!this.loginWindow.closed) this.loginWindow.close();
+          if (this.api.redirectUrl)
+            this.router.navigate([this.api.redirectUrl]);
+          else
+            this.router.navigate(['']);
+          this.loginWindow = undefined;
         } catch (error) {
           //
         }
-        if (this.loginWindow.closed) {
+        if (this.loginWindow && this.loginWindow.closed) {
           this.loginWindow = undefined;
           console.log("Error");
           return;

@@ -159,7 +159,6 @@ export class Room {
   }
 
   closeProducer(id, sessionID) {
-    
     if (this.users[sessionID] == undefined)
       throw new Error("User is not inizialized");
     for (const type in this.users[sessionID].producers) {
@@ -241,7 +240,7 @@ export class Room {
       if (init === false) return;
       logger.info(`${this.roomId}: ${user.nickname || "User"} (${email}) left`)
       delete this.users[sessionID];
-      
+
       for (const transport of transports) {
         transport.close();
       }
@@ -273,7 +272,7 @@ export class Room {
           this.broadcastMessage(
             {
               type: "update-user",
-              data: user,
+              data: { id: user.id, nickname: user.nickname, producers: user.producers },
             },
             ws
           );
@@ -291,7 +290,7 @@ export class Room {
       this.broadcastMessage(
         {
           type: "add-user",
-          data: user,
+          data: { id: user.id, nickname: user.nickname, producers: user.producers },
         },
         ws
       );

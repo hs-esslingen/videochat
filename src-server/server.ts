@@ -77,7 +77,7 @@ if (!process.env.DEBUG) {
       const user = {
         email: profile["urn:oid:0.9.2342.19200300.100.1.3"],
         scope: profile["urn:oid:1.3.6.1.4.1.5923.1.1.1.9"],
-        displayName: profile["urn:oid:2.5.4.42"] + profile["urn:oid:2.5.4.4"],
+        displayName: profile["urn:oid:2.5.4.42"] + " " + profile["urn:oid:2.5.4.4"],
       };
       return done(null, user);
     }
