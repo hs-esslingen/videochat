@@ -8,7 +8,7 @@ import {
 import * as mediasoup from "mediasoup";
 import * as WebSocket from "ws";
 import { MyWebSocket } from "src-server/server";
-import { getLogger } from 'log4js';
+import { getLogger } from "log4js";
 
 const logger = getLogger("room");
 
@@ -26,8 +26,17 @@ export class Room {
   private constructor(private roomId: string) {
     // Delete Room if nobody has joined after 10 Seconds
     setTimeout(() => {
-      if (Object.keys(Room.rooms[roomId].users).length === 0) {
-        logger.info("Deleting Room " + this.roomId + " 10000 timeout");
+      if (
+        Room.rooms[roomId] &&
+        Object.keys(Room.rooms[roomId].users).length === 0 &&
+        this === Room.rooms[roomId]
+      ) {
+        logger.warn(
+          "Deleting Room " +
+            this.roomId +
+            " 5s timeout, this only happens if a user joined and left very fast \n" +
+            "without establishing a websocket connection"
+        );
         this.router?.close();
         delete Room.rooms[this.roomId];
       }
@@ -214,7 +223,6 @@ export class Room {
     } else {
       throw new Error("Transport not found");
     }
-
   }
 
   async resumeConsumer(id) {
@@ -225,11 +233,20 @@ export class Room {
   getUsers() {
     return Object.keys(this.users).map((sessionId) => {
       const user = this.users[sessionId];
-      return { id: user.id, nickname: user.nickname, producers: user.producers };
+      return {
+        id: user.id,
+        nickname: user.nickname,
+        producers: user.producers,
+      };
     });
   }
 
-  initWebsocket(ws: WebSocket, initData: WebsocketUserInfo, sessionID: string, { email }) {
+  initWebsocket(
+    ws: WebSocket,
+    initData: WebsocketUserInfo,
+    sessionID: string,
+    { email }
+  ) {
     const transports: Transport[] = [];
     let init = false;
     const user: User = {
@@ -243,7 +260,7 @@ export class Room {
 
     ws.on("close", (e) => {
       if (init === false) return;
-      logger.info(`${this.roomId}: ${user.nickname || "User"} (${email}) left`)
+      logger.info(`${this.roomId}: ${user.nickname || "User"} (${email}) left`);
       delete this.users[sessionID];
 
       for (const transport of transports) {
@@ -253,7 +270,11 @@ export class Room {
       this.broadcastMessage(
         {
           type: "remove-user",
-          data: { id: user.id, nickname: user.nickname, producers: user.producers },
+          data: {
+            id: user.id,
+            nickname: user.nickname,
+            producers: user.producers,
+          },
         },
         ws
       );
@@ -261,9 +282,16 @@ export class Room {
       this.websockets = this.websockets.filter((item) => item !== ws);
 
       if (Object.keys(this.users).length === 0) {
-        logger.info("Removing Room " + this.roomId);
+        logger.info("Deleting Room " + this.roomId);
         this.router.close();
-        delete Room.rooms[this.roomId];
+        // Only delete room from rooms array if the room is the current room
+        if (this === Room.rooms[this.roomId]) {
+          delete Room.rooms[this.roomId];
+        } else {
+          logger.warn(
+            "Did not delete room globally, because it was overwritten"
+          );
+        }
       }
     });
 
@@ -277,7 +305,11 @@ export class Room {
           this.broadcastMessage(
             {
               type: "update-user",
-              data: { id: user.id, nickname: user.nickname, producers: user.producers },
+              data: {
+                id: user.id,
+                nickname: user.nickname,
+                producers: user.producers,
+              },
             },
             ws
           );
@@ -288,29 +320,34 @@ export class Room {
       }
     });
 
-
     // Check if seesion id already exists
     if (this.users[sessionID] == undefined) {
-      logger.info(`${this.roomId}: ${user.nickname || "User"} (${email}) joined`)
+      logger.info(
+        `${this.roomId}: ${user.nickname || "User"} (${email}) joined`
+      );
       this.broadcastMessage(
         {
           type: "add-user",
-          data: { id: user.id, nickname: user.nickname, producers: user.producers },
+          data: {
+            id: user.id,
+            nickname: user.nickname,
+            producers: user.producers,
+          },
         },
         ws
       );
       this.users[sessionID] = user;
-      ws.send(JSON.stringify({
-        type: "init",
-        data: {
-          id: user.id,
-        }
-      }))
+      ws.send(
+        JSON.stringify({
+          type: "init",
+          data: {
+            id: user.id,
+          },
+        })
+      );
       init = true;
       this.websockets.push(ws);
-
     } else {
-
       ws.send(
         JSON.stringify({
           type: "error-duplicate-session",
