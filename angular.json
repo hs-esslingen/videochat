@@ -127,5 +127,8 @@
       }
     }
   },
-  "defaultProject": "videochat"
+  "defaultProject": "videochat",
+  "cli": {
+    "analytics": false
+  }
 }

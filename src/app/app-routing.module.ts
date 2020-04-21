@@ -6,9 +6,13 @@ import { OverviewPageComponent } from './pages/overview-page/overview-page.compo
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { AuthGuard } from './helper/auth.guard';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { ContactsPageComponent } from './pages/contacts-page/contacts-page.component';
+import { ImprintPageComponent } from './pages/imprint-page/imprint-page.component';
 
 const routes: Routes = [
   { path: "datenschutz", component: PrivacyPolicyComponent },
+  { path: "kontakt", component: ContactsPageComponent },
+  { path: "impressum", component: ImprintPageComponent },
   { path: "login", component: LoginPageComponent  },
   { path: ":roomId", component: MeetingPageComponent, canActivate: [AuthGuard]  },
   { path: ":roomId/thank-you", component: ThankYouPageComponent, canActivate: [AuthGuard] },

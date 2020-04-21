@@ -3,12 +3,13 @@
   background-color: #172c50;
   margin-right: 8px;
 }
-.center {
-  text-align: center;
+
+#spacer {
+  height: 64px;
 }
 
-h1 {
-  margin-top: 64px;
+.center {
+  text-align: center;
 }
 
 
@@ -16,7 +17,7 @@ p {
   margin-top: 64px;
 }
 
-div {
+#input {
   margin-top: 24px;
 
   input {

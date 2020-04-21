@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { ActivatedRoute, ParamMap, Router } from "@angular/router"
 
 @Component({
   selector: 'app-thank-you-page',
@@ -6,10 +7,22 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./thank-you-page.component.scss']
 })
 export class ThankYouPageComponent implements OnInit {
+  roomId: string;
 
-  constructor() { }
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router
+    ) { }
 
   ngOnInit(): void {
+    
   }
 
+  backtoroom(){
+    this.route.paramMap.subscribe(async (params) => {
+      this.roomId = params.get("roomId");
+      this.router.navigate([this.roomId], {replaceUrl:true});
+    });
+  }
 }

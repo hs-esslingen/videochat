@@ -16,6 +16,9 @@ import { UserComponent } from "./components/user/user.component";
 import { MatDialogModule } from "@angular/material/dialog";
 import { OverviewPageComponent } from './pages/overview-page/overview-page.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { ContactsPageComponent } from './pages/contacts-page/contacts-page.component';
+import { ImprintPageComponent } from './pages/imprint-page/imprint-page.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +31,9 @@ import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.co
     NicknameDialogComponent,
     OverviewPageComponent,
     PrivacyPolicyComponent,
+    FooterComponent,
+    ContactsPageComponent,
+    ImprintPageComponent,
   ],
   imports: [
     BrowserModule,
