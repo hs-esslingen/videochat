@@ -13,6 +13,12 @@
     <input type="text" readonly [value]="roomUrl" (click)="$event.target.focus();$event.target.select()">
   </div>
 
+  <div id="duplicate-session" *ngIf="duplicateSession">
+    <h2>Es besteht bereits eine Verbindung zu diesem Raum</h2>
+    <button class="button" (click)="reload()">Erneut Versuchen</button>
+  </div>
+
+
   <app-user *ngIf="singleVideo" id="single-stream" [user]="singleVideo" [videoConsumers]="videoConsumers" (click)="toggleSingleGrid(singleVideo)"  [selected]="true"></app-user>
 
   <div id="streams" [class.single]="singleVideo">
