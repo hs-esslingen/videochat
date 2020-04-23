@@ -1,4 +1,6 @@
 import * as nodemailer from "nodemailer";
+import { getLogger, configure } from "log4js";
+export const logger = getLogger();
 
 export class Email {
   constructor() {
