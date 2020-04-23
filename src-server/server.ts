@@ -12,12 +12,12 @@ import * as jwt from "jsonwebtoken";
 import * as session from "express-session";
 import { readFileSync } from "fs";
 import * as bodyParser from "body-parser";
-import { getLogger } from "log4js";
+import { getLogger, configure } from "log4js";
 
-export const logger = getLogger();
-
-if (process.env.DEBUG) logger.level = "debug";
-else logger.level = process.env.LOGLEVEL || "info";
+const logname = "server";
+export const logger = getLogger(logname);
+initLogger();
+logAllLevel();
 
 // Express server
 const app = express();
@@ -77,7 +77,8 @@ if (!process.env.DEBUG) {
       const user = {
         email: profile["urn:oid:0.9.2342.19200300.100.1.3"],
         scope: profile["urn:oid:1.3.6.1.4.1.5923.1.1.1.9"],
-        displayName: profile["urn:oid:2.5.4.42"] + " " + profile["urn:oid:2.5.4.4"],
+        displayName:
+          profile["urn:oid:2.5.4.42"] + " " + profile["urn:oid:2.5.4.4"],
       };
       return done(null, user);
     }
@@ -147,6 +148,8 @@ app.get("/auth/jwt", passport.authenticate("jwt"), (req, res) => {
 });
 
 app.post("/auth/email", (req, res) => {
+  logger.debug(req.body);
+  logger.info(req.headers);
   const secretkey = "mysecretkey";
 
   const EmailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -167,7 +170,6 @@ app.post("/auth/email", (req, res) => {
   }
 });
 
-
 app.get("/auth/check", (req, res) => {
   // @ts-ignore email exists exists in user
   if (req.isAuthenticated()) res.json({ email: req.user.email });
@@ -183,7 +185,7 @@ app.get("/ws", (req, res) => {
   wss.handleUpgrade(req, res.socket, Buffer.from(""), (ws: MyWebSocket) => {
     ws.sessionID = req.sessionID;
     ws.user = req.user;
-    wss.emit('connection', ws, );
+    wss.emit("connection", ws);
   });
 });
 
@@ -228,4 +230,31 @@ export interface MyWebSocket extends WebSocket {
   isAlive: boolean;
   sessionID: string;
   user: any;
+}
+
+function logAllLevel(): void {
+  // test loglevel
+  logger.trace("logger.trace");
+  logger.debug("logger.debug");
+  logger.info("logger.info");
+  logger.warn("logger.warn");
+  logger.error("logger.error");
+  logger.fatal("logger.fatal");
+  logger.fatal(logger.level);
+}
+
+function initLogger(): void {
+  // show all logs if environment variable DEBUG is true, otherwise print only the errors
+  if (process.env.DEBUG === "true") logger.level = "trace";
+  else logger.level = process.env.LOGLEVEL || "error";
+  configure({
+    appenders: {
+      // write logs to log file
+      server: { type: "file", filename: logname + ".log" },
+      stdout: { type: "stdout" },
+    },
+    categories: {
+      default: { appenders: [logname, "stdout"], level: logger.level },
+    },
+  });
 }
