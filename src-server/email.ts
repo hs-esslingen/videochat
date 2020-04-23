@@ -4,18 +4,16 @@ export const logger = getLogger();
 
 export class Email {
   constructor() {
-    nodemailer.createTestAccount(this.setupTestAccount);
+    if (process.env.DEBUG === "true") {
+      nodemailer.createTestAccount(this.setupTestAccount);
+    } else {
+    }
   }
 
   async setupTestAccount(err: Error, account: nodemailer.TestAccount) {
     // Generate SMTP service account from ethereal.email
     if (err) {
-      console.error(
-        "Error: " +
-          err.name +
-          " ,Failed to create a testing account: " +
-          err.message
-      );
+      logger.error("Failed to create a testing account: ", err.message);
       return process.exit(1);
     }
 
@@ -42,14 +40,9 @@ export class Email {
       html: "<p><b>Hello</b> to myself!</p>",
     };
 
-    transporter.sendMail(message, (errSend: Error, info: any) => {
-      if (errSend) {
-        console.log("Error occurred. " + err.message);
-        return process.exit(1);
-      }
-      console.log("Message sent: %s", info.messageId);
-      // Preview only available when sending through an Ethereal account
-      console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-    });
+    const info = await transporter.sendMail(message);
+    logger.debug("Message sent: ", info.messageId);
+    // Preview only available when sending through an Ethereal account
+    logger.debug("Preview URL: ", nodemailer.getTestMessageUrl(info));
   }
 }

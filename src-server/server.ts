@@ -200,6 +200,7 @@ app.get("/auth/jwt", passport.authenticate("jwt"), (req, res) => {
 });
 
 app.post("/auth/email", (req, res) => {
+  logger.trace("/auth/email");
   const secretkey = "mysecretkey";
 
   const EmailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -209,6 +210,7 @@ app.post("/auth/email", (req, res) => {
     req.body.email.endsWith("hs-esslingen.de")
   ) {
     const token = jwt.sign({ email: req.body.email }, secretkey);
+    logger.info("email is valid: ", req.body.email);
     // send encoded token
     res.json({
       token,
@@ -217,7 +219,7 @@ app.post("/auth/email", (req, res) => {
     this.email = new Email();
   } else {
     const error = "email is invalid";
-    logger.error("Email is invalid: ", req.body.email);
+    logger.error(error, req.body.email);
     res.status(400).send(error);
   }
 });
