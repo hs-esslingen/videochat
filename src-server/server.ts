@@ -13,6 +13,7 @@ import * as session from "express-session";
 import { readFileSync } from "fs";
 import * as bodyParser from "body-parser";
 import { getLogger, configure } from "log4js";
+import { Email } from "./email";
 
 export const logger = getLogger("server");
 initLogger();
@@ -212,6 +213,8 @@ app.post("/auth/email", (req, res) => {
     res.json({
       token,
     });
+    //email senden
+    this.email = new Email();
   } else {
     const error = "email is invalid";
     logger.error("Email is invalid: ", req.body.email);
