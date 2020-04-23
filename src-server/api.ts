@@ -20,37 +20,8 @@ export class Api {
 
   constructor(wss: WebSocket.Server) {
     this.api.use(bodyParser.json());
-    this.api.post("/login", (req, res) => {
-      let secretkey = "mysecretkey";
-      if (process.env.SECRETKEY !== undefined) {
-        secretkey = process.env.SECRETKEY;
-      }
-
-      const EmailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      if (
-        req.body.email !== undefined &&
-        EmailRegExp.test(req.body.email) &&
-        req.body.email.endsWith("hs-esslingen.de")
-      ) {
-        const token = jwt.sign({ email: req.body.email }, secretkey);
-        console.log("created token: " + token);
-        // send encoded token
-        res.json({
-          token,
-        });
-        //email senden
-        this.email = new Email();
-
-        res.send(token);
-      } else {
-        const error = "email is invalid";
-        console.log(error);
-        res.status(400).send(error);
-      }
-    });
 
     this.api.use("/", (req, res, next) => {
-      // console.log("Token: " + req.headers.token);
       next();
     });
 
