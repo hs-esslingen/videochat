@@ -1,6 +1,4 @@
 <!-- <div class="user"> -->
-  <button (click)="videoStream = undefined">Stop Video</button>
-  <button (click)="showVideo = !showVideo">Delete Video</button>
   <video #video *ngIf="showVideo" [srcObject]="videoStream?.stream" autoplay playinline [class.small]="small" [class.selected]="selected"></video>
   <div class="no-video-wrapper" *ngIf="!showVideo" [class.small]="small" [class.selected]="selected">
     <div class="no-video">
