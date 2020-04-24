@@ -11,6 +11,8 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { User, Stream } from "src/app/helper/media.service";
+import { WsService } from 'src/app/helper/ws.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: "app-user",
@@ -35,24 +37,31 @@ export class UserComponent implements OnInit, DoCheck, OnChanges {
     }
   }
 
-  videoStream: MediaStream;
-  audioStream: MediaStream;
+  videoStream: Stream;
+  audioStream: Stream;
   showVideo: boolean;
   iterableDifferVideo: IterableDiffer<Stream>;
   iterableDifferAudio: IterableDiffer<Stream>;
+  messageSubscription: Subscription;
 
-  constructor(private iterableDiffers: IterableDiffers) {
+  constructor(private iterableDiffers: IterableDiffers, private ws: WsService) {
     this.iterableDifferVideo = iterableDiffers.find([]).create(null);
     this.iterableDifferAudio = iterableDiffers.find([]).create(null);
+
+    this.messageSubscription = ws.messageObserver.subscribe((msg) => {
+      if (msg.type === "remove-producer") {
+        if (msg.data.id === this.videoStream.consumer.producerId && this.user.producers.screen === msg.data.id) this.showVideo = false;
+      }
+    })
   }
 
   ngOnInit(): void {
     this.videoStream = this.videoConsumers?.find(
       (item) => item.consumer.producerId === this.user.producers.video
-    )?.stream;
+    );
     this.audioStream = this.audioConsumers?.find(
       (item) => item.consumer.producerId === this.user.producers.audio
-    )?.stream;
+    );
     this.calcShowVideo();
   }
 
@@ -75,45 +84,50 @@ export class UserComponent implements OnInit, DoCheck, OnChanges {
   }
 
   updateVideo() {
-    let videoStream = this.videoStream;
+    let videoStream;
     videoStream = this.videoConsumers?.find(
       (item) => item.consumer.producerId === this.user.producers.video
-    )?.stream;
+    );
     if (this.user.producers.screen) {
       let screenshareStream;
       screenshareStream = this.videoConsumers?.find(
         (item) => item.consumer.producerId === this.user.producers.screen
-      )?.stream;
+      );
       if (screenshareStream != undefined) {
         videoStream = screenshareStream;
       }
     }
-    if (this.videoStream !== videoStream) {
-      this.videoStream = undefined;
-      // if (this.showVideo === true) this.videoElement.nativeElement.pause();
-      setTimeout(() => {
-        this.videoStream = videoStream;
-        this.calcShowVideo();
-        if (videoStream != undefined) {
-          setTimeout(() => {
-            // this.videoElement.nativeElement.play();
-          }, 50);
-        }
-      }, 100);
-    }
+    this.videoStream = videoStream;
+    this.calcShowVideo();
+    // if (this.videoStream !== videoStream) {
+    //   this.videoStream = undefined;
+    //   // if (this.showVideo === true) this.videoElement.nativeElement.pause();
+    //   setTimeout(() => {
+    //     this.videoStream = videoStream;
+    //     this.calcShowVideo();
+    //     if (videoStream != undefined) {
+    //       setTimeout(() => {
+    //         // this.videoElement.nativeElement.play();
+    //       }, 50);
+    //     }
+    //   }, 100);
+    // }
+    // if (videoStream != undefined) {
+    //   this.videoStream = videoStream;
+    // }
   }
 
   updateAudio() {
     this.audioStream = this.audioConsumers?.find(
       (item) => item.consumer.producerId === this.user.producers.audio
-    )?.stream;
+    );
   }
 
   calcShowVideo() {
-    console.log(this.videoStream);
-    if (this.videoStream == undefined) this.showVideo = false;
-    else {
+    // console.log(this.videoStream);
+    // if (this.videoStream == undefined) this.showVideo = false;
+    // else {
       this.showVideo = true;
-    }
+    // }
   }
 }

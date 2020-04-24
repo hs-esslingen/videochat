@@ -72,7 +72,7 @@ export class Api {
 
     this.api.post("/room/:roomId/producer-close", async (req, res) => {
       try {
-        Room.getRoom(req.params.roomId).closeProducer(
+        await Room.getRoom(req.params.roomId).closeProducer(
           req.body.id,
           req.sessionID
         );
