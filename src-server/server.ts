@@ -243,7 +243,14 @@ function initLogger(): void {
     logger.level = "trace";
     if (process.env.LOGFILE.endsWith(".log")) {
       // write logs to log file
-      logconf.appenders.file = { type: "file", filename: process.env.LOGFILE };
+      logconf.appenders.file = {
+        type: "file",
+        filename: process.env.LOGFILE,
+        // log size in bytes for log rolling
+        maxLogSize: 10485760,
+        // number of files for log rolling
+        backups: 3,
+      };
       logconf.categories.default = {
         appenders: ["file", "stdout"],
         level: logger.level,
