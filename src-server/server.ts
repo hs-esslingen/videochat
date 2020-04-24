@@ -229,30 +229,29 @@ export interface MyWebSocket extends WebSocket {
 }
 
 function initLogger(): void {
+  const logconf: any = {
+    appenders: {
+      stdout: { type: "stdout" },
+    },
+    categories: {
+      default: { appenders: ["stdout"], level: logger.level },
+    },
+  };
+
   // show all logs if environment variable DEBUG is true, otherwise print only the errors
   if (process.env.DEBUG === "true") {
     logger.level = "trace";
     if (process.env.LOGFILE.endsWith(".log")) {
-      configure({
-        appenders: {
-          // write logs to log file
-          file: { type: "file", filename: process.env.LOGFILE },
-          stdout: { type: "stdout" },
-        },
-        categories: {
-          default: { appenders: ["file", "stdout"], level: logger.level },
-        },
-      });
+      // write logs to log file
+      logconf.appenders.file = { type: "file", filename: process.env.LOGFILE };
+      logconf.categories.default = {
+        appenders: ["file", "stdout"],
+        level: logger.level,
+      };
     }
   } else {
     logger.level = process.env.LOGLEVEL || "info";
-    configure({
-      appenders: {
-        stdout: { type: "stdout" },
-      },
-      categories: {
-        default: { appenders: ["stdout"], level: logger.level },
-      },
-    });
   }
+  // configure log4js
+  configure(logconf);
 }
