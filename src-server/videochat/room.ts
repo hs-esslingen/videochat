@@ -188,7 +188,7 @@ export class Room {
               setTimeout(() => {
                 producer.close();
                 res();
-              }, 100);
+              }, 300);
             }
           }
         }

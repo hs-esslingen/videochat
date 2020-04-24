@@ -50,7 +50,7 @@ export class UserComponent implements OnInit, DoCheck, OnChanges {
 
     this.messageSubscription = ws.messageObserver.subscribe((msg) => {
       if (msg.type === "remove-producer") {
-        if (msg.data.id === this.videoStream.consumer.producerId) this.videoStream = undefined;
+        if (msg.data.id === this.videoStream.consumer.producerId && this.user.producers.screen === msg.data.id) this.showVideo = false;
       }
     })
   }

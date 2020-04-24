@@ -322,7 +322,7 @@ export class MediaService {
           case "remove-producer":
             setTimeout(() => {
               this.removeConsumer(msg.data.id, msg.data.kind);
-            }, 100);
+            }, 300);
             break;
           case "add-user":
             {
