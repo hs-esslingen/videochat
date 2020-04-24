@@ -168,19 +168,32 @@ export class Room {
   }
 
   closeProducer(id, sessionID) {
-    if (this.users[sessionID] == undefined)
+    return new Promise(res => {
+
+      if (this.users[sessionID] == undefined)
       throw new Error("User is not inizialized");
-    for (const type in this.users[sessionID].producers) {
-      if (this.users[sessionID].producers.hasOwnProperty(type)) {
-        const producerId = this.users[sessionID].producers[type];
-        if (producerId === id) {
-          const producer = this.producers.find((prod) => prod.id === id);
-          if (producer) {
-            producer.close();
+      for (const type in this.users[sessionID].producers) {
+        if (this.users[sessionID].producers.hasOwnProperty(type)) {
+          const producerId = this.users[sessionID].producers[type];
+          if (producerId === id) {
+            const producer = this.producers.find((prod) => prod.id === id);
+            if (producer) {
+              this.broadcastMessage({
+                type: "remove-producer",
+                data: {
+                  id: producer.id,
+                  kind: producer.kind,
+                },
+              });
+              setTimeout(() => {
+                producer.close();
+                res();
+              }, 100);
+            }
           }
         }
       }
-    }
+    });
   }
 
   getProducers() {

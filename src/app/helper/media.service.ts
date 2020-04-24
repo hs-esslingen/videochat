@@ -8,6 +8,7 @@ import {
 import { environment } from "src/environments/environment";
 import { ApiService } from "./api.service";
 import { Observable, Subscriber } from "rxjs";
+import { WsService } from "./ws.service";
 
 export enum CameraState {
   ENABLED = "videocam",
@@ -54,7 +55,6 @@ export class MediaService {
   }>;
   private recvTransport: Transport;
   private sendTransport: Transport;
-  private websocket: WebSocket;
   private status: Status = Status.DISCONNECTED;
   private autoGainControl: boolean;
   private microphoneState: MicrophoneState;
@@ -69,7 +69,7 @@ export class MediaService {
 
   public nickname: string;
 
-  constructor(private api: ApiService) {
+  constructor(private api: ApiService, private ws: WsService) {
     this.autoGainControl = localStorage.getItem("autoGainControl") !== "false";
     this.nickname = localStorage.getItem("nickname");
   }
@@ -111,7 +111,6 @@ export class MediaService {
 
     await this.setupWebsocket();
 
-
     await this.createSendTransport();
     await this.createRecvTransport();
 
@@ -146,15 +145,7 @@ export class MediaService {
   setNickname(nickname: string) {
     this.nickname = nickname;
     window.localStorage.setItem("nickname", nickname);
-    if (this.websocket)
-      this.websocket.send(
-        JSON.stringify({
-          type: "update",
-          data: {
-            nickname,
-          },
-        })
-      );
+    this.ws.send("update", { nickname });
   }
 
   toggleMirophone() {
@@ -283,58 +274,63 @@ export class MediaService {
     return new Promise((res, rej) => {
       if (environment.production) {
         const url = new URL(window.location.href);
-        this.websocket = new WebSocket("wss://" + url.host + "/ws");
+        this.ws.connect("wss://" + url.host + "/ws");
       } else {
-        this.websocket = new WebSocket("ws://localhost:4000/ws");
+        // const url = new URL(window.location.href);
+        // this.ws.connect("wss://" + url.host + "/ws");
+        this.ws.connect("ws://localhost:4000/ws");
       }
 
-      this.websocket.onopen = async (event) => {
+      this.ws.websocket.addEventListener("open", async (event) => {
         console.log("websocket opened");
         this.updateObserver();
         if (this.status === Status.CONNECTING) this.status = Status.CONNECTED;
 
-        this.websocket.send(
-          JSON.stringify({
-            type: "init",
-            data: {
-              roomId: this.roomId,
-              nickname: this.nickname,
-              transports: [this.sendTransport?.id, this.recvTransport?.id],
-              producers: {
-                audio: this.localAudioProducer?.id,
-                video: this.localVideoProducer?.id,
-                screen: this.localScreenProducer?.id,
-              },
-            },
-          })
-        );
+        this.ws.send("init", {
+          roomId: this.roomId,
+          nickname: this.nickname,
+          transports: [this.sendTransport?.id, this.recvTransport?.id],
+          producers: {
+            audio: this.localAudioProducer?.id,
+            video: this.localVideoProducer?.id,
+            screen: this.localScreenProducer?.id,
+          },
+        });
 
         // @ts-ignore
         if (this.status === Status.DISCONNECTED) {
-          this.websocket.close();
+          this.ws.close();
           this.disconnect();
           rej();
           return;
         }
-      };
+      });
 
-      this.websocket.addEventListener("message", (ev) => {
-        const msg = JSON.parse(ev.data);
+      this.ws.messageObserver.subscribe((msg) => {
         switch (msg.type) {
           case "init":
             this.userId = msg.data.id;
             res();
             break;
           case "add-producer":
-            if (this.recvTransport != undefined && this.recvTransport.id != undefined)
+            if (
+              this.recvTransport != undefined &&
+              this.recvTransport.id != undefined
+            )
               this.addConsumer(msg.data.producerId, msg.data.kind);
             break;
           case "remove-producer":
-            this.removeConsumer(msg.data.id, msg.data.kind);
+            setTimeout(() => {
+              this.removeConsumer(msg.data.id, msg.data.kind);
+            }, 100);
             break;
           case "add-user":
             {
-              if (this.recvTransport == undefined || this.recvTransport.id == undefined) return;
+              if (
+                this.recvTransport == undefined ||
+                this.recvTransport.id == undefined
+              )
+                return;
               const user: User = msg.data;
               if (!this.users.find((item) => item.id === user.id)) {
                 this.users.push(user);
@@ -567,7 +563,7 @@ export class MediaService {
       this.localVideoProducer = undefined;
       this.localScreenshareStream = undefined;
       this.screenshareState = ScreenshareState.DISABLED;
-      this.websocket?.close();
+      this.ws.close();
     }
     this.status = Status.DISCONNECTED;
   }
