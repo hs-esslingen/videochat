@@ -37,8 +37,17 @@ export enum Status {
 export class MediaService {
   private device: Device;
   private localVideoProducer: Producer;
+  get LocalVideoProducer(): Producer {
+    return this.localVideoProducer;
+  }
   private localScreenProducer: Producer;
+  get LocalScreenProducer(): Producer {
+    return this.localScreenProducer;
+  }
   private localAudioProducer: Producer;
+  get LocalAudioProducer(): Producer {
+    return this.localAudioProducer;
+  }
   private videoConsumers: Stream[] = [];
   private audioConsumers: Stream[] = [];
   private addingProducers: string[] = [];

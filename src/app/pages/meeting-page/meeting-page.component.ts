@@ -27,6 +27,48 @@ enum Layout {
   SINGLE = "SINGLE",
 }
 
+@Component({
+  selector: "app-nickname-dialog",
+  templateUrl: "./choose-nickname.component.html",
+  styleUrls: ["./choose-nickname.component.scss"],
+})
+export class NicknameDialogComponent {
+  constructor(
+    public dialogRef: MatDialogRef<NicknameDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: NicknameDialogData
+  ) {}
+
+  close(): void {
+    console.log(this.data.nickname);
+    this.dialogRef.close(this.data.nickname);
+  }
+}
+
+@Component({
+  selector: "app-debug-dialog",
+  templateUrl: "./debug-stats.component.html",
+  styleUrls: ["./debug-stats.component.scss"],
+})
+export class DebugDialogComponent {
+  debugInfo: { [key: string]: { [key: string]: string }} = {};
+  objectKeys = Object.keys;
+
+  constructor(
+    public dialogRef: MatDialogRef<NicknameDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    console.log(data.keys());
+    for (const key of data.keys()) {
+      this.debugInfo[key] = data.get(key);
+      console.log(data.get(key));
+    }
+  }
+
+  close(): void {
+    this.dialogRef.close();
+  }
+}
+
 export interface NicknameDialogData {
   nickname: string;
 }
@@ -135,6 +177,20 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
       if (result != undefined || "") this.mediaService.setNickname(result);
     });
   }
+  async openDebugDialog() {
+    if (this.mediaService.LocalVideoProducer) {
+      console.log(await this.mediaService.LocalVideoProducer.getStats());
+      const dialogRef = this.dialog.open(DebugDialogComponent, {
+        width: "1200px",
+        data: await this.mediaService.LocalVideoProducer.getStats(),
+      });
+      
+      dialogRef.afterClosed().subscribe((result) => {
+        console.log("The dialog was closed");
+      });
+    }
+  }
+
 
   toggleSingleGrid(user: User) {
     if (this.users.length <= 1) return;
@@ -170,21 +226,5 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
       // @ts-ignore
     })(navigator.userAgent || navigator.vendor || window.opera);
     return check;
-  }
-}
-@Component({
-  selector: "app-nickname-dialog",
-  templateUrl: "./choose-nickname.component.html",
-  styleUrls: ["./choose-nickname.component.scss"],
-})
-export class NicknameDialogComponent {
-  constructor(
-    public dialogRef: MatDialogRef<NicknameDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: NicknameDialogData
-  ) {}
-
-  close(): void {
-    console.log(this.data.nickname);
-    this.dialogRef.close(this.data.nickname);
   }
 }
