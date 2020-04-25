@@ -495,8 +495,9 @@ export class MediaService {
     this.localVideoProducer = await this.sendTransport.produce({
       track: localStream.getVideoTracks()[0],
       encodings: [
-        { maxBitrate: 96000, scaleResolutionDownBy: 4 },
         { maxBitrate: 680000, scaleResolutionDownBy: 1 },
+        // The switching seams to fail in firefox and is not supported in hardware encoders
+        // { maxBitrate: 96000, scaleResolutionDownBy: 4 },
       ],
       appData: { type: "video" },
     });
