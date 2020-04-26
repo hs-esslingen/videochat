@@ -124,7 +124,6 @@ export class UserComponent implements OnInit, DoCheck, OnChanges {
   }
 
   calcShowVideo() {
-    console.log(this.videoStream);
     if (this.videoStream == undefined) this.showVideo = false;
     else {
       this.showVideo = true;

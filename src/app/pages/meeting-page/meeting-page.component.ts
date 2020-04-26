@@ -39,7 +39,6 @@ export class NicknameDialogComponent {
   ) {}
 
   close(): void {
-    console.log(this.data.nickname);
     this.dialogRef.close(this.data.nickname);
   }
 }
@@ -57,10 +56,8 @@ export class DebugDialogComponent {
     public dialogRef: MatDialogRef<NicknameDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    console.log(data.keys());
     for (const key of data.keys()) {
       this.debugInfo[key] = data.get(key);
-      console.log(data.get(key));
     }
   }
 
@@ -179,7 +176,6 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   async openDebugDialog() {
     if (this.mediaService.LocalVideoProducer) {
-      console.log(await this.mediaService.LocalVideoProducer.getStats());
       const dialogRef = this.dialog.open(DebugDialogComponent, {
         width: "1200px",
         data: await this.mediaService.LocalVideoProducer.getStats(),
