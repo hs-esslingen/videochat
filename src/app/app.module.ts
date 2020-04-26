@@ -7,7 +7,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatMenuModule } from "@angular/material/menu";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
-import { MeetingPageComponent, NicknameDialogComponent } from "./pages/meeting-page/meeting-page.component";
+import { MeetingPageComponent, NicknameDialogComponent, DebugDialogComponent } from "./pages/meeting-page/meeting-page.component";
 import { HttpClientModule } from "@angular/common/http";
 import { LoginPageComponent } from "./pages/login-page/login-page.component";
 import { HeaderComponent } from "./components/header/header.component";
@@ -29,6 +29,7 @@ import { ImprintPageComponent } from './pages/imprint-page/imprint-page.componen
     ThankYouPageComponent,
     UserComponent,
     NicknameDialogComponent,
+    DebugDialogComponent,
     OverviewPageComponent,
     PrivacyPolicyComponent,
     FooterComponent,

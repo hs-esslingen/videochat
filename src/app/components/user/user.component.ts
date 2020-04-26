@@ -50,7 +50,7 @@ export class UserComponent implements OnInit, DoCheck, OnChanges {
 
     this.messageSubscription = ws.messageObserver.subscribe((msg) => {
       if (msg.type === "remove-producer") {
-        if (msg.data.id === this.videoStream.consumer.producerId && this.user.producers.screen === msg.data.id) this.showVideo = false;
+        if (msg.data.id === this.videoStream?.consumer.producerId && this.user.producers.screen === msg.data.id) this.showVideo = false;
       }
     })
   }
@@ -124,10 +124,9 @@ export class UserComponent implements OnInit, DoCheck, OnChanges {
   }
 
   calcShowVideo() {
-    // console.log(this.videoStream);
-    // if (this.videoStream == undefined) this.showVideo = false;
-    // else {
+    if (this.videoStream == undefined) this.showVideo = false;
+    else {
       this.showVideo = true;
-    // }
+    }
   }
 }

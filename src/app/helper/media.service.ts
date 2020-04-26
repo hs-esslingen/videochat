@@ -37,8 +37,17 @@ export enum Status {
 export class MediaService {
   private device: Device;
   private localVideoProducer: Producer;
+  get LocalVideoProducer(): Producer {
+    return this.localVideoProducer;
+  }
   private localScreenProducer: Producer;
+  get LocalScreenProducer(): Producer {
+    return this.localScreenProducer;
+  }
   private localAudioProducer: Producer;
+  get LocalAudioProducer(): Producer {
+    return this.localAudioProducer;
+  }
   private videoConsumers: Stream[] = [];
   private audioConsumers: Stream[] = [];
   private addingProducers: string[] = [];
@@ -495,8 +504,9 @@ export class MediaService {
     this.localVideoProducer = await this.sendTransport.produce({
       track: localStream.getVideoTracks()[0],
       encodings: [
-        { maxBitrate: 96000, scaleResolutionDownBy: 4 },
         { maxBitrate: 680000, scaleResolutionDownBy: 1 },
+        // The switching seams to fail in firefox and is not supported in hardware encoders
+        // { maxBitrate: 96000, scaleResolutionDownBy: 4 },
       ],
       appData: { type: "video" },
     });
