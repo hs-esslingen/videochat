@@ -56,7 +56,7 @@ const jwtStrategy = new jwtPassport.Strategy(
 );
 
 let samlStrategy: saml.Strategy;
-if (!process.env.DEBUG) {
+if (process.env.NODE_ENV === "production") {
   samlStrategy = new saml.Strategy(
     {
       callbackUrl: process.env.CALLBACK_URL,
@@ -91,7 +91,7 @@ app.use(expressSession);
 app.use(passport.initialize());
 app.use(passport.session());
 
-if (!process.env.DEBUG) {
+if (process.env.NODE_ENV === "production") {
   app.get(
     "/auth/sso",
     passport.authenticate("saml", { failureRedirect: "/auth/fail" }),
@@ -229,6 +229,8 @@ export interface MyWebSocket extends WebSocket {
 }
 
 function initLogger(): void {
+  // set log level via environment variable (default is info)
+  logger.level = process.env.LOGLEVEL || "info";
   const logconf: any = {
     appenders: {
       stdout: { type: "stdout" },
@@ -238,27 +240,22 @@ function initLogger(): void {
     },
   };
 
-  // show all logs if environment variable DEBUG is true, otherwise print only the errors
-  if (process.env.DEBUG === "true") {
-    logger.level = "trace";
-    if (process.env.LOGFILE.endsWith(".log")) {
-      // write logs to log file
-      logconf.appenders.file = {
-        type: "file",
-        filename: process.env.LOGFILE,
-        // log size in bytes for log rolling
-        maxLogSize: 10485760,
-        // number of files for log rolling
-        backups: 3,
-      };
-      logconf.categories.default = {
-        appenders: ["file", "stdout"],
-        level: logger.level,
-      };
-    }
-  } else {
-    logger.level = process.env.LOGLEVEL || "info";
+  if (process.env.LOGFILE.endsWith(".log")) {
+    // write logs to log file
+    logconf.appenders.file = {
+      type: "file",
+      filename: process.env.LOGFILE,
+      // log size in bytes for log rolling
+      maxLogSize: 10485760,
+      // number of files for log rolling
+      backups: 3,
+    };
+    logconf.categories.default = {
+      appenders: ["file", "stdout"],
+      level: logger.level,
+    };
   }
+
   // configure log4js
   configure(logconf);
 }
