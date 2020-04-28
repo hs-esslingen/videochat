@@ -12,12 +12,10 @@ import * as jwt from "jsonwebtoken";
 import * as session from "express-session";
 import { readFileSync } from "fs";
 import * as bodyParser from "body-parser";
-import { getLogger } from "log4js";
+import { getLogger, configure } from "log4js";
 
-export const logger = getLogger();
-
-if (process.env.DEBUG) logger.level = "debug";
-else logger.level = process.env.LOGLEVEL || "info";
+export const logger = getLogger("server");
+initLogger();
 
 // Express server
 const app = express();
@@ -58,7 +56,7 @@ const jwtStrategy = new jwtPassport.Strategy(
 );
 
 let samlStrategy: saml.Strategy;
-if (!process.env.DEBUG) {
+if (process.env.NODE_ENV === "production") {
   samlStrategy = new saml.Strategy(
     {
       callbackUrl: process.env.CALLBACK_URL,
@@ -77,7 +75,8 @@ if (!process.env.DEBUG) {
       const user = {
         email: profile["urn:oid:0.9.2342.19200300.100.1.3"],
         scope: profile["urn:oid:1.3.6.1.4.1.5923.1.1.1.9"],
-        displayName: profile["urn:oid:2.5.4.42"] + " " + profile["urn:oid:2.5.4.4"],
+        displayName:
+          profile["urn:oid:2.5.4.42"] + " " + profile["urn:oid:2.5.4.4"],
       };
       return done(null, user);
     }
@@ -92,7 +91,7 @@ app.use(expressSession);
 app.use(passport.initialize());
 app.use(passport.session());
 
-if (!process.env.DEBUG) {
+if (process.env.NODE_ENV === "production") {
   app.get(
     "/auth/sso",
     passport.authenticate("saml", { failureRedirect: "/auth/fail" }),
@@ -167,7 +166,6 @@ app.post("/auth/email", (req, res) => {
   }
 });
 
-
 app.get("/auth/check", (req, res) => {
   // @ts-ignore email exists exists in user
   if (req.isAuthenticated()) res.json({ email: req.user.email });
@@ -183,7 +181,7 @@ app.get("/ws", (req, res) => {
   wss.handleUpgrade(req, res.socket, Buffer.from(""), (ws: MyWebSocket) => {
     ws.sessionID = req.sessionID;
     ws.user = req.user;
-    wss.emit('connection', ws, );
+    wss.emit("connection", ws);
   });
 });
 
@@ -228,4 +226,36 @@ export interface MyWebSocket extends WebSocket {
   isAlive: boolean;
   sessionID: string;
   user: any;
+}
+
+function initLogger(): void {
+  // set log level via environment variable (default is info)
+  logger.level = process.env.LOGLEVEL || "info";
+  const logconf: any = {
+    appenders: {
+      stdout: { type: "stdout" },
+    },
+    categories: {
+      default: { appenders: ["stdout"], level: logger.level },
+    },
+  };
+
+  if (process.env.LOGFILE.endsWith(".log")) {
+    // write logs to log file
+    logconf.appenders.file = {
+      type: "file",
+      filename: process.env.LOGFILE,
+      // log size in bytes for log rolling
+      maxLogSize: 10485760,
+      // number of files for log rolling
+      backups: 3,
+    };
+    logconf.categories.default = {
+      appenders: ["file", "stdout"],
+      level: logger.level,
+    };
+  }
+
+  // configure log4js
+  configure(logconf);
 }
