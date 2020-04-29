@@ -500,9 +500,10 @@ export class MediaService {
   }
 
   private async sendScreen(localStream: MediaStream) {
+    const codec = this.device.rtpCapabilities.codecs.find((item) => item.mimeType.includes("VP8"));
     this.localScreenProducer = await this.sendTransport.produce({
       track: localStream.getVideoTracks()[0],
-      encodings: null,
+      codec,
       appData: { type: "screen" },
     });
   }
