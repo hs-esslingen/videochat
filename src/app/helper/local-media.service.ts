@@ -3,16 +3,19 @@ import { Injectable } from "@angular/core";
 @Injectable({
   providedIn: "root",
 })
-export class LocalMediaService {
+export class LocalMediaService {  
+  private autoGainControl: boolean;
+  private video: MediaStream;
+  private videoLabel: string;
+  private audio: MediaStream;
+  private audioLabel: string;
+  private capabilities: MediaDeviceInfo[];
+
   constructor() {
     this.videoLabel = window.localStorage.getItem("videoLabel");
     this.audioLabel = window.localStorage.getItem("audioLabel");
+    this.autoGainControl = localStorage.getItem("autoGainControl") !== "false";
   }
-  video: MediaStream;
-  videoLabel: string;
-  audio: MediaStream;
-  audioLabel: string;
-  capabilities: MediaDeviceInfo[];
 
   async getAudioCapabilites(): Promise<MediaDeviceInfo[]> {
     // refresh capabilites
@@ -73,6 +76,7 @@ export class LocalMediaService {
 
       const options: any = {};
       if (device != undefined) options.deviceId = device.deviceId;
+      options.autoGainControl = this.autoGainControl;
 
       try {
         this.audio = await navigator.mediaDevices.getUserMedia({
