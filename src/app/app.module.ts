@@ -24,7 +24,7 @@ import { FooterComponent } from "./components/footer/footer.component";
 import { ContactsPageComponent } from "./pages/contacts-page/contacts-page.component";
 import { ImprintPageComponent } from "./pages/imprint-page/imprint-page.component";
 import { JoinMeetingPopupComponent } from "./components/join-meeting-popup/join-meeting-popup.component";
-import { LecturePageComponent } from './lecture-page/lecture-page.component';
+import { LecturePageComponent } from './pages/lecture-page/lecture-page.component';
 import { MatSelectModule } from "@angular/material/select";
 
 @NgModule({
