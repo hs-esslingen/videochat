@@ -21,6 +21,8 @@ import {
   MatDialogRef,
   MatDialog,
 } from "@angular/material/dialog";
+import { JoinMeetingPopupComponent } from "src/app/components/join-meeting-popup/join-meeting-popup.component";
+import { LocalMediaService } from 'src/app/helper/local-media.service';
 
 enum Layout {
   GRID = "GRID",
@@ -49,7 +51,7 @@ export class NicknameDialogComponent {
   styleUrls: ["./debug-stats.component.scss"],
 })
 export class DebugDialogComponent {
-  debugInfo: { [key: string]: { [key: string]: string }} = {};
+  debugInfo: { [key: string]: { [key: string]: string } } = {};
   objectKeys = Object.keys;
 
   constructor(
@@ -75,7 +77,7 @@ export interface NicknameDialogData {
   templateUrl: "./meeting-page.component.html",
   styleUrls: ["./meeting-page.component.scss"],
 })
-export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
+export class MeetingPageComponent implements OnInit, OnDestroy {
   @ViewChild("local") local: ElementRef<HTMLVideoElement>;
   videoConsumers: Stream[];
   audioConsumers: Stream[];
@@ -99,7 +101,8 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
     readonly mediaService: MediaService,
     private route: ActivatedRoute,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private localMedia: LocalMediaService,
   ) {}
 
   ngOnInit(): void {
@@ -111,47 +114,57 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
         this.isToolbarHidden = true;
       }, 1500) as any) as number;
     }
+    this.route.paramMap.subscribe(async (params) => {
+      this.roomId = params.get("roomId");
+      // if (this.mediaService.nickname == undefined) this.openNicknameDialog();
+      const dialogRef = this.dialog.open(JoinMeetingPopupComponent, {
+        width: "400px",
+        data: { nickname: this.mediaService.nickname, roomId: this.roomId },
+      });
+      dialogRef.afterClosed().subscribe(async (result) => {
+        if (result == undefined) {
+          this.localMedia.closeAudio();
+          this.localMedia.closeVideo();
+          return;
+        }
 
-    if (this.mediaService.nickname == undefined) this.openNicknameDialog();
+        if (result.nickname !== "")
+          this.mediaService.setNickname(result.nickname);
+
+        try {
+          const observer = await this.mediaService.connectToRoom(
+            params.get("roomId"),
+            result.isWebcamDisabled
+          );
+          if (observer != undefined)
+            observer.subscribe((data) => {
+              this.audioConsumers = data.audioConsumers;
+              this.videoConsumers = data.videoConsumers;
+              this.autoGainControl = data.autoGainControl;
+              this.cameraState = data.cameraState;
+              this.microphoneState = data.microphoneState;
+              this.screenshareState = data.screenshareState;
+              this.localStream = data.localStream;
+              this.localSchreenshareStream = data.localScreenshareStream;
+              this.users = data.users;
+
+              if (!this.users.includes(this.singleVideo))
+                this.singleVideo = undefined;
+              if (this.users.length <= 1) this.singleVideo = undefined;
+            });
+        } catch (err) {
+          if (err === "DUPLICATE SESSION") {
+            this.duplicateSession = true;
+          } else {
+            console.error(err);
+          }
+        }
+      });
+    });
   }
 
   ngOnDestroy(): void {
     this.mediaService.disconnect();
-  }
-
-  ngAfterViewInit() {
-    this.route.paramMap.subscribe(async (params) => {
-      try {
-        const localStream = await this.mediaService.getUserMedia();
-        this.roomId = params.get("roomId");
-        const observer = await this.mediaService.connectToRoom(
-          params.get("roomId"),
-          localStream
-        );
-        if (observer != undefined)
-          observer.subscribe((data) => {
-            this.audioConsumers = data.audioConsumers;
-            this.videoConsumers = data.videoConsumers;
-            this.autoGainControl = data.autoGainControl;
-            this.cameraState = data.cameraState;
-            this.microphoneState = data.microphoneState;
-            this.screenshareState = data.screenshareState;
-            this.localStream = data.localStream;
-            this.localSchreenshareStream = data.localScreenshareStream;
-            this.users = data.users;
-
-            if (!this.users.includes(this.singleVideo))
-              this.singleVideo = undefined;
-            if (this.users.length <= 1) this.singleVideo = undefined;
-          });
-      } catch (err) {
-        if (err === "DUPLICATE SESSION") {
-          this.duplicateSession = true;
-        } else {
-          console.log(err);
-        }
-      }
-    });
   }
 
   reload() {
@@ -180,13 +193,12 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
         width: "1200px",
         data: await this.mediaService.LocalVideoProducer.getStats(),
       });
-      
+
       dialogRef.afterClosed().subscribe((result) => {
         console.log("The dialog was closed");
       });
     }
   }
-
 
   toggleSingleGrid(user: User) {
     if (this.users.length <= 1) return;
@@ -198,12 +210,9 @@ export class MeetingPageComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.isMobile) {
       this.isToolbarHidden = false;
       clearTimeout(this.moveTimout);
-      this.moveTimout = (setTimeout(
-        () => {
-          this.isToolbarHidden = true;
-        },
-        1500
-      ) as any) as number;
+      this.moveTimout = (setTimeout(() => {
+        this.isToolbarHidden = true;
+      }, 1500) as any) as number;
     }
   }
 
