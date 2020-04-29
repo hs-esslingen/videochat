@@ -121,7 +121,7 @@ export class MeetingPageComponent implements OnInit, OnDestroy {
         data: { nickname: this.mediaService.nickname, roomId: this.roomId },
       });
       dialogRef.afterClosed().subscribe(async (result) => {
-        if (result == undefined) {
+        if (result == undefined || result === "") {
           this.localMedia.closeAudio();
           this.localMedia.closeVideo();
           return;
