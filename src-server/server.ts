@@ -240,7 +240,7 @@ function initLogger(): void {
     },
   };
 
-  if (process.env.LOGFILE.endsWith(".log")) {
+  if (process.env.LOGFILE && process.env.LOGFILE.endsWith(".log")) {
     // write logs to log file
     logconf.appenders.file = {
       type: "file",

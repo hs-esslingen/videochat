@@ -9,6 +9,7 @@ import { environment } from "src/environments/environment";
 import { ApiService } from "./api.service";
 import { Observable, Subscriber } from "rxjs";
 import { WsService } from "./ws.service";
+import { LocalMediaService } from './local-media.service';
 
 export enum CameraState {
   ENABLED = "videocam",
@@ -78,44 +79,18 @@ export class MediaService {
 
   public nickname: string;
 
-  constructor(private api: ApiService, private ws: WsService) {
+  constructor(private api: ApiService, private ws: WsService, private localMedia: LocalMediaService) {
     this.autoGainControl = localStorage.getItem("autoGainControl") !== "false";
     this.nickname = localStorage.getItem("nickname");
   }
 
-  public async getUserMedia(): Promise<MediaStream> {
-    this.setStatusConnecting();
-    const capabilities = await navigator.mediaDevices.enumerateDevices();
-    const video =
-      capabilities.find((cap) => cap.kind === "videoinput") != undefined;
-    let stream: MediaStream;
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video,
-        audio: {
-          autoGainControl: this.autoGainControl,
-        },
-      });
-    } catch (e) {
-      stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          autoGainControl: this.autoGainControl,
-        },
-      });
-    }
-    return stream;
-  }
 
   public async connectToRoom(
     roomId,
-    localStream: MediaStream
+    isWebcamDisabled: boolean
   ): Promise<MediaObservable> {
-    if (this.status === Status.DISCONNECTED) {
-      localStream.getTracks().forEach((track) => track.stop());
-      return undefined;
-    }
+    this.status = Status.CONNECTING;
     this.roomId = roomId;
-    this.localStream = new MediaStream(localStream.getVideoTracks());
     await this.setupDevice();
 
     await this.setupWebsocket();
@@ -123,17 +98,30 @@ export class MediaService {
     await this.createSendTransport();
     await this.createRecvTransport();
 
-    if (localStream.getVideoTracks().length > 0) {
-      this.cameraState = CameraState.ENABLED;
-      await this.sendVideo(localStream);
+
+    if (!isWebcamDisabled) {
+      const videoTracks = await this.localMedia.getVideoTrack();
+      this.localStream = new MediaStream(videoTracks.getVideoTracks());
+      if (videoTracks.getVideoTracks().length > 0) {
+        this.cameraState = CameraState.ENABLED;
+        await this.sendVideo(videoTracks);
+      } else {
+        this.cameraState = CameraState.DISABLED;
+      }
     } else {
       this.cameraState = CameraState.DISABLED;
     }
 
-    if (localStream.getAudioTracks().length > 0) {
-      this.microphoneState = MicrophoneState.ENABLED;
-      await this.sendAudio(localStream);
-    } else {
+    try {
+      const audioTracks = await this.localMedia.getAudioTrack();
+      if (audioTracks.getAudioTracks().length > 0) {
+        this.microphoneState = MicrophoneState.ENABLED;
+        await this.sendAudio(audioTracks);
+      } else {
+        this.microphoneState = MicrophoneState.DISABLED;
+      }
+    } catch (error) {
+      console.log("AUDIO ERROR");
       this.microphoneState = MicrophoneState.DISABLED;
     }
 
@@ -175,6 +163,7 @@ export class MediaService {
       this.localVideoProducer != undefined &&
       !this.localVideoProducer?.closed
     ) {
+      this.localMedia.closeVideo();
       this.localVideoProducer.close();
       await this.api.producerClose(this.roomId, this.localVideoProducer.id);
       this.cameraState = CameraState.DISABLED;
@@ -185,9 +174,7 @@ export class MediaService {
           this.startingCameraStream = true;
           this.cameraState = CameraState.ENABLED;
           this.updateObserver();
-          const mediaStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-          });
+          const mediaStream = await this.localMedia.getVideoTrack();
           this.localStream = mediaStream;
           this.updateObserver();
           await this.sendVideo(mediaStream);
@@ -513,9 +500,10 @@ export class MediaService {
   }
 
   private async sendScreen(localStream: MediaStream) {
+    const codec = this.device.rtpCapabilities.codecs.find((item) => item.mimeType.includes("VP8"));
     this.localScreenProducer = await this.sendTransport.produce({
       track: localStream.getVideoTracks()[0],
-      encodings: null,
+      codec,
       appData: { type: "screen" },
     });
   }
@@ -574,6 +562,8 @@ export class MediaService {
       this.localScreenshareStream = undefined;
       this.screenshareState = ScreenshareState.DISABLED;
       this.ws.close();
+      this.localMedia.closeAudio();
+      this.localMedia.closeVideo();
     }
     this.status = Status.DISCONNECTED;
   }

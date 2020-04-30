@@ -1,5 +1,5 @@
 @import '~@angular/cdk/overlay-prebuilt.css';
-@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+@import 'mat-theme.scss';
 
 /* You can add global styles to this file, and also import other style files */
 body {
@@ -47,16 +47,16 @@ button {
   /* Corrects inability to style clickable `input` types in iOS */
   -webkit-appearance: none;
 }
-
-.mat-menu-content {
-  background-color: white;
-  color: black;
+.mat-form-field-appearance-legacy .mat-form-field-label, .mat-select-arrow,.mat-form-field-appearance-legacy .mat-form-field-underline {
+  color: white;
 }
 
-.mat-dialog-container {
-  background-color: #193058;
-  color: white
+.mat-form-field-appearance-legacy .mat-form-field-underline {
+  background-color: unset;
 }
+
+
+
 
 input {
   border-radius: 4px;
