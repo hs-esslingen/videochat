@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 @Injectable({
   providedIn: "root",
 })
-export class LocalMediaService {  
+export class LocalMediaService {
   private autoGainControl: boolean;
   private video: MediaStream;
   private videoLabel: string;
