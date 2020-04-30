@@ -1,1 +1,28 @@
-<p>lecture-page works!</p>
+<div id="content">
+    <div id="test">
+        <p>lecture-page works!</p>
+        <div id="webcams"></div>
+        <div id="screenshare"></div>
+        <div id="toolbar"></div>
+    </div>
+    <div id="sidepanel">
+        <div id="master">
+            <h4>Chats</h4>
+            <button type="button" id="public-chat" name="btn_chat" (click)="toggleChat()">Public Chat</button>
+            <!-- Add your active Chats -->
+            <h4>Currnet Users</h4>
+            <label>You</label>
+            <hr>
+            <div id="user-actions">
+                <button type="button" id="raise-hand" name="btn_raise" (click)="raiseHand()">Raise</button>
+                <button type="button" id="whatever_1" name="btn_wt1">Test</button>
+                <button type="button" id="whatever_2" name="btn_wt2">Test</button>
+            </div>
+            <hr>
+            <label>Others</label>
+            <!-- Display current Users  -->
+        </div>
+        <app-chat *ngIf="sidebarDetail === 'public_chat'" class="detail"></app-chat>
+        <!-- <app-poll *ngIf="selected === SELECTION.poll" class="detail"></app-poll> -->
+    </div> 
+</div>

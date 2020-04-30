@@ -1,0 +1,52 @@
+#content {
+    width: 100%;
+    height: 100%;
+
+    #test {
+        float: left;
+    }
+
+    #sidepanel {
+        float: right;
+        height: calc(100% - 52px);
+        width: 25%;
+
+        #master {
+            float: right;
+            display: flex;
+            height: 100%;
+            width: 40%;
+            flex-direction: column;
+            background: #1c2126;
+            margin: 0 auto 0 auto;
+
+            #user-actions {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+            }
+        }
+
+        .detail {
+            // visibility: hidden;
+            float: left;
+            height: 100%;
+            width: 60%;
+            background: #1f252b;
+            margin: 0 auto 0 auto;
+        }
+
+        hr {
+            width: 100%;
+            border-top: thin;
+        }
+    }
+
+    label {
+        padding-bottom: 8px;
+        font-weight: bold;
+        font-size: 12px;
+        line-height: 1.5;
+        color: white;
+    }
+}

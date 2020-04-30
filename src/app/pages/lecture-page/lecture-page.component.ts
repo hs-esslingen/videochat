@@ -6,8 +6,24 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./lecture-page.component.scss']
 })
 export class LecturePageComponent implements OnInit {
+  sidebarDetail = undefined;
 
   constructor() { }
+
+
+
+  toggleChat(): void {
+    if (this.sidebarDetail == "public_chat") {
+      this.sidebarDetail = undefined;
+    }
+    else {
+      this.sidebarDetail = "public_chat"
+    }
+  }
+
+  raiseHand(): void {
+    console.log("Raised you Hand");
+  }
 
   ngOnInit(): void {
   }
