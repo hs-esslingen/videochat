@@ -25,7 +25,6 @@
                     <div class="nickname">{{you.nickname}}</div>
                     <div class="signal" *ngIf="you.isMuted != true"><i class="material-icons">mic</i></div>
                 </div>
-
             <div id="user-actions">
                 <button id="raise-hand" class="small round-button" (click)="raiseHand()"><i
                         class="material-icons">pan_tool</i></button>
@@ -35,8 +34,9 @@
                         class="material-icons">thumb_down</i></button>
             </div>
 
+
+            <label>Others</label>
             <div id="participants">
-                <label>Others</label>
                 <div *ngFor="let user of users" class="user" (click)="userInteraction()"
                   [class.talking]="user.isTalking" 
                   [class.votingUp]="user.votedUp" 
