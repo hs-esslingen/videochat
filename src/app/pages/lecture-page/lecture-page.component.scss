@@ -1,52 +1,244 @@
 #content {
-    width: 100%;
-    height: calc(100% - 52px);
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: calc(100% - 52px);
 
-    #test {
-        float: left;
-    }
+  #test {
+    flex-grow: 1;
+  }
 
-    #sidepanel {
-        float: right;
-        width: 25%;
-        height: 100%;
+  #master {
+    height: 100%;
+    width: 180px;
+    background-color: #1c2126;
+    background-color: #080e1a;
+    margin: 0 auto 0 auto;
 
-        #master {
-            float: right;
-            display: flex;
-            height: 100%;
-            width: 40%;
-            flex-direction: column;
-            background: #1c2126;
-            margin: 0 auto 0 auto;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    // border-top-left-radius: 5px;
+    // border-bottom-left-radius: 5px;
 
-            #user-actions {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-around;
-            }
-        }
+    #scroll {
+      overflow-y: auto;
+      display: flex;
+      height: calc(100% - 70px);
+      flex-direction: column;
 
-        .detail {
-            // visibility: hidden;
-            float: left;
-            height: 100%;
-            width: 60%;
-            background: #1f252b;
-            margin: 0 auto 0 auto;
-        }
+      #user-actions {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        margin-bottom: 8px;
+      }
 
-        hr {
-            width: 100%;
-            border-top: thin;
-        }
-    }
+      // Design for all the other users, that have joined the chat
+      #participants {
+        flex-grow: 1;
+      }
 
-    label {
+
+      h4 {
+        margin: 8px auto 8px 8px;
+      }
+
+      label {
+        margin-left: 8px;
         padding-bottom: 8px;
         font-weight: bold;
         font-size: 12px;
         line-height: 1.5;
         color: white;
+      }
+
+      /* width */
+      &::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      /* Track */
+      &::-webkit-scrollbar-track {
+        background: #080e1a;
+      }
+
+      /* Handle */
+      &::-webkit-scrollbar-thumb {
+        background: #555;
+        border-radius: 6px;
+        border: 2px solid #080e1a;
+      }
+
+      /* Handle on hover */
+      &::-webkit-scrollbar-thumb:hover {
+        background: #2a5094;
+      }
+    }
+
+    
+    #control {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+    }
+
+    .user {
+      min-height: 32px;
+      white-space: nowrap;
+      overflow: hidden;
+      display: flex;
+      flex-direction: row;
+      margin-left: 8px;
+      margin-bottom: 4px;
+      margin-right: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+
+      .status {
+        // background-color: rgb(11, 1, 71);
+        width: 8px;
+        height: 32px;
+        // border-right-style: none;
+        // border-style: solid;
+        // border-width: 2px;
+        // border-color: #08111a;
+      }
+
+      &.micActive .status {
+        background-color: #243e74;
+      }
+      &.talking .status {
+        background-color: #43a047;
+        // padding-left: 8px;
+      }
+      &.votingUp .status{
+          background-color: #43a047;
+      }
+      &.votingDown .status{
+        background-color: #e53935;
+      }
+      &.signaling .status {
+        background-color: yellow;
+      }
+
+      .nickname {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex-grow: 1;
+        padding-left: 8px;
+        padding-right: 4px;
+        width: 70%;
+        
+        // border-style: solid;
+        // border-width: 2px;
+        // border-color: #08111a;
+        line-height: 32px;
+        // background-color: rgb(5, 0, 32);
+      }
+
+      &.micActive .nickname {
+        background-color: #0d1629;
+      }
+      &.talking .nickname {
+        background-color: #1b5e20;
+      }
+      &.votingDown .nickname{
+        background-color: #620f0f;
+      }      
+      &.votingUp .nickname {
+        background-color: #124016;
+      }
+      &.signaling .nickname {
+        background-color: #6d6919;
+      }
+
+      .signal {
+        padding-top: 6px;
+        padding-bottom: 4px;
+        background-color: #1a2e56;
+        padding-right: 8px;
+        padding-left: 6px;
+        color: white;
+        i {
+          font-size: 16px;
+        }
+      }
+      &.talking .signal {
+        color: black;
+        background-color: #1b5e20;
+      }
+      &.votingDown .signal{
+        color: black;
+        background-color: #b71c1c;
+      }      
+      &.votingUp .signal {
+        color: black;
+        background-color: #1b5e20;
+      }
+      &.signaling .signal {
+        background-color: #9e9824;
+      }
+    }
+  }
+
+  .detail {
+    float: left;
+    height: 100%;
+    width: 15%;
+    background: #1f252b;
+    margin: 0 auto 0 auto;
+  }
+
+  .round-button {
+    border-radius: 50%;
+    border-style: solid;
+    border-width: thin;
+    border-color: white;
+    border: none;
+    margin: 8px;
+    background-color: #193058;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+
+    &.active {
+      background-color: var(--app-primary);
+      color: black;
+    }
+
+    &.small {
+      width: 32px;
+      height: 32px;
+
+      i {
+        padding-top: 2px;
+        font-size: 16px;
+      }
+    }
+
+    &.big {
+      width: 48px;
+      height: 48px;
+
+      i {
+        padding-top: 4px;
+        font-size: 32px;
+      }
+    }
+  }
+
+    // Colors the button for leaving the chat in red
+    #raise-hand {
+    //   background-color: #a4c21d;
+        background-color: #9e9824;
+    // background-color: #c2ba1d;
+    // background-color: #969018;
+    }
+    #vote-up {
+        background-color: #25591d;
+    }
+    #vote-down {
+        background-color: #591d1d;
+    }
+    // Styling for the buttons of the control panel
+    #leave-chat {
+        background-color: #6f0e0e;
     }
 }

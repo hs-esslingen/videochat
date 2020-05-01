@@ -5,24 +5,57 @@
         <div id="screenshare"></div>
         <div id="toolbar"></div>
     </div>
-    <div id="sidepanel">
-        <div id="master">
+    <app-chat *ngIf="sidebarDetail === 'public_chat'" class="detail"></app-chat>
+    <!-- <app-poll *ngIf="selected === SELECTION.poll" class="detail"></app-poll> -->
+    <div id="master">
+        <div id="scroll">
+
             <h4>Chats</h4>
-            <button type="button" id="public-chat" name="btn_chat" (click)="toggleChat()">Public Chat</button>
+            <button id="public-chat" (click)="toggleChat()">Public Chat</button>
             <!-- Add your active Chats -->
             <h4>Currnet Users</h4>
             <label>You</label>
-            <hr>
+            <div id="You" class="user"
+                  [class.talking]="you.isTalking" 
+                  [class.votingUp]="you.votedUp" 
+                  [class.votingDown]="you.votedDown"
+                  [class.micActive]="you.isMuted != true"
+                  [class.signaling]="you.isSignaling">
+                    <div class="status"></div>
+                    <div class="nickname">{{you.nickname}}</div>
+                    <div class="signal" *ngIf="you.isMuted != true"><i class="material-icons">mic</i></div>
+                </div>
+
             <div id="user-actions">
-                <button type="button" id="raise-hand" name="btn_raise" (click)="raiseHand()">Raise</button>
-                <button type="button" id="whatever_1" name="btn_wt1">Test</button>
-                <button type="button" id="whatever_2" name="btn_wt2">Test</button>
+                <button id="raise-hand" class="small round-button" (click)="raiseHand()"><i
+                        class="material-icons">pan_tool</i></button>
+                <button id="vote-up" class="small round-button" (click)="thumbsUp()"><i
+                        class="material-icons">thumb_up</i></button>
+                <button id="vote-down" class="small round-button" (click)="thumbsDown()"><i
+                        class="material-icons">thumb_down</i></button>
             </div>
-            <hr>
-            <label>Others</label>
-            <!-- Display current Users  -->
+
+            <div id="participants">
+                <label>Others</label>
+                <div *ngFor="let user of users" class="user" (click)="userInteraction()"
+                  [class.talking]="user.isTalking" 
+                  [class.votingUp]="user.votedUp" 
+                  [class.votingDown]="user.votedDown"
+                  [class.micActive]="user.isMuted != true"
+                  [class.signaling]="user.isSignaling">
+                    <div class="status"></div>
+                    <div class="nickname">{{user.nickname}}</div>
+                    <div class="signal" *ngIf="user.isMuted != true"><i class="material-icons">mic</i></div>
+                </div>
+                <!-- Display current Users  -->
+            </div>
+
         </div>
-        <app-chat *ngIf="sidebarDetail === 'public_chat'" class="detail"></app-chat>
-        <!-- <app-poll *ngIf="selected === SELECTION.poll" class="detail"></app-poll> -->
-    </div> 
+        <div id="control">
+            <button id="settings" class="big round-button" (click)="raiseHand()"><i
+                    class="material-icons">settings</i></button>
+            <button id="leave-chat" class="big round-button" (click)="thumbsUp()"><i
+                    class="material-icons">directions_run</i></button>
+        </div>
+    </div>
 </div>
