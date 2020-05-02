@@ -81,7 +81,7 @@
       justify-content: space-around;
     }
 
-    .user {
+    .object-label {
       min-height: 32px;
       white-space: nowrap;
       overflow: hidden;
@@ -94,13 +94,15 @@
       cursor: pointer;
 
       .status {
-        // background-color: rgb(11, 1, 71);
         width: 8px;
         height: 32px;
-        // border-right-style: none;
-        // border-style: solid;
-        // border-width: 2px;
-        // border-color: #08111a;
+      }
+
+      &.chat .status {
+        background-color: #2b2b2b;
+      }
+      &.messaged .status{
+        background-color: orangered;
       }
 
       &.micActive .status {
@@ -127,12 +129,11 @@
         padding-left: 8px;
         padding-right: 4px;
         width: 70%;
-        
-        // border-style: solid;
-        // border-width: 2px;
-        // border-color: #08111a;
         line-height: 32px;
-        // background-color: rgb(5, 0, 32);
+      }
+
+      &.chat .nickname {
+        background-color: #212121;
       }
 
       &.micActive .nickname {
@@ -162,6 +163,11 @@
           font-size: 16px;
         }
       }
+
+      &.chat .signal {
+        background-color: #2b2b2b;
+      }
+
       &.talking .signal {
         color: black;
         background-color: #1b5e20;
@@ -188,6 +194,9 @@
     margin: 0 auto 0 auto;
   }
 
+  /////////////////////////////
+  //Styling for all the buttons
+  /////////////////////////////
   .round-button {
     border-radius: 50%;
     border-style: solid;
@@ -198,11 +207,16 @@
     background-color: #193058;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 
-    &.active {
-      background-color: var(--app-primary);
-      color: black;
-    }
+    // Subclasses of buttons
+    &.big {
+      width: 48px;
+      height: 48px;
 
+      i {
+        padding-top: 4px;
+        font-size: 32px;
+      }
+    }
     &.small {
       width: 32px;
       height: 32px;
@@ -213,32 +227,28 @@
       }
     }
 
-    &.big {
-      width: 48px;
-      height: 48px;
+    // Functions for all classes
+    &:hover {
+      filter: brightness(1.15);
+    }
+    &.active {
+      background-color: var(--app-primary);
+      color: black;
+    }
 
-      i {
-        padding-top: 4px;
-        font-size: 32px;
-      }
+    // Stylings for individual buttons
+    &#raise-hand {
+      background-color: #9e9824;
+    }
+    &#vote-up {
+      background-color: #25591d;
+    }
+    &#vote-down {
+      background-color: #591d1d;
+    }
+    // Styling for the control-buttons
+    &#leave-chat {
+      background-color: #6f0e0e;
     }
   }
-
-    // Colors the button for leaving the chat in red
-    #raise-hand {
-    //   background-color: #a4c21d;
-        background-color: #9e9824;
-    // background-color: #c2ba1d;
-    // background-color: #969018;
-    }
-    #vote-up {
-        background-color: #25591d;
-    }
-    #vote-down {
-        background-color: #591d1d;
-    }
-    // Styling for the buttons of the control panel
-    #leave-chat {
-        background-color: #6f0e0e;
-    }
 }

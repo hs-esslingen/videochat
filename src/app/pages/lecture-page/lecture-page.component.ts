@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from 'src/app/helper/media.service';
+import { User, Chat } from 'src/app/helper/media.service';
+import { elementEventFullName } from '@angular/compiler/src/view_compiler/view_compiler';
 
 @Component({
   selector: 'app-lecture-page',
@@ -8,9 +9,9 @@ import { User } from 'src/app/helper/media.service';
 })
 export class LecturePageComponent implements OnInit {
   sidebarDetail = undefined;
-  
-  you: User = {id: "666", nickname: "Der King", producers:{}};
+  detailType = undefined;
 
+  you: User = {id: "666", nickname: "Der King", producers:{}};
   users: User[] = [
     { id: "1", nickname: "Leon", producers:{}, isTalking: true, isSignaling: true},
     { id: "2", nickname: "Bartholomäus Rößler", producers:{}, isSignaling: false},
@@ -36,33 +37,53 @@ export class LecturePageComponent implements OnInit {
     { id: "2", nickname: "Andreas Rößler", producers:{}, votedUp: true},
   ];
 
+  publicChat: Chat = {id: "1", partner: "Public Chat", messages: [], newMessage: false}
+
+  chats: Chat[] = [
+    {id: "2", partner: "Leon", messages: [], newMessage: true},
+    {id: "3", partner: "Andy", messages: [], newMessage: false},
+  ]
+
   constructor() { }
 
+  ngOnInit(): void {
+    //this.chats.push({id: "1", partner: "Public Chat", messages: [], newMessage: false})
+  }
 
-
-  toggleChat(): void {
-    if (this.sidebarDetail == "public_chat") {
-      this.sidebarDetail = undefined;
+  toggleSidebar(element): void {
+    //Most of this function is still missing (like polling)
+    if (this.detailType == "chat") {
+      if (this.sidebarDetail.id == element.id) {
+        this.sidebarDetail = undefined;
+        this.detailType = undefined;
+      }
+      else {
+        this.sidebarDetail = element;
+      }
     }
     else {
-      this.sidebarDetail = "public_chat"
+      this.sidebarDetail = element;
+      this.detailType = "chat";
     }
   }
 
   raiseHand(): void {
-    console.log("Raised you Hand");
+    console.log("You've raised your Hand");
   }
   thumbsUp(): void {
-    console.log("You have voted up!");
+    console.log("You've voted up!");
   }
   thumbsDown(): void {
-    console.log("You have voted down!");
+    console.log("You've voted down!");
   }
   userInteraction(): void {
 
   }
-
-  ngOnInit(): void {
+  openSettings(): void {
+    console.log("You've opened the settings!");
+  }
+  leaveChat(): void {
+    console.log("You've left the lecture!");
   }
 
 }

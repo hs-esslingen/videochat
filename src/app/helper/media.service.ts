@@ -604,3 +604,11 @@ export interface User {
     screen?: string;
   };
 }
+
+//Work-in-Progress
+export interface Chat {
+  id: string;
+  partner: String;
+  messages: String[];
+  newMessage: Boolean;
+}
