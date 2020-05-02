@@ -1,3 +1,4 @@
+// Division that holds all content
 #content {
   display: flex;
   flex-direction: row;
@@ -20,10 +21,7 @@
     background-color: #1c2126;
     background-color: #080e1a;
     margin: 0 auto 0 auto;
-
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-    // border-top-left-radius: 5px;
-    // border-bottom-left-radius: 5px;
 
     #scroll {
       overflow-y: auto;

@@ -56,12 +56,17 @@ export class LecturePageComponent implements OnInit {
     { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
   ];
 
-  publicChat: Chat = { id: "1", partner: "Public Chat", messages: [], newMessage: false };
+  publicChat: Chat = {
+    id: "1", 
+    partner: {id: undefined, nickname: "Public Chat", producers:{}}, 
+    messages: [], 
+    newMessage: false,
+  }
 
   chats: Chat[] = [
-    { id: "2", partner: "Leon", messages: [], newMessage: true },
-    { id: "3", partner: "Andy", messages: [], newMessage: false },
-  ];
+    {id: "2", partner: this.users[0], messages: [], newMessage: true},
+    {id: "3", partner: this.users[1], messages: [], newMessage: false},
+  ]
 
   constructor(readonly mediaService: MediaService, private route: ActivatedRoute, private dialog: MatDialog, private localMedia: LocalMediaService) {}
 
@@ -121,7 +126,7 @@ export class LecturePageComponent implements OnInit {
   toggleSidebar(element): void {
     //Most of this function is still missing (like polling)
     if (this.detailType == "chat") {
-      if (this.sidebarDetail.id == element.id) {
+      if (this.sidebarDetail.partner.id == element.partner.id) {
         this.sidebarDetail = undefined;
         this.detailType = undefined;
       } else {

@@ -12,7 +12,7 @@
         <app-toolbar id="toolbar" [microphoneState]="microphoneState" [cameraState]="cameraState" [screenshareState]="screenshareState"></app-toolbar>
 
     </div>
-    <div *ngIf="detailType === 'chat'" class="detail">{{sidebarDetail.partner}}</div>
+    <div *ngIf="detailType === 'chat'" class="detail">{{sidebarDetail.partner.nickname}}</div>
     <!-- <app-chat *ngIf="detailType === 'chat'" class="detail"></app-chat> -->
     <!-- <app-poll *ngIf="selected === SELECTION.poll" class="detail"></app-poll> -->
 
@@ -23,7 +23,7 @@
             <div id="public-chat" class="object-label chat" [class.messaged]="publicChat.newMessage"
                 (click)="toggleSidebar(publicChat)">
                 <div class="status"></div>
-                <div class="nickname">Public Chat</div>
+                <div class="nickname">{{publicChat.partner.nickname}}</div>
                 <div class="signal">
                     <i *ngIf="!publicChat.newMessage" class="material-icons">chat_bubble_outline</i>
                     <i *ngIf="publicChat.newMessage" class="material-icons">chat</i>
@@ -31,14 +31,13 @@
             </div>
 
             <label>Private Chats</label>
-            <div *ngFor="let chat of chats" class="object-label chat" [class.messaged]="chat.newMessage"
-                (click)="toggleSidebar(chat)">
-                <div class="status"></div>
-                <div class="nickname">{{chat.partner}}</div>
-                <div class="signal">
-                    <i *ngIf="!chat.newMessage" class="material-icons">chat_bubble_outline</i>
-                    <i *ngIf="chat.newMessage" class="material-icons">chat</i>
-                </div>
+            <div *ngFor="let chat of chats" class="object-label chat" [class.messaged]="chat.newMessage" (click)="toggleSidebar(chat)">
+                    <div class="status"></div>
+                    <div class="nickname">{{chat.partner.nickname}}</div>
+                    <div class="signal">
+                        <i *ngIf="chat.newMessage != true"class="material-icons">chat_bubble_outline</i>
+                        <i *ngIf="chat.newMessage == true"class="material-icons">chat</i>
+                    </div>
             </div>
 
 
