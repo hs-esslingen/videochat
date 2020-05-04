@@ -4,23 +4,27 @@ export const logger = getLogger();
 
 export class Email {
   constructor() {
-    if (process.env.DEBUG === "true") {
+    if (process.env.NODE_ENV === "development") {
       nodemailer.createTestAccount(this.setupTestAccount);
     } else {
     }
   }
 
+  async setupAccount() {
+    let mailConfig;
+    mailConfig = {
+      host: process.env.MAIL_HOST,
+      port: process.env.MAIL_PORT,
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+      },
+    };
+  }
+
   async setupTestAccount(err: Error, account: nodemailer.TestAccount) {
-    // Generate SMTP service account from ethereal.email
-    if (err) {
-      logger.error("Failed to create a testing account: ", err.message);
-      return process.exit(1);
-    }
-
-    console.log("Credentials obtained, sending message...");
-
-    // Create a SMTP transporter object
-    const transporter = nodemailer.createTransport({
+    let mailConfig;
+    mailConfig = {
       host: account.smtp.host,
       port: account.smtp.port,
       secure: account.smtp.secure,
@@ -28,7 +32,9 @@ export class Email {
         user: account.user,
         pass: account.pass,
       },
-    });
+    };
+
+    const transporter = nodemailer.createTransport(mailConfig);
 
     // Message object
     const message = {
