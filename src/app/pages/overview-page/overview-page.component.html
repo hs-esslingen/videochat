@@ -9,7 +9,7 @@
     </a>
   </div>
 
-  <h3 class="center">Moodle:</h3>
+  <h3 class="center" *ngIf="moodleIsLoggedIn || !isAndroid">Moodle:</h3>
   <div class="center rooms" *ngIf="moodleIsLoggedIn">
     <a class="room" *ngFor="let course of moodleCourses" [routerLink]="'/' + esc(course.shortname)">
       <div class="name">{{course.fullname}}</div>
@@ -17,7 +17,7 @@
       <i class="material-icons">navigate_next</i>
     </a>
   </div>
-  <div class="center" id="moodle-login-outer" *ngIf="!moodleIsLoggedIn">
+  <div class="center" id="moodle-login-outer" *ngIf="!moodleIsLoggedIn && !isAndroid">
     <div class="preview rooms">
       <a class="room">
         <div class="name">Inforamtionstechnik</div>

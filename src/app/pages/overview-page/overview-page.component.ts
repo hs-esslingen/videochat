@@ -31,12 +31,15 @@ export class OverviewPageComponent implements OnInit {
   }[];
   displayName: string;
   email: string;
+  isAndroid: boolean;
 
 
 
   constructor(readonly router: Router, private moodle: MoodleService, readonly api: ApiService, private dialog: MatDialog) { }
 
   async ngOnInit() {
+    const userAgent = navigator.userAgent.toLowerCase();
+    this.isAndroid = userAgent.indexOf("android") > -1;
     if (window.localStorage.getItem("moodleToken")) {
       this.moodleIsLoggedIn = true;
       const token = window.localStorage.getItem("moodleToken");
