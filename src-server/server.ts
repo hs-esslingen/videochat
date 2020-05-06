@@ -174,7 +174,6 @@ app.get("/auth/moodle", (req, res) => {
       const b64Split = data.split(":::");
       if (b64Split.length > 1) {
         token = b64Split[1];
-        console.log(token);
       }
     }
   }
@@ -222,7 +221,7 @@ app.post("/auth/email", (req, res) => {
 
 app.get("/auth/check", (req, res) => {
   // @ts-ignore email exists exists in user
-  if (req.isAuthenticated()) res.json({ email: req.user.email });
+  if (req.isAuthenticated()) res.json({ email: req.user.email, displayName: req.user.displayName || req.user.email.split("@")[0] });
   else res.status(401).send("Unauthorized");
 });
 

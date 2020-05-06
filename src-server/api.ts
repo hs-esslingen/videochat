@@ -4,6 +4,7 @@ import * as WebSocket from "ws";
 import { MyWebSocket } from "./server";
 import * as jwt from "jsonwebtoken";
 import { Room } from "./videochat/room";
+import fetch from "node-fetch";
 
 export class Api {
   readonly api = express.Router();
@@ -107,6 +108,36 @@ export class Api {
       Room.getRoom(req.params.roomId).resumeConsumer(req.body.id);
       res.status(201).send();
     });
+
+    this.api.get("/moodle/courses", async (req, res) => {
+      const params = new URLSearchParams();
+      params.append('wstoken', req.query.token);
+      params.append('moodlewssettingfilter', "true");
+      params.append('moodlewssettingfileurl', "true");
+      params.append('wsfunction', "core_webservice_get_site_info");
+
+      const info = await fetch("https://moodle.hs-esslingen.de/moodle/webservice/rest/server.php?moodlewsrestformat=json", {
+        method: 'POST',
+        // @ts-ignore
+        body: params,
+      })
+      const infoData = await info.json();
+      if (infoData.errorcode === "invalidtoken") {
+        res.status(401).send(infoData.errorcode);
+        return;
+      }
+
+      params.append('userid', infoData.userid);
+      params.delete('wsfunction');
+      params.append('wsfunction', "core_enrol_get_users_courses");
+
+      const data = await fetch("https://moodle.hs-esslingen.de/moodle/webservice/rest/server.php?moodlewsrestformat=json", {
+        method: 'POST',
+        // @ts-ignore
+        body: params,
+      })
+      res.json(await data.json());
+    })
 
     wss.on("connection", (ws: MyWebSocket) => {
       function onMessage(e) {

@@ -44,6 +44,7 @@ export class Room {
   }
 
   static getRoom(roomId) {
+    roomId = unescape(roomId);
     if (this.rooms[roomId] == undefined) {
       logger.info("Creating Room " + roomId);
       this.rooms[roomId] = new Room(roomId);

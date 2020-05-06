@@ -16,12 +16,11 @@ export class ApiService {
   public initialLoading = true;
   public redirectUrl: string;
   public isLoggedIn: boolean;
+  private moodleCourses;
 
   constructor(private http: HttpClient) {
     this.token = window.localStorage.getItem("token");
   }
-
-
 
   public getLogin(): string {
     return this.token;
@@ -29,7 +28,9 @@ export class ApiService {
 
   public async checkLogin() {
     try {
-      await this.http.get(`/auth/check`).toPromise();
+      const data = await this.http.get(`/auth/check`).toPromise() as any;
+      window.localStorage.setItem("email", data.email);
+      window.localStorage.setItem("displayName", data.displayName);
       this.isLoggedIn = true;
       return true;
     } catch (e) {
@@ -74,6 +75,14 @@ export class ApiService {
     return this.http.get(`/auth/logout`).toPromise() as Promise<{
       token?: string;
     }>;
+  }
+
+  async getMoodleCourses(token: string) {
+    if (this.moodleCourses == undefined)
+      this.moodleCourses = (await this.http
+        .get("/api/moodle/courses?token=" + token)
+        .toPromise()) as any;
+    return this.moodleCourses;
   }
 
   public getCapabilities(roomId: string): Promise<RtpCapabilities> {
