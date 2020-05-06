@@ -87,4 +87,9 @@ input {
   &:active {
       background: #B61601;
   }
+
+  &.blue {
+    background: mat-color($app-primary);
+    color: black;
+  }
 }

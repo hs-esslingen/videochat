@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
-import { FormControl, Validators, EmailValidator } from "@angular/forms";
+import { FormControl, Validators } from "@angular/forms";
 import { ApiService } from "src/app/helper/api.service";
-import { promise } from "protractor";
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: "app-login-page",
@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 export class LoginPageComponent implements OnInit {
   isEmailSent = false;
   loginWindow: Window;
+  prodction: boolean;
 
   email: FormControl = new FormControl("", [
     Validators.required,
@@ -21,6 +22,7 @@ export class LoginPageComponent implements OnInit {
   constructor(readonly api: ApiService, readonly router: Router) {}
 
   ngOnInit(): void {
+    this.prodction = environment.production;
     if (this.api.isLoggedIn) {
       this.router.navigate(['']);
     }

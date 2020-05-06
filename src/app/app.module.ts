@@ -18,7 +18,7 @@ import { HeaderComponent } from "./components/header/header.component";
 import { ThankYouPageComponent } from "./pages/thank-you-page/thank-you-page.component";
 import { UserComponent } from "./components/user/user.component";
 import { MatDialogModule } from "@angular/material/dialog";
-import { OverviewPageComponent } from "./pages/overview-page/overview-page.component";
+import { OverviewPageComponent, AllowUriComponent } from "./pages/overview-page/overview-page.component";
 import { PrivacyPolicyComponent } from "./pages/privacy-policy/privacy-policy.component";
 import { FooterComponent } from "./components/footer/footer.component";
 import { ContactsPageComponent } from "./pages/contacts-page/contacts-page.component";
@@ -42,6 +42,7 @@ import { MatSelectModule } from "@angular/material/select";
     ContactsPageComponent,
     ImprintPageComponent,
     JoinMeetingPopupComponent,
+    AllowUriComponent,
   ],
   imports: [
     BrowserModule,

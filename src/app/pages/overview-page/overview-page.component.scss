@@ -4,12 +4,121 @@
   margin-right: 8px;
 }
 
+h1 {
+  text-align: center;
+}
+
+h2 {
+  margin-top: 64px;
+  font-size: 20px;
+}
+
+#moodle-login {
+  margin-right: auto;
+  margin-left: auto;
+  padding: 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  background-color: rgba(255,99,0);
+  line-height: 18px;
+  img {
+    height: 18px;
+    margin-top: -4px;
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+}
+
+#personal-room {
+  padding: 8px;
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.rooms {
+  overflow: hidden;
+  border-radius: 8px;
+  user-select: none; 
+
+  &.preview {
+    .room {
+      background-color: #152849;
+      .name {
+        flex-grow: 0;
+        border-radius: 8px;
+        background-color: #11203a;
+        color: transparent;
+      }
+
+      .grow {
+        flex-grow: 1;
+      }
+
+      i {
+        color: #0d182b;
+        border-radius: 8px;
+      }
+    }
+  }
+  
+  &:not(.preview) .room:hover {
+    background-color: #264986;
+  }
+
+  &:not(.preview) .room {
+    cursor: pointer;
+  }
+
+  .room {
+    text-decoration: none;
+    color: white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    transition: background-color 0.15s ease-out;
+    border-bottom: 1px solid #0c1729;
+    display: flex;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: #193058;
+
+    &.preview {
+      filter: blur(4px);
+    }
+
+    .name {
+      flex-grow: 1;
+    }
+  }
+}
+
+#moodle-login-outer {
+  position: relative;
+
+  #moodle-login {
+    position: absolute;
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+    top: 48px;
+  }
+}
+
 #spacer {
-  height: 64px;
+  height: 32px;
 }
 
 .center {
-  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 500px;
+
+  @media (max-width: 516px) {
+    margin-right: 8px;
+    margin-left: 8px;
+  }
 }
 
 
