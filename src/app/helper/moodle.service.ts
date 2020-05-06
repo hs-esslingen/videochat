@@ -10,9 +10,10 @@ export class MoodleService {
   constructor(private api: ApiService) {}
 
   async requestURI() {
+    const url = new URL(window.location.href);
     navigator.registerProtocolHandler(
       "wtai",
-      "http://localhost:4200/auth/moodle?token=%s",
+      url.origin + "/auth/moodle?token=%s",
       "HSE-Chat Moodle login"
     );
   }
