@@ -18,6 +18,8 @@ import { Email } from "./email";
 export const logger = getLogger("server");
 initLogger();
 
+const email = new Email();
+
 // Express server
 const app = express();
 const server = http.createServer(app);
@@ -215,8 +217,30 @@ app.post("/auth/email", (req, res) => {
     res.json({
       token,
     });
-    //email senden
-    this.email = new Email();
+
+    const callbackUrl =
+      "https://hse-chat.app/login/email?token=" + escape(token);
+
+    email.sendMail(
+      req.body.email,
+      req.body.email,
+      "HSE Chat Login",
+      "",
+      `
+      <style>
+      a {
+        padding: 8px;
+        text-aling: center;
+        color: white;
+        background-color: #193058;
+        display: inline-block;
+        text-decoration: none;
+      }
+      </style>
+      <h1>Willkommen zum Online Videochat der HSE</h1>
+      <a href="${callbackUrl}">Login</a>
+      `
+    );
   } else {
     const error = "email is invalid";
     logger.error(error, req.body.email);
