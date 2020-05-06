@@ -1,19 +1,43 @@
 <main>
   <div id="spacer"></div>
   <h1>Willkommen zum Online Videochat der HSE</h1>
-  <h2 class="center">Meine Kurse:</h2>
-  <button class="button" id="moodle-login">
-    <span>Mit</span>
-    <img src="/assets/img/Moodle-Logo.png" alt="">
-    <span>verbinden</span>
-  </button>
-  <!-- <p class="center">Bitte gebe deinen gewünschten Raumnamen ein:</p> -->
-  <!-- <div class="center" id="input">
-    <input id="chatroom" type="text" name="" [(ngModel)]="roomId">
-    <button class="button" (click)="gotoRoom()">GO</button>
-  </div> -->
   <h2 class="center">Persönlicher Raum:</h2>
-  <button id="personal-room" class="button blue">Meeting starten</button>
-
+  <div class="center rooms">
+    <a class="room">
+      <div class="name">Persönlicher Raum von Leon Schmidt</div>
+      <i class="material-icons">navigate_next</i>
+    </a>
+  </div>
+  
+  <h3 class="center">Moodle:</h3>
+  <div class="center" id="moodle-login-outer">
+    <div class="preview rooms">
+      <a class="room">
+        <div class="name">Inforamtionstechnik</div>
+        <div class="grow"></div>
+        <i class="material-icons">navigate_next</i>
+      </a>
+      <a class="room">
+        <div class="name">Mensch-Computer-Interaktion</div>
+        <div class="grow"></div>
+        <i class="material-icons">navigate_next</i>
+      </a>
+      <a class="room">
+        <div class="name">Modellbildung und Simulation</div>
+        <div class="grow"></div>
+        <i class="material-icons">navigate_next</i>
+      </a>
+      <a class="room">
+        <div class="name">Objektorientierte Systeme 2</div>
+        <div class="grow"></div>
+        <i class="material-icons">navigate_next</i>
+      </a>
+    </div>
+    <button class="button" id="moodle-login">
+      <span>Mit</span>
+      <img src="/assets/img/Moodle-Logo.png" alt="">
+      <span>verbinden</span>
+    </button>
+  </div>
 </main>
 <app-footer></app-footer>

@@ -38,6 +38,73 @@ h2 {
   margin-left: auto;
 }
 
+.rooms {
+  overflow: hidden;
+  border-radius: 8px;
+  user-select: none; 
+
+  &.preview {
+    .room {
+      background-color: #152849;
+      .name {
+        flex-grow: 0;
+        border-radius: 8px;
+        background-color: #11203a;
+        color: transparent;
+      }
+
+      .grow {
+        flex-grow: 1;
+      }
+
+      i {
+        color: #0d182b;
+        border-radius: 8px;
+      }
+    }
+  }
+  
+  &:not(.preview) .room:hover {
+    background-color: #264986;
+  }
+
+  &:not(.preview) .room {
+    cursor: pointer;
+  }
+
+  .room {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    transition: background-color 0.15s ease-out;
+    border-bottom: 1px solid #0c1729;
+    display: flex;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: #193058;
+
+    &.preview {
+      filter: blur(4px);
+    }
+
+    .name {
+      flex-grow: 1;
+    }
+  }
+}
+
+#moodle-login-outer {
+  position: relative;
+
+  #moodle-login {
+    position: absolute;
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+    top: 48px;
+  }
+}
+
 #spacer {
   height: 32px;
 }
