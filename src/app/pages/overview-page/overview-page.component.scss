@@ -4,12 +4,48 @@
   margin-right: 8px;
 }
 
+h1 {
+  text-align: center;
+}
+
+h2 {
+  margin-top: 64px;
+  font-size: 20px;
+  // text-align: center;
+}
+
+#moodle-login {
+  margin-right: auto;
+  margin-left: auto;
+  padding: 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  background-color: rgba(255,99,0);
+  line-height: 18px;
+  img {
+    height: 18px;
+    margin-top: -4px;
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+}
+
+#personal-room {
+  padding: 8px;
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
 #spacer {
-  height: 64px;
+  height: 32px;
 }
 
 .center {
-  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 500px;
 }
 
 

@@ -105,7 +105,18 @@ if (process.env.NODE_ENV === "production") {
     passport.authenticate("saml", { failureRedirect: "/auth/fail" }),
     (req, res) => {
       logger.info("SSO Login", req.user);
-      res.json(req.isAuthenticated());
+
+      res.send(`<html>
+      <head>
+        <title>SSO Login Callback</title>
+      </head>
+      <body>
+        <p>Please close this Window!</p>
+        <script type="text/javascript">
+          window.close();
+        </script>
+      </body>
+      </html>`);
     }
   );
 
@@ -115,7 +126,18 @@ if (process.env.NODE_ENV === "production") {
     passport.authenticate("saml", { failureRedirect: "/auth/fail" }),
     (req, res) => {
       logger.info("SSO Login", req.user);
-      res.json(req.isAuthenticated());
+
+      res.send(`<html>
+      <head>
+        <title>SSO Login Callback</title>
+      </head>
+      <body>
+        <p>Please close this Window!</p>
+        <script type="text/javascript">
+          window.close();
+        </script>
+      </body>
+      </html>`);
     }
   );
 
@@ -139,6 +161,38 @@ if (process.env.NODE_ENV === "production") {
     res.send("SSO login is disabled in DEBUG mode");
   });
 }
+
+app.get("/auth/moodle", (req, res) => {
+  res.set("Content-Type", "text/html; charset=UTF-8");
+  let token;
+  const queryString: string = req.query.token;
+  if (queryString) {
+    const split = queryString.split("://token=");
+    if (split.length > 1) {
+      const b64 = split[1];
+      const data = Buffer.from(b64, "base64").toString();
+      const b64Split = data.split(":::");
+      if (b64Split.length > 1) {
+        token = b64Split[1];
+        console.log(token);
+      }
+    }
+  }
+  res.send(`
+<html>
+  <head>
+    <title>Moodle Callback</title>
+  </head>
+  <body>
+    <h1>Please close this Window!</h1>
+    <script type="text/javascript">
+      window.localStorage.setItem("moodleToken", "${token}");
+      window.close();
+    </script>
+  </body>
+</html>
+  `);
+});
 
 app.get("/auth/jwt", passport.authenticate("jwt"), (req, res) => {
   logger.info("JWT Login", req.user);
