@@ -31,6 +31,12 @@ export enum Status {
   CONNECTED,
   DISCONNECTED,
 }
+export enum Signal {
+  NONE = 0,
+  RAISED_HAND = 1,
+  VOTED_UP = 2,
+  VOTED_DOWN = 3,
+}
 
 @Injectable({
   providedIn: "root",
@@ -603,6 +609,9 @@ export interface User {
     video?: string;
     screen?: string;
   };
+  signal: Signal,
+  isMuted: boolean,
+  isTalking: boolean,
 }
 
 //Work-in-Progress

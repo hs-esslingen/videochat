@@ -4,8 +4,14 @@
   width: 100%;
   height: calc(100% - 52px);
 
-  #test {
+  #main {
+    position: relative;
     flex-grow: 1;
+
+    #toolbar {
+      bottom: 32px;
+      
+    }
   }
 
   #master {

@@ -1,9 +1,16 @@
 <div id="content">
-    <div id="test">
-        <p>lecture-page works!</p>
-        <div id="webcams"></div>
+    <div id="main">
+        <div id="webcams">
+            <app-user class="user" *ngFor="let user of users" [user]="user" [audioConsumers]="audioConsumers"
+                [videoConsumers]="videoConsumers" [small]="singleVideo != undefined" [selected]="singleVideo == user">
+            </app-user>
+
+        </div>
         <div id="screenshare"></div>
-        <div id="toolbar"></div>
+
+
+        <app-toolbar id="toolbar" [microphoneState]="microphoneState" [cameraState]="cameraState" [screenshareState]="screenshareState"></app-toolbar>
+
     </div>
     <div *ngIf="detailType === 'chat'" class="detail">{{sidebarDetail.partner}}</div>
     <!-- <app-chat *ngIf="detailType === 'chat'" class="detail"></app-chat> -->
@@ -13,38 +20,37 @@
         <div id="scroll">
 
             <h4>Chats</h4>
-            <div id="public-chat" class="object-label chat" [class.messaged]="publicChat.newMessage" (click)="toggleSidebar(publicChat)">
+            <div id="public-chat" class="object-label chat" [class.messaged]="publicChat.newMessage"
+                (click)="toggleSidebar(publicChat)">
                 <div class="status"></div>
                 <div class="nickname">Public Chat</div>
                 <div class="signal">
-                    <i *ngIf="publicChat.newMessage != true"class="material-icons">chat_bubble_outline</i>
-                    <i *ngIf="publicChat.newMessage == true"class="material-icons">chat</i>
+                    <i *ngIf="!publicChat.newMessage" class="material-icons">chat_bubble_outline</i>
+                    <i *ngIf="publicChat.newMessage" class="material-icons">chat</i>
                 </div>
             </div>
 
             <label>Private Chats</label>
-            <div *ngFor="let chat of chats" class="object-label chat" [class.messaged]="chat.newMessage" (click)="toggleSidebar(chat)">
-                    <div class="status"></div>
-                    <div class="nickname">{{chat.partner}}</div>
-                    <div class="signal">
-                        <i *ngIf="chat.newMessage != true"class="material-icons">chat_bubble_outline</i>
-                        <i *ngIf="chat.newMessage == true"class="material-icons">chat</i>
-                    </div>
+            <div *ngFor="let chat of chats" class="object-label chat" [class.messaged]="chat.newMessage"
+                (click)="toggleSidebar(chat)">
+                <div class="status"></div>
+                <div class="nickname">{{chat.partner}}</div>
+                <div class="signal">
+                    <i *ngIf="!chat.newMessage" class="material-icons">chat_bubble_outline</i>
+                    <i *ngIf="chat.newMessage" class="material-icons">chat</i>
+                </div>
             </div>
 
 
             <h4>Currnet Users</h4>
             <label>You</label>
-            <div id="You" class="object-label"
-                [class.talking]="you.isTalking" 
-                [class.votingUp]="you.votedUp" 
-                [class.votingDown]="you.votedDown"
-                [class.micActive]="you.isMuted != true"
-                [class.signaling]="you.isSignaling">
-                    <div class="status"></div>
-                    <div class="nickname">{{you.nickname}}</div>
-                    <div class="signal" *ngIf="you.isMuted != true"><i class="material-icons">mic</i></div>
-                </div>
+            <div id="You" class="object-label" [class.talking]="currentUser.isTalking"
+                [class.signaling]="currentUser.signal === 1" [class.votingUp]="currentUser.signal === 2"
+                [class.votingDown]="currentUser.signal === 3" [class.micActive]="!currentUser.isMuted">
+                <div class="status"></div>
+                <div class="nickname">{{currentUser.nickname}}</div>
+                <div class="signal" *ngIf="currentUser.isMuted != true"><i class="material-icons">mic</i></div>
+            </div>
             <div id="user-actions">
                 <button id="raise-hand" class="small round-button" (click)="raiseHand()"><i
                         class="material-icons">pan_tool</i></button>
@@ -58,11 +64,9 @@
             <label>Others</label>
             <div id="participants">
                 <div *ngFor="let user of users" class="object-label" (click)="userInteraction()"
-                  [class.talking]="user.isTalking" 
-                  [class.votingUp]="user.votedUp" 
-                  [class.votingDown]="user.votedDown"
-                  [class.micActive]="user.isMuted != true"
-                  [class.signaling]="user.isSignaling">
+                    [class.talking]="user.isTalking" [class.signaling]="user.signal === 1"
+                    [class.votingUp]="user.signal === 2" [class.votingDown]="user.signal === 3"
+                    [class.micActive]="!user.isMuted">
                     <div class="status"></div>
                     <div class="nickname">{{user.nickname}}</div>
                     <div class="signal" *ngIf="user.isMuted != true"><i class="material-icons">mic</i></div>
