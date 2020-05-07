@@ -27,6 +27,7 @@ import { JoinMeetingPopupComponent } from "./components/join-meeting-popup/join-
 import { LecturePageComponent } from './pages/lecture-page/lecture-page.component';
 import { MatSelectModule } from "@angular/material/select";
 import { ChatComponent } from './components/chat/chat.component';
+import { ToolbarComponent } from './components/toolbar/toolbar.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { ChatComponent } from './components/chat/chat.component';
     AllowUriComponent,
     LecturePageComponent,
     ChatComponent,
+    ToolbarComponent,
   ],
   imports: [
     BrowserModule,
