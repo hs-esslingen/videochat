@@ -32,18 +32,23 @@ export class Email {
   }
 
   private setupTestAccount() {
-    nodemailer.createTestAccount((err, account) => {
-      const mailConfig: SMTPTransport.Options = {
-        host: account.smtp.host,
-        port: account.smtp.port,
-        secure: account.smtp.secure,
-        auth: {
-          user: account.user,
-          pass: account.pass,
-        },
-      };
-      this.transporter = nodemailer.createTransport(mailConfig);
-    });
+    nodemailer.createTestAccount(
+      (err: Error, account: nodemailer.TestAccount) => {
+        if (err) {
+          logger.error("setup test account failed: " + err);
+        }
+        const mailConfig: SMTPTransport.Options = {
+          host: account.smtp.host,
+          port: account.smtp.port,
+          secure: account.smtp.secure,
+          auth: {
+            user: account.user,
+            pass: account.pass,
+          },
+        };
+        this.transporter = nodemailer.createTransport(mailConfig);
+      }
+    );
   }
 
   async sendMail(
@@ -69,11 +74,3 @@ export class Email {
   }
 }
 
-type MailConfig = {
-  host: string;
-  port: string;
-  auth: {
-    user: string;
-    pass: string;
-  };
-};

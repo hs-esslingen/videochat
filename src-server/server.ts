@@ -224,7 +224,7 @@ app.post("/auth/email", (req, res) => {
     email.sendMail(
       req.body.email,
       req.body.email,
-      "HSE Chat Login",
+      "Hochschule Esslingen Chat Login",
       "",
       `
       <style>
@@ -237,8 +237,10 @@ app.post("/auth/email", (req, res) => {
         text-decoration: none;
       }
       </style>
-      <h1>Willkommen zum Online Videochat der HSE</h1>
+      <h1>Willkommen zum Online Videochat der Hochschule Esslingen</h1>
+	  <p>Klicken Sie auf den Login Link um ein Videochat Room zu betreten:</p>
       <a href="${callbackUrl}">Login</a>
+	  <p>Wenn Sie sich nicht beim Online Videochat der Hochschule Esslingen angemeldet haben, ignorieren Sie diese Email.</p>
       `
     );
   } else {
