@@ -29,6 +29,7 @@ export class Email {
       },
     };
     this.transporter = nodemailer.createTransport(mailConfig);
+    this.verifyConnection();
   }
 
   private setupTestAccount() {
@@ -47,8 +48,23 @@ export class Email {
           },
         };
         this.transporter = nodemailer.createTransport(mailConfig);
+        this.verifyConnection();
       }
     );
+  }
+
+  private verifyConnection() {
+    // verify connection configuration
+    this.transporter.verify((error: Error, success: true) => {
+      if (error) {
+        logger.error(error);
+      }
+      if (success) {
+        logger.trace("Server is ready to take our messages");
+      } else {
+        logger.error("no success on verifing smtp connection");
+      }
+    });
   }
 
   async sendMail(
@@ -68,9 +84,17 @@ export class Email {
     };
 
     const info = await this.transporter.sendMail(message);
-    logger.debug("Message sent: ", info.messageId);
-    // Preview only available when sending through an Ethereal account
-    logger.debug("Preview URL: ", nodemailer.getTestMessageUrl(info));
+    logger.debug(
+      "E-Mail sent! messageID: ",
+      info.messageId,
+      " - envelope: ",
+      info.envelope
+    );
+
+    if (process.env.NODE_ENV === "development") {
+      // Preview only available when sending through an Ethereal account
+      logger.debug("Preview URL: ", nodemailer.getTestMessageUrl(info));
+    }
   }
 }
 
