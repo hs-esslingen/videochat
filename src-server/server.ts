@@ -221,13 +221,9 @@ app.post("/auth/email", (req, res) => {
     const callbackUrl =
       "https://hse-chat.app/login/email?token=" + escape(token);
 
-    email.sendMail(
-      req.body.email,
-      req.body.email,
-      "Hochschule Esslingen Chat Login",
-      "",
-      `
-      <style>
+    // build Email content in plain text and html
+    const subject = "Hochschule Esslingen Chat Login";
+    const htmlStyle = `<style>
       a {
         padding: 8px;
         text-aling: center;
@@ -236,13 +232,23 @@ app.post("/auth/email", (req, res) => {
         display: inline-block;
         text-decoration: none;
       }
-      </style>
-      <h1>Willkommen zum Online Videochat der Hochschule Esslingen</h1>
-	  <p>Klicken Sie auf den Login Link um ein Videochat Room zu betreten:</p>
+      </style>`;
+    const bodyWelcome =
+      "Willkommen zum Online Videochat der Hochschule Esslingen";
+    const bodyp1 =
+      "Klicken Sie auf den Login Link um ein Videochat Room zu betreten:";
+    const bodyp2 =
+      "Wenn Sie sich nicht beim Online Videochat der Hochschule Esslingen angemeldet haben, ignorieren Sie diese Email.";
+    const html = `${htmlStyle}
+      <h1>${bodyWelcome}</h1>
+	  <p>${bodyp1}</p>
       <a href="${callbackUrl}">Login</a>
-	  <p>Wenn Sie sich nicht beim Online Videochat der Hochschule Esslingen angemeldet haben, ignorieren Sie diese Email.</p>
-      `
-    );
+	  <p>${bodyp2}</p>
+      `;
+    const text =
+      bodyWelcome + "\n\n" + bodyp1 + "\n\n" + callbackUrl + "\n\n" + bodyp2;
+
+    email.sendMail(req.body.email, req.body.email, subject, text, html);
   } else {
     const error = "email is invalid";
     logger.error(error, req.body.email);
