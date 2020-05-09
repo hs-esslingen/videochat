@@ -19,6 +19,10 @@ export const logger = getLogger("server");
 initLogger();
 
 const email = new Email();
+// track emails which try to receive a email
+let loginRequest: Map<string, number> = new Map<string, number>();
+// minimum time difference in milliseconds between last email request and current time
+const minTimeDifference: number = 600000;
 
 // Express server
 const app = express();
@@ -203,7 +207,21 @@ app.get("/auth/jwt", passport.authenticate("jwt"), (req, res) => {
 
 app.post("/auth/email", (req, res) => {
   logger.trace("/auth/email");
-  const secretkey = "mysecretkey";
+
+  if (loginRequest.has(req.body.email)) {
+    const previousTime = loginRequest.get(req.body.email);
+    if (Date.now() - previousTime < minTimeDifference) {
+      // requested email was too frequently
+      const error: Error = new Error("email already requested!");
+      res.send(error);
+      logger.trace(error);
+      return;
+    }
+  }
+
+  loginRequest.set(req.body.email, Date.now());
+
+  const secretkey = process.env.SIGN_SECRETKEY || "mysecretkey";
 
   const EmailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (
