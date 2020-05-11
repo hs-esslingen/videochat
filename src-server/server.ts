@@ -230,10 +230,12 @@ app.post("/auth/email", (req, res) => {
   ) {
     const token = jwt.sign({ email: req.body.email }, secretkey);
     logger.info("email is valid: ", req.body.email);
-    // send encoded token
-    res.json({
-      token,
-    });
+    if (process.env.NODE_ENV === "development") {
+      // send encoded token
+      res.json({
+        token,
+      });
+    }
 
     const callbackUrl =
       "https://hse-chat.app/login/email?token=" + escape(token);
@@ -275,7 +277,11 @@ app.post("/auth/email", (req, res) => {
 
 app.get("/auth/check", (req, res) => {
   // @ts-ignore email exists exists in user
-  if (req.isAuthenticated()) res.json({ email: req.user.email, displayName: req.user.displayName || req.user.email.split("@")[0] });
+  if (req.isAuthenticated())
+    res.json({
+      email: req.user.email,
+      displayName: req.user.displayName || req.user.email.split("@")[0],
+    });
   else res.status(401).send("Unauthorized");
 });
 
