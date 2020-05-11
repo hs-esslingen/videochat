@@ -29,6 +29,7 @@ const app = express();
 const server = http.createServer(app);
 
 const PORT = process.env.PORT || 4000;
+const secretkey = process.env.SIGN_SECRETKEY || "mysecretkey";
 
 const wss = new WebSocket.Server({ noServer: true });
 
@@ -53,7 +54,7 @@ passport.deserializeUser((user, done) => {
 
 const jwtStrategy = new jwtPassport.Strategy(
   {
-    secretOrKey: "mysecretkey",
+    secretOrKey: secretkey,
     jwtFromRequest: jwtPassport.ExtractJwt.fromHeader("x-token"),
   },
   (jwtPayload, done) => {
@@ -213,15 +214,13 @@ app.post("/auth/email", (req, res) => {
     if (Date.now() - previousTime < minTimeDifference) {
       // requested email was too frequently
       const error: Error = new Error("email already requested!");
-      res.send(error);
       logger.trace(error);
+      res.status(429).send(error);
       return;
     }
   }
 
   loginRequest.set(req.body.email, Date.now());
-
-  const secretkey = process.env.SIGN_SECRETKEY || "mysecretkey";
 
   const EmailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (
@@ -269,7 +268,7 @@ app.post("/auth/email", (req, res) => {
     email.sendMail(req.body.email, req.body.email, subject, text, html);
   } else {
     const error = "email is invalid";
-    logger.error(error, req.body.email);
+    logger.warn(error, req.body.email);
     res.status(400).send(error);
   }
 });
