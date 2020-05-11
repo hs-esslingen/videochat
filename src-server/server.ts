@@ -13,15 +13,23 @@ import * as session from "express-session";
 import { readFileSync } from "fs";
 import * as bodyParser from "body-parser";
 import { getLogger, configure } from "log4js";
+import { Email } from "./email";
 
 export const logger = getLogger("server");
 initLogger();
+
+const email = new Email();
+// track emails which try to receive a email
+let loginRequest: Map<string, number> = new Map<string, number>();
+// minimum time difference in milliseconds between last email request and current time
+const minTimeDifference: number = 600000;
 
 // Express server
 const app = express();
 const server = http.createServer(app);
 
 const PORT = process.env.PORT || 4000;
+const secretkey = process.env.SIGN_SECRETKEY || "mysecretkey";
 
 const wss = new WebSocket.Server({ noServer: true });
 
@@ -46,7 +54,7 @@ passport.deserializeUser((user, done) => {
 
 const jwtStrategy = new jwtPassport.Strategy(
   {
-    secretOrKey: "mysecretkey",
+    secretOrKey: secretkey,
     jwtFromRequest: jwtPassport.ExtractJwt.fromHeader("x-token"),
   },
   (jwtPayload, done) => {
@@ -199,7 +207,20 @@ app.get("/auth/jwt", passport.authenticate("jwt"), (req, res) => {
 });
 
 app.post("/auth/email", (req, res) => {
-  const secretkey = "mysecretkey";
+  logger.trace("/auth/email");
+
+  if (loginRequest.has(req.body.email)) {
+    const previousTime = loginRequest.get(req.body.email);
+    if (Date.now() - previousTime < minTimeDifference) {
+      // requested email was too frequently
+      const error: Error = new Error("email already requested!");
+      logger.trace(error);
+      res.status(429).send(error);
+      return;
+    }
+  }
+
+  loginRequest.set(req.body.email, Date.now());
 
   const EmailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (
@@ -208,20 +229,59 @@ app.post("/auth/email", (req, res) => {
     req.body.email.endsWith("hs-esslingen.de")
   ) {
     const token = jwt.sign({ email: req.body.email }, secretkey);
-    // send encoded token
-    res.json({
-      token,
-    });
+    logger.info("email is valid: ", req.body.email);
+    if (process.env.NODE_ENV === "development") {
+      // send encoded token
+      res.json({
+        token,
+      });
+    }
+
+    const callbackUrl =
+      "https://hse-chat.app/login/email?token=" + escape(token);
+
+    // build Email content in plain text and html
+    const subject = "Hochschule Esslingen Chat Login";
+    const htmlStyle = `<style>
+      a {
+        padding: 8px;
+        text-aling: center;
+        color: white;
+        background-color: #193058;
+        display: inline-block;
+        text-decoration: none;
+      }
+      </style>`;
+    const bodyWelcome =
+      "Willkommen zum Online Videochat der Hochschule Esslingen";
+    const bodyp1 =
+      "Klicken Sie auf den Login Link um ein Videochat Room zu betreten:";
+    const bodyp2 =
+      "Wenn Sie sich nicht beim Online Videochat der Hochschule Esslingen angemeldet haben, ignorieren Sie diese Email.";
+    const html = `${htmlStyle}
+      <h1>${bodyWelcome}</h1>
+	  <p>${bodyp1}</p>
+      <a href="${callbackUrl}">Login</a>
+	  <p>${bodyp2}</p>
+      `;
+    const text =
+      bodyWelcome + "\n\n" + bodyp1 + "\n\n" + callbackUrl + "\n\n" + bodyp2;
+
+    email.sendMail(req.body.email, req.body.email, subject, text, html);
   } else {
     const error = "email is invalid";
-    logger.error("Email is invalid: ", req.body.email);
+    logger.warn(error, req.body.email);
     res.status(400).send(error);
   }
 });
 
 app.get("/auth/check", (req, res) => {
   // @ts-ignore email exists exists in user
-  if (req.isAuthenticated()) res.json({ email: req.user.email, displayName: req.user.displayName || req.user.email.split("@")[0] });
+  if (req.isAuthenticated())
+    res.json({
+      email: req.user.email,
+      displayName: req.user.displayName || req.user.email.split("@")[0],
+    });
   else res.status(401).send("Unauthorized");
 });
 
