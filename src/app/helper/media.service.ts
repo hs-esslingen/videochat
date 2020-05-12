@@ -525,3 +525,9 @@ export interface User {
   isMuted: boolean;
   isTalking: boolean;
 }
+
+export interface Message {
+  sender: string;
+  text:   string;
+  time:   Date;
+}

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { User, Signal } from "./media.service";
+import { User, Signal, Message } from "./media.service";
 import { Subscriber, Observable, Observer } from "rxjs";
 
 @Injectable({
@@ -36,7 +36,7 @@ export class ChatService {
 }
 
 export class Chat {
-  constructor(public id: string, public messages: String[], public newMessage: boolean, public partner?: User) {}
+  constructor(public id: string, public messages: Message[], public newMessage: boolean, public partner?: User) {}
 
   static fromJson(data: ChatJson) {
     return new Chat(data.id, data.messages, data.newMessage, data.partner);
@@ -51,7 +51,7 @@ export class Chat {
 type ChatJson = {
   id: string;
   partner?: User;
-  messages: String[];
+  messages: Message[];
   newMessage: boolean;
 };
 

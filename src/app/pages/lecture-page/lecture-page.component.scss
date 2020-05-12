@@ -18,15 +18,16 @@
   #master {
     height: 100%;
     width: 180px;
-    background-color: #1c2126;
     background-color: #080e1a;
     margin: 0 auto 0 auto;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.05), 0 6px 6px rgba(0, 0, 0, 0.23);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.06), 0 6px 6px rgba(0, 0, 0, 0.23);
 
     #scroll {
       overflow-y: auto;
       display: flex;
-      height: calc(100% - 70px);
+      height: calc(100% - 64px);
       flex-direction: column;
 
       #user-actions {
@@ -191,10 +192,9 @@
   }
 
   .detail {
-    float: left;
     height: 100%;
-    width: 15%;
-    background: #1f252b;
+    width: 350px;
+    background-color: #080e1a;
     margin: 0 auto 0 auto;
   }
 

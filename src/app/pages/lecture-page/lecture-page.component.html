@@ -1,9 +1,9 @@
 <div id="content">
     <div id="main">
         <div id="webcams">
-            <app-user class="user" *ngFor="let user of users" [user]="user" [audioConsumers]="audioConsumers"
+            <!-- <app-user class="user" *ngFor="let user of users" [user]="user" [audioConsumers]="audioConsumers"
                 [videoConsumers]="videoConsumers" [small]="singleVideo != undefined" [selected]="singleVideo == user">
-            </app-user>
+            </app-user> -->
 
         </div>
         <div id="screenshare"></div>
@@ -12,8 +12,8 @@
         <app-toolbar id="toolbar" [microphoneState]="microphoneState" [cameraState]="cameraState" [screenshareState]="screenshareState"></app-toolbar>
 
     </div>
-    <div *ngIf="detailType === 'chat'" class="detail">{{sidebarDetail.getNickname()}}</div>
-    <!-- <app-chat *ngIf="detailType === 'chat'" class="detail"></app-chat> -->
+
+    <app-chat *ngIf="detailType === 'chat'" class="detail" [childData]="sidebarDetail"></app-chat>
     <!-- <app-poll *ngIf="selected === SELECTION.poll" class="detail"></app-poll> -->
 
     <div id="master">

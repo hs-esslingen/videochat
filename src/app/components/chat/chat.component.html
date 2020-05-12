@@ -1,1 +1,16 @@
-<p>chat works!</p>
+<div id="content">
+    <h4 *ngIf="childData.partner !== undefined">Your chat with {{childData.getNickname()}}</h4>
+    <h4 *ngIf="childData.partner === undefined">Public Chat</h4>
+    <div id="messages">
+        <div *ngFor="let message of childData.messages" class="message">
+            <div id="sender">{{message.sender}}:</div>
+            <div id="time">{{message.time}}</div>
+            <div id="text">{{message.text}}</div>
+        </div>
+    </div>
+    
+    <button id="send-message" (click)="sendMessage()">Send</button>
+    <textarea id="chat-input" placeholder="Enter your message here"></textarea>
+</div>
+
+

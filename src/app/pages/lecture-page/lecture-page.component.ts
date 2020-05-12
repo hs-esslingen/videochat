@@ -57,6 +57,7 @@ export class LecturePageComponent implements OnInit, OnDestroy {
     // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreses or rejoins)
     this.chats = this.chatService.getChats();
 
+    //Creates an observer on the chats and subscribes to it
     this.chatSubscription = this.chatService.getObserver().subscribe((data) => {
       this.chats = data.chats;
     });
