@@ -154,4 +154,8 @@ export class LecturePageComponent implements OnInit {
   leaveChat(): void {
     console.log("You've left the lecture!");
   }
+
+  test(): void {
+
+  }
 }
