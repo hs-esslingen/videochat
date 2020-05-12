@@ -1,16 +1,22 @@
-import { Component, OnInit } from "@angular/core";
-import { User, Chat, Stream, MicrophoneState, ScreenshareState, CameraState, Signal, MediaService } from "src/app/helper/media.service";
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { User, Stream, MicrophoneState, ScreenshareState, CameraState, Signal, MediaService } from "src/app/helper/media.service";
 import { ActivatedRoute } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { LocalMediaService } from "src/app/helper/local-media.service";
 import { JoinMeetingPopupComponent } from "src/app/components/join-meeting-popup/join-meeting-popup.component";
+import { ChatService, Chat, ChatObservable } from "src/app/helper/chat.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-lecture-page",
   templateUrl: "./lecture-page.component.html",
   styleUrls: ["./lecture-page.component.scss"],
 })
-export class LecturePageComponent implements OnInit {
+export class LecturePageComponent implements OnInit, OnDestroy {
+  //Enables / Disables debug mode, that creates some dummy users and chats
+  debug = true;
+
+  // Variables for video
   videoConsumers: Stream[];
   audioConsumers: Stream[];
   autoGainControl: boolean;
@@ -35,9 +41,26 @@ export class LecturePageComponent implements OnInit {
   users: User[] = [];
   chats: Chat[] = [];
 
-  constructor(readonly mediaService: MediaService, private route: ActivatedRoute, private dialog: MatDialog, private localMedia: LocalMediaService) {}
+  chatSubscription: Subscription;
+
+  constructor(
+    readonly mediaService: MediaService,
+    readonly chatService: ChatService,
+    private route: ActivatedRoute,
+    private dialog: MatDialog,
+    private localMedia: LocalMediaService
+  ) {}
 
   ngOnInit(): void {
+    if (this.debug) this.test();
+
+    // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreses or rejoins)
+    this.chats = this.chatService.getChats();
+
+    this.chatSubscription = this.chatService.getObserver().subscribe((data) => {
+      this.chats = data.chats;
+    });
+
     const url = new URL(location.href);
     this.roomUrl = url.origin + url.pathname;
     // this.isMobile = this.checkMobile();
@@ -87,22 +110,29 @@ export class LecturePageComponent implements OnInit {
         }
       });
     });
-    //this.chats.push({id: "1", partner: "Public Chat", messages: [], newMessage: false})
   }
-   
+
+  ngOnDestroy(): void {
+    this.chatSubscription.unsubscribe();
+  }
 
   toggleSidebar(element): void {
     //Most of this function is still missing (like polling)
-    if (this.detailType == "chat") {
-      if (this.sidebarDetail.partner.id == element.partner.id) {
-        this.sidebarDetail = undefined;
-        this.detailType = undefined;
-      } else {
+    switch (this.detailType) {
+      case "chat":
+        if (this.sidebarDetail.id == element.id) {
+          this.sidebarDetail = undefined;
+          this.detailType = undefined;
+        }
+        else {
+          this.sidebarDetail = element;
+        }
+        break;
+
+      default:
         this.sidebarDetail = element;
-      }
-    } else {
-      this.sidebarDetail = element;
-      this.detailType = "chat";
+        this.detailType = "chat";
+        break;
     }
   }
 
@@ -146,8 +176,8 @@ export class LecturePageComponent implements OnInit {
     this.users.push({ id: "20", nickname: "Test_20", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
     this.users.push({ id: "21", nickname: "Test_21", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
     this.users.push({ id: "22", nickname: "Test_22", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
-  
-    this.chats.push({id: "2", partner: this.users[0], messages: [], newMessage: true});
-    this.chats.push({id: "3", partner: this.users[1], messages: [], newMessage: false});
+
+    this.chatService.addChat(this.users[0]);
+    this.chatService.addChat(this.users[1]);
   }
 }

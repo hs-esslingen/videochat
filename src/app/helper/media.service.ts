@@ -525,11 +525,3 @@ export interface User {
   isMuted: boolean;
   isTalking: boolean;
 }
-
-// Work-in-Progress
-export interface Chat {
-  id: string;
-  partner: string;
-  messages: string[];
-  newMessage: boolean;
-}
