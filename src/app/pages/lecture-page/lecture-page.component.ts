@@ -27,46 +27,13 @@ export class LecturePageComponent implements OnInit {
   singleVideo: User;
   duplicateSession = false;
 
+  //Variables for sidebar
   sidebarDetail = undefined;
   detailType = undefined;
 
   currentUser: User = { id: "666", nickname: "Der King", producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND };
-  users: User[] = [
-    { id: "1", nickname: "Leon", producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND },
-    { id: "2", nickname: "Bartholomäus Rößler", producers: {}, isMuted: false, isTalking: true, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: false, isTalking: true, signal: Signal.VOTED_UP },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: false, isTalking: true, signal: Signal.VOTED_DOWN },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: true, signal: Signal.VOTED_DOWN },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_UP },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_UP },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-    { id: "2", nickname: "Andreas Rößler", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-  ];
-
-  publicChat: Chat = {
-    id: "1", 
-    partner: {id: undefined, nickname: "Public Chat", producers:{}}, 
-    messages: [], 
-    newMessage: false,
-  }
-
-  chats: Chat[] = [
-    {id: "2", partner: this.users[0], messages: [], newMessage: true},
-    {id: "3", partner: this.users[1], messages: [], newMessage: false},
-  ]
+  users: User[] = [];
+  chats: Chat[] = [];
 
   constructor(readonly mediaService: MediaService, private route: ActivatedRoute, private dialog: MatDialog, private localMedia: LocalMediaService) {}
 
@@ -106,7 +73,7 @@ export class LecturePageComponent implements OnInit {
               this.screenshareState = data.screenshareState;
               this.localStream = data.localStream;
               this.localSchreenshareStream = data.localScreenshareStream;
-              this.users = data.users;
+              if (!this.debug) this.users = data.users;
 
               if (!this.users.includes(this.singleVideo)) this.singleVideo = undefined;
               if (this.users.length <= 1) this.singleVideo = undefined;
@@ -122,6 +89,7 @@ export class LecturePageComponent implements OnInit {
     });
     //this.chats.push({id: "1", partner: "Public Chat", messages: [], newMessage: false})
   }
+   
 
   toggleSidebar(element): void {
     //Most of this function is still missing (like polling)
@@ -156,6 +124,30 @@ export class LecturePageComponent implements OnInit {
   }
 
   test(): void {
-
+    this.users.push({ id: "1", nickname: "Test_1", producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND });
+    this.users.push({ id: "2", nickname: "Test_2", producers: {}, isMuted: false, isTalking: true, signal: Signal.NONE });
+    this.users.push({ id: "3", nickname: "Test_3", producers: {}, isMuted: false, isTalking: true, signal: Signal.VOTED_UP });
+    this.users.push({ id: "4", nickname: "Test_4", producers: {}, isMuted: false, isTalking: true, signal: Signal.VOTED_DOWN });
+    this.users.push({ id: "5", nickname: "Test_5", producers: {}, isMuted: true, isTalking: true, signal: Signal.VOTED_DOWN });
+    this.users.push({ id: "6", nickname: "Test_6", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_UP });
+    this.users.push({ id: "7", nickname: "Test_7", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_UP });
+    this.users.push({ id: "8", nickname: "Test_8", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+    this.users.push({ id: "9", nickname: "Test_9", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+    this.users.push({ id: "10", nickname: "Test_10", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+    this.users.push({ id: "11", nickname: "Test_11", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+    this.users.push({ id: "12", nickname: "Test_12", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+    this.users.push({ id: "13", nickname: "Test_13", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+    this.users.push({ id: "14", nickname: "Test_14", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+    this.users.push({ id: "15", nickname: "Test_15", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+    this.users.push({ id: "16", nickname: "Test_16", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+    this.users.push({ id: "17", nickname: "Test_17", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+    this.users.push({ id: "18", nickname: "Test_18", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+    this.users.push({ id: "19", nickname: "Test_19", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+    this.users.push({ id: "20", nickname: "Test_20", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+    this.users.push({ id: "21", nickname: "Test_21", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+    this.users.push({ id: "22", nickname: "Test_22", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE });
+  
+    this.chats.push({id: "2", partner: this.users[0], messages: [], newMessage: true});
+    this.chats.push({id: "3", partner: this.users[1], messages: [], newMessage: false});
   }
 }

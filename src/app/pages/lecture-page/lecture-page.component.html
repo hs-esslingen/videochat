@@ -20,25 +20,25 @@
         <div id="scroll">
 
             <h4>Chats</h4>
-            <div id="public-chat" class="object-label chat" [class.messaged]="publicChat.newMessage"
-                (click)="toggleSidebar(publicChat)">
-                <div class="status"></div>
-                <div class="nickname">{{publicChat.partner.nickname}}</div>
-                <div class="signal">
-                    <i *ngIf="!publicChat.newMessage" class="material-icons">chat_bubble_outline</i>
-                    <i *ngIf="publicChat.newMessage" class="material-icons">chat</i>
+            <ng-container *ngFor="let chat of chats">
+                <div *ngIf="chat.partner === undefined" id="public-chat" class="object-label chat" [class.messaged]="chat.newMessage" (click)="toggleSidebar(publicChat)">
+                    <div class="status"></div>
+                    <div class="nickname">Public Chat</div>
+                    <div class="signal">
+                        <i *ngIf="!chat.newMessage" class="material-icons">chat_bubble_outline</i>
+                        <i *ngIf="chat.newMessage" class="material-icons">chat</i>
+                    </div>
                 </div>
-            </div>
 
-            <label>Private Chats</label>
-            <div *ngFor="let chat of chats" class="object-label chat" [class.messaged]="chat.newMessage" (click)="toggleSidebar(chat)">
+                <div *ngIf="chat.partner !== undefined" class="object-label chat" [class.messaged]="chat.newMessage" (click)="toggleSidebar(chat)">
                     <div class="status"></div>
                     <div class="nickname">{{chat.partner.nickname}}</div>
                     <div class="signal">
-                        <i *ngIf="chat.newMessage != true"class="material-icons">chat_bubble_outline</i>
-                        <i *ngIf="chat.newMessage == true"class="material-icons">chat</i>
+                        <i *ngIf="!chat.newMessage" class="material-icons">chat_bubble_outline</i>
+                        <i *ngIf="chat.newMessage" class="material-icons">chat</i>
                     </div>
-            </div>
+                </div>
+            </ng-container>
 
 
             <h4>Currnet Users</h4>
