@@ -213,7 +213,9 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         id: "1",
         nickname: "Test_1",
         consumers: {
+          // @ts-ignore
           video: {},
+          // @ts-ignore
           screen: {},
         },
         isMuted: false,
@@ -224,6 +226,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         id: "2",
         nickname: "Test_2",
         consumers: {
+          // @ts-ignore
           video: {},
         },
         isMuted: false,
@@ -234,6 +237,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         id: "3",
         nickname: "Test_3",
         consumers: {
+          // @ts-ignore
           video: {},
         },
         isMuted: false,
