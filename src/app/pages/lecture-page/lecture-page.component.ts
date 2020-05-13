@@ -52,7 +52,10 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     private localMedia: LocalMediaService,
     private element: ElementRef<HTMLElement>,
     readonly chatService: ChatService
-  ) {}
+  ) {
+    const webcamHeight = window.localStorage.getItem("webcamHeight");
+    if (webcamHeight != undefined) this.webcamHeight = parseFloat(webcamHeight);
+  }
 
   @HostListener("window:resize", ["$event"])
   onResize(event) {
