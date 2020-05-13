@@ -147,12 +147,13 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
               this.localSchreenshareStream = data.localScreenshareStream;
               this.users = data.users;
 
-              this.screenShareUser = this.users.find((item) => item.consumers?.screen != undefined);
-              if (this.screenshareState === ScreenshareState.ENABLED) this.screenShareUser = this.currentUser;
+              let screenShareUser = this.users.find((item) => item.consumers?.screen != undefined);
+              if (this.screenshareState === ScreenshareState.ENABLED) screenShareUser = this.currentUser;
 
-              if (this.screenShareUser != undefined) {
-                this.screenShareStream = this.getStream(this.screenShareUser);
+              if (screenShareUser != undefined && screenShareUser !== this.screenShareUser) {
+                this.screenShareStream = this.getStream(screenShareUser);
               }
+              this.screenShareUser = screenShareUser;
 
               requestAnimationFrame(() => {
                 this.recalculateMaxVideoWidth();
