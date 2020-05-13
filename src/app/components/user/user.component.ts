@@ -34,12 +34,12 @@ export class UserComponent implements OnInit, DoCheck, OnChanges {
     this.differ = keyValueDiffer.find({}).create();
     this.messageSubscription = ws.messageObserver?.subscribe((msg) => {
       if (msg.type === "remove-producer") {
-        if (msg.data.id === this.user.mappedProducer?.screen?.producerId && this.user.producers.screen === msg.data.id) this.showVideo = false;
+        if (msg.data.id === this.user.consumers?.screen?.producerId && this.user.producers.screen === msg.data.id) this.showVideo = false;
       }
     });
   }
   ngDoCheck(): void {
-    const change = this.differ.diff(this.user.mappedProducer)
+    const change = this.differ.diff(this.user.consumers)
     if (change) {
       change.forEachItem((record) => {
         if (record.key === "audio") {
@@ -48,7 +48,6 @@ export class UserComponent implements OnInit, DoCheck, OnChanges {
           this.updateVideo();
           this.calcShowVideo();
         }
-        console.log(record);
       });
     }
   }
@@ -60,7 +59,6 @@ export class UserComponent implements OnInit, DoCheck, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
     if (changes.user) {
       this.updateAudio();
       this.updateVideo();
@@ -68,13 +66,13 @@ export class UserComponent implements OnInit, DoCheck, OnChanges {
     }
   }
   updateAudio() {
-    if (this.user.mappedProducer?.audio) this.audioStream = new MediaStream([this.user.mappedProducer.audio.track]);
+    if (this.user.consumers?.audio) this.audioStream = new MediaStream([this.user.consumers.audio.track]);
     else this.audioStream = undefined;
   }
 
   updateVideo() {
-    if (this.user.mappedProducer?.screen) this.videoStream = new MediaStream([this.user.mappedProducer.screen.track]);
-    else if (this.user.mappedProducer?.video) this.videoStream = new MediaStream([this.user.mappedProducer.video.track]);
+    if (this.user.consumers?.screen) this.videoStream = new MediaStream([this.user.consumers.screen.track]);
+    else if (this.user.consumers?.video) this.videoStream = new MediaStream([this.user.consumers.video.track]);
     else  this.videoStream = undefined;
   }
 

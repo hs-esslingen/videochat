@@ -301,15 +301,15 @@ export class MediaService {
                 foundUser.nickname = user.nickname;
                 foundUser.producers = user.producers;
 
-                if (foundUser.mappedProducer == undefined) foundUser.mappedProducer = {};
+                if (foundUser.consumers == undefined) foundUser.consumers = {};
 
                 ["audio", "video", "screen"].forEach((type) => {
                   // add missing producers
-                  if (foundUser.mappedProducer[type] == undefined && foundUser.producers[type] != undefined)
+                  if (foundUser.consumers[type] == undefined && foundUser.producers[type] != undefined)
                     this.addConsumer(foundUser, type as "audio" | "video" | "screen");
 
                   // remove old producers
-                  if (foundUser.mappedProducer[type] != undefined && foundUser.producers[type] == undefined)
+                  if (foundUser.consumers[type] != undefined && foundUser.producers[type] == undefined)
                     this.removeConsumer(foundUser, type as "audio" | "video" | "screen")
                 });
               }
@@ -373,8 +373,8 @@ export class MediaService {
       rtpParameters: consume.rtpParameters,
     });
 
-    if (!user.mappedProducer) user.mappedProducer = {};
-    user.mappedProducer[type] = consumer;
+    if (!user.consumers) user.consumers = {};
+    user.consumers[type] = consumer;
 
     await this.api.resume(this.roomId, consume.id);
     console.log("resume");
@@ -392,10 +392,10 @@ export class MediaService {
   }
 
   private removeConsumer(user: User, type: "audio" | "video" | "screen") {
-    if (!user.mappedProducer || !user.mappedProducer[type]) return;
+    if (!user.consumers || !user.consumers[type]) return;
 
-    user.mappedProducer[type].close();
-    user.mappedProducer[type] = undefined;
+    user.consumers[type].close();
+    user.consumers[type] = undefined;
     this.updateObserver();
   }
 
@@ -516,7 +516,7 @@ export interface User {
     video?: string;
     screen?: string;
   };
-  mappedProducer?: {
+  consumers?: {
     audio?: Consumer;
     video?: Consumer;
     screen?: Consumer;
