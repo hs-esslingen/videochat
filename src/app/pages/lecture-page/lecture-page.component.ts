@@ -29,8 +29,13 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   singleVideo: User;
   duplicateSession = false;
 
+  //Variables for Users
   currentUser: User = { id: "666", nickname: "Der King", producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND };
   users: User[] = [];
+
+  //Variables for sidebar
+  sidebarDetail = undefined;
+  detailType = undefined;
 
   constructor(
     readonly mediaService: MediaService,
@@ -113,5 +118,22 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
 
+  }
+
+  updateSidebar($event) {
+    //console.log("Event occured")
+    if (this.detailType == $event.type) {
+      if (this.sidebarDetail.id == $event.element.id) {
+        this.sidebarDetail = undefined;
+        this.detailType = undefined;
+      }
+      else {
+        this.sidebarDetail = $event.element;
+      }
+    }
+    else {
+      this.sidebarDetail = $event.element;
+      this.detailType = $event.type;
+    }
   }
 }

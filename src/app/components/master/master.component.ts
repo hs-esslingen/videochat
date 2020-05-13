@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { User, Signal } from 'src/app/helper/media.service';
 import { ChatService, Chat, ChatObservable } from "src/app/helper/chat.service";
 import { Subscription } from "rxjs";
@@ -12,12 +12,10 @@ export class MasterComponent implements OnInit {
 @Input() currentUser: User;
 @Input() users: User[];
 
+@Output() sidebarEvent = new EventEmitter<{element: Element, type: string}>();
+
   //Enables / Disables debug mode, that creates some dummy users and chats
   debug = true;
-
-  //Variables for sidebar
-  sidebarDetail = undefined;
-  detailType = undefined;
 
   //Variables for chat
   chats: Chat[] = [];
@@ -43,24 +41,9 @@ export class MasterComponent implements OnInit {
     this.chatSubscription.unsubscribe();
   }
 
-  toggleSidebar(element): void {
-    //Most of this function is still missing (like polling)
-    switch (this.detailType) {
-      case "chat":
-        if (this.sidebarDetail.id == element.id) {
-          this.sidebarDetail = undefined;
-          this.detailType = undefined;
-        }
-        else {
-          this.sidebarDetail = element;
-        }
-        break;
-
-      default:
-        this.sidebarDetail = element;
-        this.detailType = "chat";
-        break;
-    }
+  setSidebarChat(chat): void {
+    //console.log("Triggered Event");
+    this.sidebarEvent.emit({element: chat, type: "chat"});
   }
 
   raiseHand(): void {
@@ -73,6 +56,7 @@ export class MasterComponent implements OnInit {
     console.log("You've voted down!");
   }
   userInteraction(): void {}
+
   openSettings(): void {
     console.log("You've opened the settings!");
   }
