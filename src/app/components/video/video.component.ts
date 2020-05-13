@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Consumer } from 'mediasoup-client/lib/types';
 
 @Component({
   selector: 'app-video',

@@ -5,7 +5,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { LocalMediaService } from "src/app/helper/local-media.service";
 import { JoinMeetingPopupComponent } from "src/app/components/join-meeting-popup/join-meeting-popup.component";
 import { ChatService } from "src/app/helper/chat.service";
-import { Consumer } from "mediasoup-client/lib/types";
 
 @Component({
   selector: "app-lecture-page",
