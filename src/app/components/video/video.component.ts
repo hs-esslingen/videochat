@@ -7,17 +7,15 @@ import { Consumer } from 'mediasoup-client/lib/types';
   styleUrls: ['./video.component.scss']
 })
 export class VideoComponent implements OnInit {
-  @Input() video: Consumer;
+  @Input() video: MediaStreamTrack;
+
+  videoStream: MediaStream;
 
   constructor() { }
 
   ngOnInit(): void {
+    if (!(this.video instanceof MediaStreamTrack)) return;
+      this.videoStream = new MediaStream([this.video]);
+
   }
-
-  getStream(video: Consumer) {
-    return;
-    return new MediaStream([video?.track]);
-  }
-
-
 }

@@ -7,7 +7,7 @@ import { Consumer } from 'mediasoup-client/lib/types';
   styleUrls: ['./audio.component.scss']
 })
 export class AudioComponent implements OnInit {
-  @Input() audio: Consumer;
+  @Input() audio: MediaStreamTrack;
 
   constructor() { }
 
@@ -15,9 +15,9 @@ export class AudioComponent implements OnInit {
   }
 
 
-  getStream(audio: Consumer) {
-    return;
-    return new MediaStream([audio?.track]);
+  getStream(audio: MediaStreamTrack) {
+    if (!(audio instanceof MediaStreamTrack)) return;
+    return new MediaStream([audio]);
   }
 
 }

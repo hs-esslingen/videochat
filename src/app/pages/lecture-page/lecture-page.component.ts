@@ -5,6 +5,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { LocalMediaService } from "src/app/helper/local-media.service";
 import { JoinMeetingPopupComponent } from "src/app/components/join-meeting-popup/join-meeting-popup.component";
 import { ChatService } from "src/app/helper/chat.service";
+import { Consumer } from "mediasoup-client/lib/types";
 
 @Component({
   selector: "app-lecture-page",
@@ -13,7 +14,7 @@ import { ChatService } from "src/app/helper/chat.service";
 })
 export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   // Enables / Disables debug mode, that creates some dummy users and chats
-  demo = true;
+  demo = false;
 
   @ViewChild("webcams") webcams: ElementRef<HTMLDivElement>;
   // Variables for video
@@ -30,8 +31,11 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   isToolbarHidden = false;
   isMobile = false;
   roomUrl: string;
-  singleVideo: User;
   duplicateSession = false;
+
+  screenShareUser: User;
+  screenShareStream: MediaStream;
+  webcamHeight = 0.2;
 
   // Variables for Users
   currentUser: User = { id: "666", nickname: "Der King", producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND };
@@ -61,31 +65,52 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   recalculateMaxVideoWidth() {
     this.element.nativeElement.style.setProperty("--max-video-width", (this.webcams?.nativeElement?.clientHeight / 3) * 4 - 5 + "px");
-    const numVideos = this.users.filter((user) => user.consumers?.video != undefined).length;
+
+    let numVideos = this.users.filter((user) => user.consumers?.video != undefined).length;
+    if (this.localStream != undefined) numVideos++;
+
     const clientWidth = this.webcams?.nativeElement?.clientWidth;
     const clientHeight = this.webcams?.nativeElement?.clientHeight;
 
     let colums = 1;
-    while ((1 / (colums + 1)) * clientWidth * (3 / 4) * Math.ceil((numVideos) / (colums)) > clientHeight) {
-      colums++
-    };
+    while ((1 / (colums + 1)) * clientWidth * (3 / 4) * Math.ceil(numVideos / colums) > clientHeight) {
+      colums++;
+    }
     const maxHeightPerElement = clientHeight / Math.ceil(numVideos / colums);
     const maxWidthPerElement = clientWidth / colums;
     const maxRatio = Math.min((maxHeightPerElement * (4 / 3)) / clientWidth, maxWidthPerElement / clientWidth);
     this.element.nativeElement.style.setProperty("--max-video-flex-basis", maxRatio * 100 - 0.1 + "%");
   }
 
+  startDividerDrag() {
+    const pointerMove = (e: PointerEvent) => {
+      this.webcamHeight = Math.min(Math.max((e.clientY - 52) / (window.innerHeight - 52), 0.2), 0.9);
+      requestAnimationFrame(() => {
+        this.recalculateMaxVideoWidth();
+      });
+    };
+    const pointerUp = (e: PointerEvent) => {
+      window.localStorage.setItem("webcamHeight", this.webcamHeight.toString());
+      window.removeEventListener("pointerup", pointerUp);
+      window.removeEventListener("pointermove", pointerMove);
+    };
+    window.addEventListener("pointerup", pointerUp);
+    window.addEventListener("pointermove", pointerMove);
+  }
+
   ngOnInit(): void {
-    if (this.demo) this.test();
+    if (this.demo) {
+      this.test();
+      this.screenShareUser = this.users[0];
+    }
 
     const url = new URL(location.href);
     this.roomUrl = url.origin + url.pathname;
-    // this.isMobile = this.checkMobile();
-    // if (!this.isMobile) {
-    //   this.moveTimout = (setTimeout(() => {
-    //     this.isToolbarHidden = true;
-    //   }, 1500) as any) as number;
-    // }
+
+    this.moveTimout = (setTimeout(() => {
+      this.isToolbarHidden = true;
+    }, 1500) as any) as number;
+
     this.route.paramMap.subscribe(async (params) => {
       // don't actually connect if demo is enabled
       if (this.demo) return;
@@ -103,6 +128,9 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
           return;
         }
 
+        // TODO rework states (use current user)
+        this.currentUser.nickname = this.mediaService.nickname;
+
         if (result.nickname !== "") this.mediaService.setNickname(result.nickname);
 
         try {
@@ -117,8 +145,16 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
               this.localSchreenshareStream = data.localScreenshareStream;
               this.users = data.users;
 
-              if (!this.users.includes(this.singleVideo)) this.singleVideo = undefined;
-              if (this.users.length <= 1) this.singleVideo = undefined;
+              this.screenShareUser = this.users.find((item) => item.consumers?.screen != undefined);
+              if (this.screenshareState === ScreenshareState.ENABLED) this.screenShareUser = this.currentUser;
+
+              if (this.screenShareUser != undefined) {
+                this.screenShareStream = this.getStream(this.screenShareUser);
+              }
+
+              requestAnimationFrame(() => {
+                this.recalculateMaxVideoWidth();
+              });
             });
         } catch (err) {
           if (err === "DUPLICATE SESSION") {
@@ -133,6 +169,12 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {}
 
+  getStream(user: User) {
+    if (this.demo) return new MediaStream();
+    if (user === this.currentUser) return this.localSchreenshareStream;
+    return new MediaStream([user.consumers.screen?.track]);
+  }
+
   updateSidebar($event) {
     // console.log("Event occured")
     if (this.detailType === $event.type) {
@@ -146,19 +188,55 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sidebarDetail = $event.element;
       this.detailType = $event.type;
     }
+    requestAnimationFrame(() => {
+      this.recalculateMaxVideoWidth();
+    });
   }
+
+  onMousemoove() {
+    if (!this.isMobile) {
+      this.isToolbarHidden = false;
+      clearTimeout(this.moveTimout);
+      this.moveTimout = (setTimeout(() => {
+        this.isToolbarHidden = true;
+      }, 1500) as any) as number;
+    }
+  }
+
 
   test(): void {
     this.users.push(
-      { id: "1", nickname: "Test_1", consumers: {
-        video: {},
-      }, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND },
-      { id: "2", nickname: "Test_2", consumers: {
-        video: {},
-      }, isMuted: false, isTalking: true, signal: Signal.NONE },
-      { id: "3", nickname: "Test_3", consumers: {
-        video: {},
-      }, isMuted: false, isTalking: true, signal: Signal.VOTED_UP },
+      {
+        id: "1",
+        nickname: "Test_1",
+        consumers: {
+          video: {},
+          screen: {},
+        },
+        isMuted: false,
+        isTalking: true,
+        signal: Signal.RAISED_HAND,
+      },
+      {
+        id: "2",
+        nickname: "Test_2",
+        consumers: {
+          video: {},
+        },
+        isMuted: false,
+        isTalking: true,
+        signal: Signal.NONE,
+      },
+      {
+        id: "3",
+        nickname: "Test_3",
+        consumers: {
+          video: {},
+        },
+        isMuted: false,
+        isTalking: true,
+        signal: Signal.VOTED_UP,
+      },
       { id: "4", nickname: "Test_4", producers: {}, isMuted: false, isTalking: true, signal: Signal.VOTED_DOWN },
       { id: "5", nickname: "Test_5", producers: {}, isMuted: true, isTalking: true, signal: Signal.VOTED_DOWN },
       { id: "6", nickname: "Test_6", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_UP },
