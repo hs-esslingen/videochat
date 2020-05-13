@@ -310,7 +310,7 @@ export class MediaService {
 
                   // remove old producers
                   if (foundUser.consumers[type] != undefined && foundUser.producers[type] == undefined)
-                    this.removeConsumer(foundUser, type as "audio" | "video" | "screen")
+                    this.removeConsumer(foundUser, type as "audio" | "video" | "screen");
                 });
               }
             }
@@ -428,6 +428,7 @@ export class MediaService {
     this.localScreenProducer = await this.sendTransport.produce({
       track: localStream.getVideoTracks()[0],
       codec,
+      encodings: [{ maxBitrate: 6800000, scaleResolutionDownBy: 1 }],
       appData: { type: "screen" },
     });
   }
@@ -528,6 +529,6 @@ export interface User {
 
 export interface Message {
   sender: string;
-  text:   string;
+  text: string;
   // time:   Date;
 }
