@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef } from "@angular/core";
+import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, AfterViewInit } from "@angular/core";
 import { User, Stream, MicrophoneState, ScreenshareState, CameraState, Signal, MediaService } from "src/app/helper/media.service";
 import { ActivatedRoute } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
@@ -10,7 +10,8 @@ import { JoinMeetingPopupComponent } from "src/app/components/join-meeting-popup
   templateUrl: "./lecture-page.component.html",
   styleUrls: ["./lecture-page.component.scss"],
 })
-export class LecturePageComponent implements OnInit, OnDestroy {
+export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild("webcams") webcams: ElementRef<HTMLDivElement>;
   // Variables for video
   videoConsumers: Stream[];
   audioConsumers: Stream[];
@@ -42,9 +43,20 @@ export class LecturePageComponent implements OnInit, OnDestroy {
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    console.log(this.element.nativeElement)
-    this.element.nativeElement.style.setProperty('--max-video-width', 100 + "px")
-    // this.    event.target.innerWidth;
+    this.recalculateMaxVideoWidth();
+  }
+
+  ngAfterViewInit(): void {
+    this.recalculateMaxVideoWidth();
+  }
+
+  recalculateMaxVideoWidth() {
+    this.element.nativeElement.style.setProperty('--max-video-width', (this.webcams?.nativeElement?.clientHeight / 3 * 4) - 5 + "px");
+    const numVideos = this.users.filter((user) => user.consumers?.video != undefined).length;
+    console.log(numVideos);
+    console.log(this.webcams?.nativeElement?.clientWidth);
+    this.element.nativeElement.style.setProperty('--max-video-flex-basis', (this.webcams?.nativeElement?.clientHeight / 3 * 4) - 5 + "px");
+
   }
 
   ngOnInit(): void {

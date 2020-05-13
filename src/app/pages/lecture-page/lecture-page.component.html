@@ -1,6 +1,6 @@
 <div id="content">
     <div id="main">
-        <div id="webcams">
+        <div #webcams id="webcams">
             <ng-container *ngFor="let user of users" >
                 <div  *ngIf="user.consumers?.video != undefined"  class="video-element">
                     <app-video [video]="user.consumers?.video"></app-video>
