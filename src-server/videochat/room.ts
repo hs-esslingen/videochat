@@ -1,10 +1,4 @@
-import {
-  Worker,
-  Router,
-  MediaKind,
-  RtpParameters,
-  Transport,
-} from "mediasoup/lib/types";
+import { Worker, Router, MediaKind, RtpParameters, Transport } from "mediasoup/lib/types";
 import * as mediasoup from "mediasoup";
 import * as WebSocket from "ws";
 import { MyWebSocket } from "src-server/server";
@@ -26,11 +20,7 @@ export class Room {
   private constructor(private roomId: string) {
     // Delete Room if nobody has joined after 10 Seconds
     setTimeout(() => {
-      if (
-        Room.rooms[roomId] &&
-        Object.keys(Room.rooms[roomId].users).length === 0 &&
-        this === Room.rooms[roomId]
-      ) {
+      if (Room.rooms[roomId] && Object.keys(Room.rooms[roomId].users).length === 0 && this === Room.rooms[roomId]) {
         logger.warn(
           "Deleting Room " +
             this.roomId +
@@ -63,8 +53,7 @@ export class Room {
   }
 
   async createTransport(sessionID: string) {
-    if (this.users[sessionID] == undefined)
-      throw new Error("User is not inizialized");
+    if (this.users[sessionID] == undefined) throw new Error("User is not inizialized");
 
     await this.getRouter();
     const trans = await this.router.createWebRtcTransport({
@@ -99,17 +88,10 @@ export class Room {
     });
   }
 
-  async produce(
-    transportId,
-    kind: MediaKind,
-    rtpParameters: RtpParameters,
-    appData: any,
-    sessionID: string
-  ) {
+  async produce(transportId, kind: MediaKind, rtpParameters: RtpParameters, appData: any, sessionID: string) {
     const trans = this.transports[transportId];
     if (trans) {
-      if (this.users[sessionID] == undefined)
-        throw new Error("User is not inizialized");
+      if (this.users[sessionID] == undefined) throw new Error("User is not inizialized");
       const producer = await trans.produce({
         kind,
         rtpParameters,
@@ -150,9 +132,7 @@ export class Room {
       });
 
       producer.observer.on("close", () => {
-        this.producers = this.producers.filter(
-          (prod) => prod.id !== producer.id
-        );
+        this.producers = this.producers.filter((prod) => prod.id !== producer.id);
 
         this.broadcastMessage({
           type: "remove-producer",
@@ -169,15 +149,14 @@ export class Room {
   }
 
   closeProducer(id, sessionID) {
-    return new Promise(res => {
-
-      if (this.users[sessionID] == undefined)
-      throw new Error("User is not inizialized");
+    return new Promise((res) => {
+      if (this.users[sessionID] == undefined) throw new Error("User is not inizialized");
       for (const type in this.users[sessionID].producers) {
         if (this.users[sessionID].producers.hasOwnProperty(type)) {
           const producerId = this.users[sessionID].producers[type];
           if (producerId === id) {
             const producer = this.producers.find((prod) => prod.id === id);
+            this.users[sessionID].producers[type] = undefined;
             if (producer) {
               this.broadcastMessage({
                 type: "remove-producer",
@@ -185,6 +164,11 @@ export class Room {
                   id: producer.id,
                   kind: producer.kind,
                 },
+              });
+
+              this.broadcastMessage({
+                type: "update-user",
+                data: this.getPublicUser(this.users[sessionID]),
               });
               setTimeout(() => {
                 producer.close();
@@ -247,26 +231,15 @@ export class Room {
   getUsers() {
     return Object.keys(this.users).map((sessionId) => {
       const user = this.users[sessionId];
-      return {
-        id: user.id,
-        nickname: user.nickname,
-        producers: user.producers,
-      };
+      return this.getPublicUser(user);
     });
   }
 
-  initWebsocket(
-    ws: WebSocket,
-    initData: WebsocketUserInfo,
-    sessionID: string,
-    { email }
-  ) {
+  initWebsocket(ws: WebSocket, initData: WebsocketUserInfo, sessionID: string, { email }) {
     const transports: Transport[] = [];
     let init = false;
     const user: User = {
-      id:
-        Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15),
+      id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
       nickname: initData.nickname,
       transports,
       producers: {},
@@ -302,9 +275,7 @@ export class Room {
         if (this === Room.rooms[this.roomId]) {
           delete Room.rooms[this.roomId];
         } else {
-          logger.warn(
-            "Did not delete room globally, because it was overwritten"
-          );
+          logger.warn("Did not delete room globally, because it was overwritten");
         }
       }
     });
@@ -336,9 +307,7 @@ export class Room {
 
     // Check if seesion id already exists
     if (this.users[sessionID] == undefined) {
-      logger.info(
-        `${this.roomId}: ${user.nickname || "User"} (${email}) joined`
-      );
+      logger.info(`${this.roomId}: ${user.nickname || "User"} (${email}) joined`);
       this.broadcastMessage(
         {
           type: "add-user",
@@ -371,10 +340,15 @@ export class Room {
     }
   }
 
-  private broadcastMessage(
-    message: { type: string; data: any },
-    excludeWsOrSession?: any
-  ) {
+  private getPublicUser(user: User) {
+    return {
+      id: user.id,
+      nickname: user.nickname,
+      producers: user.producers,
+    };
+  }
+
+  private broadcastMessage(message: { type: string; data: any }, excludeWsOrSession?: any) {
     this.websockets.forEach((ws: MyWebSocket) => {
       if (ws === excludeWsOrSession) return;
       if (ws.sessionID === excludeWsOrSession) return;

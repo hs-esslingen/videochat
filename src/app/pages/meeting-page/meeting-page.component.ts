@@ -78,8 +78,6 @@ export interface NicknameDialogData {
 })
 export class MeetingPageComponent implements OnInit, OnDestroy {
   @ViewChild("local") local: ElementRef<HTMLVideoElement>;
-  videoConsumers: Stream[];
-  audioConsumers: Stream[];
   autoGainControl: boolean;
   microphoneState: MicrophoneState = MicrophoneState.ENABLED;
   cameraState: CameraState = CameraState.DISABLED;
@@ -137,8 +135,6 @@ export class MeetingPageComponent implements OnInit, OnDestroy {
           );
           if (observer != undefined)
             observer.subscribe((data) => {
-              this.audioConsumers = data.audioConsumers;
-              this.videoConsumers = data.videoConsumers;
               this.autoGainControl = data.autoGainControl;
               this.cameraState = data.cameraState;
               this.microphoneState = data.microphoneState;

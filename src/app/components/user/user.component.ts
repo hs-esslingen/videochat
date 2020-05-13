@@ -1,18 +1,8 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  DoCheck,
-  IterableDiffers,
-  IterableDiffer,
-  ViewChild,
-  ElementRef,
-  OnChanges,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, OnInit, Input, DoCheck, IterableDiffers, IterableDiffer, ViewChild, ElementRef, OnChanges, SimpleChanges, KeyValueDiffers, KeyValueDiffer } from "@angular/core";
 import { User, Stream } from "src/app/helper/media.service";
-import { WsService } from 'src/app/helper/ws.service';
-import { Subscription } from 'rxjs';
+import { WsService } from "src/app/helper/ws.service";
+import { Subscription } from "rxjs";
+import { Consumer } from 'mediasoup-client/lib/types';
 
 @Component({
   selector: "app-user",
@@ -21,90 +11,71 @@ import { Subscription } from 'rxjs';
 })
 export class UserComponent implements OnInit, DoCheck, OnChanges {
   @Input() user: User;
-  @Input() audioConsumers: Stream[];
-  @Input() videoConsumers: Stream[];
+  @Input() playAudio = true;
   @Input() small: boolean;
   @Input() selected: boolean;
 
   videoElement: ElementRef<HTMLVideoElement>;
 
-  @ViewChild("video", { static: false }) set content(
-    content: ElementRef<HTMLVideoElement>
-  ) {
+  @ViewChild("video", { static: false }) set content(content: ElementRef<HTMLVideoElement>) {
     if (content) {
       // initially setter gets called with undefined
       this.videoElement = content;
     }
   }
 
-  videoStream: Stream;
-  audioStream: Stream;
+  videoStream: MediaStream;
+  audioStream: MediaStream;
   showVideo: boolean;
-  iterableDifferVideo: IterableDiffer<Stream>;
-  iterableDifferAudio: IterableDiffer<Stream>;
+  differ: KeyValueDiffer<string, Consumer>;
   messageSubscription: Subscription;
 
-  constructor(private iterableDiffers: IterableDiffers, private ws: WsService) {
-    this.iterableDifferVideo = iterableDiffers.find([]).create(null);
-    this.iterableDifferAudio = iterableDiffers.find([]).create(null);
-
-    this.messageSubscription = ws.messageObserver.subscribe((msg) => {
+  constructor(private keyValueDiffer: KeyValueDiffers, private ws: WsService) {
+    this.differ = keyValueDiffer.find({}).create();
+    this.messageSubscription = ws.messageObserver?.subscribe((msg) => {
       if (msg.type === "remove-producer") {
-        if (msg.data.id === this.videoStream?.consumer.producerId && this.user.producers.screen === msg.data.id) this.showVideo = false;
+        if (msg.data.id === this.user.mappedProducer?.screen?.producerId && this.user.producers.screen === msg.data.id) this.showVideo = false;
       }
-    })
+    });
+  }
+  ngDoCheck(): void {
+    const change = this.differ.diff(this.user.mappedProducer)
+    if (change) {
+      change.forEachItem((record) => {
+        if (record.key === "audio") {
+          this.updateAudio();
+        } else {
+          this.updateVideo();
+          this.calcShowVideo();
+        }
+        console.log(record);
+      });
+    }
   }
 
   ngOnInit(): void {
-    this.videoStream = this.videoConsumers?.find(
-      (item) => item.consumer.producerId === this.user.producers.video
-    );
-    this.audioStream = this.audioConsumers?.find(
-      (item) => item.consumer.producerId === this.user.producers.audio
-    );
     this.calcShowVideo();
+    this.updateAudio();
+    this.updateVideo();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes.user && this.videoElement) {
+    console.log(changes);
+    if (changes.user) {
       this.updateAudio();
       this.updateVideo();
+      this.calcShowVideo();
     }
   }
-
-  ngDoCheck(): void {
-    const videoChanges = this.iterableDifferVideo.diff(this.videoConsumers);
-    if (videoChanges) {
-      this.updateVideo();
-    }
-    const audioChanges = this.iterableDifferAudio.diff(this.audioConsumers);
-    if (audioChanges) {
-      this.updateAudio();
-    }
+  updateAudio() {
+    if (this.user.mappedProducer?.audio) this.audioStream = new MediaStream([this.user.mappedProducer.audio.track]);
+    else this.audioStream = undefined;
   }
 
   updateVideo() {
-    let videoStream;
-    videoStream = this.videoConsumers?.find(
-      (item) => item.consumer.producerId === this.user.producers.video
-    );
-    if (this.user.producers.screen) {
-      let screenshareStream;
-      screenshareStream = this.videoConsumers?.find(
-        (item) => item.consumer.producerId === this.user.producers.screen
-      );
-      if (screenshareStream != undefined) {
-        videoStream = screenshareStream;
-      }
-    }
-    this.videoStream = videoStream;
-    this.calcShowVideo();
-  }
-
-  updateAudio() {
-    this.audioStream = this.audioConsumers?.find(
-      (item) => item.consumer.producerId === this.user.producers.audio
-    );
+    if (this.user.mappedProducer?.screen) this.videoStream = new MediaStream([this.user.mappedProducer.screen.track]);
+    else if (this.user.mappedProducer?.video) this.videoStream = new MediaStream([this.user.mappedProducer.video.track]);
+    else  this.videoStream = undefined;
   }
 
   calcShowVideo() {
