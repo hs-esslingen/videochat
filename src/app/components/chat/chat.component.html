@@ -1,11 +1,14 @@
 <div id="content">
-    <h4 *ngIf="childData.partner !== undefined">Your chat with {{childData.getNickname()}}</h4>
-    <h4 *ngIf="childData.partner === undefined">Public Chat</h4>
+    <div id="header">
+        <h4 *ngIf="childData.partner !== undefined">Your chat with {{childData.getNickname()}}</h4>
+        <h4 *ngIf="childData.partner === undefined">Public Chat</h4>
+    </div>
+    
     <div id="messages">
         <div *ngFor="let message of childData.messages" class="message">
-            <div id="sender">{{message.sender}}:</div>
+            <label id="sender" [class.user]="message.sender === user.nickname">{{message.sender}}:</label>
             <!-- <div id="time">{{message.time}}</div> -->
-            <div id="text">{{message.text}}</div>
+            <p id="text">{{message.text}}</p>
         </div>
     </div>
     

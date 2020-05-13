@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { User } from 'src/app/helper/media.service';
 import { ChatService, Chat, ChatObservable } from "src/app/helper/chat.service";
+
 
 @Component({
   selector: 'app-chat',
@@ -8,6 +10,7 @@ import { ChatService, Chat, ChatObservable } from "src/app/helper/chat.service";
 })
 export class ChatComponent implements OnInit {
   @Input() childData: Chat;
+  @Input() user: User;
 
   constructor() { }
 
@@ -15,7 +18,7 @@ export class ChatComponent implements OnInit {
   }
 
   sendMessage(): void {
-    
+    console.log("Message sent!");
   }
 
 }

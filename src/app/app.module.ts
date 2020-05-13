@@ -30,6 +30,7 @@ import { ChatComponent } from './components/chat/chat.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { VideoComponent } from './components/video/video.component';
 import { AudioComponent } from './components/audio/audio.component';
+import { MasterComponent } from './components/master/master.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { AudioComponent } from './components/audio/audio.component';
     ToolbarComponent,
     VideoComponent,
     AudioComponent,
+    MasterComponent,
   ],
   imports: [
     BrowserModule,

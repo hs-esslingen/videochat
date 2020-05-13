@@ -15,8 +15,26 @@ export class ChatService {
     const testData = [
       { id: "public_chat",
         messages: [
+          {sender: "Hr. Rößler", text: "Guten Morgen!"},
+          {sender: "Claus", text: "Morgen!"},
+          {sender: "Rolf", text: "Guten Morgen"},
+          {sender: "Emilia", text: "Guten Morgen :)"},
+          {sender: "Lukas", text: "Moin"},
+          {sender: "Christina", text: "Hallo"},
+          {sender: "Ali", text: "Tach"},
+          {sender: "Kevin", text: "Verstehe ich nicht"},
+          {sender: "Der King", text: "Hör halt mal zu..."},
+          {sender: "Emilia", text: "Ich dachte mit dem Kindergarten sind wir durch im Studium."},
+          {sender: "Lukas", text: "Oh boi^^"},
+          {sender: "Rolf", text: "Ihre Folien verändern sich nichtmehr..."},
+          {sender: "Claus", text: "+"},
+          {sender: "Emilia", text: "+"},
+          {sender: "Lukas", text: "+"},
+          {sender: "Christina", text: "+"},
+          {sender: "Hr. Rößler", text: "Okay, dann hören wir auf für heute."},
           {sender: "Vladimir", text: "Jo, lass mal chillen nachher."},
-          {sender: "Ali", text: "Bruder, nee. Is Corona."}
+          {sender: "Ali", text: "Bruder, nee. Is Corona."},
+          {sender: "Der King", text: "Ach komm, nen Bierchen geht immer."}
         ],
         newMessage: true },
     ];
