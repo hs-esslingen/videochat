@@ -279,7 +279,9 @@ app.get("/auth/check", (req, res) => {
   // @ts-ignore email exists exists in user
   if (req.isAuthenticated())
     res.json({
+      // @ts-ignore email exists exists in user
       email: req.user.email,
+      // @ts-ignore displayName exists in user
       displayName: req.user.displayName || req.user.email.split("@")[0],
     });
   else res.status(401).send("Unauthorized");
