@@ -86,7 +86,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   startDividerDrag() {
     const pointerMove = (e: PointerEvent) => {
-      this.webcamHeight = Math.min(Math.max((e.clientY - 52) / (window.innerHeight - 52), 0.2), 0.9);
+      this.webcamHeight = Math.min(Math.max((e.clientY - 52) / (window.innerHeight - 52), 0.1), 0.9);
       requestAnimationFrame(() => {
         this.recalculateMaxVideoWidth();
       });
