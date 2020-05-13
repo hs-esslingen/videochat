@@ -1,182 +1,195 @@
 #content {
-    height: 100%;
-    width: 180px;
-    background-color: #080e1a;
-    margin: 0 auto 0 auto;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.05), 0 6px 6px rgba(0, 0, 0, 0.23);
-    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.06), 0 6px 6px rgba(0, 0, 0, 0.23);
+  height: 100%;
+  width: 180px;
+  background-color: #080e1a;
+  margin: 0 auto 0 auto;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  box-shadow: 0 10px 20px rgba(255, 255, 255, 0.05), 0 6px 6px rgba(0, 0, 0, 0.23);
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.06), 0 6px 6px rgba(0, 0, 0, 0.23);
 
-    #scroll {
-        overflow-y: auto;
-        display: flex;
-        height: calc(100% - 64px);
-        flex-direction: column;
+  #scroll {
+    overflow-y: auto;
+    display: flex;
+    height: calc(100% - 64px);
+    flex-direction: column;
 
-        #user-actions {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        margin-bottom: 8px;
-        }
-
-        // Design for all the other users, that have joined the chat
-        #participants {
-        flex-grow: 1;
-        }
-
-
-        h4 {
-        margin: 8px auto 8px 8px;
-        }
-
-        label {
-        margin-left: 8px;
-        padding-bottom: 8px;
-        font-weight: bold;
-        font-size: 12px;
-        line-height: 1.5;
-        color: white;
-        }
-
-        /* width */
-        &::-webkit-scrollbar {
-        width: 12px;
-        }
-
-        /* Track */
-        &::-webkit-scrollbar-track {
-        background: #080e1a;
-        }
-
-        /* Handle */
-        &::-webkit-scrollbar-thumb {
-        background: #555;
-        border-radius: 6px;
-        border: 2px solid #080e1a;
-        }
-
-        /* Handle on hover */
-        &::-webkit-scrollbar-thumb:hover {
-        background: #2a5094;
-        }
+    #user-actions {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      margin-bottom: 8px;
     }
 
-    
-    #control {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
+    // Design for all the other users, that have joined the chat
+    #participants {
+      flex-grow: 1;
     }
 
-    .object-label {
-        min-height: 32px;
-        white-space: nowrap;
-        overflow: hidden;
-        display: flex;
-        flex-direction: row;
-        margin-left: 8px;
-        margin-bottom: 4px;
-        margin-right: 8px;
-        border-radius: 5px;
-        cursor: pointer;
 
-        .status {
-        width: 8px;
-        height: 32px;
-        }
-
-        &.chat .status {
-        background-color: #2b2b2b;
-        }
-        &.messaged .status{
-        background-color: orangered;
-        }
-
-        &.micActive .status {
-        background-color: #243e74;
-        }
-        &.talking .status {
-        background-color: #43a047;
-        // padding-left: 8px;
-        }
-        &.votingUp .status{
-            background-color: #43a047;
-        }
-        &.votingDown .status{
-        background-color: #e53935;
-        }
-        &.signaling .status {
-        background-color: yellow;
-        }
-
-        .nickname {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        flex-grow: 1;
-        padding-left: 8px;
-        padding-right: 4px;
-        width: 70%;
-        line-height: 32px;
-        }
-
-        &.chat .nickname {
-        background-color: #212121;
-        }
-
-        &.micActive .nickname {
-        background-color: #0d1629;
-        }
-        &.talking .nickname {
-        background-color: #1b5e20;
-        }
-        &.votingDown .nickname{
-        background-color: #620f0f;
-        }      
-        &.votingUp .nickname {
-        background-color: #124016;
-        }
-        &.signaling .nickname {
-        background-color: #6d6919;
-        }
-
-        .signal {
-        padding-top: 6px;
-        padding-bottom: 4px;
-        background-color: #1a2e56;
-        padding-right: 8px;
-        padding-left: 6px;
-        color: white;
-        i {
-            font-size: 16px;
-        }
-        }
-
-        &.chat .signal {
-        background-color: #2b2b2b;
-        }
-
-        &.talking .signal {
-        color: black;
-        background-color: #1b5e20;
-        }
-        &.votingDown .signal{
-        color: black;
-        background-color: #b71c1c;
-        }      
-        &.votingUp .signal {
-        color: black;
-        background-color: #1b5e20;
-        }
-        &.signaling .signal {
-        background-color: #9e9824;
-        }
+    h4 {
+      margin: 8px auto 8px 8px;
     }
 
-    /////////////////////////////
-    //Styling for all the buttons
-    /////////////////////////////
-    .round-button {
+    label {
+      margin-left: 8px;
+      padding-bottom: 8px;
+      font-weight: bold;
+      font-size: 12px;
+      line-height: 1.5;
+      color: white;
+    }
+
+    /* width */
+    &::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+      background: #080e1a;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+      background: #555;
+      border-radius: 6px;
+      border: 2px solid #080e1a;
+    }
+
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+      background: #2a5094;
+    }
+  }
+
+
+  #control {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .object-label {
+    min-height: 32px;
+    white-space: nowrap;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    margin-left: 8px;
+    margin-bottom: 4px;
+    margin-right: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    .status {
+      width: 8px;
+      height: 32px;
+    }
+
+    &.chat .status {
+      background-color: #2b2b2b;
+    }
+
+    &.messaged .status {
+      background-color: orangered;
+    }
+
+    &.micActive .status {
+      background-color: #243e74;
+    }
+
+    &.talking .status {
+      background-color: #43a047;
+      // padding-left: 8px;
+    }
+
+    &.votingUp .status {
+      background-color: #43a047;
+    }
+
+    &.votingDown .status {
+      background-color: #e53935;
+    }
+
+    &.signaling .status {
+      background-color: yellow;
+    }
+
+    .nickname {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-grow: 1;
+      padding-left: 8px;
+      padding-right: 4px;
+      width: 70%;
+      line-height: 32px;
+    }
+
+    &.chat .nickname {
+      background-color: #212121;
+    }
+
+    &.micActive .nickname {
+      background-color: #0d1629;
+    }
+
+    &.talking .nickname {
+      background-color: #1b5e20;
+    }
+
+    &.votingDown .nickname {
+      background-color: #620f0f;
+    }
+
+    &.votingUp .nickname {
+      background-color: #124016;
+    }
+
+    &.signaling .nickname {
+      background-color: #6d6919;
+    }
+
+    .signal {
+      padding-top: 6px;
+      padding-bottom: 4px;
+      background-color: #1a2e56;
+      padding-right: 8px;
+      padding-left: 6px;
+      color: white;
+
+      i {
+        font-size: 16px;
+      }
+    }
+
+    &.chat .signal {
+      background-color: #2b2b2b;
+    }
+
+    &.talking .signal {
+      color: black;
+      background-color: #1b5e20;
+    }
+
+    &.votingDown .signal {
+      color: black;
+      background-color: #b71c1c;
+    }
+
+    &.votingUp .signal {
+      color: black;
+      background-color: #1b5e20;
+    }
+
+    &.signaling .signal {
+      background-color: #9e9824;
+    }
+  }
+
+  /////////////////////////////
+  //Styling for all the buttons
+  /////////////////////////////
+  .round-button {
     border-radius: 50%;
     border-style: solid;
     border-width: thin;
@@ -188,46 +201,51 @@
 
     // Subclasses of buttons
     &.big {
-        width: 48px;
-        height: 48px;
+      width: 48px;
+      height: 48px;
 
-        i {
+      i {
         padding-top: 4px;
         font-size: 32px;
-        }
+      }
     }
-    &.small {
-        width: 32px;
-        height: 32px;
 
-        i {
+    &.small {
+      width: 32px;
+      height: 32px;
+
+      i {
         padding-top: 2px;
         font-size: 16px;
-        }
+      }
     }
 
     // Functions for all classes
     &:hover {
-        filter: brightness(1.15);
+      filter: brightness(1.15);
     }
+
     &.active {
-        background-color: var(--app-primary);
-        color: black;
+      background-color: var(--app-primary);
+      color: black;
     }
 
     // Stylings for individual buttons
     &#raise-hand {
-        background-color: #9e9824;
+      background-color: #9e9824;
     }
+
     &#vote-up {
-        background-color: #25591d;
+      background-color: #25591d;
     }
+
     &#vote-down {
-        background-color: #591d1d;
+      background-color: #591d1d;
     }
+
     // Styling for the control-buttons
     &#leave-chat {
-        background-color: #6f0e0e;
+      background-color: #6f0e0e;
     }
-    }
+  }
 }
