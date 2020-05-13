@@ -1,15 +1,10 @@
 import { Injectable } from "@angular/core";
-import {
-  Consumer,
-  Producer,
-  Device,
-  Transport,
-} from "mediasoup-client/lib/types";
+import { Consumer, Producer, Device, Transport } from "mediasoup-client/lib/types";
 import { environment } from "src/environments/environment";
 import { ApiService } from "./api.service";
 import { Observable, Subscriber } from "rxjs";
 import { WsService } from "./ws.service";
-import { LocalMediaService } from './local-media.service';
+import { LocalMediaService } from "./local-media.service";
 
 export enum CameraState {
   ENABLED = "videocam",
@@ -90,11 +85,7 @@ export class MediaService {
     this.nickname = localStorage.getItem("nickname");
   }
 
-
-  public async connectToRoom(
-    roomId,
-    isWebcamDisabled: boolean
-  ): Promise<MediaObservable> {
+  public async connectToRoom(roomId, isWebcamDisabled: boolean): Promise<MediaObservable> {
     this.status = Status.CONNECTING;
     this.roomId = roomId;
     await this.setupDevice();
@@ -103,7 +94,6 @@ export class MediaService {
 
     await this.createSendTransport();
     await this.createRecvTransport();
-
 
     if (!isWebcamDisabled) {
       const videoTracks = await this.localMedia.getVideoTrack();
@@ -165,10 +155,7 @@ export class MediaService {
 
   async toggleCamera() {
     if (this.status !== Status.CONNECTED) return;
-    if (
-      this.localVideoProducer != undefined &&
-      !this.localVideoProducer?.closed
-    ) {
+    if (this.localVideoProducer != undefined && !this.localVideoProducer?.closed) {
       this.localMedia.closeVideo();
       this.localVideoProducer.close();
       await this.api.producerClose(this.roomId, this.localVideoProducer.id);
@@ -213,9 +200,7 @@ export class MediaService {
     if (!this.localScreenProducer || this.localAudioProducer.closed) {
       try {
         // @ts-ignore
-        const localScreen = (await navigator.mediaDevices.getDisplayMedia(
-          {}
-        )) as MediaStream;
+        const localScreen = (await navigator.mediaDevices.getDisplayMedia({})) as MediaStream;
         this.localScreenshareStream = localScreen;
 
         await this.sendScreen(localScreen);
@@ -223,8 +208,7 @@ export class MediaService {
 
         this.localScreenProducer.track.onended = async () => {
           setTimeout(() => {
-            if (this.screenshareState !== ScreenshareState.DISABLED)
-              this.toggleScreenshare();
+            if (this.screenshareState !== ScreenshareState.DISABLED) this.toggleScreenshare();
           }, 0);
         };
         this.updateObserver();
@@ -278,8 +262,6 @@ export class MediaService {
         const url = new URL(window.location.href);
         this.ws.connect("wss://" + url.host + "/ws");
       } else {
-        // const url = new URL(window.location.href);
-        // this.ws.connect("wss://" + url.host + "/ws");
         this.ws.connect("ws://localhost:4000/ws");
       }
 
@@ -291,12 +273,6 @@ export class MediaService {
         this.ws.send("init", {
           roomId: this.roomId,
           nickname: this.nickname,
-          transports: [this.sendTransport?.id, this.recvTransport?.id],
-          producers: {
-            audio: this.localAudioProducer?.id,
-            video: this.localVideoProducer?.id,
-            screen: this.localScreenProducer?.id,
-          },
         });
 
         // @ts-ignore
@@ -315,11 +291,7 @@ export class MediaService {
             res();
             break;
           case "add-producer":
-            if (
-              this.recvTransport != undefined &&
-              this.recvTransport.id != undefined
-            )
-              this.addConsumer(msg.data.producerId, msg.data.kind);
+            if (this.recvTransport != undefined && this.recvTransport.id != undefined) this.addConsumer(msg.data.producerId, msg.data.kind);
             break;
           case "remove-producer":
             setTimeout(() => {
@@ -328,11 +300,8 @@ export class MediaService {
             break;
           case "add-user":
             {
-              if (
-                this.recvTransport == undefined ||
-                this.recvTransport.id == undefined
-              )
-                return;
+              if (this.recvTransport == undefined || this.recvTransport.id == undefined) return;
+
               const user: User = msg.data;
               if (!this.users.find((item) => item.id === user.id)) {
                 this.users.push(user);
@@ -375,12 +344,8 @@ export class MediaService {
     const producers = await this.api.getProducers(this.roomId);
     for (const prod of producers) {
       if (
-        this.videoConsumers.find(
-          (item) => item.consumer.id === prod.producerId
-        ) == undefined &&
-        this.audioConsumers.find(
-          (item) => item.consumer.id === prod.producerId
-        ) == undefined
+        this.videoConsumers.find((item) => item.consumer.id === prod.producerId) == undefined &&
+        this.audioConsumers.find((item) => item.consumer.id === prod.producerId) == undefined
       ) {
         console.log("adding existing consumer");
         this.addConsumer(prod.producerId, prod.kind);
@@ -413,22 +378,13 @@ export class MediaService {
     }
     this.addingProducers.push(producerId);
 
-    if (
-      producerId === this.localVideoProducer?.id ||
-      producerId === this.localAudioProducer?.id ||
-      producerId === this.localScreenProducer?.id
-    ) {
+    if (producerId === this.localVideoProducer?.id || producerId === this.localAudioProducer?.id || producerId === this.localScreenProducer?.id) {
       return;
     }
 
     console.log("ADDING: " + kind);
 
-    const consume = await this.api.addConsumer(
-      this.roomId,
-      this.recvTransport.id,
-      this.device.rtpCapabilities,
-      producerId
-    );
+    const consume = await this.api.addConsumer(this.roomId, this.recvTransport.id, this.device.rtpCapabilities, producerId);
 
     const consumer = await this.recvTransport.consume({
       id: consume.id,
@@ -454,9 +410,7 @@ export class MediaService {
 
     this.updateObserver();
 
-    this.addingProducers.slice(
-      this.addingProducers.findIndex((item) => item === producerId)
-    );
+    this.addingProducers.slice(this.addingProducers.findIndex((item) => item === producerId));
 
     consumer.on("transportclose", () => {
       console.log("track close");
@@ -539,13 +493,7 @@ export class MediaService {
     transport.on("produce", async (parameters, callback, errback) => {
       console.log("PRODUCE");
       try {
-        const { id } = await this.api.produce(
-          this.roomId,
-          transport.id,
-          parameters.kind,
-          parameters.rtpParameters,
-          parameters.appData
-        );
+        const { id } = await this.api.produce(this.roomId, transport.id, parameters.kind, parameters.rtpParameters, parameters.appData);
         callback({ id });
       } catch (err) {
         console.error(err);
@@ -609,12 +557,17 @@ export interface User {
     video?: string;
     screen?: string;
   };
-  signal: Signal,
-  isMuted: boolean,
-  isTalking: boolean,
+  mappedProducer?: {
+    audio?: Producer;
+    video?: Producer;
+    screen?: Producer;
+  };
+  signal: Signal;
+  isMuted: boolean;
+  isTalking: boolean;
 }
 
-//Work-in-Progress
+// Work-in-Progress
 export interface Chat {
   id: string;
   partner: String;
