@@ -19,6 +19,35 @@
         flex-grow: 1;
     }
 
+    #send-message {
+        position: relative;
+        width: 96px;
+        height: 32px;
+        margin-left: auto;
+        background-color: gray;
+        // border-bottom:  32px solid gray;
+        // border-left:    32px solid transparent;
+
+        i {
+            line-height: 32px;
+        }
+
+        // &::before {
+        //     content: "";
+        //     position: absolute;
+        //     bottom: -32px;
+        //     left: -88px;
+        //     width: 64px;
+        //     height: 16px;
+
+        //     background-color: blue;
+        //     border-bottom-right-radius: 32px 12px;
+        //     box-shadow: 24px 0 0 0 gray;
+        //     border-top: 8px solid blue;
+        //     border-right: 8px solid transparent;
+        // }
+    }
+
     #chat-input {
         height: 64px;
         border: none;

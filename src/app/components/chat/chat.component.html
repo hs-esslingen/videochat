@@ -4,12 +4,12 @@
     <div id="messages">
         <div *ngFor="let message of childData.messages" class="message">
             <div id="sender">{{message.sender}}:</div>
-            <div id="time">{{message.time}}</div>
+            <!-- <div id="time">{{message.time}}</div> -->
             <div id="text">{{message.text}}</div>
         </div>
     </div>
     
-    <button id="send-message" (click)="sendMessage()">Send</button>
+    <button id="send-message" (click)="sendMessage()"><i class="material-icons">send</i></button>
     <textarea id="chat-input" placeholder="Enter your message here"></textarea>
 </div>
 

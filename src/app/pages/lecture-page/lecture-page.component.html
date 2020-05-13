@@ -42,12 +42,15 @@
                 <div class="signal" *ngIf="currentUser.isMuted != true"><i class="material-icons">mic</i></div>
             </div>
             <div id="user-actions">
-                <button id="raise-hand" class="small round-button" (click)="raiseHand()"><i
-                        class="material-icons">pan_tool</i></button>
-                <button id="vote-up" class="small round-button" (click)="thumbsUp()"><i
-                        class="material-icons">thumb_up</i></button>
-                <button id="vote-down" class="small round-button" (click)="thumbsDown()"><i
-                        class="material-icons">thumb_down</i></button>
+                <button id="raise-hand" class="small round-button" (click)="raiseHand()">
+                    <i class="material-icons">pan_tool</i>
+                </button>
+                <button id="vote-up" class="small round-button" (click)="thumbsUp()">
+                    <i class="material-icons">thumb_up</i>
+                </button>
+                <button id="vote-down" class="small round-button" (click)="thumbsDown()">
+                    <i class="material-icons">thumb_down</i>
+                </button>
             </div>
 
 

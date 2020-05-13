@@ -13,7 +13,12 @@ export class ChatService {
   constructor() {
 
     const testData = [
-      { id: "public_chat", messages: [], newMessage: true },
+      { id: "public_chat",
+        messages: [
+          {sender: "Vladimir", text: "Jo, lass mal chillen nachher."},
+          {sender: "Ali", text: "Bruder, nee. Is Corona."}
+        ],
+        newMessage: true },
     ];
 
     this.chats = testData.map((jsonObj) => Chat.fromJson(jsonObj));
