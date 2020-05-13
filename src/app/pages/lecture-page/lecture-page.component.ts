@@ -4,6 +4,7 @@ import { ActivatedRoute } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { LocalMediaService } from "src/app/helper/local-media.service";
 import { JoinMeetingPopupComponent } from "src/app/components/join-meeting-popup/join-meeting-popup.component";
+import { ChatService } from 'src/app/helper/chat.service';
 
 @Component({
   selector: "app-lecture-page",
@@ -11,6 +12,9 @@ import { JoinMeetingPopupComponent } from "src/app/components/join-meeting-popup
   styleUrls: ["./lecture-page.component.scss"],
 })
 export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
+  // Enables / Disables debug mode, that creates some dummy users and chats
+  demo = true;
+
   @ViewChild("webcams") webcams: ElementRef<HTMLDivElement>;
   // Variables for video
   videoConsumers: Stream[];
@@ -29,11 +33,11 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   singleVideo: User;
   duplicateSession = false;
 
-  //Variables for Users
+  // Variables for Users
   currentUser: User = { id: "666", nickname: "Der King", producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND };
   users: User[] = [];
 
-  //Variables for sidebar
+  // Variables for sidebar
   sidebarDetail = undefined;
   detailType = undefined;
 
@@ -43,6 +47,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     private dialog: MatDialog,
     private localMedia: LocalMediaService,
     private element: ElementRef<HTMLElement>,
+    readonly chatService: ChatService,
   ) {}
 
 
@@ -65,6 +70,8 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+    if (this.demo) this.test();
+
     const url = new URL(location.href);
     this.roomUrl = url.origin + url.pathname;
     // this.isMobile = this.checkMobile();
@@ -74,7 +81,9 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     //   }, 1500) as any) as number;
     // }
     this.route.paramMap.subscribe(async (params) => {
+      // don't actually connect if demo is enabled
       if (this.demo) return;
+
       this.roomId = params.get("roomId");
       // if (this.mediaService.nickname == undefined) this.openNicknameDialog();
       const dialogRef = this.dialog.open(JoinMeetingPopupComponent, {
@@ -121,9 +130,9 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateSidebar($event) {
-    //console.log("Event occured")
-    if (this.detailType == $event.type) {
-      if (this.sidebarDetail.id == $event.element.id) {
+    // console.log("Event occured")
+    if (this.detailType === $event.type) {
+      if (this.sidebarDetail.id === $event.element.id) {
         this.sidebarDetail = undefined;
         this.detailType = undefined;
       }
@@ -135,5 +144,36 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sidebarDetail = $event.element;
       this.detailType = $event.type;
     }
+  }
+
+
+  test(): void {
+    this.users.push(
+      { id: "1", nickname: "Test_1", producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND },
+      { id: "2", nickname: "Test_2", producers: {}, isMuted: false, isTalking: true, signal: Signal.NONE },
+      { id: "3", nickname: "Test_3", producers: {}, isMuted: false, isTalking: true, signal: Signal.VOTED_UP },
+      { id: "4", nickname: "Test_4", producers: {}, isMuted: false, isTalking: true, signal: Signal.VOTED_DOWN },
+      { id: "5", nickname: "Test_5", producers: {}, isMuted: true, isTalking: true, signal: Signal.VOTED_DOWN },
+      { id: "6", nickname: "Test_6", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_UP },
+      { id: "7", nickname: "Test_7", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_UP },
+      { id: "8", nickname: "Test_8", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "9", nickname: "Test_9", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "10", nickname: "Test_10", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "11", nickname: "Test_11", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "12", nickname: "Test_12", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "13", nickname: "Test_13", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "14", nickname: "Test_14", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "15", nickname: "Test_15", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "16", nickname: "Test_16", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "17", nickname: "Test_17", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "18", nickname: "Test_18", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "19", nickname: "Test_19", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "20", nickname: "Test_20", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "21", nickname: "Test_21", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "22", nickname: "Test_22", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE }
+    );
+
+    this.chatService.addChat(this.users[0]);
+    this.chatService.addChat(this.users[1]);
   }
 }

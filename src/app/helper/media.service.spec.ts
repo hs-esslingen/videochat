@@ -5,7 +5,6 @@ import { MediaService } from './media.service';
 
 describe('MediaService', () => {
   let service: MediaService;
-  
 
 
   beforeEach(() => {
