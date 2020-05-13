@@ -1,12 +1,15 @@
 <div id="content">
     <div id="main">
         <div id="webcams">
-            <!-- <app-user class="user" *ngFor="let user of users" [user]="user" [audioConsumers]="audioConsumers"
-                [videoConsumers]="videoConsumers" [small]="singleVideo != undefined" [selected]="singleVideo == user">
-            </app-user> -->
-
+            <ng-container *ngFor="let user of users" >
+                <div  *ngIf="user.consumers?.video != undefined"  class="video-element">
+                    <app-video [video]="user.consumers?.video"></app-video>
+                </div>
+            </ng-container>
         </div>
         <div id="screenshare"></div>
+
+        <app-audio *ngFor="let user of users" [audio]="user.consumers?.audio"></app-audio>
 
 
         <app-toolbar id="toolbar" [microphoneState]="microphoneState" [cameraState]="cameraState" [screenshareState]="screenshareState"></app-toolbar>
@@ -16,7 +19,7 @@
     <app-chat *ngIf="detailType === 'chat'" class="detail" [childData]="sidebarDetail"></app-chat>
     <!-- <app-poll *ngIf="selected === SELECTION.poll" class="detail"></app-poll> -->
 
-    <div id="master">
+    <div id="master" [class.detail-open]="detailType === 'chat'">
         <div id="scroll">
 
             <h4>Chats</h4>

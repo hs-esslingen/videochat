@@ -29,6 +29,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { ChatComponent } from './components/chat/chat.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { VideoComponent } from './components/video/video.component';
+import { AudioComponent } from './components/audio/audio.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { VideoComponent } from './components/video/video.component';
     ChatComponent,
     ToolbarComponent,
     VideoComponent,
+    AudioComponent,
   ],
   imports: [
     BrowserModule,

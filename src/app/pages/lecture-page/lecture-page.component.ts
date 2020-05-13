@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef } from "@angular/core";
 import { User, Stream, MicrophoneState, ScreenshareState, CameraState, Signal, MediaService } from "src/app/helper/media.service";
 import { ActivatedRoute } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
@@ -6,6 +6,7 @@ import { LocalMediaService } from "src/app/helper/local-media.service";
 import { JoinMeetingPopupComponent } from "src/app/components/join-meeting-popup/join-meeting-popup.component";
 import { ChatService, Chat, ChatObservable } from "src/app/helper/chat.service";
 import { Subscription } from "rxjs";
+import { Consumer } from 'mediasoup-client/lib/types';
 
 @Component({
   selector: "app-lecture-page",
@@ -13,8 +14,8 @@ import { Subscription } from "rxjs";
   styleUrls: ["./lecture-page.component.scss"],
 })
 export class LecturePageComponent implements OnInit, OnDestroy {
-  //Enables / Disables debug mode, that creates some dummy users and chats
-  debug = true;
+  // Enables / Disables demo mode, that creates some dummy users and chats
+  demo = true;
 
   // Variables for video
   videoConsumers: Stream[];
@@ -48,11 +49,20 @@ export class LecturePageComponent implements OnInit, OnDestroy {
     readonly chatService: ChatService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private localMedia: LocalMediaService
+    private localMedia: LocalMediaService,
+    private element: ElementRef<HTMLElement>,
   ) {}
 
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    console.log(this.element.nativeElement)
+    this.element.nativeElement.style.setProperty('--max-video-width', 100 + "px")
+    // this.    event.target.innerWidth;
+  }
+
   ngOnInit(): void {
-    if (this.debug) this.test();
+    if (this.demo) this.test();
 
     // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreses or rejoins)
     this.chats = this.chatService.getChats();
@@ -71,7 +81,7 @@ export class LecturePageComponent implements OnInit, OnDestroy {
     //   }, 1500) as any) as number;
     // }
     this.route.paramMap.subscribe(async (params) => {
-      return;
+      if (this.demo) return;
       this.roomId = params.get("roomId");
       // if (this.mediaService.nickname == undefined) this.openNicknameDialog();
       const dialogRef = this.dialog.open(JoinMeetingPopupComponent, {
@@ -97,7 +107,7 @@ export class LecturePageComponent implements OnInit, OnDestroy {
               this.screenshareState = data.screenshareState;
               this.localStream = data.localStream;
               this.localSchreenshareStream = data.localScreenshareStream;
-              if (!this.debug) this.users = data.users;
+              if (!this.demo) this.users = data.users;
 
               if (!this.users.includes(this.singleVideo)) this.singleVideo = undefined;
               if (this.users.length <= 1) this.singleVideo = undefined;
@@ -155,7 +165,10 @@ export class LecturePageComponent implements OnInit, OnDestroy {
   }
 
   test(): void {
-    this.users.push({ id: "1", nickname: "Test_1", producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND });
+    this.users.push({ id: "1", nickname: "Test_1", consumers: {
+      audio: {},
+      video: "abc",
+    }, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND });
     this.users.push({ id: "2", nickname: "Test_2", producers: {}, isMuted: false, isTalking: true, signal: Signal.NONE });
     this.users.push({ id: "3", nickname: "Test_3", producers: {}, isMuted: false, isTalking: true, signal: Signal.VOTED_UP });
     this.users.push({ id: "4", nickname: "Test_4", producers: {}, isMuted: false, isTalking: true, signal: Signal.VOTED_DOWN });
