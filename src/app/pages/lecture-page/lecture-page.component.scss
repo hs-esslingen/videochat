@@ -16,17 +16,14 @@
       display: flex;
       flex-direction: row;
       justify-content: center;
+      align-content: center;
       align-items: center;
       flex-wrap: wrap;
 
       
       .video-element {
-        // &:nth-child(3n) {
-          flex-basis: 30%;
-        // }
+        flex-basis: var(--max-video-flex-basis);
         width: 100%;
-        margin-right: 4px;
-        margin-left: 4px;
         max-width: var(--max-video-width);
         max-height: 100%;
         app-video {

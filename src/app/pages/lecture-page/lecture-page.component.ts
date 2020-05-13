@@ -4,7 +4,7 @@ import { ActivatedRoute } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { LocalMediaService } from "src/app/helper/local-media.service";
 import { JoinMeetingPopupComponent } from "src/app/components/join-meeting-popup/join-meeting-popup.component";
-import { ChatService } from 'src/app/helper/chat.service';
+import { ChatService } from "src/app/helper/chat.service";
 
 @Component({
   selector: "app-lecture-page",
@@ -47,11 +47,10 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     private dialog: MatDialog,
     private localMedia: LocalMediaService,
     private element: ElementRef<HTMLElement>,
-    readonly chatService: ChatService,
+    readonly chatService: ChatService
   ) {}
 
-
-  @HostListener('window:resize', ['$event'])
+  @HostListener("window:resize", ["$event"])
   onResize(event) {
     this.recalculateMaxVideoWidth();
   }
@@ -61,12 +60,19 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   recalculateMaxVideoWidth() {
-    this.element.nativeElement.style.setProperty('--max-video-width', (this.webcams?.nativeElement?.clientHeight / 3 * 4) - 5 + "px");
+    this.element.nativeElement.style.setProperty("--max-video-width", (this.webcams?.nativeElement?.clientHeight / 3) * 4 - 5 + "px");
     const numVideos = this.users.filter((user) => user.consumers?.video != undefined).length;
-    console.log(numVideos);
-    console.log(this.webcams?.nativeElement?.clientWidth);
-    this.element.nativeElement.style.setProperty('--max-video-flex-basis', (this.webcams?.nativeElement?.clientHeight / 3 * 4) - 5 + "px");
+    const clientWidth = this.webcams?.nativeElement?.clientWidth;
+    const clientHeight = this.webcams?.nativeElement?.clientHeight;
 
+    let colums = 1;
+    while ((1 / (colums + 1)) * clientWidth * (3 / 4) * Math.ceil((numVideos) / (colums)) > clientHeight) {
+      colums++
+    };
+    const maxHeightPerElement = clientHeight / Math.ceil(numVideos / colums);
+    const maxWidthPerElement = clientWidth / colums;
+    const maxRatio = Math.min((maxHeightPerElement * (4 / 3)) / clientWidth, maxWidthPerElement / clientWidth);
+    this.element.nativeElement.style.setProperty("--max-video-flex-basis", maxRatio * 100 - 0.1 + "%");
   }
 
   ngOnInit(): void {
@@ -125,9 +131,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngOnDestroy() {
-
-  }
+  ngOnDestroy() {}
 
   updateSidebar($event) {
     // console.log("Event occured")
@@ -135,23 +139,26 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.sidebarDetail.id === $event.element.id) {
         this.sidebarDetail = undefined;
         this.detailType = undefined;
-      }
-      else {
+      } else {
         this.sidebarDetail = $event.element;
       }
-    }
-    else {
+    } else {
       this.sidebarDetail = $event.element;
       this.detailType = $event.type;
     }
   }
 
-
   test(): void {
     this.users.push(
-      { id: "1", nickname: "Test_1", producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND },
-      { id: "2", nickname: "Test_2", producers: {}, isMuted: false, isTalking: true, signal: Signal.NONE },
-      { id: "3", nickname: "Test_3", producers: {}, isMuted: false, isTalking: true, signal: Signal.VOTED_UP },
+      { id: "1", nickname: "Test_1", consumers: {
+        video: {},
+      }, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND },
+      { id: "2", nickname: "Test_2", consumers: {
+        video: {},
+      }, isMuted: false, isTalking: true, signal: Signal.NONE },
+      { id: "3", nickname: "Test_3", consumers: {
+        video: {},
+      }, isMuted: false, isTalking: true, signal: Signal.VOTED_UP },
       { id: "4", nickname: "Test_4", producers: {}, isMuted: false, isTalking: true, signal: Signal.VOTED_DOWN },
       { id: "5", nickname: "Test_5", producers: {}, isMuted: true, isTalking: true, signal: Signal.VOTED_DOWN },
       { id: "6", nickname: "Test_6", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_UP },
