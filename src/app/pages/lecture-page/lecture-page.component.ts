@@ -13,7 +13,7 @@ import { ChatService } from "src/app/helper/chat.service";
 })
 export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   // Enables / Disables debug mode, that creates some dummy users and chats
-  demo = true;
+  demo = false;
 
   @ViewChild("webcams") webcams: ElementRef<HTMLDivElement>;
   // Variables for video
