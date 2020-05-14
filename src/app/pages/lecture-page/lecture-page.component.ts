@@ -13,12 +13,10 @@ import { ChatService } from "src/app/helper/chat.service";
 })
 export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   // Enables / Disables debug mode, that creates some dummy users and chats
-  demo = false;
+  demo = true;
 
   @ViewChild("webcams") webcams: ElementRef<HTMLDivElement>;
   // Variables for video
-  videoConsumers: Stream[];
-  audioConsumers: Stream[];
   autoGainControl: boolean;
   microphoneState: MicrophoneState = MicrophoneState.ENABLED;
   cameraState: CameraState = CameraState.DISABLED;
@@ -81,7 +79,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     const maxHeightPerElement = clientHeight / Math.ceil(numVideos / colums);
     const maxWidthPerElement = clientWidth / colums;
     const maxRatio = Math.min((maxHeightPerElement * (4 / 3)) / clientWidth, maxWidthPerElement / clientWidth);
-    this.element.nativeElement.style.setProperty("--max-video-flex-basis", maxRatio * 100 - 0.1 + "%");
+    this.element.nativeElement.style.setProperty("--max-video-flex-basis", maxRatio * 100 - 1 + "%");
   }
 
   startDividerDrag() {
@@ -113,52 +111,56 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isToolbarHidden = true;
     }, 1500) as any) as number;
 
+    this.currentUser.nickname = this.mediaService.nickname;
+
     this.route.paramMap.subscribe(async (params) => {
       // don't actually connect if demo is enabled
       if (this.demo) return;
 
       this.roomId = params.get("roomId");
-      // if (this.mediaService.nickname == undefined) this.openNicknameDialog();
       const dialogRef = this.dialog.open(JoinMeetingPopupComponent, {
         width: "400px",
         data: { nickname: this.mediaService.nickname, roomId: this.roomId },
       });
       dialogRef.afterClosed().subscribe(async (result) => {
+
+        // if popup is canceled
         if (result == undefined || result === "") {
           this.localMedia.closeAudio();
           this.localMedia.closeVideo();
           return;
         }
+        // Proceed when all informations are given
 
         // TODO rework states (use current user)
         this.currentUser.nickname = this.mediaService.nickname;
 
         if (result.nickname !== "") this.mediaService.setNickname(result.nickname);
+        else this.mediaService.setNickname("User " +  Math.round(Math.random() * 100));
 
         try {
-          const observer = await this.mediaService.connectToRoom(params.get("roomId"), result.isWebcamDisabled);
-          if (observer != undefined)
-            observer.subscribe((data) => {
-              this.autoGainControl = data.autoGainControl;
-              this.cameraState = data.cameraState;
-              this.microphoneState = data.microphoneState;
-              this.screenshareState = data.screenshareState;
-              this.localStream = data.localStream;
-              this.localSchreenshareStream = data.localScreenshareStream;
-              this.users = data.users;
+          const observer = await this.mediaService.connectToRoom(this.roomId, result.isWebcamDisabled);
+          observer.subscribe((data) => {
+            this.autoGainControl = data.autoGainControl;
+            this.cameraState = data.cameraState;
+            this.microphoneState = data.microphoneState;
+            this.screenshareState = data.screenshareState;
+            this.localStream = data.localStream;
+            this.localSchreenshareStream = data.localScreenshareStream;
+            this.users = data.users;
 
-              let screenShareUser = this.users.find((item) => item.consumers?.screen != undefined);
-              if (this.screenshareState === ScreenshareState.ENABLED) screenShareUser = this.currentUser;
+            let screenShareUser = this.users.find((item) => item.consumers?.screen != undefined);
+            if (this.screenshareState === ScreenshareState.ENABLED) screenShareUser = this.currentUser;
 
-              if (screenShareUser != undefined && screenShareUser !== this.screenShareUser) {
-                this.screenShareStream = this.getStream(screenShareUser);
-              }
-              this.screenShareUser = screenShareUser;
+            if (screenShareUser != undefined && screenShareUser !== this.screenShareUser) {
+              this.screenShareStream = this.getScreenShareStream(screenShareUser);
+            }
+            this.screenShareUser = screenShareUser;
 
-              requestAnimationFrame(() => {
-                this.recalculateMaxVideoWidth();
-              });
+            requestAnimationFrame(() => {
+              this.recalculateMaxVideoWidth();
             });
+          });
         } catch (err) {
           if (err === "DUPLICATE SESSION") {
             this.duplicateSession = true;
@@ -170,9 +172,11 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    this.mediaService.disconnect();
+  }
 
-  getStream(user: User) {
+  getScreenShareStream(user: User) {
     if (this.demo) return new MediaStream();
     if (user === this.currentUser) return this.localSchreenshareStream;
     return new MediaStream([user.consumers.screen?.track]);
@@ -196,7 +200,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  onMousemoove() {
+  onMousemove() {
     if (!this.isMobile) {
       this.isToolbarHidden = false;
       clearTimeout(this.moveTimout);
@@ -206,8 +210,9 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-
   test(): void {
+    this.currentUser = { id: "666", nickname: "Der King", producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND };
+
     this.users.push(
       {
         id: "1",
