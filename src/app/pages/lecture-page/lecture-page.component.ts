@@ -13,7 +13,7 @@ import { ChatService } from "src/app/helper/chat.service";
 })
 export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   // Enables / Disables debug mode, that creates some dummy users and chats
-  demo = false;
+  demo = true;
 
   @ViewChild("webcams") webcams: ElementRef<HTMLDivElement>;
   // Variables for video
@@ -253,9 +253,9 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       { id: "5", nickname: "Test_5", producers: {}, isMuted: true, isTalking: true, signal: Signal.VOTED_DOWN },
       { id: "6", nickname: "Test_6", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_UP },
       { id: "7", nickname: "Test_7", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_UP },
-      { id: "8", nickname: "Test_8", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-      { id: "9", nickname: "Test_9", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-      { id: "10", nickname: "Test_10", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
+      { id: "8", nickname: "Test_8", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_DOWN },
+      { id: "9", nickname: "Test_9", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_DOWN },
+      { id: "10", nickname: "Test_10", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_DOWN },
       { id: "11", nickname: "Test_11", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
       { id: "12", nickname: "Test_12", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
       { id: "13", nickname: "Test_13", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
