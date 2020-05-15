@@ -14,7 +14,17 @@
     "watch-build-server": "webpack -w --config webpack.server.config.js",
     "watch-server": "cross-env MEDIASOUP_WORKER_BIN=dist/worker/mediasoup-worker nodemon --watch dist/server.js --inspect dist/server.js",
     "watch-frontend": "ng serve",
-    "prerender": "ng run videochat:prerender"
+    "prerender": "ng run videochat:prerender",
+    "check": "gts check",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm.cmd run compile",
+    "pretest": "npm.cmd run compile",
+    "posttest": "npm.cmd run check"
+  },
+  "engines": {
+    "node": ">=10.0.0"
   },
   "private": true,
   "dependencies": {
@@ -58,7 +68,7 @@
     "@types/jasmine": "~3.5.10",
     "@types/jasminewd2": "~2.0.8",
     "@types/jsonwebtoken": "^8.3.8",
-    "@types/node": "~13.11.0",
+    "@types/node": "^13.11.1",
     "@types/node-fetch": "^2.5.7",
     "@types/passport": "^1.0.3",
     "@types/passport-jwt": "^3.0.3",
@@ -87,12 +97,7 @@
     "tslint": "~6.1.1",
     "typescript": "~3.8.3",
     "webpack-cli": "^3.3.11",
-    "zone.js": "~0.10.3"
-  },
-  "prettier": {
-    "trailingComma": "es5",
-    "semi": true,
-    "singleQuote": false,
-    "printWidth": 160
+    "zone.js": "~0.10.3",
+    "gts": "^2.0.2"
   }
 }
