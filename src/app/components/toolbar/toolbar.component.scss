@@ -1,0 +1,63 @@
+
+  #toolbar {
+    position: absolute;
+    opacity: 1;
+    bottom: 0px;
+    right: 32px;
+    left: 32px;
+    width: calc(100% - 64px);
+    display: flex;
+    justify-content: center;
+    transition: opacity 0.25s ease-in-out;
+
+    &.hidden {
+      opacity: 0;
+    }
+
+    @media (max-width: 768px) {
+      justify-content: center;
+      right: 8px;
+      left: 8px;
+      width: calc(100% - 16px);
+    }
+
+
+    button {
+      height: 56px;
+      width: 56px;
+      margin: 16px 8px 40px 8px;
+      border-radius: 28px;
+      pointer-events: all;
+      color: white;
+
+      @media (max-width: 768px) {
+        margin: 16px 6px 24px 6px;
+
+        &.screen-share {
+          visibility: hidden;
+        }
+      }
+
+
+      i {
+        line-height: 56px;
+      }
+
+      &.toggle {
+        background-color: rgba(0, 0, 0, 0.38);
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.76);
+        }
+
+        &.disabled {
+          background-color: white;
+          color: black;
+        }
+      }
+
+      &.end-call {
+        background-color: #db4437;
+      }
+    }
+  }

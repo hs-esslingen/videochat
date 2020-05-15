@@ -8,14 +8,18 @@ import { AuthGuard } from './helper/auth.guard';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { ContactsPageComponent } from './pages/contacts-page/contacts-page.component';
 import { ImprintPageComponent } from './pages/imprint-page/imprint-page.component';
+import { LecturePageComponent } from './pages/lecture-page/lecture-page.component';
 
 const routes: Routes = [
   { path: "datenschutz", component: PrivacyPolicyComponent },
   { path: "kontakt", component: ContactsPageComponent },
   { path: "impressum", component: ImprintPageComponent },
   { path: "login", component: LoginPageComponent  },
+  // TODO: Create lecture Overiview Page
+  // { path: "lecture", component: LecturePageComponent, canActivate: [AuthGuard]  },
   { path: ":roomId", component: MeetingPageComponent, canActivate: [AuthGuard]  },
   { path: ":roomId/thank-you", component: ThankYouPageComponent, canActivate: [AuthGuard] },
+  { path: "lecture/:roomId", component: LecturePageComponent, canActivate: [AuthGuard]  },
   { path: "**", component: OverviewPageComponent, canActivate: [AuthGuard]  },
 ];
 

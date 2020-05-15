@@ -24,7 +24,13 @@ import { FooterComponent } from "./components/footer/footer.component";
 import { ContactsPageComponent } from "./pages/contacts-page/contacts-page.component";
 import { ImprintPageComponent } from "./pages/imprint-page/imprint-page.component";
 import { JoinMeetingPopupComponent } from "./components/join-meeting-popup/join-meeting-popup.component";
+import { LecturePageComponent } from './pages/lecture-page/lecture-page.component';
 import { MatSelectModule } from "@angular/material/select";
+import { ChatComponent } from './components/chat/chat.component';
+import { ToolbarComponent } from './components/toolbar/toolbar.component';
+import { VideoComponent } from './components/video/video.component';
+import { AudioComponent } from './components/audio/audio.component';
+import { MasterSidebarComponent } from './components/master-sidebar/master-sidebar.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +49,12 @@ import { MatSelectModule } from "@angular/material/select";
     ImprintPageComponent,
     JoinMeetingPopupComponent,
     AllowUriComponent,
+    LecturePageComponent,
+    ChatComponent,
+    ToolbarComponent,
+    VideoComponent,
+    AudioComponent,
+    MasterSidebarComponent,
   ],
   imports: [
     BrowserModule,

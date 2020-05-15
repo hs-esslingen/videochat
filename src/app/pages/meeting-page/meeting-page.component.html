@@ -13,12 +13,12 @@
   </div>
 
 
-  <app-user *ngIf="singleVideo" id="single-stream" [user]="singleVideo" [videoConsumers]="videoConsumers"
+  <app-user *ngIf="singleVideo" id="single-stream" [user]="singleVideo" playAudio="true"
     (click)="toggleSingleGrid(singleVideo)" [selected]="true"></app-user>
 
   <div id="streams" [class.single]="singleVideo">
     <app-user class="user" *ngFor="let user of users" (click)="toggleSingleGrid(user)" [user]="user"
-      [audioConsumers]="audioConsumers" [videoConsumers]="videoConsumers" [small]="singleVideo != undefined"
+      [small]="singleVideo != undefined"
       [selected]="singleVideo == user"></app-user>
 
     <video class="user" *ngIf="localSchreenshareStream" [srcObject]="localSchreenshareStream" [volume]="0" autoplay

@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, OnDestroy } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { MediaService } from "src/app/helper/media.service";
-import { LocalMediaService } from "src/app/helper/local-media.service";
+import { MediaService } from "../../helper/media.service";
+import { LocalMediaService } from "../../helper/local-media.service";
 
 interface JoinMeetingData {
   roomId: string;

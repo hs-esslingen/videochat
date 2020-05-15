@@ -1,15 +1,10 @@
 import { Injectable } from "@angular/core";
-import {
-  Consumer,
-  Producer,
-  Device,
-  Transport,
-} from "mediasoup-client/lib/types";
-import { environment } from "src/environments/environment";
+import { Consumer, Producer, Device, Transport } from "mediasoup-client/lib/types";
+import { environment } from "../../environments/environment";
 import { ApiService } from "./api.service";
 import { Observable, Subscriber } from "rxjs";
 import { WsService } from "./ws.service";
-import { LocalMediaService } from './local-media.service';
+import { LocalMediaService } from "./local-media.service";
 
 export enum CameraState {
   ENABLED = "videocam",
@@ -31,6 +26,12 @@ export enum Status {
   CONNECTED,
   DISCONNECTED,
 }
+export enum Signal {
+  NONE = 0,
+  RAISED_HAND = 1,
+  VOTED_UP = 2,
+  VOTED_DOWN = 3,
+}
 
 @Injectable({
   providedIn: "root",
@@ -49,12 +50,7 @@ export class MediaService {
   get LocalAudioProducer(): Producer {
     return this.localAudioProducer;
   }
-  private videoConsumers: Stream[] = [];
-  private audioConsumers: Stream[] = [];
-  private addingProducers: string[] = [];
   private consumerSubscriber: Subscriber<{
-    videoConsumers: Stream[];
-    audioConsumers: Stream[];
     autoGainControl: boolean;
     cameraState: CameraState;
     microphoneState: MicrophoneState;
@@ -84,11 +80,7 @@ export class MediaService {
     this.nickname = localStorage.getItem("nickname");
   }
 
-
-  public async connectToRoom(
-    roomId,
-    isWebcamDisabled: boolean
-  ): Promise<MediaObservable> {
+  public async connectToRoom(roomId, isWebcamDisabled: boolean): Promise<MediaObservable> {
     this.status = Status.CONNECTING;
     this.roomId = roomId;
     await this.setupDevice();
@@ -97,7 +89,6 @@ export class MediaService {
 
     await this.createSendTransport();
     await this.createRecvTransport();
-
 
     if (!isWebcamDisabled) {
       const videoTracks = await this.localMedia.getVideoTrack();
@@ -125,7 +116,6 @@ export class MediaService {
       this.microphoneState = MicrophoneState.DISABLED;
     }
 
-    this.addExistingConsumers();
     this.addExistingUsers();
 
     // Push an inital update
@@ -159,10 +149,7 @@ export class MediaService {
 
   async toggleCamera() {
     if (this.status !== Status.CONNECTED) return;
-    if (
-      this.localVideoProducer != undefined &&
-      !this.localVideoProducer?.closed
-    ) {
+    if (this.localVideoProducer != undefined && !this.localVideoProducer?.closed) {
       this.localMedia.closeVideo();
       this.localVideoProducer.close();
       await this.api.producerClose(this.roomId, this.localVideoProducer.id);
@@ -207,9 +194,7 @@ export class MediaService {
     if (!this.localScreenProducer || this.localAudioProducer.closed) {
       try {
         // @ts-ignore
-        const localScreen = (await navigator.mediaDevices.getDisplayMedia(
-          {}
-        )) as MediaStream;
+        const localScreen = (await navigator.mediaDevices.getDisplayMedia({})) as MediaStream;
         this.localScreenshareStream = localScreen;
 
         await this.sendScreen(localScreen);
@@ -217,8 +202,7 @@ export class MediaService {
 
         this.localScreenProducer.track.onended = async () => {
           setTimeout(() => {
-            if (this.screenshareState !== ScreenshareState.DISABLED)
-              this.toggleScreenshare();
+            if (this.screenshareState !== ScreenshareState.DISABLED) this.toggleScreenshare();
           }, 0);
         };
         this.updateObserver();
@@ -244,8 +228,6 @@ export class MediaService {
   updateObserver() {
     if (this.consumerSubscriber)
       this.consumerSubscriber.next({
-        videoConsumers: this.videoConsumers,
-        audioConsumers: this.audioConsumers,
         autoGainControl: this.autoGainControl,
         microphoneState: this.microphoneState,
         screenshareState: this.screenshareState,
@@ -272,8 +254,6 @@ export class MediaService {
         const url = new URL(window.location.href);
         this.ws.connect("wss://" + url.host + "/ws");
       } else {
-        // const url = new URL(window.location.href);
-        // this.ws.connect("wss://" + url.host + "/ws");
         this.ws.connect("ws://localhost:4000/ws");
       }
 
@@ -285,12 +265,6 @@ export class MediaService {
         this.ws.send("init", {
           roomId: this.roomId,
           nickname: this.nickname,
-          transports: [this.sendTransport?.id, this.recvTransport?.id],
-          producers: {
-            audio: this.localAudioProducer?.id,
-            video: this.localVideoProducer?.id,
-            screen: this.localScreenProducer?.id,
-          },
         });
 
         // @ts-ignore
@@ -308,25 +282,10 @@ export class MediaService {
             this.userId = msg.data.id;
             res();
             break;
-          case "add-producer":
-            if (
-              this.recvTransport != undefined &&
-              this.recvTransport.id != undefined
-            )
-              this.addConsumer(msg.data.producerId, msg.data.kind);
-            break;
-          case "remove-producer":
-            setTimeout(() => {
-              this.removeConsumer(msg.data.id, msg.data.kind);
-            }, 300);
-            break;
           case "add-user":
             {
-              if (
-                this.recvTransport == undefined ||
-                this.recvTransport.id == undefined
-              )
-                return;
+              if (this.recvTransport == undefined || this.recvTransport.id == undefined) return;
+
               const user: User = msg.data;
               if (!this.users.find((item) => item.id === user.id)) {
                 this.users.push(user);
@@ -341,6 +300,18 @@ export class MediaService {
               if (foundUser) {
                 foundUser.nickname = user.nickname;
                 foundUser.producers = user.producers;
+
+                if (foundUser.consumers == undefined) foundUser.consumers = {};
+
+                ["audio", "video", "screen"].forEach((type) => {
+                  // add missing producers
+                  if (foundUser.consumers[type] == undefined && foundUser.producers[type] != undefined)
+                    this.addConsumer(foundUser, type as "audio" | "video" | "screen");
+
+                  // remove old producers
+                  if (foundUser.consumers[type] != undefined && foundUser.producers[type] == undefined)
+                    this.removeConsumer(foundUser, type as "audio" | "video" | "screen");
+                });
               }
             }
             break;
@@ -364,24 +335,6 @@ export class MediaService {
     });
   }
 
-  private async addExistingConsumers() {
-    console.log("GET CONSUMER");
-    const producers = await this.api.getProducers(this.roomId);
-    for (const prod of producers) {
-      if (
-        this.videoConsumers.find(
-          (item) => item.consumer.id === prod.producerId
-        ) == undefined &&
-        this.audioConsumers.find(
-          (item) => item.consumer.id === prod.producerId
-        ) == undefined
-      ) {
-        console.log("adding existing consumer");
-        this.addConsumer(prod.producerId, prod.kind);
-      }
-    }
-  }
-
   private async addExistingUsers() {
     const users = await this.api.getUsers(this.roomId);
     const newUsers: User[] = [];
@@ -391,88 +344,59 @@ export class MediaService {
 
       const foundUser = this.users.find((item) => item.id === user.id);
       if (foundUser) {
+        console.log("User already exits ... updating");
         foundUser.nickname = user.nickname;
-        foundUser.producers = user.producers;
-      } else {
-        newUsers.push(user);
+        return;
       }
+
+      for (const key in user.producers) {
+        if (user.producers.hasOwnProperty(key)) {
+          this.addConsumer(user, key as "audio" | "video" | "screen");
+        }
+      }
+      newUsers.push(user);
     }
     this.users.push(...newUsers);
   }
 
-  private async addConsumer(producerId, kind) {
-    if (this.addingProducers.includes(producerId)) {
-      console.log("duplicate");
-      return;
-    }
-    this.addingProducers.push(producerId);
+  private async addConsumer(user: User, type: "audio" | "video" | "screen") {
+    const producerId = user.producers[type];
+    if (producerId === this.localVideoProducer?.id || producerId === this.localAudioProducer?.id || producerId === this.localScreenProducer?.id) return;
+    console.log("ADDING: " + type);
 
-    if (
-      producerId === this.localVideoProducer?.id ||
-      producerId === this.localAudioProducer?.id ||
-      producerId === this.localScreenProducer?.id
-    ) {
-      return;
-    }
-
-    console.log("ADDING: " + kind);
-
-    const consume = await this.api.addConsumer(
-      this.roomId,
-      this.recvTransport.id,
-      this.device.rtpCapabilities,
-      producerId
-    );
+    const consume = await this.api.addConsumer(this.roomId, this.recvTransport.id, this.device.rtpCapabilities, producerId);
 
     const consumer = await this.recvTransport.consume({
       id: consume.id,
-      kind,
+      kind: type === "audio" ? "audio" : "video",
       producerId,
       rtpParameters: consume.rtpParameters,
     });
 
+    if (!user.consumers) user.consumers = {};
+    user.consumers[type] = consumer;
+
     await this.api.resume(this.roomId, consume.id);
     console.log("resume");
 
-    if (consumer.kind === "video")
-      this.videoConsumers.push({
-        consumer,
-        stream: new MediaStream([consumer.track]),
-      });
-    else {
-      this.audioConsumers.push({
-        consumer,
-        stream: new MediaStream([consumer.track]),
-      });
-    }
-
     this.updateObserver();
-
-    this.addingProducers.slice(
-      this.addingProducers.findIndex((item) => item === producerId)
-    );
 
     consumer.on("transportclose", () => {
       console.log("track close");
-      this.removeConsumer(consumer.id, consumer.kind);
+      this.removeConsumer(user, type);
     });
     consumer.on("trackended", () => {
       console.log("track ended");
-      this.removeConsumer(consumer.id, consumer.kind);
+      this.removeConsumer(user, type);
     });
   }
 
-  private removeConsumer(id: string, kind: string) {
-    const list = kind === "video" ? this.videoConsumers : this.audioConsumers;
-    const index = list.findIndex((item) => item.consumer.producerId === id);
-    if (index >= 0) {
-      if (kind === "video") {
-        this.videoConsumers.splice(index, 1);
-      } else {
-        this.audioConsumers.splice(index, 1);
-      }
-      this.updateObserver();
-    }
+  private removeConsumer(user: User, type: "audio" | "video" | "screen") {
+    if (!user.consumers || !user.consumers[type]) return;
+
+    user.consumers[type].close();
+    user.consumers[type] = undefined;
+    this.updateObserver();
   }
 
   private async createSendTransport() {
@@ -504,6 +428,7 @@ export class MediaService {
     this.localScreenProducer = await this.sendTransport.produce({
       track: localStream.getVideoTracks()[0],
       codec,
+      encodings: [{ maxBitrate: 6800000, scaleResolutionDownBy: 1 }],
       appData: { type: "screen" },
     });
   }
@@ -533,13 +458,7 @@ export class MediaService {
     transport.on("produce", async (parameters, callback, errback) => {
       console.log("PRODUCE");
       try {
-        const { id } = await this.api.produce(
-          this.roomId,
-          transport.id,
-          parameters.kind,
-          parameters.rtpParameters,
-          parameters.appData
-        );
+        const { id } = await this.api.produce(this.roomId, transport.id, parameters.kind, parameters.rtpParameters, parameters.appData);
         callback({ id });
       } catch (err) {
         console.error(err);
@@ -555,9 +474,6 @@ export class MediaService {
       this.localAudioProducer?.close();
       this.localVideoProducer?.close();
       this.users = [];
-      this.videoConsumers = [];
-      this.audioConsumers = [];
-      this.addingProducers = [];
       this.localVideoProducer = undefined;
       this.localScreenshareStream = undefined;
       this.screenshareState = ScreenshareState.DISABLED;
@@ -575,8 +491,6 @@ export type Stream = {
 };
 
 export type MediaObservable = Observable<{
-  videoConsumers: Stream[];
-  audioConsumers: Stream[];
   autoGainControl: boolean;
   cameraState: CameraState;
   microphoneState: MicrophoneState;
@@ -603,4 +517,18 @@ export interface User {
     video?: string;
     screen?: string;
   };
+  consumers?: {
+    audio?: Consumer;
+    video?: Consumer;
+    screen?: Consumer;
+  };
+  signal: Signal;
+  isMuted: boolean;
+  isTalking: boolean;
+}
+
+export interface Message {
+  sender: string;
+  text: string;
+  // time:   Date;
 }
