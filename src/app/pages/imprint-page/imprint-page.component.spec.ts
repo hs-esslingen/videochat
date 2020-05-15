@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ImprintPageComponent } from './imprint-page.component';
+import {ImprintPageComponent} from './imprint-page.component';
 
 describe('ImprintPageComponent', () => {
   let component: ImprintPageComponent;
@@ -8,9 +8,8 @@ describe('ImprintPageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ImprintPageComponent ]
-    })
-    .compileComponents();
+      declarations: [ImprintPageComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

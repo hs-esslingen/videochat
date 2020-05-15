@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { LocalMediaService } from './local-media.service';
+import {LocalMediaService} from './local-media.service';
 
 describe('LocalMediaService', () => {
   let service: LocalMediaService;

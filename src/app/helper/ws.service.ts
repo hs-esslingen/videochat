@@ -1,34 +1,37 @@
-import { Injectable } from "@angular/core";
-import { Observable, Subscriber } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class WsService {
-  public websocket: WebSocket;
-  public messageObserver: Observable<{
-    type: string,
-    data: any,
-  }>;
+  public websocket: WebSocket | undefined;
+  public messageObserver:
+    | Observable<{
+        type: string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        data: any;
+      }>
+    | undefined;
   constructor() {}
 
-  public connect(url) {
+  public connect(url: string) {
     this.websocket = new WebSocket(url);
-    this.messageObserver = new Observable((sub) => {
-      this.websocket.addEventListener("message", (ev) => {
+    this.messageObserver = new Observable(sub => {
+      this.websocket?.addEventListener('message', ev => {
         const msg = JSON.parse(ev.data);
         sub.next({
           type: msg.type,
-          data: msg.data
+          data: msg.data,
         });
-      })
-      this.websocket.addEventListener("close", () => {
+      });
+      this.websocket?.addEventListener('close', () => {
         sub.complete();
-      })
-    })
+      });
+    });
   }
 
-  public send(type: string, data: any) {
+  public send<T>(type: string, data: T) {
     if (this.websocket)
       this.websocket.send(
         JSON.stringify({

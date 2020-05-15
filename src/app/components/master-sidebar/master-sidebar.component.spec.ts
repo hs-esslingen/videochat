@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { MasterSidebarComponent } from './master-sidebar.component';
+import {MasterSidebarComponent} from './master-sidebar.component';
 
 describe('MasterComponent', () => {
   let component: MasterSidebarComponent;
@@ -8,9 +8,8 @@ describe('MasterComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MasterSidebarComponent ]
-    })
-    .compileComponents();
+      declarations: [MasterSidebarComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

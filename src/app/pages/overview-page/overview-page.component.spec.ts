@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { OverviewPageComponent } from './overview-page.component';
+import {OverviewPageComponent} from './overview-page.component';
 
 describe('OverviewPageComponent', () => {
   let component: OverviewPageComponent;
@@ -8,9 +8,8 @@ describe('OverviewPageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ OverviewPageComponent ]
-    })
-    .compileComponents();
+      declarations: [OverviewPageComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

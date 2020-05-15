@@ -1,24 +1,21 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { User } from '../../helper/media.service';
-import { ChatService, Chat, ChatObservable } from "../../helper/chat.service";
-
+import {Component, OnInit, Input} from '@angular/core';
+import {User} from '../../helper/media.service';
+import {Chat} from '../../helper/chat.service';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.scss']
+  styleUrls: ['./chat.component.scss'],
 })
 export class ChatComponent implements OnInit {
-  @Input() childData: Chat;
-  @Input() user: User;
+  @Input() childData!: Chat;
+  @Input() user!: User;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   sendMessage(): void {
-    console.log("Message sent!");
+    console.log('Message sent!');
   }
-
 }

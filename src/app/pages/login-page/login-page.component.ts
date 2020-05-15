@@ -1,23 +1,20 @@
-import { Component, OnInit } from "@angular/core";
-import { FormControl, Validators } from "@angular/forms";
-import { ApiService } from "../../helper/api.service";
-import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
+import {Component, OnInit} from '@angular/core';
+import {FormControl, Validators} from '@angular/forms';
+import {ApiService} from '../../helper/api.service';
+import {Router} from '@angular/router';
+import {environment} from '../../../environments/environment';
 
 @Component({
-  selector: "app-login-page",
-  templateUrl: "./login-page.component.html",
-  styleUrls: ["./login-page.component.scss"],
+  selector: 'app-login-page',
+  templateUrl: './login-page.component.html',
+  styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent implements OnInit {
   isEmailSent = false;
-  loginWindow: Window;
-  prodction: boolean;
+  loginWindow: undefined | Window;
+  prodction!: boolean;
 
-  email: FormControl = new FormControl("", [
-    Validators.required,
-    Validators.pattern(/hs-esslingen.de$/),
-  ]);
+  email: FormControl = new FormControl('', [Validators.required, Validators.pattern(/hs-esslingen.de$/)]);
 
   constructor(readonly api: ApiService, readonly router: Router) {}
 
@@ -35,21 +32,16 @@ export class LoginPageComponent implements OnInit {
       console.log(result);
       // If the application is in debug mode a token will be returned immediately
       if (result && result.token) {
-        window.localStorage.setItem("token", result.token);
+        window.localStorage.setItem('token', result.token);
         this.api.token = result.token;
         await this.api.jwtLogin();
-        if (this.api.redirectUrl)
-          this.router.navigate([this.api.redirectUrl]);
-        else
-          this.router.navigate(['']);
+        if (this.api.redirectUrl) this.router.navigate([this.api.redirectUrl]);
+        else this.router.navigate(['']);
       }
     }
   }
   async onSSOLogin() {
-    if (
-      this.loginWindow != undefined ||
-      (this.loginWindow && this.loginWindow.closed)
-    ) {
+    if (this.loginWindow != null && !this.loginWindow.closed) {
       this.openLoginWindow();
       return;
     }
@@ -59,11 +51,9 @@ export class LoginPageComponent implements OnInit {
         try {
           const response = await this.api.checkLogin();
           if (response) {
-            if (!this.loginWindow.closed) this.loginWindow.close();
-            if (this.api.redirectUrl)
-            this.router.navigate([this.api.redirectUrl]);
-            else
-            this.router.navigate(['']);
+            if (this.loginWindow && !this.loginWindow.closed) this.loginWindow.close();
+            if (this.api.redirectUrl) this.router.navigate([this.api.redirectUrl]);
+            else this.router.navigate(['']);
             this.loginWindow = undefined;
             return;
           }
@@ -72,7 +62,7 @@ export class LoginPageComponent implements OnInit {
         }
         if (!this.loginWindow || this.loginWindow.closed) {
           this.loginWindow = undefined;
-          console.log("Error");
+          console.log('Error');
           return;
         }
         waitForAuthentication();
@@ -87,21 +77,12 @@ export class LoginPageComponent implements OnInit {
     const xPosition = (window.innerWidth - popupWidth) / 2;
     const yPosition = (window.innerHeight - popupHeight) / 2;
     const url = new URL(window.location.href);
-    const loginUrl = url.origin + "/auth/check-sso";
-    localStorage.removeItem("token");
+    const loginUrl = url.origin + '/auth/check-sso';
+    localStorage.removeItem('token');
     this.loginWindow = window.open(
       loginUrl,
-      "LoginWindow",
-      "location=1,scrollbars=0," +
-        "width=" +
-        popupWidth +
-        ",height=" +
-        popupHeight +
-        "," +
-        "left=" +
-        xPosition +
-        ",top=" +
-        yPosition
-    );
+      'LoginWindow',
+      'location=1,scrollbars=0,' + 'width=' + popupWidth + ',height=' + popupHeight + ',' + 'left=' + xPosition + ',top=' + yPosition
+    ) as Window;
   }
 }
