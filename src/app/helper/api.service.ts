@@ -1,36 +1,38 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import {
-  TransportOptions,
-  RtpParameters,
-  MediaKind,
-  RtpCapabilities,
-} from "mediasoup-client/lib/types";
-import { User } from "./media.service";
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {TransportOptions, RtpParameters, MediaKind, RtpCapabilities, DtlsParameters} from 'mediasoup-client/lib/types';
+import {User} from './media.service';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class ApiService {
-  public token: string;
+  public token: string | undefined;
   public initialLoading = true;
-  public redirectUrl: string;
-  public isLoggedIn: boolean;
-  private moodleCourses;
+  public redirectUrl: string | undefined;
+  public isLoggedIn: boolean | undefined;
+  private moodleCourses:
+    | {
+        fullname: string;
+        id: number;
+        visible: number;
+        shortname: string;
+      }[]
+    | undefined;
 
   constructor(private http: HttpClient) {
-    this.token = window.localStorage.getItem("token");
+    this.token = window.localStorage.getItem('token') as string;
   }
 
-  public getLogin(): string {
+  public getLogin(): string | undefined {
     return this.token;
   }
 
   public async checkLogin() {
     try {
-      const data = await this.http.get(`/auth/check`).toPromise() as any;
-      window.localStorage.setItem("email", data.email);
-      window.localStorage.setItem("displayName", data.displayName);
+      const data = (await this.http.get('/auth/check').toPromise()) as {email: string; displayName: string};
+      window.localStorage.setItem('email', data.email);
+      window.localStorage.setItem('displayName', data.displayName);
       this.isLoggedIn = true;
       return true;
     } catch (e) {
@@ -40,14 +42,16 @@ export class ApiService {
           this.isLoggedIn = true;
           return true;
         }
-      } catch (e) {}
+      } catch (e) {
+        // ingore error
+      }
       this.isLoggedIn = false;
       return false;
     }
   }
 
   public async emailLogin(email: string) {
-    return this.http.post(`/auth/email`, { email }).toPromise() as Promise<{
+    return this.http.post('/auth/email', {email}).toPromise() as Promise<{
       token?: string;
     }>;
   }
@@ -55,9 +59,9 @@ export class ApiService {
   public async jwtLogin() {
     try {
       await this.http
-        .get(`/auth/jwt`, {
+        .get('/auth/jwt', {
           headers: {
-            "x-token": this.token,
+            'x-token': this.token as string,
           },
         })
         .toPromise();
@@ -71,33 +75,32 @@ export class ApiService {
   public async logout() {
     this.token = undefined;
     this.isLoggedIn = false;
-    window.localStorage.removeItem("token");
-    return this.http.get(`/auth/logout`).toPromise() as Promise<{
+    window.localStorage.removeItem('token');
+    return this.http.get('/auth/logout').toPromise() as Promise<{
       token?: string;
     }>;
   }
 
   async getMoodleCourses(token: string) {
-    if (this.moodleCourses == undefined)
-      this.moodleCourses = (await this.http
-        .get("/api/moodle/courses?token=" + token)
-        .toPromise()) as any;
+    if (this.moodleCourses == null)
+      this.moodleCourses = (await this.http.get('/api/moodle/courses?token=' + token).toPromise()) as {
+        fullname: string;
+        id: number;
+        visible: number;
+        shortname: string;
+      }[];
     return this.moodleCourses;
   }
 
   public getCapabilities(roomId: string): Promise<RtpCapabilities> {
-    return this.http
-      .get(`/api/room/${roomId}/capabilities`)
-      .toPromise() as Promise<RtpCapabilities>;
+    return this.http.get(`/api/room/${roomId}/capabilities`).toPromise() as Promise<RtpCapabilities>;
   }
 
   public getCreateTransport(roomId: string): Promise<TransportOptions> {
-    return this.http
-      .get(`/api/room/${roomId}/create-transport`)
-      .toPromise() as Promise<TransportOptions>;
+    return this.http.get(`/api/room/${roomId}/create-transport`).toPromise() as Promise<TransportOptions>;
   }
 
-  public connect(roomId: string, id, dtlsParameters): Promise<object> {
+  public connect(roomId: string, id: string, dtlsParameters: DtlsParameters): Promise<object> {
     return this.http
       .post(`/api/room/${roomId}/connect`, {
         id,
@@ -106,13 +109,7 @@ export class ApiService {
       .toPromise();
   }
 
-  public produce(
-    roomId: string,
-    id,
-    kind,
-    rtpParameters,
-    appData
-  ): Promise<{ id: string }> {
+  public produce(roomId: string, id: string, kind: string, rtpParameters: RtpParameters, appData: {type: string}): Promise<{id: string}> {
     return this.http
       .post(`/api/room/${roomId}/produce`, {
         id,
@@ -120,10 +117,10 @@ export class ApiService {
         rtpParameters,
         appData,
       })
-      .toPromise() as Promise<{ id: string }>;
+      .toPromise() as Promise<{id: string}>;
   }
 
-  public producerClose(roomId: string, id) {
+  public producerClose(roomId: string, id: string) {
     return this.http
       .post(`/api/room/${roomId}/producer-close`, {
         id,
@@ -139,9 +136,7 @@ export class ApiService {
       producerId: string;
     }[]
   > {
-    return this.http
-      .get(`/api/room/${roomId}/producers`)
-      .toPromise() as Promise<
+    return this.http.get(`/api/room/${roomId}/producers`).toPromise() as Promise<
       {
         kind: MediaKind;
         producerId: string;
@@ -149,22 +144,17 @@ export class ApiService {
     >;
   }
 
-  public addConsumer(
-    roomId: string,
-    id,
-    rtpCapabilities,
-    producerId
-  ): Promise<{ id: string; rtpParameters: RtpParameters }> {
+  public addConsumer(roomId: string, id: string, rtpCapabilities: RtpCapabilities, producerId: string): Promise<{id: string; rtpParameters: RtpParameters}> {
     return this.http
       .post(`/api/room/${roomId}/add-consumer`, {
         id,
         rtpCapabilities,
         producerId,
       })
-      .toPromise() as Promise<{ id: string; rtpParameters: RtpParameters }>;
+      .toPromise() as Promise<{id: string; rtpParameters: RtpParameters}>;
   }
 
-  public resume(roomId: string, id): Promise<object> {
+  public resume(roomId: string, id: string): Promise<object> {
     return this.http
       .post(`/api/room/${roomId}/resume`, {
         id,
@@ -172,9 +162,7 @@ export class ApiService {
       .toPromise();
   }
 
-  public getUsers(roomId): Promise<User[]> {
-    return this.http.get(`/api/room/${roomId}/users`).toPromise() as Promise<
-      User[]
-    >;
+  public getUsers(roomId: string): Promise<User[]> {
+    return this.http.get(`/api/room/${roomId}/users`).toPromise() as Promise<User[]>;
   }
 }

@@ -1,0 +1,15 @@
+{
+  "extends": "./node_modules/gts/",
+  "rules": {
+    "node/no-extraneous-require": 0,
+    "node/no-unpublished-require": 0,
+    "node/no-unpublished-import": 0,
+    "@typescript-eslint/ban-ts-ignore": 0,
+    "eqeqeq": ["error", "smart"]
+  },
+  "env": {
+    "jasmine": true,
+    "node": true,
+    "browser": true
+  }
+}

@@ -1,29 +1,22 @@
-import { Injectable } from "@angular/core";
-import { ApiService } from "./api.service";
+import {Injectable} from '@angular/core';
+import {ApiService} from './api.service';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class MoodleService {
-  moodleWindow: Window;
+  moodleWindow: Window | undefined;
 
   constructor(private api: ApiService) {}
 
   async requestURI() {
     const url = new URL(window.location.href);
-    navigator.registerProtocolHandler(
-      "wtai",
-      url.origin + "/auth/moodle?token=%s",
-      "HSE-Chat Moodle login"
-    );
+    navigator.registerProtocolHandler('wtai', url.origin + '/auth/moodle?token=%s', 'HSE-Chat Moodle login');
   }
 
   async moodleLogin() {
     return new Promise((res, rej) => {
-      if (
-        this.moodleWindow != undefined ||
-        (this.moodleWindow && this.moodleWindow.closed)
-      ) {
+      if (this.moodleWindow != null && !this.moodleWindow.closed) {
         this.openMoodleLoginWindow();
         return;
       }
@@ -31,9 +24,9 @@ export class MoodleService {
       const waitForAuthentication = () => {
         setTimeout(async () => {
           try {
-            const token = await window.localStorage.getItem("moodleToken");
+            const token = await window.localStorage.getItem('moodleToken');
             if (token) {
-              if (!this.moodleWindow.closed) this.moodleWindow.close();
+              if (!this.moodleWindow?.closed) this.moodleWindow?.close();
               res();
               return;
             }
@@ -42,7 +35,7 @@ export class MoodleService {
           }
           if (!this.moodleWindow || this.moodleWindow.closed) {
             this.moodleWindow = undefined;
-            console.log("Error");
+            console.log('Error');
             return;
           }
           waitForAuthentication();
@@ -57,23 +50,12 @@ export class MoodleService {
     const popupHeight = 1150;
     const xPosition = (window.innerWidth - popupWidth) / 2;
     const yPosition = (window.innerHeight - popupHeight) / 2;
-    const url = new URL(window.location.href);
-    const loginUrl =
-      "https://moodle.hs-esslingen.de/moodle/admin/tool/mobile/launch.php?service=local_mobile&urlscheme=wtai&passport=603.5561786350319";
-    localStorage.removeItem("moodleToken");
+    const loginUrl = 'https://moodle.hs-esslingen.de/moodle/admin/tool/mobile/launch.php?service=local_mobile&urlscheme=wtai&passport=603.5561786350319';
+    localStorage.removeItem('moodleToken');
     this.moodleWindow = window.open(
       loginUrl,
-      "LoginWindow",
-      "location=1,scrollbars=0," +
-        "width=" +
-        popupWidth +
-        ",height=" +
-        popupHeight +
-        "," +
-        "left=" +
-        xPosition +
-        ",top=" +
-        yPosition
-    );
+      'LoginWindow',
+      'location=1,scrollbars=0,' + 'width=' + popupWidth + ',height=' + popupHeight + ',' + 'left=' + xPosition + ',top=' + yPosition
+    ) as Window;
   }
 }

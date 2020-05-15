@@ -1,46 +1,46 @@
-import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, AfterViewInit } from "@angular/core";
-import { User, Stream, MicrophoneState, ScreenshareState, CameraState, Signal, MediaService } from "../../helper/media.service";
-import { ActivatedRoute } from "@angular/router";
-import { MatDialog } from "@angular/material/dialog";
-import { LocalMediaService } from "../../helper/local-media.service";
-import { JoinMeetingPopupComponent } from "../../components/join-meeting-popup/join-meeting-popup.component";
-import { ChatService } from "../../helper/chat.service";
+import {Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
+import {User, MicrophoneState, ScreenshareState, CameraState, Signal, MediaService} from '../../helper/media.service';
+import {ActivatedRoute} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {LocalMediaService} from '../../helper/local-media.service';
+import {JoinMeetingPopupComponent} from '../../components/join-meeting-popup/join-meeting-popup.component';
+import {ChatService} from '../../helper/chat.service';
 
 @Component({
-  selector: "app-lecture-page",
-  templateUrl: "./lecture-page.component.html",
-  styleUrls: ["./lecture-page.component.scss"],
+  selector: 'app-lecture-page',
+  templateUrl: './lecture-page.component.html',
+  styleUrls: ['./lecture-page.component.scss'],
 })
 export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   // Enables / Disables debug mode, that creates some dummy users and chats
   demo = true;
 
-  @ViewChild("webcams") webcams: ElementRef<HTMLDivElement>;
+  @ViewChild('webcams') webcams: ElementRef<HTMLDivElement> | undefined;
   // Variables for video
-  autoGainControl: boolean;
+  autoGainControl: boolean | undefined;
   microphoneState: MicrophoneState = MicrophoneState.ENABLED;
   cameraState: CameraState = CameraState.DISABLED;
   screenshareState: ScreenshareState = ScreenshareState.DISABLED;
-  localStream: MediaStream;
-  localSchreenshareStream: MediaStream;
-  roomId: string;
-  moveTimout: number;
+  localStream: MediaStream | undefined;
+  localSchreenshareStream: MediaStream | undefined;
+  roomId!: string;
+  moveTimout: number | undefined;
   isToolbarHidden = false;
   isMobile = false;
-  roomUrl: string;
+  roomUrl: string | undefined;
   duplicateSession = false;
 
-  screenShareUser: User;
-  screenShareStream: MediaStream;
+  screenShareUser: User | undefined;
+  screenShareStream: MediaStream | undefined;
   webcamHeight = 0.2;
 
   // Variables for Users
-  currentUser: User = { id: "666", nickname: "Der King", producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND };
+  currentUser: User = {id: '666', nickname: 'Der King', producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND};
   users: User[] = [];
 
   // Variables for sidebar
-  sidebarDetail = undefined;
-  detailType = undefined;
+  sidebarDetail: undefined | Element;
+  detailType: string | undefined;
 
   constructor(
     readonly mediaService: MediaService,
@@ -50,12 +50,12 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     private element: ElementRef<HTMLElement>,
     readonly chatService: ChatService
   ) {
-    const webcamHeight = window.localStorage.getItem("webcamHeight");
-    if (webcamHeight != undefined) this.webcamHeight = parseFloat(webcamHeight);
+    const webcamHeight = window.localStorage.getItem('webcamHeight');
+    if (webcamHeight != null) this.webcamHeight = parseFloat(webcamHeight);
   }
 
-  @HostListener("window:resize", ["$event"])
-  onResize(event) {
+  @HostListener('window:resize', ['$event'])
+  onResize() {
     this.recalculateMaxVideoWidth();
   }
 
@@ -64,22 +64,24 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   recalculateMaxVideoWidth() {
-    this.element.nativeElement.style.setProperty("--max-video-width", (this.webcams?.nativeElement?.clientHeight / 3) * 4 - 5 + "px");
+    if (this.webcams?.nativeElement)
+      this.element.nativeElement.style.setProperty('--max-video-width', (this.webcams?.nativeElement?.clientHeight / 3) * 4 - 5 + 'px');
 
-    let numVideos = this.users.filter((user) => user.consumers?.video != undefined).length;
-    if (this.localStream != undefined) numVideos++;
+    let numVideos = this.users.filter(user => user.consumers?.video != null).length;
+    if (this.localStream != null) numVideos++;
 
     const clientWidth = this.webcams?.nativeElement?.clientWidth;
     const clientHeight = this.webcams?.nativeElement?.clientHeight;
-
-    let colums = 1;
-    while ((1 / (colums + 1)) * clientWidth * (3 / 4) * Math.ceil(numVideos / colums) > clientHeight) {
-      colums++;
+    if (clientHeight && clientWidth) {
+      let colums = 1;
+      while ((1 / (colums + 1)) * clientWidth * (3 / 4) * Math.ceil(numVideos / colums) > clientHeight) {
+        colums++;
+      }
+      const maxHeightPerElement = clientHeight / Math.ceil(numVideos / colums);
+      const maxWidthPerElement = clientWidth / colums;
+      const maxRatio = Math.min((maxHeightPerElement * (4 / 3)) / clientWidth, maxWidthPerElement / clientWidth);
+      this.element.nativeElement.style.setProperty('--max-video-flex-basis', maxRatio * 100 - 1 + '%');
     }
-    const maxHeightPerElement = clientHeight / Math.ceil(numVideos / colums);
-    const maxWidthPerElement = clientWidth / colums;
-    const maxRatio = Math.min((maxHeightPerElement * (4 / 3)) / clientWidth, maxWidthPerElement / clientWidth);
-    this.element.nativeElement.style.setProperty("--max-video-flex-basis", maxRatio * 100 - 1 + "%");
   }
 
   startDividerDrag() {
@@ -89,13 +91,13 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         this.recalculateMaxVideoWidth();
       });
     };
-    const pointerUp = (e: PointerEvent) => {
-      window.localStorage.setItem("webcamHeight", this.webcamHeight.toString());
-      window.removeEventListener("pointerup", pointerUp);
-      window.removeEventListener("pointermove", pointerMove);
+    const pointerUp = () => {
+      window.localStorage.setItem('webcamHeight', this.webcamHeight.toString());
+      window.removeEventListener('pointerup', pointerUp);
+      window.removeEventListener('pointermove', pointerMove);
     };
-    window.addEventListener("pointerup", pointerUp);
-    window.addEventListener("pointermove", pointerMove);
+    window.addEventListener('pointerup', pointerUp);
+    window.addEventListener('pointermove', pointerMove);
   }
 
   ngOnInit(): void {
@@ -107,25 +109,24 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     const url = new URL(location.href);
     this.roomUrl = url.origin + url.pathname;
 
-    this.moveTimout = (setTimeout(() => {
+    this.moveTimout = window.setTimeout(() => {
       this.isToolbarHidden = true;
-    }, 1500) as any) as number;
+    }, 1500);
 
     this.currentUser.nickname = this.mediaService.nickname;
 
-    this.route.paramMap.subscribe(async (params) => {
+    this.route.paramMap.subscribe(async params => {
       // don't actually connect if demo is enabled
       if (this.demo) return;
 
-      this.roomId = params.get("roomId");
+      this.roomId = params.get('roomId') as string;
       const dialogRef = this.dialog.open(JoinMeetingPopupComponent, {
-        width: "400px",
-        data: { nickname: this.mediaService.nickname, roomId: this.roomId },
+        width: '400px',
+        data: {nickname: this.mediaService.nickname, roomId: this.roomId},
       });
-      dialogRef.afterClosed().subscribe(async (result) => {
-
+      dialogRef.afterClosed().subscribe(async result => {
         // if popup is canceled
-        if (result == undefined || result === "") {
+        if (result == null || result === '') {
           this.localMedia.closeAudio();
           this.localMedia.closeVideo();
           return;
@@ -135,12 +136,12 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         // TODO rework states (use current user)
         this.currentUser.nickname = this.mediaService.nickname;
 
-        if (result.nickname !== "") this.mediaService.setNickname(result.nickname);
-        else this.mediaService.setNickname("User " +  Math.round(Math.random() * 100));
+        if (result.nickname !== '') this.mediaService.setNickname(result.nickname);
+        else this.mediaService.setNickname('User ' + Math.round(Math.random() * 100));
 
         try {
           const observer = await this.mediaService.connectToRoom(this.roomId, result.isWebcamDisabled);
-          observer.subscribe((data) => {
+          observer.subscribe(data => {
             this.autoGainControl = data.autoGainControl;
             this.cameraState = data.cameraState;
             this.microphoneState = data.microphoneState;
@@ -149,10 +150,10 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
             this.localSchreenshareStream = data.localScreenshareStream;
             this.users = data.users;
 
-            let screenShareUser = this.users.find((item) => item.consumers?.screen != undefined);
+            let screenShareUser = this.users.find(item => item.consumers?.screen != null);
             if (this.screenshareState === ScreenshareState.ENABLED) screenShareUser = this.currentUser;
 
-            if (screenShareUser != undefined && screenShareUser !== this.screenShareUser) {
+            if (screenShareUser != null && screenShareUser !== this.screenShareUser) {
               this.screenShareStream = this.getScreenShareStream(screenShareUser);
             }
             this.screenShareUser = screenShareUser;
@@ -162,7 +163,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
             });
           });
         } catch (err) {
-          if (err === "DUPLICATE SESSION") {
+          if (err === 'DUPLICATE SESSION') {
             this.duplicateSession = true;
           } else {
             console.error(err);
@@ -179,13 +180,14 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   getScreenShareStream(user: User) {
     if (this.demo) return new MediaStream();
     if (user === this.currentUser) return this.localSchreenshareStream;
-    return new MediaStream([user.consumers.screen?.track]);
+    if (user.consumers?.screen) return new MediaStream([user.consumers.screen?.track]);
+    return undefined;
   }
 
-  updateSidebar($event) {
+  updateSidebar($event: {element: Element; type: string}) {
     // console.log("Event occured")
     if (this.detailType === $event.type) {
-      if (this.sidebarDetail.id === $event.element.id) {
+      if (this.sidebarDetail?.id === $event.element.id) {
         this.sidebarDetail = undefined;
         this.detailType = undefined;
       } else {
@@ -204,19 +206,19 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.isMobile) {
       this.isToolbarHidden = false;
       clearTimeout(this.moveTimout);
-      this.moveTimout = (setTimeout(() => {
+      this.moveTimout = window.setTimeout(() => {
         this.isToolbarHidden = true;
-      }, 1500) as any) as number;
+      }, 1500);
     }
   }
 
   test(): void {
-    this.currentUser = { id: "666", nickname: "Der King", producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND };
+    this.currentUser = {id: '666', nickname: 'Der King', producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND};
 
     this.users.push(
       {
-        id: "1",
-        nickname: "Test_1",
+        id: '1',
+        nickname: 'Test_1',
         consumers: {
           // @ts-ignore
           video: {},
@@ -228,8 +230,8 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         signal: Signal.RAISED_HAND,
       },
       {
-        id: "2",
-        nickname: "Test_2",
+        id: '2',
+        nickname: 'Test_2',
         consumers: {
           // @ts-ignore
           video: {},
@@ -239,8 +241,8 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         signal: Signal.NONE,
       },
       {
-        id: "3",
-        nickname: "Test_3",
+        id: '3',
+        nickname: 'Test_3',
         consumers: {
           // @ts-ignore
           video: {},
@@ -249,25 +251,25 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         isTalking: true,
         signal: Signal.VOTED_UP,
       },
-      { id: "4", nickname: "Test_4", producers: {}, isMuted: false, isTalking: true, signal: Signal.VOTED_DOWN },
-      { id: "5", nickname: "Test_5", producers: {}, isMuted: true, isTalking: true, signal: Signal.VOTED_DOWN },
-      { id: "6", nickname: "Test_6", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_UP },
-      { id: "7", nickname: "Test_7", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_UP },
-      { id: "8", nickname: "Test_8", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_DOWN },
-      { id: "9", nickname: "Test_9", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_DOWN },
-      { id: "10", nickname: "Test_10", producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_DOWN },
-      { id: "11", nickname: "Test_11", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-      { id: "12", nickname: "Test_12", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-      { id: "13", nickname: "Test_13", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-      { id: "14", nickname: "Test_14", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-      { id: "15", nickname: "Test_15", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-      { id: "16", nickname: "Test_16", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-      { id: "17", nickname: "Test_17", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-      { id: "18", nickname: "Test_18", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-      { id: "19", nickname: "Test_19", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-      { id: "20", nickname: "Test_20", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-      { id: "21", nickname: "Test_21", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE },
-      { id: "22", nickname: "Test_22", producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE }
+      {id: '4', nickname: 'Test_4', producers: {}, isMuted: false, isTalking: true, signal: Signal.VOTED_DOWN},
+      {id: '5', nickname: 'Test_5', producers: {}, isMuted: true, isTalking: true, signal: Signal.VOTED_DOWN},
+      {id: '6', nickname: 'Test_6', producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_UP},
+      {id: '7', nickname: 'Test_7', producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_UP},
+      {id: '8', nickname: 'Test_8', producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_DOWN},
+      {id: '9', nickname: 'Test_9', producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_DOWN},
+      {id: '10', nickname: 'Test_10', producers: {}, isMuted: true, isTalking: false, signal: Signal.VOTED_DOWN},
+      {id: '11', nickname: 'Test_11', producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE},
+      {id: '12', nickname: 'Test_12', producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE},
+      {id: '13', nickname: 'Test_13', producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE},
+      {id: '14', nickname: 'Test_14', producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE},
+      {id: '15', nickname: 'Test_15', producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE},
+      {id: '16', nickname: 'Test_16', producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE},
+      {id: '17', nickname: 'Test_17', producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE},
+      {id: '18', nickname: 'Test_18', producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE},
+      {id: '19', nickname: 'Test_19', producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE},
+      {id: '20', nickname: 'Test_20', producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE},
+      {id: '21', nickname: 'Test_21', producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE},
+      {id: '22', nickname: 'Test_22', producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE}
     );
 
     this.chatService.addChat(this.users[0]);

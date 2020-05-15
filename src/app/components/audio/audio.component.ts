@@ -1,22 +1,19 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 
 @Component({
   selector: 'app-audio',
   templateUrl: './audio.component.html',
-  styleUrls: ['./audio.component.scss']
+  styleUrls: ['./audio.component.scss'],
 })
 export class AudioComponent implements OnInit {
-  @Input() audio: MediaStreamTrack;
+  @Input() audio!: MediaStreamTrack;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 
   getStream(audio: MediaStreamTrack) {
     if (!(audio instanceof MediaStreamTrack)) return;
     return new MediaStream([audio]);
   }
-
 }

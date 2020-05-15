@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { JoinMeetingPopupComponent } from './join-meeting-popup.component';
+import {JoinMeetingPopupComponent} from './join-meeting-popup.component';
 
 describe('JoinMeetingPopupComponent', () => {
   let component: JoinMeetingPopupComponent;
@@ -8,9 +8,8 @@ describe('JoinMeetingPopupComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ JoinMeetingPopupComponent ]
-    })
-    .compileComponents();
+      declarations: [JoinMeetingPopupComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

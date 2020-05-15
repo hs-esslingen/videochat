@@ -1,7 +1,7 @@
-import { Component, OnInit, Inject, OnDestroy } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { MediaService } from "../../helper/media.service";
-import { LocalMediaService } from "../../helper/local-media.service";
+import {Component, OnInit, Inject, OnDestroy} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MediaService} from '../../helper/media.service';
+import {LocalMediaService} from '../../helper/local-media.service';
 
 interface JoinMeetingData {
   roomId: string;
@@ -9,24 +9,24 @@ interface JoinMeetingData {
 }
 
 @Component({
-  selector: "app-join-meeting-popup",
-  templateUrl: "./join-meeting-popup.component.html",
-  styleUrls: ["./join-meeting-popup.component.scss"],
+  selector: 'app-join-meeting-popup',
+  templateUrl: './join-meeting-popup.component.html',
+  styleUrls: ['./join-meeting-popup.component.scss'],
 })
 export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
-  analyser: AnalyserNode;
-  audioCtx: AudioContext;
-  volume: string;
-  videoTrack: MediaStream;
-  intervalId: number;
+  analyser: AnalyserNode | undefined;
+  audioCtx: AudioContext | undefined;
+  volume: string | undefined;
+  videoTrack: MediaStream | undefined;
+  intervalId: number | undefined;
 
-  videoDevices: MediaDeviceInfo[];
-  audioDevices: MediaDeviceInfo[];
+  videoDevices: MediaDeviceInfo[] | undefined;
+  audioDevices: MediaDeviceInfo[] | undefined;
 
-  audioStream: MediaStreamAudioSourceNode;
+  audioStream: MediaStreamAudioSourceNode | undefined;
 
-  selectedAudioStream: string;
-  selectedVideoStream: string;
+  selectedAudioStream: string | undefined;
+  selectedVideoStream: string | undefined;
 
   constructor(
     public dialogRef: MatDialogRef<JoinMeetingPopupComponent>,
@@ -38,11 +38,11 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
   }
 
   close(): void {
-    if (this.audioDevices != undefined) {
+    if (this.audioDevices != null) {
       clearInterval(this.intervalId);
       this.dialogRef.close({
         nickname: this.data.nickname,
-        isWebcamDisabled: this.selectedVideoStream === "none",
+        isWebcamDisabled: this.selectedVideoStream === 'none',
       });
     }
   }
@@ -58,28 +58,32 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
         this.selectedVideoStream = videoTracks[0].label;
       }
     } catch (error) {
-      this.selectedVideoStream = "none";
+      this.selectedVideoStream = 'none';
     }
 
     try {
       this.analyser = this.audioCtx.createAnalyser();
       const audioStream = await this.localMedia.getAudioTrack();
-      const audio = audioStream.getAudioTracks()[0];
-      this.audioStream = this.audioCtx.createMediaStreamSource(audioStream);
+      if (audioStream) {
+        const audio = audioStream.getAudioTracks()[0];
+        this.audioStream = this.audioCtx.createMediaStreamSource(audioStream);
 
-      this.audioStream.connect(this.analyser);
+        this.audioStream.connect(this.analyser);
 
-      const array = new Uint8Array(this.analyser.fftSize);
+        const array = new Uint8Array(this.analyser.fftSize);
 
-      // @ts-ignore
-      this.intervalId = setInterval(() => {
-        this.analyser.getByteTimeDomainData(array);
-        const volume = Math.max(0, Math.max(...array) - 128) / 128;
-        this.volume = volume * 100 + "%";
-      }, 100);
+        // @ts-ignore
+        this.intervalId = setInterval(() => {
+          this.analyser?.getByteTimeDomainData(array);
+          const volume = Math.max(0, Math.max(...array) - 128) / 128;
+          this.volume = volume * 100 + '%';
+        }, 100);
 
-      this.selectedAudioStream = audio.label;
-    } catch (error) {}
+        this.selectedAudioStream = audio.label;
+      }
+    } catch (error) {
+      // ingore error
+    }
 
     this.videoDevices = await this.localMedia.getVideoCapabilites();
     this.audioDevices = await this.localMedia.getAudioCapabilites();
@@ -90,11 +94,11 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
   }
 
   async changeVideoStream(label: string) {
-    if (this.videoTrack?.getVideoTracks().length > 0)
-      this.videoTrack.getVideoTracks()[0].stop();
-    if (label === "none") {
+    const videoTracks = this.videoTrack?.getVideoTracks();
+    if (videoTracks && videoTracks.length > 0) videoTracks[0].stop();
+    if (label === 'none') {
       this.videoTrack = undefined;
-      this.selectedVideoStream = "none";
+      this.selectedVideoStream = 'none';
       this.localMedia.closeVideo();
       return;
     }
@@ -102,18 +106,19 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
 
     const newVideoTracks = video.getVideoTracks();
     this.videoTrack = video;
-    if (newVideoTracks.length > 0)
-      this.selectedVideoStream = newVideoTracks[0].label;
+    if (newVideoTracks.length > 0) this.selectedVideoStream = newVideoTracks[0].label;
   }
 
   async changeAudioStream(label: string) {
     try {
-      this.audioStream.disconnect(this.analyser);
-    } catch (error) {}
+      this.audioStream?.disconnect(this.analyser as AnalyserNode);
+    } catch (error) {
+      // ignore error
+    }
 
     const audio = await this.localMedia.getAudioTrack(label);
 
-    this.audioStream = this.audioCtx.createMediaStreamSource(audio);
-    this.audioStream.connect(this.analyser);
+    this.audioStream = this.audioCtx?.createMediaStreamSource(audio as MediaStream);
+    this.audioStream?.connect(this.analyser as AnalyserNode);
   }
 }

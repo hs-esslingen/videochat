@@ -1,54 +1,56 @@
-import { Component, OnInit, Input, DoCheck, IterableDiffers, IterableDiffer, ViewChild, ElementRef, OnChanges, SimpleChanges, KeyValueDiffers, KeyValueDiffer } from "@angular/core";
-import { User, Stream } from "../../helper/media.service";
-import { WsService } from "../../helper/ws.service";
-import { Subscription } from "rxjs";
-import { Consumer } from 'mediasoup-client/lib/types';
+import {Component, OnInit, Input, DoCheck, ViewChild, ElementRef, OnChanges, SimpleChanges, KeyValueDiffers, KeyValueDiffer} from '@angular/core';
+import {User} from '../../helper/media.service';
+import {WsService} from '../../helper/ws.service';
+import {Subscription} from 'rxjs';
+import {Consumer} from 'mediasoup-client/lib/types';
 
 @Component({
-  selector: "app-user",
-  templateUrl: "./user.component.html",
-  styleUrls: ["./user.component.scss"],
+  selector: 'app-user',
+  templateUrl: './user.component.html',
+  styleUrls: ['./user.component.scss'],
 })
 export class UserComponent implements OnInit, DoCheck, OnChanges {
-  @Input() user: User;
+  @Input() user!: User;
   @Input() playAudio = true;
-  @Input() small: boolean;
-  @Input() selected: boolean;
+  @Input() small = false;
+  @Input() selected = false;
 
-  videoElement: ElementRef<HTMLVideoElement>;
+  videoElement!: ElementRef<HTMLVideoElement>;
 
-  @ViewChild("video", { static: false }) set content(content: ElementRef<HTMLVideoElement>) {
+  @ViewChild('video', {static: false}) set content(content: ElementRef<HTMLVideoElement>) {
     if (content) {
       // initially setter gets called with undefined
       this.videoElement = content;
     }
   }
 
-  videoStream: MediaStream;
-  audioStream: MediaStream;
-  showVideo: boolean;
-  differ: KeyValueDiffer<string, Consumer>;
-  messageSubscription: Subscription;
+  videoStream: MediaStream | undefined;
+  audioStream: MediaStream | undefined;
+  showVideo = false;
+  differ: KeyValueDiffer<string, Consumer | undefined>;
+  messageSubscription: Subscription | undefined;
 
   constructor(private keyValueDiffer: KeyValueDiffers, private ws: WsService) {
     this.differ = keyValueDiffer.find({}).create();
-    this.messageSubscription = ws.messageObserver?.subscribe((msg) => {
-      if (msg.type === "remove-producer") {
+    this.messageSubscription = ws.messageObserver?.subscribe(msg => {
+      if (msg.type === 'remove-producer') {
         if (msg.data.id === this.user.consumers?.screen?.producerId && this.user.producers.screen === msg.data.id) this.showVideo = false;
       }
     });
   }
   ngDoCheck(): void {
-    const change = this.differ.diff(this.user.consumers)
-    if (change) {
-      change.forEachItem((record) => {
-        if (record.key === "audio") {
-          this.updateAudio();
-        } else {
-          this.updateVideo();
-          this.calcShowVideo();
-        }
-      });
+    if (this.user.consumers) {
+      const change = this.differ.diff(this.user.consumers);
+      if (change) {
+        change.forEachItem(record => {
+          if (record.key === 'audio') {
+            this.updateAudio();
+          } else {
+            this.updateVideo();
+            this.calcShowVideo();
+          }
+        });
+      }
     }
   }
 
@@ -73,11 +75,11 @@ export class UserComponent implements OnInit, DoCheck, OnChanges {
   updateVideo() {
     if (this.user.consumers?.screen) this.videoStream = new MediaStream([this.user.consumers.screen.track]);
     else if (this.user.consumers?.video) this.videoStream = new MediaStream([this.user.consumers.video.track]);
-    else  this.videoStream = undefined;
+    else this.videoStream = undefined;
   }
 
   calcShowVideo() {
-    if (this.videoStream == undefined) this.showVideo = false;
+    if (this.videoStream == null) this.showVideo = false;
     else {
       this.showVideo = true;
     }
