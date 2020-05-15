@@ -5,10 +5,10 @@ import { Subscription } from "rxjs";
 
 @Component({
   selector: 'app-master',
-  templateUrl: './master.component.html',
-  styleUrls: ['./master.component.scss']
+  templateUrl: './master-sidebar.component.html',
+  styleUrls: ['./master-sidebar.component.scss']
 })
-export class MasterComponent implements OnInit, OnDestroy {
+export class MasterSidebarComponent implements OnInit, OnDestroy {
 @Input() currentUser: User;
 @Input() users: User[];
 

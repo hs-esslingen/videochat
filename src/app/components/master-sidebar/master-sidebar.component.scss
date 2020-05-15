@@ -78,7 +78,7 @@
   }
 
   .object-label {
-    min-height: 28px;
+    min-height: 30px;
     white-space: nowrap;
     overflow: hidden;
     display: flex;
@@ -91,7 +91,7 @@
 
     .status {
       width: 8px;
-      height: 28px;
+      height: 30px;
     }
 
     &.chat .status {
@@ -129,8 +129,8 @@
       padding-left: 8px;
       padding-right: 4px;
       width: 70%;
-      line-height: 28px;
-      font-size: 14px;
+      line-height: 30px;
+      font-size: 15px;
     }
 
     &.chat .nickname {
@@ -164,8 +164,8 @@
       color: white;
 
       i {
-        line-height: 28px;
-        font-size: 14px;
+        line-height: 30px;
+        font-size: 15px;
       }
     }
 
