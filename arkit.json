@@ -1,0 +1,60 @@
+{
+  "$schema": "https://arkit.js.org/schema.json",
+  "excludePatterns": ["test/**", "tests/**", "**/*.test.*", "**/*.spec.*"],
+  "components": [
+    {
+      "type": "Helper",
+      "patterns": ["**/helper/*.ts"]
+    },
+    {
+      "type": "Pages",
+      "patterns": ["**/pages/**/*.ts"]
+    },
+    {
+      "type": "Components",
+      "patterns": ["**/components/**/*.ts"]
+    },
+    {
+      "type": "Server",
+      "patterns": ["**/src-server/**/*.ts", "**/src-server/**/*.tsx"]
+    },
+    {
+      "type": "Dependency",
+      "patterns": ["node_modules/*"]
+    },
+    {
+      "type": "Component",
+      "patterns": ["**/*.ts", "**/*.tsx"]
+    }
+  ],
+  "output": [
+    {
+      "path": "arkit.svg",
+      "groups": [
+        {
+          "type": "Dependencies",
+          "components": ["Dependency"]
+        },
+        {
+          "type": "Server",
+          "first": true,
+          "components": ["Server"]
+        },
+        {
+          "type": "Services",
+          "components": ["Helper"]
+        },
+        {
+          "first": true,
+          "type": "Pages",
+          "components": ["Pages"]
+        },
+        {
+          "first": true,
+          "type": "Components",
+          "components": ["Components"]
+        }
+      ]
+    }
+  ]
+}

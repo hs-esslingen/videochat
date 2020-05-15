@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from 'src/app/helper/api.service';
-import { MediaService } from 'src/app/helper/media.service';
+import { ApiService } from '../../helper/api.service';
+import { MediaService } from '../../helper/media.service';
 import { Router } from '@angular/router';
 
 @Component({

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { User } from 'src/app/helper/media.service';
-import { ChatService, Chat, ChatObservable } from "src/app/helper/chat.service";
+import { User } from '../../helper/media.service';
+import { ChatService, Chat, ChatObservable } from "../../helper/chat.service";
 
 
 @Component({

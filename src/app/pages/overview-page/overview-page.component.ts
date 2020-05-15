@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MoodleService } from 'src/app/helper/moodle.service';
+import { MoodleService } from '../../helper/moodle.service';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { ApiService } from 'src/app/helper/api.service';
+import { ApiService } from '../../helper/api.service';
 
 @Component({
   selector: "app-nickname-dialog",

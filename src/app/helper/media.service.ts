@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Consumer, Producer, Device, Transport } from "mediasoup-client/lib/types";
-import { environment } from "src/environments/environment";
+import { environment } from "../../environments/environment";
 import { ApiService } from "./api.service";
 import { Observable, Subscriber } from "rxjs";
 import { WsService } from "./ws.service";

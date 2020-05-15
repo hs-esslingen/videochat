@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { User, Signal } from 'src/app/helper/media.service';
-import { ChatService, Chat, ChatObservable } from "src/app/helper/chat.service";
+import { User, Signal } from '../../helper/media.service';
+import { ChatService, Chat, ChatObservable } from "../../helper/chat.service";
 import { Subscription } from "rxjs";
 
 @Component({

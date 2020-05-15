@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, AfterViewInit } from "@angular/core";
-import { User, Stream, MicrophoneState, ScreenshareState, CameraState, Signal, MediaService } from "src/app/helper/media.service";
+import { User, Stream, MicrophoneState, ScreenshareState, CameraState, Signal, MediaService } from "../../helper/media.service";
 import { ActivatedRoute } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
-import { LocalMediaService } from "src/app/helper/local-media.service";
-import { JoinMeetingPopupComponent } from "src/app/components/join-meeting-popup/join-meeting-popup.component";
-import { ChatService } from "src/app/helper/chat.service";
+import { LocalMediaService } from "../../helper/local-media.service";
+import { JoinMeetingPopupComponent } from "../../components/join-meeting-popup/join-meeting-popup.component";
+import { ChatService } from "../../helper/chat.service";
 
 @Component({
   selector: "app-lecture-page",

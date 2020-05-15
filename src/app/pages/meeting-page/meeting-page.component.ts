@@ -13,15 +13,15 @@ import {
   CameraState,
   ScreenshareState,
   User,
-} from "src/app/helper/media.service";
+} from "../../helper/media.service";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
   MatDialog,
 } from "@angular/material/dialog";
-import { JoinMeetingPopupComponent } from "src/app/components/join-meeting-popup/join-meeting-popup.component";
-import { LocalMediaService } from 'src/app/helper/local-media.service';
+import { JoinMeetingPopupComponent } from "../../components/join-meeting-popup/join-meeting-popup.component";
+import { LocalMediaService } from '../../helper/local-media.service';
 
 enum Layout {
   GRID = "GRID",

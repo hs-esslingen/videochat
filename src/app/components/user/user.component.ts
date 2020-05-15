@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, DoCheck, IterableDiffers, IterableDiffer, ViewChild, ElementRef, OnChanges, SimpleChanges, KeyValueDiffers, KeyValueDiffer } from "@angular/core";
-import { User, Stream } from "src/app/helper/media.service";
-import { WsService } from "src/app/helper/ws.service";
+import { User, Stream } from "../../helper/media.service";
+import { WsService } from "../../helper/ws.service";
 import { Subscription } from "rxjs";
 import { Consumer } from 'mediasoup-client/lib/types';
 
