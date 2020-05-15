@@ -6,7 +6,7 @@
     "watch-debug": "concurrently npm:watch-frontend npm:watch-server npm:watch-build-server",
     "build": "npm run build-frontend && npm run build-server",
     "test": "ng test",
-    "lint": "ng lint",
+    "lint": "gts fix && tsc --noEmit",
     "e2e": "ng e2e",
     "start": "cross-env MEDIASOUP_WORKER_BIN=dist/worker/mediasoup-worker node dist/server.js",
     "build-frontend": "ng build --prod",
@@ -18,10 +18,16 @@
     "check": "gts check",
     "clean": "gts clean",
     "compile": "tsc",
+    "test-compile": "tsc --noEmit",
     "fix": "gts fix",
     "prepare": "npm.cmd run compile",
     "pretest": "npm.cmd run compile",
     "posttest": "npm.cmd run check"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && npm run test-compile"
+    }
   },
   "engines": {
     "node": ">=10.0.0"
@@ -70,15 +76,17 @@
     "@types/jsonwebtoken": "^8.3.8",
     "@types/node": "^13.11.1",
     "@types/node-fetch": "^2.5.7",
+    "@types/nodemailer": "^6.4.0",
     "@types/passport": "^1.0.3",
     "@types/passport-jwt": "^3.0.3",
     "@types/passport-saml": "^1.1.1",
-    "@types/nodemailer": "^6.4.0",
     "@types/ws": "^7.2.3",
     "codelyzer": "^5.2.2",
     "concurrently": "^5.1.0",
     "copy-webpack-plugin": "^5.1.1",
     "cross-env": "^7.0.2",
+    "gts": "^2.0.2",
+    "husky": "^4.2.5",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~5.0.1",
     "karma": "~4.4.1",
@@ -97,7 +105,6 @@
     "tslint": "~6.1.1",
     "typescript": "~3.8.3",
     "webpack-cli": "^3.3.11",
-    "zone.js": "~0.10.3",
-    "gts": "^2.0.2"
+    "zone.js": "~0.10.3"
   }
 }
