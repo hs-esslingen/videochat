@@ -17,6 +17,8 @@ export class Room {
   private websockets: WebSocket[] = [];
   private users: {[sessionId: string]: User} = {};
 
+  private messages: Message[] = [];
+
   private constructor(private roomId: string) {
     // Delete Room if nobody has joined after 10 Seconds
     setTimeout(() => {
@@ -50,6 +52,22 @@ export class Room {
 
   async getCapabilities() {
     return (await this.getRouter()).rtpCapabilities;
+  }
+
+  getMessages(sessionID: string) {
+    if (this.users[sessionID] == undefined) throw new Error('User is not inizialized');
+
+    const userId = this.users[sessionID].id;
+    return this.messages.filter(item => item.to == undefined || item.from === userId || item.to === userId);
+  }
+
+  sendMessage(message: string, to: string, sessionID: string) {
+    if (this.users[sessionID] == undefined) throw new Error('User is not inizialized');
+
+    // TODO: Create Message Object
+    // TODO: send Websocket Message
+    // TODO: add to message array
+    return;
   }
 
   async createTransport(sessionID: string) {
@@ -149,9 +167,9 @@ export class Room {
     }
   }
 
-  closeProducer(id: string, sessionID: string) {
+  closeProducer(id, sessionID) {
     return new Promise(res => {
-      if (this.users[sessionID] == null) throw new Error('User is not inizialized');
+      if (this.users[sessionID] == undefined) throw new Error('User is not inizialized');
       for (const type in this.users[sessionID].producers) {
         if (Object.prototype.hasOwnProperty.call(this.users[sessionID].producers, type)) {
           const producerId = this.users[sessionID].producers[type as 'audio' | 'video' | 'screen'];
@@ -427,4 +445,10 @@ export interface WebsocketUserInfo {
     screen?: string;
   };
   transports?: Transport[];
+}
+export interface Message {
+  from: string;
+  to?: string;
+  time: number;
+  message: string;
 }
