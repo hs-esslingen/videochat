@@ -70,7 +70,7 @@ if (process.env.NODE_ENV === 'production') {
       callbackUrl: process.env.CALLBACK_URL,
       entryPoint: process.env.ENTRY_POINT,
       issuer: process.env.ISSUER,
-      identifierFormat: undefined,
+      identifierFormat: (null as any) as undefined,
       decryptionPvk: readFileSync(__dirname + '/cert/key.pem', 'utf8'),
       privateCert: readFileSync(__dirname + '/cert/key.pem', 'utf8'),
       // IDP Public key
