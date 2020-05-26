@@ -47,8 +47,12 @@ export class Api {
     });
 
     this.api.post('/room/:roomId/message', async (req, res) => {
+      if (req.body.message == null) {
+        res.status(400).send('no message provided');
+        return;
+      }
       try {
-        await Room.getRoom(req.params.roomId).sendMessage(req.body.message, req.body.to, req.sessionID as string);
+        Room.getRoom(req.params.roomId).sendMessage(req.body.message, req.body.to, req.sessionID as string);
         res.status(201).send();
       } catch (e) {
         res.status(500).send(e);

@@ -55,16 +55,21 @@ export class Room {
   }
 
   getMessages(sessionID: string) {
-    if (this.users[sessionID] === null) throw new Error('User is not inizialized');
+    if (this.users[sessionID] == null) throw new Error('User is not inizialized');
 
     const userId = this.users[sessionID].id;
-    return this.messages.filter(item => item.to === null || item.from === userId || item.to === userId);
+
+    logger.trace(this.messages.filter(item => item.to == null || item.from === userId || item.to === userId));
+    return this.messages.filter(item => item.to == null || item.from === userId || item.to === userId);
   }
 
-  sendMessage(message: string, to: string, sessionID: string) {
-    if (this.users[sessionID] === null) throw new Error('User is not inizialized');
+  sendMessage(message: string, to: string | undefined, sessionID: string) {
+    if (this.users[sessionID] == null) throw new Error('User is not inizialized');
 
     const user = this.users[sessionID];
+
+    logger.trace('sendMessage:');
+    logger.trace(message, to);
 
     const m: Message = {
       from: user.nickname,
@@ -73,9 +78,10 @@ export class Room {
       time: Date.now(),
       message,
     };
+    logger.trace(m);
 
     // send Websocket Message
-    if (to === null) {
+    if (to == null) {
       // send a public message
       // if no receiver is specified send message to all participants
       this.broadcastMessage({
@@ -174,7 +180,7 @@ export class Room {
       this.broadcastMessage(
         {
           type: 'update-user',
-          data: this.users[sessionID],
+          data: this.getPublicUser(this.users[sessionID]),
         },
         sessionID
       );
@@ -309,6 +315,7 @@ export class Room {
       transports,
       producers: {},
     };
+    logger.trace(user.id);
 
     ws.on('close', () => {
       if (init === false) return;
