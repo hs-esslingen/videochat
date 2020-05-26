@@ -191,6 +191,7 @@ app.get('/auth/moodle', (req, res) => {
 
 app.get('/auth/jwt', passport.authenticate('jwt'), (req, res) => {
   logger.info('JWT Login', req.user);
+  logger.trace(req.headers.cookie);
   res.status(204).send();
 });
 

@@ -17,6 +17,8 @@ export class Room {
   private websockets: WebSocket[] = [];
   private users: {[sessionId: string]: User} = {};
 
+  private messages: Message[] = [];
+
   private constructor(private roomId: string) {
     // Delete Room if nobody has joined after 10 Seconds
     setTimeout(() => {
@@ -50,6 +52,73 @@ export class Room {
 
   async getCapabilities() {
     return (await this.getRouter()).rtpCapabilities;
+  }
+
+  getMessages(sessionID: string) {
+    if (this.users[sessionID] == null) throw new Error('User is not inizialized');
+
+    const userId = this.users[sessionID].id;
+
+    logger.trace(this.messages.filter(item => item.to == null || item.from === userId || item.to === userId));
+    return this.messages.filter(item => item.to == null || item.from === userId || item.to === userId);
+  }
+
+  sendMessage(message: string, to: string | undefined, sessionID: string) {
+    if (this.users[sessionID] == null) throw new Error('User is not inizialized');
+
+    const user = this.users[sessionID];
+
+    logger.trace('sendMessage:');
+    logger.trace(message, to);
+
+    const m: Message = {
+      from: user.nickname,
+      // send to User.id
+      to,
+      time: Date.now(),
+      message,
+    };
+    logger.trace(m);
+
+    // send Websocket Message
+    if (to == null) {
+      // send a public message
+      // if no receiver is specified send message to all participants
+      this.broadcastMessage({
+        type: 'message',
+        data: m,
+      });
+    } else {
+      // send a private message
+      // send message to sender
+      try {
+        user.ws.send(
+          JSON.stringify({
+            type: 'message',
+            data: m,
+          })
+        );
+
+        // send message to receiver
+        for (const key in this.users) {
+          const user = this.users[key];
+          if (user.id === to) {
+            user.ws.send(
+              JSON.stringify({
+                type: 'message',
+                data: m,
+              })
+            );
+            break;
+          }
+        }
+      } catch (error) {
+        throw new Error('Sending message failed!');
+      }
+    }
+
+    this.messages.push(m);
+    return;
   }
 
   async createTransport(sessionID: string) {
@@ -111,7 +180,7 @@ export class Room {
       this.broadcastMessage(
         {
           type: 'update-user',
-          data: this.users[sessionID],
+          data: this.getPublicUser(this.users[sessionID]),
         },
         sessionID
       );
@@ -241,10 +310,12 @@ export class Room {
     let init = false;
     const user: User = {
       id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+      ws: ws,
       nickname: initData.nickname,
       transports,
       producers: {},
     };
+    logger.trace(user.id);
 
     ws.on('close', () => {
       if (init === false) return;
@@ -410,6 +481,7 @@ export class Room {
 
 export interface User {
   id: string;
+  ws: WebSocket;
   nickname: string;
   producers: {
     audio?: string;
@@ -428,3 +500,10 @@ export interface WebsocketUserInfo {
   };
   transports?: Transport[];
 }
+export interface Message {
+  from: string;
+  to?: string;
+  time: number;
+  message: string;
+}
+
