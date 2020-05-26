@@ -55,14 +55,14 @@ export class Room {
   }
 
   getMessages(sessionID: string) {
-    if (this.users[sessionID] == undefined) throw new Error('User is not inizialized');
+    if (this.users[sessionID] === null) throw new Error('User is not inizialized');
 
     const userId = this.users[sessionID].id;
-    return this.messages.filter(item => item.to == undefined || item.from === userId || item.to === userId);
+    return this.messages.filter(item => item.to === null || item.from === userId || item.to === userId);
   }
 
   sendMessage(message: string, to: string, sessionID: string) {
-    if (this.users[sessionID] == undefined) throw new Error('User is not inizialized');
+    if (this.users[sessionID] === null) throw new Error('User is not inizialized');
 
     const user = this.users[sessionID];
 
@@ -75,15 +75,40 @@ export class Room {
     };
 
     // send Websocket Message
-    if (to === undefined) {
+    if (to === null) {
+      // send a public message
       // if no receiver is specified send message to all participants
-      // TODO: message should be a enum
-      const d: MessageData = { type: "messsage", data: JSON.stringify(m) };
-      this.broadcastMessage(d);
+      this.broadcastMessage({
+        type: 'message',
+        data: m,
+      });
     } else {
       // send a private message
-      // TODO: filter only private messages
-      // this.websockets.filter((item: MyWebSocket) => {});
+      // send message to sender
+      try {
+        user.ws.send(
+          JSON.stringify({
+            type: 'message',
+            data: m,
+          })
+        );
+
+        // send message to receiver
+        for (const key in this.users) {
+          const user = this.users[key];
+          if (user.id === to) {
+            user.ws.send(
+              JSON.stringify({
+                type: 'message',
+                data: m,
+              })
+            );
+            break;
+          }
+        }
+      } catch (error) {
+        throw new Error('Sending message failed!');
+      }
     }
 
     this.messages.push(m);
@@ -187,9 +212,9 @@ export class Room {
     }
   }
 
-  closeProducer(id, sessionID) {
+  closeProducer(id: string, sessionID: string) {
     return new Promise(res => {
-      if (this.users[sessionID] == undefined) throw new Error('User is not inizialized');
+      if (this.users[sessionID] == null) throw new Error('User is not inizialized');
       for (const type in this.users[sessionID].producers) {
         if (Object.prototype.hasOwnProperty.call(this.users[sessionID].producers, type)) {
           const producerId = this.users[sessionID].producers[type as 'audio' | 'video' | 'screen'];
@@ -279,6 +304,7 @@ export class Room {
     let init = false;
     const user: User = {
       id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+      ws: ws,
       nickname: initData.nickname,
       transports,
       producers: {},
@@ -448,6 +474,7 @@ export class Room {
 
 export interface User {
   id: string;
+  ws: WebSocket;
   nickname: string;
   producers: {
     audio?: string;
@@ -474,5 +501,5 @@ export interface Message {
 }
 export interface MessageData {
   type: string;
-  data: any;
+  data: string;
 }

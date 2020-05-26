@@ -46,24 +46,18 @@ export class Api {
       res.json(await Room.getRoom(req.params.roomId).produce(req.body.id, req.body.kind, req.body.rtpParameters, req.body.appData, req.sessionID as string));
     });
 
-    this.api.post("/room/:roomId/message", async (req, res) => {
+    this.api.post('/room/:roomId/message', async (req, res) => {
       try {
-        await Room.getRoom(req.params.roomId).sendMessage(
-          req.body.message,
-          req.body.to,
-          req.sessionID
-        )
+        await Room.getRoom(req.params.roomId).sendMessage(req.body.message, req.body.to, req.sessionID as string);
         res.status(201).send();
       } catch (e) {
         res.status(500).send(e);
       }
     });
 
-    this.api.get("/room/:roomId/messages", async (req, res) => {
+    this.api.get('/room/:roomId/messages', async (req, res) => {
       try {
-        const messages = Room.getRoom(req.params.roomId).getMessages(
-          req.sessionID
-        )
+        const messages = Room.getRoom(req.params.roomId).getMessages(req.sessionID as string);
         res.json(messages);
       } catch (e) {
         res.status(500).send(e);
