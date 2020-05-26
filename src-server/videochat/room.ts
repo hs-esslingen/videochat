@@ -64,9 +64,29 @@ export class Room {
   sendMessage(message: string, to: string, sessionID: string) {
     if (this.users[sessionID] == undefined) throw new Error('User is not inizialized');
 
-    // TODO: Create Message Object
-    // TODO: send Websocket Message
-    // TODO: add to message array
+    const user = this.users[sessionID];
+
+    const m: Message = {
+      from: user.nickname,
+      // send to User.id
+      to,
+      time: Date.now(),
+      message,
+    };
+
+    // send Websocket Message
+    if (to === undefined) {
+      // if no receiver is specified send message to all participants
+      // TODO: message should be a enum
+      const d: MessageData = { type: "messsage", data: JSON.stringify(m) };
+      this.broadcastMessage(d);
+    } else {
+      // send a private message
+      // TODO: filter only private messages
+      // this.websockets.filter((item: MyWebSocket) => {});
+    }
+
+    this.messages.push(m);
     return;
   }
 
@@ -451,4 +471,8 @@ export interface Message {
   to?: string;
   time: number;
   message: string;
+}
+export interface MessageData {
+  type: string;
+  data: any;
 }
