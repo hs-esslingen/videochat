@@ -506,7 +506,4 @@ export interface Message {
   time: number;
   message: string;
 }
-export interface MessageData {
-  type: string;
-  data: string;
-}
+
