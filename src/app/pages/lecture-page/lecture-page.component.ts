@@ -1,10 +1,11 @@
 import {Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
 import {User, MicrophoneState, ScreenshareState, CameraState, Signal, MediaService} from '../../helper/media.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {LocalMediaService} from '../../helper/local-media.service';
 import {JoinMeetingPopupComponent} from '../../components/join-meeting-popup/join-meeting-popup.component';
 import {ChatService} from '../../helper/chat.service';
+import {UserComponent} from 'src/app/components/user/user.component';
 
 @Component({
   selector: 'app-lecture-page',
@@ -35,7 +36,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   webcamHeight = 0.2;
 
   // Variables for Users
-  currentUser: User = {id: '666', nickname: 'Der King', producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND};
+  currentUser: User;
   users: User[] = [];
 
   // Variables for sidebar
@@ -44,6 +45,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     readonly mediaService: MediaService,
+    private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private localMedia: LocalMediaService,
@@ -113,6 +115,9 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isToolbarHidden = true;
     }, 1500);
 
+    // Initialize User
+    // TODO rework states (use current user)
+    this.currentUser = {id: '0', nickname: undefined, producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE};
     this.currentUser.nickname = this.mediaService.nickname;
 
     this.route.paramMap.subscribe(async params => {
@@ -132,9 +137,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
           return;
         }
         // Proceed when all informations are given
-
-        // TODO rework states (use current user)
-        this.currentUser.nickname = this.mediaService.nickname;
 
         if (result.nickname !== '') this.mediaService.setNickname(result.nickname);
         else this.mediaService.setNickname('User ' + Math.round(Math.random() * 100));
@@ -184,8 +186,10 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     return undefined;
   }
 
-  updateSidebar($event: {element: Element; type: string}) {
+  processSidebarEvent($event: {element: Element; type: string}) {
     // console.log("Event occured")
+    if ($event.element === null && $event.type === 'disconnect') this.disconnect();
+
     if (this.detailType === $event.type) {
       if (this.sidebarDetail?.id === $event.element.id) {
         this.sidebarDetail = undefined;
@@ -197,6 +201,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sidebarDetail = $event.element;
       this.detailType = $event.type;
     }
+
     requestAnimationFrame(() => {
       this.recalculateMaxVideoWidth();
     });
@@ -210,6 +215,10 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         this.isToolbarHidden = true;
       }, 1500);
     }
+  }
+
+  async disconnect() {
+    this.router.navigate(['/' + this.roomId + '/thank-you']);
   }
 
   test(): void {

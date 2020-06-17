@@ -53,7 +53,9 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   openSettings(): void {
     console.log("You've opened the settings!");
   }
-  leaveChat(): void {
-    console.log("You've left the lecture!");
+
+  leaveRoom(): void {
+    //console.log("You've left the lecture!");
+    this.sidebarEvent.emit({element: null, type: 'disconnect'});
   }
 }

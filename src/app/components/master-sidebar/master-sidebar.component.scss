@@ -1,3 +1,5 @@
+@import '../../../styles/round-buttons.scss';
+
 :host {
   height: 100%;
   width: 180px;
@@ -193,51 +195,10 @@
     }
   }
 
-  /////////////////////////////
-  //Styling for all the buttons
-  /////////////////////////////
+  //////////////////////////////////
+  // Styling for individual buttons
+  //////////////////////////////////
   .round-button {
-    border-radius: 50%;
-    border-style: solid;
-    border-width: thin;
-    border-color: white;
-    border: none;
-    margin: 8px 8px 4px 8px;
-    background-color: #193058;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-
-    // Subclasses of buttons
-    &.big {
-      width: 48px;
-      height: 48px;
-
-      i {
-        padding-top: 4px;
-        font-size: 32px;
-      }
-    }
-
-    &.small {
-      width: 32px;
-      height: 32px;
-
-      i {
-        padding-top: 2px;
-        font-size: 16px;
-      }
-    }
-
-    // Functions for all classes
-    &:hover {
-      filter: brightness(1.15);
-    }
-
-    &.active {
-      background-color: var(--app-primary);
-      color: black;
-    }
-
-    // Stylings for individual buttons
     &#raise-hand {
       background-color: #9e9824;
     }
@@ -250,8 +211,7 @@
       background-color: #591d1d;
     }
 
-    // Styling for the control-buttons
-    &#leave-chat {
+    &#leave-room {
       background-color: #6f0e0e;
     }
   }
