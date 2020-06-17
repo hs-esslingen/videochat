@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
-import {User} from '../../helper/media.service';
+import {User, Signal} from '../../helper/media.service';
 import {ChatService, Chat} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
 
@@ -12,7 +12,9 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   @Input() currentUser!: User;
   @Input() users!: User[];
 
-  @Output() sidebarEvent = new EventEmitter<{element: Element; type: string}>();
+  @Output() sidebarSetDetailEvent = new EventEmitter<{element: Element; type: string}>();
+  @Output() sidebarSignalEvent = new EventEmitter<Signal>();
+  @Output() sidebarDisconnectEvent = new EventEmitter<null>();
 
   // Variables for chat
   chats: Chat[] = [];
@@ -34,20 +36,25 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     this.chatSubscription?.unsubscribe();
   }
 
+  // TODO: Verallgemeinerte Version möglich?
   setSidebarChat(chat: Element): void {
     // console.log("Triggered Event");
-    this.sidebarEvent.emit({element: chat, type: 'chat'});
+    this.sidebarSetDetailEvent.emit({element: chat, type: 'chat'});
   }
 
   raiseHand(): void {
-    console.log("You've raised your Hand");
+    //console.log("You've raised your Hand");
+    this.sidebarSignalEvent.emit(Signal.RAISED_HAND);
   }
   thumbsUp(): void {
-    console.log("You've voted up!");
+    //console.log("You've voted up!");
+    this.sidebarSignalEvent.emit(Signal.VOTED_UP);
   }
   thumbsDown(): void {
-    console.log("You've voted down!");
+    //console.log("You've voted down!");
+    this.sidebarSignalEvent.emit(Signal.VOTED_DOWN);
   }
+
   userInteraction(): void {}
 
   openSettings(): void {
@@ -56,6 +63,6 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
 
   leaveRoom(): void {
     //console.log("You've left the lecture!");
-    this.sidebarEvent.emit({element: null, type: 'disconnect'});
+    this.sidebarDisconnectEvent.emit();
   }
 }

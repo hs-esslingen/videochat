@@ -36,7 +36,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   webcamHeight = 0.2;
 
   // Variables for Users
-  currentUser: User;
+  currentUser: User = {id: '0', nickname: 'User', producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE};
   users: User[] = [];
 
   // Variables for sidebar
@@ -116,8 +116,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     }, 1500);
 
     // Initialize User
-    // TODO rework states (use current user)
-    this.currentUser = {id: '0', nickname: undefined, producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE};
     this.currentUser.nickname = this.mediaService.nickname;
 
     this.route.paramMap.subscribe(async params => {
@@ -186,10 +184,8 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     return undefined;
   }
 
-  processSidebarEvent($event: {element: Element; type: string}) {
+  setSidebarDetail($event: {element: Element; type: string}) {
     // console.log("Event occured")
-    if ($event.element === null && $event.type === 'disconnect') this.disconnect();
-
     if (this.detailType === $event.type) {
       if (this.sidebarDetail?.id === $event.element.id) {
         this.sidebarDetail = undefined;
@@ -207,6 +203,11 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  setSidebarSignal($event: Signal) {
+    if ($event !== this.currentUser.signal) this.currentUser.signal = $event;
+    else this.currentUser.signal = Signal.NONE;
+  }
+
   onMousemove() {
     if (!this.isMobile) {
       this.isToolbarHidden = false;
@@ -222,7 +223,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   test(): void {
-    this.currentUser = {id: '666', nickname: 'Der King', producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND};
+    this.currentUser = {id: '0', nickname: 'User', producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND};
 
     this.users.push(
       {
