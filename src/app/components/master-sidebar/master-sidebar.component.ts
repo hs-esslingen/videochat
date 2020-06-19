@@ -1,9 +1,10 @@
 import {Component, OnInit, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
-import {User, Signal, Poll} from '../../helper/media.service';
+import {User, Signal} from '../../helper/media.service';
 import {ChatService, Chat} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';
+import {Poll} from 'src/app/helper/poll.service';
 
 @Component({
   selector: 'app-master',
@@ -14,7 +15,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   @Input() currentUser!: User;
   @Input() users!: User[];
 
-  @Output() sidebarSetDetailEvent = new EventEmitter<{element: Element; type: string}>();
+  @Output() sidebarSetDetailEvent = new EventEmitter<{element: Record<string, any>; type: string}>();
   @Output() sidebarSignalEvent = new EventEmitter<Signal>();
   @Output() sidebarNicknameEvent = new EventEmitter<string>();
   @Output() sidebarDisconnectEvent = new EventEmitter<null>();
@@ -25,7 +26,6 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
 
   //Variables for polls
   polls: Poll[] = [];
-  //polls: Poll[] = [{id: "0", title: "Test_1"}, {id: "1", title: "Test_2"}];
 
   constructor(readonly chatService: ChatService, private dialog: MatDialog) {}
 
@@ -37,20 +37,28 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     this.chatSubscription = this.chatService.getObserver().subscribe(data => {
       this.chats = data.chats;
     });
+
+    this.polls.push(new Poll('0', 'Poll_1'));
+    this.polls.push(new Poll('1', 'Poll_2'));
   }
 
   ngOnDestroy(): void {
     this.chatSubscription?.unsubscribe();
   }
 
-  // TODO: Verallgemeinerte Version möglich?
-  setSidebarChat(chat: Element): void {
-    // console.log("Triggered Event");
-    this.sidebarSetDetailEvent.emit({element: chat, type: 'chat'});
+  //PUSH NEWLY CREATED CHAT TO CHAT SERVICE?
+  openChat(user: User): void {
+    if (!this.chats.find(chat => chat.partner === user)) this.chatService.addChat(user);
+    const foundElement = this.chats.find(chat => chat.partner === user);
+    if (foundElement !== undefined) this.setSidebarDetailType(foundElement);
+    // this.setSidebarDetailType(this.chats.find(chat => chat.partner === user));
   }
-  setSidebarPoll(poll: Element): void {
-    // console.log("Triggered Event");
-    this.sidebarSetDetailEvent.emit({element: poll, type: 'poll'});
+
+  setSidebarDetailType(obj: Record<string, any>): void {
+    // console.log("A label was clicked!");
+    // console.log(obj);
+    if (obj instanceof Chat) this.sidebarSetDetailEvent.emit({element: obj, type: 'chat'});
+    if (obj instanceof Poll) this.sidebarSetDetailEvent.emit({element: obj, type: 'poll'});
   }
 
   raiseHand(): void {
@@ -68,12 +76,12 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
 
   //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!
   userInteraction(): void {
-    console.log('Opened menu for user interaction!');
+    // console.log('Opened menu for user interaction!');
   }
 
   //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!
   openSettings(): void {
-    console.log("You've opened the settings menu!");
+    // console.log("You've opened the settings menu!");
   }
 
   createPoll(): void {

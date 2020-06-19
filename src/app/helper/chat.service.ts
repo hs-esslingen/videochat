@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {User, Message} from './media.service';
+import {User} from './media.service';
 import {Subscriber, Observable} from 'rxjs';
 
 @Injectable({
@@ -70,6 +70,12 @@ export class Chat {
     if (!this.partner) return 'Public Chat';
     else return this.partner.nickname;
   }
+}
+
+export interface Message {
+  sender: string;
+  text: string;
+  // time:   Date;
 }
 
 type ChatJson = {

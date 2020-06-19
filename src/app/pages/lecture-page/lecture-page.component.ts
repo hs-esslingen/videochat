@@ -5,7 +5,6 @@ import {MatDialog} from '@angular/material/dialog';
 import {LocalMediaService} from '../../helper/local-media.service';
 import {JoinMeetingPopupComponent} from '../../components/join-meeting-popup/join-meeting-popup.component';
 import {ChatService} from '../../helper/chat.service';
-import {UserComponent} from 'src/app/components/user/user.component';
 
 @Component({
   selector: 'app-lecture-page',
@@ -14,7 +13,7 @@ import {UserComponent} from 'src/app/components/user/user.component';
 })
 export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   // Enables / Disables debug mode, that creates some dummy users and chats
-  demo = false;
+  demo = true;
 
   @ViewChild('webcams') webcams: ElementRef<HTMLDivElement> | undefined;
   // Variables for video
@@ -188,7 +187,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setSidebarDetail($event: {element: Element; type: string}) {
-    // console.log("Event occured")
+    //console.log("Event occured")
     if (this.detailType === $event.type) {
       if (this.sidebarDetail?.id === $event.element.id) {
         this.sidebarDetail = undefined;
