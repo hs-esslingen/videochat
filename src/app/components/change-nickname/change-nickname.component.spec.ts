@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ChangeNicknameComponent } from './change-nickname.component';
+import {ChangeNicknameComponent} from './change-nickname.component';
 
 describe('ChangeNicknameComponent', () => {
   let component: ChangeNicknameComponent;
@@ -8,9 +8,8 @@ describe('ChangeNicknameComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ChangeNicknameComponent ]
-    })
-    .compileComponents();
+      declarations: [ChangeNicknameComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

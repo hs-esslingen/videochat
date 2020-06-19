@@ -4,7 +4,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {MAT_DIALOG_DATA, MatDialogRef, MatDialog} from '@angular/material/dialog';
 import {JoinMeetingPopupComponent} from '../../components/join-meeting-popup/join-meeting-popup.component';
 import {LocalMediaService} from '../../helper/local-media.service';
-import { ChangeNicknameComponent } from 'src/app/components/change-nickname/change-nickname.component';
+import {ChangeNicknameComponent} from 'src/app/components/change-nickname/change-nickname.component';
 
 enum Layout {
   GRID = 'GRID',

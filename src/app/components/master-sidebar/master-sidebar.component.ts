@@ -2,8 +2,8 @@ import {Component, OnInit, Input, Output, EventEmitter, OnDestroy} from '@angula
 import {User, Signal} from '../../helper/media.service';
 import {ChatService, Chat} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
-import { ChangeNicknameComponent } from '../change-nickname/change-nickname.component';
+import {MatDialog} from '@angular/material/dialog';
+import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';
 
 @Component({
   selector: 'app-master',
@@ -23,10 +23,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   chats: Chat[] = [];
   chatSubscription: Subscription | undefined;
 
-  constructor(
-    readonly chatService: ChatService,
-    private dialog: MatDialog
-    ) {}
+  constructor(readonly chatService: ChatService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreses or rejoins)
@@ -63,7 +60,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
 
   //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!
   userInteraction(): void {
-    console.log("Opened menu for user interaction!");
+    console.log('Opened menu for user interaction!');
   }
 
   //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!

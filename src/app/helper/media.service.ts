@@ -546,6 +546,6 @@ export interface Message {
   // time:   Date;
 }
 
-export interface ChangeNicknameDialogData{
-nickname: string;
+export interface ChangeNicknameDialogData {
+  nickname: string;
 }
