@@ -9,8 +9,5 @@ export class PollService {
 
 //Currently just a dummy
 export class Poll {
-  constructor(
-    public id: string,
-    public title: string
-  ) {}
+  constructor(public id: string, public title: string) {}
 }
