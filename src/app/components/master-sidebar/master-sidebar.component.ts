@@ -32,10 +32,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   //Variables for polls
   polls: Poll[] = [];
 
-  constructor(
-    readonly chatService: ChatService,
-    private dialog: MatDialog
-    ) {}
+  constructor(readonly chatService: ChatService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreses or rejoins)
@@ -46,8 +43,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
       this.chats = data.chats;
     });
 
-    if (this.demo)
-    {
+    if (this.demo) {
       this.polls.push(new Poll('0', 'Poll_1'));
       this.polls.push(new Poll('1', 'Poll_2'));
     }
@@ -60,8 +56,8 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   //PUSH NEWLY CREATED CHAT TO CHAT SERVICE?
   openChat(user: User): void {
     if (!this.chats.find(chat => chat.partner === user)) this.chatService.addChat(user);
-    const foundElement = this.chats.find(chat => chat.partner === user);                  // Needed, since otherwise husky throws an error, that
-    if (foundElement !== undefined) this.setSidebarDetailType(foundElement);              // "setSidebarDetailType", must not be handed "undefined"
+    const foundElement = this.chats.find(chat => chat.partner === user); // Needed, since otherwise husky throws an error, that
+    if (foundElement !== undefined) this.setSidebarDetailType(foundElement); // "setSidebarDetailType", must not be handed "undefined"
   }
 
   setSidebarDetailType(obj: Record<string, any>): void {
