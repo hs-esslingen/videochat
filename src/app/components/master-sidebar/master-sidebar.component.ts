@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
-import {User, Signal} from '../../helper/media.service';
+import {User, Signal, MediaService} from '../../helper/media.service';
 import {ChatService, Chat} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
@@ -12,6 +12,7 @@ import {Poll} from 'src/app/helper/poll.service';
   styleUrls: ['./master-sidebar.component.scss'],
 })
 export class MasterSidebarComponent implements OnInit, OnDestroy {
+  @Input() autoGainControl: boolean | undefined;
   @Input() currentUser!: User;
   @Input() users!: User[];
 
@@ -19,6 +20,10 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   @Output() sidebarSignalEvent = new EventEmitter<Signal>();
   @Output() sidebarNicknameEvent = new EventEmitter<string>();
   @Output() sidebarDisconnectEvent = new EventEmitter<null>();
+  @Output() sidebarToggleAutogainEvent = new EventEmitter<null>();
+
+  // Enables / Disables debug mode, that creates some polls
+  demo = false;
 
   // Variables for chats
   chats: Chat[] = [];
@@ -27,7 +32,10 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   //Variables for polls
   polls: Poll[] = [];
 
-  constructor(readonly chatService: ChatService, private dialog: MatDialog) {}
+  constructor(
+    readonly chatService: ChatService,
+    private dialog: MatDialog
+    ) {}
 
   ngOnInit(): void {
     // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreses or rejoins)
@@ -38,8 +46,11 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
       this.chats = data.chats;
     });
 
-    this.polls.push(new Poll('0', 'Poll_1'));
-    this.polls.push(new Poll('1', 'Poll_2'));
+    if (this.demo)
+    {
+      this.polls.push(new Poll('0', 'Poll_1'));
+      this.polls.push(new Poll('1', 'Poll_2'));
+    }
   }
 
   ngOnDestroy(): void {
@@ -49,9 +60,8 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   //PUSH NEWLY CREATED CHAT TO CHAT SERVICE?
   openChat(user: User): void {
     if (!this.chats.find(chat => chat.partner === user)) this.chatService.addChat(user);
-    const foundElement = this.chats.find(chat => chat.partner === user);
-    if (foundElement !== undefined) this.setSidebarDetailType(foundElement);
-    // this.setSidebarDetailType(this.chats.find(chat => chat.partner === user));
+    const foundElement = this.chats.find(chat => chat.partner === user);                  // Needed, since otherwise husky throws an error, that
+    if (foundElement !== undefined) this.setSidebarDetailType(foundElement);              // "setSidebarDetailType", must not be handed "undefined"
   }
 
   setSidebarDetailType(obj: Record<string, any>): void {
@@ -84,10 +94,6 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     // console.log("You've opened the settings menu!");
   }
 
-  createPoll(): void {
-    console.log("You've created a new poll!");
-  }
-
   openNicknameDialog(): void {
     const dialogRef = this.dialog.open(ChangeNicknameComponent, {
       width: '300px',
@@ -99,6 +105,15 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
       //console.log(result);
       if (result != null || '') this.sidebarNicknameEvent.emit(result);
     });
+  }
+
+  createPoll(): void {
+    console.log("You've created a new poll!");
+  }
+
+  toggleAutoGain(): void {
+    //console.log("Toggled auto gain control!");
+    this.sidebarToggleAutogainEvent.emit();
   }
 
   leaveRoom(): void {

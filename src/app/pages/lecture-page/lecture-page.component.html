@@ -33,10 +33,12 @@
         id="master"
         [currentUser]="currentUser"
         [users]="users"
+        [autoGainControl]="autoGainControl"
         (sidebarSetDetailEvent)="setSidebarDetail($event)"
         (sidebarSignalEvent)="setSidebarSignal($event)"
         (sidebarNicknameEvent)="setNickname($event)"
         (sidebarDisconnectEvent)="disconnect()"
+        (sidebarToggleAutogainEvent)="mediaService.toggleAutoGainControl()"
         [class.detail-open]="detailType != undefined"
     ></app-master>
 </div>

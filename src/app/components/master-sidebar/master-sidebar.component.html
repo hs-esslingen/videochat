@@ -93,8 +93,10 @@
         <button mat-menu-item>
             Open audio / video settings
         </button>
-        <button mat-menu-item>
-            Auto gain control
+        <button mat-menu-item (click)="$event.stopPropagation()">
+            <mat-checkbox [checked]="autoGainControl" (change)="toggleAutoGain()">
+                Automatic gain control
+            </mat-checkbox>
         </button>
     </mat-menu>
     <button id="leave-room" class="big round-button" (click)="leaveRoom()"><i class="material-icons">directions_run</i></button>
