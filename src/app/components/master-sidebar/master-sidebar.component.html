@@ -59,9 +59,11 @@
     </div>
 
     <div id="control">
-        <button id="settings" class="big round-button" [matMenuTriggerFor]="aboveMenu"><i class="material-icons">settings</i></button>
+        <button id="settings" class="big round-button" [matMenuTriggerFor]="aboveMenu" (click)="openSettings()">
+            <i class="material-icons">settings</i>
+        </button>
         <mat-menu #aboveMenu="matMenu" yPosition="above">
-            <button mat-menu-item>
+            <button mat-menu-item (click)="openNicknameDialog()">
                 Change nickname
             </button>
             <button mat-menu-item>

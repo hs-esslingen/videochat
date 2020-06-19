@@ -150,6 +150,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
             this.screenshareState = data.screenshareState;
             this.localStream = data.localStream;
             this.localSchreenshareStream = data.localScreenshareStream;
+            this.currentUser.nickname = this.mediaService.nickname;
             this.users = data.users;
 
             let screenShareUser = this.users.find(item => item.consumers?.screen != null);
@@ -208,6 +209,12 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   setSidebarSignal($event: Signal) {
     if ($event !== this.currentUser.signal) this.currentUser.signal = $event;
     else this.currentUser.signal = Signal.NONE;
+  }
+
+  setNickname($event: string) {
+    // console.log("Changed nickname to " + $event + "!");
+    this.mediaService.setNickname($event);
+    this.currentUser.nickname = $event;                               //DIESE ZEILE FIXEN --> UNNÖTIG WENN IN OBSERVER
   }
 
   onMousemove() {

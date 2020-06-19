@@ -35,6 +35,7 @@
         [users]="users"
         (sidebarSetDetailEvent)="setSidebarDetail($event)"
         (sidebarSignalEvent)="setSidebarSignal($event)"
+        (sidebarNicknameEvent)="setNickname($event)"
         (sidebarDisconnectEvent)="disconnect()"
         [class.detail-open]="detailType != undefined"
     ></app-master>

@@ -1,7 +1,8 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {MicrophoneState, CameraState, ScreenshareState, MediaService} from '../../helper/media.service';
 import {MatDialog} from '@angular/material/dialog';
-import {NicknameDialogComponent, DebugDialogComponent} from '../../pages/meeting-page/meeting-page.component';
+import {DebugDialogComponent} from '../../pages/meeting-page/meeting-page.component';
+import { ChangeNicknameComponent } from '../change-nickname/change-nickname.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -18,7 +19,7 @@ export class ToolbarComponent implements OnInit {
   ngOnInit(): void {}
 
   openNicknameDialog(): void {
-    const dialogRef = this.dialog.open(NicknameDialogComponent, {
+    const dialogRef = this.dialog.open(ChangeNicknameComponent, {
       width: '300px',
       data: {nickname: this.mediaService.nickname},
     });

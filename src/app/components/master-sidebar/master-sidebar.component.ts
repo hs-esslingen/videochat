@@ -2,6 +2,8 @@ import {Component, OnInit, Input, Output, EventEmitter, OnDestroy} from '@angula
 import {User, Signal} from '../../helper/media.service';
 import {ChatService, Chat} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { ChangeNicknameComponent } from '../change-nickname/change-nickname.component';
 
 @Component({
   selector: 'app-master',
@@ -14,13 +16,17 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
 
   @Output() sidebarSetDetailEvent = new EventEmitter<{element: Element; type: string}>();
   @Output() sidebarSignalEvent = new EventEmitter<Signal>();
+  @Output() sidebarNicknameEvent = new EventEmitter<string>();
   @Output() sidebarDisconnectEvent = new EventEmitter<null>();
 
   // Variables for chat
   chats: Chat[] = [];
   chatSubscription: Subscription | undefined;
 
-  constructor(readonly chatService: ChatService) {}
+  constructor(
+    readonly chatService: ChatService,
+    private dialog: MatDialog
+    ) {}
 
   ngOnInit(): void {
     // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreses or rejoins)
@@ -55,10 +61,27 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     this.sidebarSignalEvent.emit(Signal.VOTED_DOWN);
   }
 
-  userInteraction(): void {}
+  //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!
+  userInteraction(): void {
+    console.log("Opened menu for user interaction!");
+  }
 
+  //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!
   openSettings(): void {
-    console.log("You've opened the settings!");
+    console.log("You've opened the settings menu!");
+  }
+
+  openNicknameDialog(): void {
+    const dialogRef = this.dialog.open(ChangeNicknameComponent, {
+      width: '300px',
+      data: {nickname: this.currentUser.nickname},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      //console.log('The dialog was closed');
+      //console.log(result);
+      if (result != null || '') this.sidebarNicknameEvent.emit(result);
+    });
   }
 
   leaveRoom(): void {
