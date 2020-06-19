@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
-import {User, Signal} from '../../helper/media.service';
+import {User, Signal, Poll} from '../../helper/media.service';
 import {ChatService, Chat} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
@@ -19,9 +19,13 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   @Output() sidebarNicknameEvent = new EventEmitter<string>();
   @Output() sidebarDisconnectEvent = new EventEmitter<null>();
 
-  // Variables for chat
+  // Variables for chats
   chats: Chat[] = [];
   chatSubscription: Subscription | undefined;
+
+  //Variables for polls
+  polls: Poll[] = [];
+  //polls: Poll[] = [{id: "0", title: "Test_1"}, {id: "1", title: "Test_2"}];
 
   constructor(readonly chatService: ChatService, private dialog: MatDialog) {}
 
@@ -43,6 +47,10 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   setSidebarChat(chat: Element): void {
     // console.log("Triggered Event");
     this.sidebarSetDetailEvent.emit({element: chat, type: 'chat'});
+  }
+  setSidebarPoll(poll: Element): void {
+    // console.log("Triggered Event");
+    this.sidebarSetDetailEvent.emit({element: poll, type: 'poll'});
   }
 
   raiseHand(): void {
@@ -66,6 +74,10 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!
   openSettings(): void {
     console.log("You've opened the settings menu!");
+  }
+
+  createPoll(): void {
+    console.log("You've created a new poll!");
   }
 
   openNicknameDialog(): void {

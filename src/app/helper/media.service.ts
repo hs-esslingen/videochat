@@ -540,6 +540,12 @@ export interface User {
   isTalking: boolean;
 }
 
+//Currently just a dummy
+export interface Poll {
+  id: string;
+  title: string;
+}
+
 export interface Message {
   sender: string;
   text: string;

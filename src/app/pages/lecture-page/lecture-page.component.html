@@ -27,7 +27,7 @@
     </div>
 
     <app-chat *ngIf="detailType === 'chat'" class="detail" [childData]="sidebarDetail" [user]="currentUser"></app-chat>
-    <!-- <app-poll *ngIf="selected === SELECTION.poll" class="detail"></app-poll> -->
+    <app-poll *ngIf="detailType === 'poll'" class="detail"></app-poll>
 
     <app-master
         id="master"

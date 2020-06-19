@@ -12,6 +12,20 @@
             </div>
         </ng-container>
 
+        <ng-container *ngIf="polls.length != 0">
+            <h4>Polls</h4>
+            <ng-container *ngFor="let poll of polls">
+                <div class="object-label chat" (click)="setSidebarPoll(poll)">
+                    <div class="status"></div>
+                <div class="nickname">{{poll.title}}</div>
+                <div class="signal">
+                    <!-- <i *ngIf="!chat.newMessage" class="material-icons">chat_bubble_outline</i>
+                    <i *ngIf="chat.newMessage" class="material-icons">chat</i> -->
+                </div>
+                </div>
+            </ng-container>
+        </ng-container>
+
         <h4>Currnet Users</h4>
         <label>You</label>
         <div
@@ -66,11 +80,14 @@
             <button mat-menu-item (click)="openNicknameDialog()">
                 Change nickname
             </button>
-            <button mat-menu-item>
+            <button mat-menu-item (click)="createPoll()">
                 Create a new poll
             </button>
             <button mat-menu-item>
                 Open audio / video settings
+            </button>
+            <button mat-menu-item>
+                Auto gain control
             </button>
         </mat-menu>
         <button id="leave-room" class="big round-button" (click)="leaveRoom()"><i class="material-icons">directions_run</i></button>
