@@ -1,5 +1,4 @@
 import {Component, OnInit, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
-import {MediaService} from '../../helper/media.service';
 import {ChatService, Chat} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
