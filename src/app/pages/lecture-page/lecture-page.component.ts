@@ -36,7 +36,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   webcamHeight = 0.2;
 
   // Variables for Users
-  currentUser: User = {id: '0', nickname: 'User', producers: {}, isMuted: true, isTalking: false, signal: Signal.NONE};
+  currentUser: User = {id: '0', nickname: 'User', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: Signal.NONE};
   users: User[] = [];
 
   // Variables for sidebar
@@ -115,12 +115,13 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isToolbarHidden = true;
     }, 1500);
 
-    // Initialize User
-    this.currentUser.nickname = this.mediaService.nickname;
-
     this.route.paramMap.subscribe(async params => {
       // don't actually connect if demo is enabled
       if (this.demo) return;
+
+      // Initialize User
+      this.currentUser.nickname = this.mediaService.nickname;
+      this.currentUser.microphoneState = this.microphoneState;
 
       this.roomId = params.get('roomId') as string;
       const dialogRef = this.dialog.open(JoinMeetingPopupComponent, {
@@ -145,6 +146,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
             this.autoGainControl = data.autoGainControl;
             this.cameraState = data.cameraState;
             this.microphoneState = data.microphoneState;
+            this.currentUser.microphoneState = this.microphoneState;
             this.screenshareState = data.screenshareState;
             this.localStream = data.localStream;
             this.localSchreenshareStream = data.localScreenshareStream;
@@ -223,8 +225,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   test(): void {
-    this.currentUser = {id: '0', nickname: 'User', producers: {}, isMuted: false, isTalking: true, signal: Signal.RAISED_HAND};
-
     this.users.push(
       {
         id: '1',

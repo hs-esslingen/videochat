@@ -27,6 +27,7 @@ import {ToolbarComponent} from './components/toolbar/toolbar.component';
 import {VideoComponent} from './components/video/video.component';
 import {AudioComponent} from './components/audio/audio.component';
 import {MasterSidebarComponent} from './components/master-sidebar/master-sidebar.component';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import {MasterSidebarComponent} from './components/master-sidebar/master-sidebar
     MatDialogModule,
     ReactiveFormsModule,
     MatSelectModule,
+    MatButtonToggleModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -536,7 +536,7 @@ export interface User {
     screen?: Consumer;
   };
   signal: Signal;
-  isMuted: boolean;
+  microphoneState: MicrophoneState;
   isTalking: boolean;
 }
 
