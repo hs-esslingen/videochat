@@ -222,7 +222,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   setNickname($event: string) {
     // console.log("Changed nickname to " + $event + "!");
     this.mediaService.setNickname($event);
-    this.currentUser.nickname = $event; //DIESE ZEILE FIXEN --> UNNÖTIG WENN IN OBSERVER
   }
 
   onMousemove() {

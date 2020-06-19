@@ -130,6 +130,7 @@ export class MediaService {
     this.nickname = nickname;
     window.localStorage.setItem('nickname', nickname);
     this.ws.send('update', {nickname});
+    this.updateObserver();
   }
 
   toggleMirophone() {

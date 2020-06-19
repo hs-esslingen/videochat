@@ -16,14 +16,14 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   @Input() currentUser!: User;
   @Input() users!: User[];
 
-  @Output() sidebarSetDetailEvent = new EventEmitter<{element: Record<string, any>; type: string}>();
+  @Output() sidebarSetDetailEvent = new EventEmitter<{element: Object; type: string}>();
   @Output() sidebarSignalEvent = new EventEmitter<userSignal>();
   @Output() sidebarNicknameEvent = new EventEmitter<string>();
   @Output() sidebarDisconnectEvent = new EventEmitter<null>();
   @Output() sidebarToggleAutogainEvent = new EventEmitter<null>();
 
   // Enables / Disables debug mode, that creates some polls
-  demo = false;
+  demo = true;
 
   // Variables for chats
   chats: Chat[] = [];

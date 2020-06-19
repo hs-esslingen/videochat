@@ -10,13 +10,13 @@ export class Email {
   readonly SENDER_NAME = process.env.MAIL_SENDER_NAME || 'HSE Chat';
   readonly SENDER_EMAIL = process.env.MAIL_SENDER_EMAIL || 'noreply@hse-chat.app';
   // private transporter
-  constructor() {
-    if (process.env.NODE_ENV === 'development') {
-      this.setupTestAccount();
-    } else {
-      this.setupAccount();
-    }
-  }
+  // constructor() {
+  //   if (process.env.NODE_ENV === 'development') {
+  //     this.setupTestAccount();
+  //   } else {
+  //     this.setupAccount();
+  //   }
+  // }
 
   private setupAccount() {
     if (!process.env.MAIL_PORT) process.env.MAIL_PORT = '465';
