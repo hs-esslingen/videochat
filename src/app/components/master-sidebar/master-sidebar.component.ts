@@ -1,10 +1,11 @@
 import {Component, OnInit, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
-import {User, Signal, MediaService} from '../../helper/media.service';
+import {MediaService} from '../../helper/media.service';
 import {ChatService, Chat} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';
 import {Poll} from 'src/app/helper/poll.service';
+import {User, userSignal} from 'src/app/helper/user.service';
 
 @Component({
   selector: 'app-master',
@@ -17,13 +18,13 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   @Input() users!: User[];
 
   @Output() sidebarSetDetailEvent = new EventEmitter<{element: Record<string, any>; type: string}>();
-  @Output() sidebarSignalEvent = new EventEmitter<Signal>();
+  @Output() sidebarSignalEvent = new EventEmitter<userSignal>();
   @Output() sidebarNicknameEvent = new EventEmitter<string>();
   @Output() sidebarDisconnectEvent = new EventEmitter<null>();
   @Output() sidebarToggleAutogainEvent = new EventEmitter<null>();
 
   // Enables / Disables debug mode, that creates some polls
-  demo = false;
+  demo = true;
 
   // Variables for chats
   chats: Chat[] = [];
@@ -35,7 +36,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   constructor(readonly chatService: ChatService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
-    // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreses or rejoins)
+    // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreshes or rejoins)
     this.chats = this.chatService.getChats();
 
     // Creates an observer on the chats and subscribes to it
@@ -69,15 +70,15 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
 
   raiseHand(): void {
     //console.log("You've raised your Hand");
-    this.sidebarSignalEvent.emit(Signal.RAISED_HAND);
+    this.sidebarSignalEvent.emit(userSignal.RAISED_HAND);
   }
   thumbsUp(): void {
     //console.log("You've voted up!");
-    this.sidebarSignalEvent.emit(Signal.VOTED_UP);
+    this.sidebarSignalEvent.emit(userSignal.VOTED_UP);
   }
   thumbsDown(): void {
     //console.log("You've voted down!");
-    this.sidebarSignalEvent.emit(Signal.VOTED_DOWN);
+    this.sidebarSignalEvent.emit(userSignal.VOTED_DOWN);
   }
 
   //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {TransportOptions, RtpParameters, MediaKind, RtpCapabilities, DtlsParameters} from 'mediasoup-client/lib/types';
-import {User} from './media.service';
+import { User } from './user.service';
 
 @Injectable({
   providedIn: 'root',

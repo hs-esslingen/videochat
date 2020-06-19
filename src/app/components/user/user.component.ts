@@ -1,8 +1,8 @@
 import {Component, OnInit, Input, DoCheck, ViewChild, ElementRef, OnChanges, SimpleChanges, KeyValueDiffers, KeyValueDiffer} from '@angular/core';
-import {User} from '../../helper/media.service';
 import {WsService} from '../../helper/ws.service';
 import {Subscription} from 'rxjs';
 import {Consumer} from 'mediasoup-client/lib/types';
+import {User} from 'src/app/helper/user.service';
 
 @Component({
   selector: 'app-user',

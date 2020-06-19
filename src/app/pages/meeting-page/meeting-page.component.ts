@@ -1,10 +1,11 @@
 import {Component, OnInit, ViewChild, ElementRef, Inject, OnDestroy} from '@angular/core';
-import {MediaService, MicrophoneState, CameraState, ScreenshareState, User} from '../../helper/media.service';
+import {MediaService, MicrophoneState, CameraState, ScreenshareState} from '../../helper/media.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MAT_DIALOG_DATA, MatDialogRef, MatDialog} from '@angular/material/dialog';
 import {JoinMeetingPopupComponent} from '../../components/join-meeting-popup/join-meeting-popup.component';
 import {LocalMediaService} from '../../helper/local-media.service';
 import {ChangeNicknameComponent} from 'src/app/components/change-nickname/change-nickname.component';
+import {User} from 'src/app/helper/user.service';
 
 enum Layout {
   GRID = 'GRID',
