@@ -11,7 +11,7 @@
         </div>
     </ng-container>
 
-    <ng-container *ngIf="polls.length != 0">
+    <ng-container *ngIf="polls.length != 0 || currentUser.userRole == 1">
         <h4>Polls</h4>
         <ng-container *ngFor="let poll of polls">
             <div class="object-label chat" (click)="setSidebarDetailType(poll)">

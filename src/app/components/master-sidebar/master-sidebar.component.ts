@@ -23,7 +23,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   @Output() sidebarToggleAutogainEvent = new EventEmitter<null>();
 
   // Enables / Disables debug mode, that creates some polls
-  demo = true;
+  demo = false;
 
   // Variables for chats
   chats: Chat[] = [];
