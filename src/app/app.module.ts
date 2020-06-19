@@ -29,7 +29,7 @@ import {AudioComponent} from './components/audio/audio.component';
 import {MasterSidebarComponent} from './components/master-sidebar/master-sidebar.component';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {ChangeNicknameComponent} from './components/change-nickname/change-nickname.component';
-import { PollComponent } from './components/poll/poll.component';
+import {PollComponent} from './components/poll/poll.component';
 
 @NgModule({
   declarations: [
