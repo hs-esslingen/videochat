@@ -53,7 +53,7 @@ export class ChatService {
   }
 
   public addChat(user: User): Chat {
-    const chat = new Chat(user.id, [], false, user)
+    const chat = new Chat(user.id, [], false, user);
     this.chats.push(chat);
 
     this.chatSubscriber?.next({chats: this.chats});
