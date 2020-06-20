@@ -5,6 +5,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';
 import {Poll} from 'src/app/helper/poll.service';
 import {User, userSignal} from 'src/app/helper/user.service';
+import {SettingsMasterComponent} from '../settings-master/settings-master.component';
 
 @Component({
   selector: 'app-master',
@@ -23,7 +24,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   @Output() sidebarToggleAutogainEvent = new EventEmitter<null>();
 
   // Enables / Disables debug mode, that creates some polls
-  demo = true;
+  demo = false;
 
   // Variables for chats
   chats: Chat[] = [];
@@ -53,18 +54,22 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     this.chatSubscription?.unsubscribe();
   }
 
-  // PUSH NEWLY CREATED CHAT TO CHAT SERVICE?
-  openChat(user: User): void {
-    let foundElement = this.chats.find(chat => chat.partner === user);
-    if (foundElement == null) foundElement = this.chatService.addChat(user);
-    this.setSidebarDetailType(foundElement);
-  }
-
   setSidebarDetailType(obj: Record<string, any>): void {
     // console.log("A label was clicked!");
     // console.log(obj);
     if (obj instanceof Chat) this.sidebarSetDetailEvent.emit({element: obj, type: 'chat'});
     if (obj instanceof Poll) this.sidebarSetDetailEvent.emit({element: obj, type: 'poll'});
+  }
+
+  createPoll(): void {
+    console.log("You've created a new poll!");
+  }
+
+  // PUSH NEWLY CREATED CHAT TO CHAT SERVICE?
+  openChat(user: User): void {
+    let foundElement = this.chats.find(chat => chat.partner === user);
+    if (foundElement == null) foundElement = this.chatService.addChat(user);
+    this.setSidebarDetailType(foundElement);
   }
 
   raiseHand(): void {
@@ -86,10 +91,20 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   }
 
   //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!
-  openSettings(): void {
+  openSettingsDialog(): void {
     // console.log("You've opened the settings menu!");
+    const dialogRef = this.dialog.open(SettingsMasterComponent, {
+      width: '300px',
+      data: {},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      //console.log(result);
+    });
   }
 
+  //MIGHT BE MOVED
   openNicknameDialog(): void {
     const dialogRef = this.dialog.open(ChangeNicknameComponent, {
       width: '300px',
@@ -103,10 +118,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     });
   }
 
-  createPoll(): void {
-    console.log("You've created a new poll!");
-  }
-
+  //WILL BE MOVED
   toggleAutoGain(): void {
     //console.log("Toggled auto gain control!");
     this.sidebarToggleAutogainEvent.emit();

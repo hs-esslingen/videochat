@@ -517,7 +517,3 @@ export interface WebsocketUserInfo {
     screen?: string;
   };
 }
-
-export interface ChangeNicknameDialogData {
-  nickname: string;
-}

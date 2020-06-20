@@ -16,11 +16,20 @@
         <ng-container *ngFor="let poll of polls">
             <div class="object-label chat" (click)="setSidebarDetailType(poll)">
                 <div class="status"></div>
-            <div class="nickname">{{poll.title}}</div>
-            <div class="signal">
-                <!-- <i *ngIf="!chat.newMessage" class="material-icons">chat_bubble_outline</i>
-                <i *ngIf="chat.newMessage" class="material-icons">chat</i> -->
+                <div class="nickname">{{poll.title}}</div>
+                <div class="signal">
+                    <!-- <i *ngIf="!chat.newMessage" class="material-icons">chat_bubble_outline</i>
+                    <i *ngIf="chat.newMessage" class="material-icons">chat</i> -->
+                </div>
             </div>
+        </ng-container>
+        <ng-container *ngIf="currentUser.userRole == 1">
+            <div class="object-label chat" (click)="createPoll()">
+                <div class="status"></div>
+                <div class="nickname">Add a new poll</div>
+                <div class="signal">
+                    <i class="material-icons">add</i>
+                </div>
             </div>
         </ng-container>
     </ng-container>
@@ -67,7 +76,8 @@
         >
             <div class="status"></div>
             <div class="nickname">{{ user.nickname }}</div>
-            <div class="signal" *ngIf="user.microphoneState === 'mic'"><i class="material-icons">mic</i></div>
+            <div class="signal" *ngIf="user.microphoneState === 'mic' && user.isTalking === false"><i class="material-icons">mic</i></div>
+            <div class="signal" *ngIf="user.microphoneState === 'mic' && user.isTalking === true"><i class="material-icons">record_voice_over</i></div> 
 
             <mat-menu #userMenu="matMenu" yPosition="above">
                 <button mat-menu-item (click)="openChat(user)">
@@ -80,15 +90,15 @@
 </div>
 
 <div id="control">
-    <button id="settings" class="big round-button" [matMenuTriggerFor]="settingsMenu" (click)="openSettings()">
+    <button id="settings" class="big round-button" (click)="openSettingsDialog()">
+        <i class="material-icons">settings</i>
+    </button>
+    <!-- <button id="settings" class="big round-button" [matMenuTriggerFor]="settingsMenu">
         <i class="material-icons">settings</i>
     </button>
     <mat-menu #settingsMenu="matMenu" yPosition="above">
         <button mat-menu-item (click)="openNicknameDialog()">
             Change nickname
-        </button>
-        <button mat-menu-item (click)="createPoll()">
-            Create a new poll
         </button>
         <button mat-menu-item>
             Open audio / video settings
@@ -98,6 +108,6 @@
                 Automatic gain control
             </mat-checkbox>
         </button>
-    </mat-menu>
+    </mat-menu> -->
     <button id="leave-room" class="big round-button" (click)="leaveRoom()"><i class="material-icons">directions_run</i></button>
 </div>

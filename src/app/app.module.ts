@@ -30,6 +30,7 @@ import {MasterSidebarComponent} from './components/master-sidebar/master-sidebar
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {ChangeNicknameComponent} from './components/change-nickname/change-nickname.component';
 import {PollComponent} from './components/poll/poll.component';
+import {SettingsMasterComponent} from './components/settings-master/settings-master.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import {PollComponent} from './components/poll/poll.component';
     MasterSidebarComponent,
     ChangeNicknameComponent,
     PollComponent,
+    SettingsMasterComponent,
   ],
   imports: [
     BrowserModule,

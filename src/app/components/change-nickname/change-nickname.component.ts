@@ -1,6 +1,5 @@
 import {Component, OnInit, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {ChangeNicknameDialogData} from 'src/app/helper/media.service';
 
 @Component({
   selector: 'app-change-nickname',
@@ -15,4 +14,8 @@ export class ChangeNicknameComponent implements OnInit {
   close(): void {
     this.dialogRef.close(this.data.nickname);
   }
+}
+
+export interface ChangeNicknameDialogData {
+  nickname: string;
 }
