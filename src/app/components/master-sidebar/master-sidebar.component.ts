@@ -53,13 +53,6 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     this.chatSubscription?.unsubscribe();
   }
 
-  // //PUSH NEWLY CREATED CHAT TO CHAT SERVICE?
-  // openChat(user: User): void {
-  //   if (!this.chats.find(chat => chat.partner === user)) this.chatService.addChat(user);
-  //   const foundElement = this.chats.find(chat => chat.partner === user); // Needed, since otherwise husky throws an error, that
-  //   if (foundElement !== undefined) this.setSidebarDetailType(foundElement); // "setSidebarDetailType", must not be handed "undefined"
-  // }
-
   // PUSH NEWLY CREATED CHAT TO CHAT SERVICE?
   openChat(user: User): void {
     let foundElement = this.chats.find(chat => chat.partner === user);
