@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { SettingsAudioComponent } from './settings-audio.component';
+import {SettingsAudioComponent} from './settings-audio.component';
 
 describe('SettingsAudioComponent', () => {
   let component: SettingsAudioComponent;
@@ -8,9 +8,8 @@ describe('SettingsAudioComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SettingsAudioComponent ]
-    })
-    .compileComponents();
+      declarations: [SettingsAudioComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

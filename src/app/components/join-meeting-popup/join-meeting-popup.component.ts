@@ -30,9 +30,9 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<JoinMeetingPopupComponent>,
     @Inject(MAT_DIALOG_DATA)
-      public data: JoinMeetingData,
-      private media: MediaService,
-      private localMedia: LocalMediaService
+    public data: JoinMeetingData,
+    private media: MediaService,
+    private localMedia: LocalMediaService
   ) {
     dialogRef.disableClose = true;
   }

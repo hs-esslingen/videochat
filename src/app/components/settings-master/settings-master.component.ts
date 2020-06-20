@@ -1,7 +1,7 @@
 import {Component, OnInit, Inject, Input} from '@angular/core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import { MediaService } from 'src/app/helper/media.service';
-import { LocalMediaService } from 'src/app/helper/local-media.service';
+import {MediaService} from 'src/app/helper/media.service';
+import {LocalMediaService} from 'src/app/helper/local-media.service';
 
 @Component({
   selector: 'app-settings-master',
@@ -14,11 +14,11 @@ export class SettingsMasterComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<SettingsMasterComponent>,
     @Inject(MAT_DIALOG_DATA)
-      public data: SettingsMasterComponentData,
-      private localMedia: LocalMediaService,            // Weitergeben
-    ) {
-      //dialogRef.disableClose = true;                  //Enable when close buttons are implemented
-    }
+    public data: SettingsMasterComponentData,
+    private localMedia: LocalMediaService // Weitergeben
+  ) {
+    //dialogRef.disableClose = true;                  //Enable when close buttons are implemented
+  }
 
   ngOnInit(): void {}
 

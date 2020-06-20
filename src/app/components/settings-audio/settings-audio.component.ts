@@ -1,16 +1,15 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { LocalMediaService } from 'src/app/helper/local-media.service';
-import { MediaService } from 'src/app/helper/media.service';
+import {Component, OnInit, Input} from '@angular/core';
+import {LocalMediaService} from 'src/app/helper/local-media.service';
+import {MediaService} from 'src/app/helper/media.service';
 
 @Component({
   selector: 'app-settings-audio',
   templateUrl: './settings-audio.component.html',
-  styleUrls: ['./settings-audio.component.scss']
+  styleUrls: ['./settings-audio.component.scss'],
 })
-
 export class SettingsAudioComponent implements OnInit {
-  @Input() autoGainControl!: boolean;                                 //Checked
-  @Input() mediaService!: MediaService;                               //Checked
+  @Input() autoGainControl!: boolean; //Checked
+  @Input() mediaService!: MediaService; //Checked
 
   analyser: AnalyserNode | undefined;
   audioCtx: AudioContext | undefined;
@@ -21,13 +20,11 @@ export class SettingsAudioComponent implements OnInit {
   selectedAudioStream: string | undefined;
   intervalId: number | undefined;
 
-  constructor(
-    private localMedia: LocalMediaService,
-  ) { }
+  constructor(private localMedia: LocalMediaService) {}
 
   async ngOnInit() {
     this.audioCtx = new AudioContext();
-    
+
     try {
       this.analyser = this.audioCtx.createAnalyser();
       const audioStream = await this.localMedia.getAudioTrack();
