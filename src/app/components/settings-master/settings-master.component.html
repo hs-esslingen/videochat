@@ -1,1 +1,25 @@
-<p>settings-master works!</p>
+<div id="tabs">
+    <button class="setting-tab" (click)="settingPage = 0">
+        User settings
+    </button>
+    <button class="setting-tab" (click)="settingPage = 1">
+        Video settings
+    </button>
+    <button class="setting-tab" (click)="settingPage = 2">
+        Audio settings
+    </button>
+</div>
+
+<div id="setting-page">
+    <app-settings-user
+        *ngIf="settingPage == 0"
+    ></app-settings-user>
+    <app-settings-video
+        *ngIf="settingPage == 1"
+    ></app-settings-video>
+    <app-settings-audio
+        *ngIf="settingPage == 2"
+        [autoGainControl]="data.autoGainControl"
+        [mediaService]="data.mediaService"
+    ></app-settings-audio>
+</div>

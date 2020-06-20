@@ -37,6 +37,9 @@ import {MoodleErrorPopupComponent} from './components/moodle-error-popup/moodle-
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {SanitizeHtmlPipe} from './helper/sanitize-html.pipe';
 import {LinkifyPipe} from './helper/linkify.pipe';
+import {SettingsVideoComponent} from './components/settings-video/settings-video.component';
+import {SettingsAudioComponent} from './components/settings-audio/settings-audio.component';
+import {SettingsUserComponent} from './components/settings-user/settings-user.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +67,9 @@ import {LinkifyPipe} from './helper/linkify.pipe';
     MoodleErrorPopupComponent,
     SanitizeHtmlPipe,
     LinkifyPipe,
+    SettingsVideoComponent,
+    SettingsAudioComponent,
+    SettingsUserComponent,
   ],
   imports: [
     BrowserModule,

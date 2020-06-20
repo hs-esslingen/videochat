@@ -1,7 +1,6 @@
 <div id="content" (mousemove)="onMousemove()">
     <div id="main">
-        <div #webcams id="webcams" *ngIf="numWebcams > 0"
-            [style.height]="screenShareUser ? webcamHeight * 100 + '%' : '99%'">
+        <div #webcams id="webcams" *ngIf="numWebcams > 0" [style.height]="screenShareUser ? webcamHeight * 100 + '%' : '99%'">
             <ng-container *ngFor="let id of getKeys(users)">
                 <div *ngIf="users[id].consumers?.video != undefined" class="video-element">
                     <app-video [video]="users[id].consumers?.video?.track"></app-video>
@@ -11,35 +10,43 @@
                 <app-video [video]="currentUser.stream.video.getVideoTracks()[0]"></app-video>
             </div>
         </div>
-        <div id="divider" *ngIf="screenShareUser != undefined && numWebcams > 0" (pointerdown)="startDividerDrag()">
-        </div>
-        <div id="screenshare" *ngIf="screenShareUser != undefined"
-            [style.height]="numWebcams > 0 ? 'calc(' + (1 - webcamHeight) * 99 + '% - 12px)' : 'calc(' + 99 + '% - 12px)'">
+        <div id="divider" *ngIf="screenShareUser != undefined && numWebcams > 0" (pointerdown)="startDividerDrag()"></div>
+        <div
+            id="screenshare"
+            *ngIf="screenShareUser != undefined"
+            [style.height]="numWebcams > 0 ? 'calc(' + (1 - webcamHeight) * 99 + '% - 12px)' : 'calc(' + 99 + '% - 12px)'"
+        >
             <video autoplay playsinline [srcObject]="screenShareStream"></video>
         </div>
 
         <app-audio *ngFor="let id of getKeys(users)" [audio]="users[id].consumers?.audio?.track"></app-audio>
 
         <app-toolbar id="toolbar" [class.hidden]="isToolbarHidden"></app-toolbar>
-        <img id="no_video_img" *ngIf="connection.state === 1 && numWebcams === 0 && screenShareUser == null"
-            src="assets/img/undraw_video_call_kxyp.svg" alt="goodbye" />
-
+        <img
+            id="no_video_img"
+            *ngIf="connection.state === 1 && numWebcams === 0 && screenShareUser == null"
+            src="assets/img/undraw_video_call_kxyp.svg"
+            alt="goodbye"
+        />
     </div>
 
-    <app-chat *ngIf="detailType === 'chat'" class="detail" [childData]="sidebarDetail" [currentUser]="currentUser"
-        [users]="users"> </app-chat>
+    <app-chat *ngIf="detailType === 'chat'" class="detail" [childData]="sidebarDetail" [currentUser]="currentUser" [users]="users"> </app-chat>
     <app-poll *ngIf="detailType === 'poll'" class="detail"></app-poll>
 
-    <app-master id="master" (sidebarSetDetailEvent)="setSidebarDetail($event)"
-        (sidebarNicknameEvent)="setNickname($event)" (sidebarDisconnectEvent)="disconnect()"
+    <app-master
+        id="master"
+        [autoGainControl]="autoGainControl"
+        (sidebarSetDetailEvent)="setSidebarDetail($event)"
+        (sidebarNicknameEvent)="setNickname($event)"
+        (sidebarDisconnectEvent)="disconnect()"
         (sidebarToggleAutogainEvent)="mediaService.toggleAutoGainControl()"
-        [class.detail-open]="detailType != undefined"></app-master>
+        [class.detail-open]="detailType != undefined"
+    ></app-master>
 </div>
 
 <div id="status">
-    <div id="no-user" class="infobox"
-        *ngIf="connection.state === 1 && users != undefined && getKeys(users).length === 0">
-        <h2>There is currently nobody else in this room</h2>
+    <div id="no-user" class="infobox" *ngIf="connection.state === 1 && users != undefined && getKeys(users).length === 0">
+        <h2>Zur Zeit befindet sich niemand in diesem Raum</h2>
         <input type="text" readonly [value]="roomUrl" (click)="$event.target.focus(); $event.target.select()" />
     </div>
     <div id="duplicate-session" class="infobox" *ngIf="connection.duplicateSession">

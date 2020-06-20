@@ -1,0 +1,28 @@
+mat-select {
+    width: 100%;
+  
+    background-color: #0c1729;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    ::ng-deep .mat-select-trigger{
+      padding: 13px 12px;
+    } 
+    
+  }
+
+#volumebar {
+    background-color: #0c1729;
+    width: calc(100% - 8px);
+    border-radius: 8px;
+    height: 8px;
+    padding: 4px;
+    div {
+      transition: width 0.15s ease-out;
+  
+      width: 0%;
+      border-radius: 8px;
+      height: 100%;
+      background-color: #b4d3ed;
+    }
+}
+

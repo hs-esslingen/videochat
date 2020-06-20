@@ -1,4 +1,4 @@
-import {Component, OnInit, Output, EventEmitter, OnDestroy, ChangeDetectorRef} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, OnDestroy, ChangeDetectorRef, Input} from '@angular/core';
 import {ChatService} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
@@ -19,11 +19,12 @@ import {SoundService} from 'src/app/helper/sound.service';
 export class MasterSidebarComponent implements OnInit, OnDestroy {
   currentUser?: CurrentUser;
   users: {[key: string]: User} = {};
+  // Inputs for options
+  @Input() autoGainControl!: boolean;
 
   @Output() sidebarSetDetailEvent = new EventEmitter<{element: Chat; type: 'chat'} | {element: Poll; type: 'poll'}>();
   @Output() sidebarNicknameEvent = new EventEmitter<string>();
   @Output() sidebarDisconnectEvent = new EventEmitter<null>();
-  @Output() sidebarToggleAutogainEvent = new EventEmitter<null>();
 
   // Enables / Disables debug mode, that creates some polls
   demo = false;
@@ -112,12 +113,17 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     // console.log('Opened menu for user interaction!');
   }
 
-  //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!
   openSettingsDialog(): void {
     // console.log("You've opened the settings menu!");
+    // console.log("Master-Sidebar-Component autoGainControl: " + this.autoGainControl);
+    // console.log("Master-Sidebar-Component mediaService:");
+    // console.log(this.mediaService);
     const dialogRef = this.dialog.open(SettingsMasterComponent, {
-      width: '300px',
-      data: {},
+      height: 'auto',
+      width: 'auto',
+      data: {
+        autoGainControl: this.autoGainControl,
+      },
     });
 
     dialogRef.afterClosed().subscribe(() => {
@@ -138,12 +144,6 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
       //console.log(result);
       if (result != null || '') this.sidebarNicknameEvent.emit(result);
     });
-  }
-
-  //WILL BE MOVED
-  toggleAutoGain(): void {
-    //console.log("Toggled auto gain control!");
-    this.sidebarToggleAutogainEvent.emit();
   }
 
   leaveRoom(): void {

@@ -1,0 +1,31 @@
+:host {
+    display: flex;
+    flex-direction: row;
+    height: 500px;
+    width: auto;
+
+    #tabs {
+        display: flex;
+        flex-direction: column;
+        height: calc(100%-4px);
+        width: 296px;
+        border-style: solid;
+        border-width: 2px;
+        border-color: red;
+
+        .setting-tab {
+            border-style: solid;
+            border-width: 2px;
+            height: 46px;
+            width: calc(100%-4px);
+        }
+    }
+
+    #setting-page {
+        height: calc(100%-4px);
+        width: 696px;
+        border-style: solid;
+        border-width: 2px;
+        border-color: green;
+    }
+}
