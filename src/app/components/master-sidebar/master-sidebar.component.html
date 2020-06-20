@@ -1,65 +1,103 @@
-<!-- <div id="content"> -->
-    <div id="scroll">
-        <h4>Chats</h4>
-        <ng-container *ngFor="let chat of chats">
-            <div class="object-label chat" [class.messaged]="chat.newMessage" (click)="setSidebarChat(chat)">
+<div id="scroll">
+    <h4>Chats</h4>
+    <ng-container *ngFor="let chat of chats">
+        <div class="object-label chat" [class.messaged]="chat.newMessage" (click)="setSidebarDetailType(chat)">
+            <div class="status"></div>
+            <div class="nickname">{{ chat.getNickname() }}</div>
+            <div class="signal">
+                <i *ngIf="!chat.newMessage" class="material-icons">chat_bubble_outline</i>
+                <i *ngIf="chat.newMessage" class="material-icons">chat</i>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="polls.length != 0 || currentUser.userRole == 1">
+        <h4>Polls</h4>
+        <ng-container *ngFor="let poll of polls">
+            <div class="object-label chat" (click)="setSidebarDetailType(poll)">
                 <div class="status"></div>
-                <div class="nickname">{{ chat.getNickname() }}</div>
-                <div class="signal">
-                    <i *ngIf="!chat.newMessage" class="material-icons">chat_bubble_outline</i>
-                    <i *ngIf="chat.newMessage" class="material-icons">chat</i>
-                </div>
+            <div class="nickname">{{poll.title}}</div>
+            <div class="signal">
+                <!-- <i *ngIf="!chat.newMessage" class="material-icons">chat_bubble_outline</i>
+                <i *ngIf="chat.newMessage" class="material-icons">chat</i> -->
+            </div>
             </div>
         </ng-container>
+    </ng-container>
 
-        <h4>Currnet Users</h4>
-        <label>You</label>
+    <h4>Current Users</h4>
+    <label>You</label>
+    <div
+        id="You"
+        class="object-label"
+        [class.talking]="currentUser.isTalking"
+        [class.signaling]="currentUser.signal === 1"
+        [class.votingUp]="currentUser.signal === 2"
+        [class.votingDown]="currentUser.signal === 3"
+        [class.micActive]="currentUser.microphoneState === 'mic'"
+    >
+        <div class="status"></div>
+        <div class="nickname">{{ currentUser.nickname }}</div>
+        <div class="signal" *ngIf="currentUser.microphoneState === 'mic'"><i class="material-icons">mic</i></div>
+    </div>
+    <div id="user-actions">
+        <button id="raise-hand" class="small round-button" (click)="raiseHand()" [class.active]="currentUser.signal === 1">
+            <i class="material-icons">pan_tool</i>
+        </button>
+        <button id="vote-up" class="small round-button" (click)="thumbsUp()" [class.active]="currentUser.signal === 2">
+            <i class="material-icons">thumb_up</i>
+        </button>
+        <button id="vote-down" class="small round-button" (click)="thumbsDown()" [class.active]="currentUser.signal === 3">
+            <i class="material-icons">thumb_down</i>
+        </button>
+    </div>
+
+    <label>Others</label>
+    <div id="participants">
         <div
-            id="You"
+            *ngFor="let user of users"
             class="object-label"
-            [class.talking]="currentUser.isTalking"
-            [class.signaling]="currentUser.signal === 1"
-            [class.votingUp]="currentUser.signal === 2"
-            [class.votingDown]="currentUser.signal === 3"
-            [class.micActive]="!currentUser.isMuted"
+            [matMenuTriggerFor]="userMenu"
+            (click)="userInteraction()"
+            [class.talking]="user.isTalking"
+            [class.signaling]="user.signal === 1"
+            [class.votingUp]="user.signal === 2"
+            [class.votingDown]="user.signal === 3"
+            [class.micActive]="user.microphoneState === 'mic'"
         >
             <div class="status"></div>
-            <div class="nickname">{{ currentUser.nickname }}</div>
-            <div class="signal" *ngIf="currentUser.isMuted != true"><i class="material-icons">mic</i></div>
-        </div>
-        <div id="user-actions">
-            <button id="raise-hand" class="small round-button" (click)="raiseHand()">
-                <i class="material-icons">pan_tool</i>
-            </button>
-            <button id="vote-up" class="small round-button" (click)="thumbsUp()">
-                <i class="material-icons">thumb_up</i>
-            </button>
-            <button id="vote-down" class="small round-button" (click)="thumbsDown()">
-                <i class="material-icons">thumb_down</i>
-            </button>
-        </div>
+            <div class="nickname">{{ user.nickname }}</div>
+            <div class="signal" *ngIf="user.microphoneState === 'mic'"><i class="material-icons">mic</i></div>
 
-        <label>Others</label>
-        <div id="participants">
-            <div
-                *ngFor="let user of users"
-                class="object-label"
-                (click)="userInteraction()"
-                [class.talking]="user.isTalking"
-                [class.signaling]="user.signal === 1"
-                [class.votingUp]="user.signal === 2"
-                [class.votingDown]="user.signal === 3"
-                [class.micActive]="!user.isMuted"
-            >
-                <div class="status"></div>
-                <div class="nickname">{{ user.nickname }}</div>
-                <div class="signal" *ngIf="user.isMuted != true"><i class="material-icons">mic</i></div>
-            </div>
+            <mat-menu #userMenu="matMenu" yPosition="above">
+                <button mat-menu-item (click)="openChat(user)">
+                    Open chat
+                </button>
+            </mat-menu>
         </div>
     </div>
+    
+</div>
 
-    <div id="control">
-        <button id="settings" class="big round-button" (click)="openSettings()"><i class="material-icons">settings</i></button>
-        <button id="leave-chat" class="big round-button" (click)="leaveChat()"><i class="material-icons">directions_run</i></button>
-    </div>
-<!-- </div> -->
+<div id="control">
+    <button id="settings" class="big round-button" [matMenuTriggerFor]="settingsMenu" (click)="openSettings()">
+        <i class="material-icons">settings</i>
+    </button>
+    <mat-menu #settingsMenu="matMenu" yPosition="above">
+        <button mat-menu-item (click)="openNicknameDialog()">
+            Change nickname
+        </button>
+        <button mat-menu-item (click)="createPoll()">
+            Create a new poll
+        </button>
+        <button mat-menu-item>
+            Open audio / video settings
+        </button>
+        <button mat-menu-item (click)="$event.stopPropagation()">
+            <mat-checkbox [checked]="autoGainControl" (change)="toggleAutoGain()">
+                Automatic gain control
+            </mat-checkbox>
+        </button>
+    </mat-menu>
+    <button id="leave-room" class="big round-button" (click)="leaveRoom()"><i class="material-icons">directions_run</i></button>
+</div>

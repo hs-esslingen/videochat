@@ -5,6 +5,7 @@ import {ApiService} from './api.service';
 import {Observable, Subscriber} from 'rxjs';
 import {WsService} from './ws.service';
 import {LocalMediaService} from './local-media.service';
+import {User} from './user.service';
 
 export enum CameraState {
   ENABLED = 'videocam',
@@ -25,12 +26,6 @@ export enum Status {
   CONNECTING,
   CONNECTED,
   DISCONNECTED,
-}
-export enum Signal {
-  NONE = 0,
-  RAISED_HAND = 1,
-  VOTED_UP = 2,
-  VOTED_DOWN = 3,
 }
 
 @Injectable({
@@ -522,26 +517,6 @@ export interface WebsocketUserInfo {
   };
 }
 
-export interface User {
-  id: string;
+export interface ChangeNicknameDialogData {
   nickname: string;
-  producers: {
-    audio?: string;
-    video?: string;
-    screen?: string;
-  };
-  consumers?: {
-    audio?: Consumer;
-    video?: Consumer;
-    screen?: Consumer;
-  };
-  signal: Signal;
-  isMuted: boolean;
-  isTalking: boolean;
-}
-
-export interface Message {
-  sender: string;
-  text: string;
-  // time:   Date;
 }

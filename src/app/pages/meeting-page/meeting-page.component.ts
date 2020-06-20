@@ -1,26 +1,15 @@
 import {Component, OnInit, ViewChild, ElementRef, Inject, OnDestroy} from '@angular/core';
-import {MediaService, MicrophoneState, CameraState, ScreenshareState, User} from '../../helper/media.service';
+import {MediaService, MicrophoneState, CameraState, ScreenshareState} from '../../helper/media.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MAT_DIALOG_DATA, MatDialogRef, MatDialog} from '@angular/material/dialog';
 import {JoinMeetingPopupComponent} from '../../components/join-meeting-popup/join-meeting-popup.component';
 import {LocalMediaService} from '../../helper/local-media.service';
+import {ChangeNicknameComponent} from 'src/app/components/change-nickname/change-nickname.component';
+import {User} from 'src/app/helper/user.service';
 
 enum Layout {
   GRID = 'GRID',
   SINGLE = 'SINGLE',
-}
-
-@Component({
-  selector: 'app-nickname-dialog',
-  templateUrl: './choose-nickname.component.html',
-  styleUrls: ['./choose-nickname.component.scss'],
-})
-export class NicknameDialogComponent {
-  constructor(public dialogRef: MatDialogRef<NicknameDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: NicknameDialogData) {}
-
-  close(): void {
-    this.dialogRef.close(this.data.nickname);
-  }
 }
 
 @Component({
@@ -32,7 +21,7 @@ export class DebugDialogComponent {
   debugInfo: {[key: string]: {[key: string]: string}} = {};
   objectKeys = Object.keys;
 
-  constructor(public dialogRef: MatDialogRef<NicknameDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: RTCStatsReport) {
+  constructor(public dialogRef: MatDialogRef<ChangeNicknameComponent>, @Inject(MAT_DIALOG_DATA) public data: RTCStatsReport) {
     data.forEach((val, key) => {
       this.debugInfo[key] = val;
     });
@@ -41,10 +30,6 @@ export class DebugDialogComponent {
   close(): void {
     this.dialogRef.close();
   }
-}
-
-export interface NicknameDialogData {
-  nickname: string;
 }
 
 @Component({
@@ -152,7 +137,7 @@ export class MeetingPageComponent implements OnInit, OnDestroy {
   }
 
   openNicknameDialog(): void {
-    const dialogRef = this.dialog.open(NicknameDialogComponent, {
+    const dialogRef = this.dialog.open(ChangeNicknameComponent, {
       width: '300px',
       data: {nickname: this.mediaService.nickname},
     });

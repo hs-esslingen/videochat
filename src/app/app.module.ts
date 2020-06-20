@@ -7,7 +7,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatMenuModule} from '@angular/material/menu';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {MeetingPageComponent, NicknameDialogComponent, DebugDialogComponent} from './pages/meeting-page/meeting-page.component';
+import {MeetingPageComponent, DebugDialogComponent} from './pages/meeting-page/meeting-page.component';
 import {HttpClientModule} from '@angular/common/http';
 import {LoginPageComponent} from './pages/login-page/login-page.component';
 import {HeaderComponent} from './components/header/header.component';
@@ -27,6 +27,9 @@ import {ToolbarComponent} from './components/toolbar/toolbar.component';
 import {VideoComponent} from './components/video/video.component';
 import {AudioComponent} from './components/audio/audio.component';
 import {MasterSidebarComponent} from './components/master-sidebar/master-sidebar.component';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {ChangeNicknameComponent} from './components/change-nickname/change-nickname.component';
+import {PollComponent} from './components/poll/poll.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +39,6 @@ import {MasterSidebarComponent} from './components/master-sidebar/master-sidebar
     HeaderComponent,
     ThankYouPageComponent,
     UserComponent,
-    NicknameDialogComponent,
     DebugDialogComponent,
     OverviewPageComponent,
     PrivacyPolicyComponent,
@@ -51,6 +53,8 @@ import {MasterSidebarComponent} from './components/master-sidebar/master-sidebar
     VideoComponent,
     AudioComponent,
     MasterSidebarComponent,
+    ChangeNicknameComponent,
+    PollComponent,
   ],
   imports: [
     BrowserModule,
@@ -63,6 +67,7 @@ import {MasterSidebarComponent} from './components/master-sidebar/master-sidebar
     MatDialogModule,
     ReactiveFormsModule,
     MatSelectModule,
+    MatButtonToggleModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
