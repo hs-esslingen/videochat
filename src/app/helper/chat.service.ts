@@ -52,10 +52,12 @@ export class ChatService {
     return this.chatObservable;
   }
 
-  public addChat(user: User) {
-    this.chats.push(new Chat(user.id, [], false, user));
+  public addChat(user: User): Chat {
+    const chat = new Chat(user.id, [], false, user)
+    this.chats.push(chat);
 
     this.chatSubscriber?.next({chats: this.chats});
+    return chat;
   }
 }
 
