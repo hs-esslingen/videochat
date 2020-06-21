@@ -36,8 +36,8 @@
     <app-master
         id="master"
         [autoGainControl]="autoGainControl"
+        [roomID]="roomId"
         (sidebarSetDetailEvent)="setSidebarDetail($event)"
-        (sidebarNicknameEvent)="setNickname($event)"
         (sidebarDisconnectEvent)="disconnect()"
         (sidebarToggleAutogainEvent)="mediaService.toggleAutoGainControl()"
         [class.detail-open]="detailType != undefined"

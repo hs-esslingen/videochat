@@ -2,10 +2,9 @@ import {Component, OnInit, Output, EventEmitter, OnDestroy, ChangeDetectorRef, I
 import {ChatService} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
-import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';
 import {Poll} from 'src/app/helper/poll.service';
 import {User, UserSignal, CurrentUser, UserConnectionState} from 'src/app/model/user';
-import {SettingsMasterComponent} from '../settings-master/settings-master.component';
+import {SettingsMasterComponent, settingMode} from '../settings-master/settings-master.component';
 import {RoomService} from 'src/app/helper/room.service';
 import {SignalService} from '../../helper/signal.service';
 import {Chat} from 'src/app/model/chat';
@@ -21,6 +20,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   users: {[key: string]: User} = {};
   // Inputs for options
   @Input() autoGainControl!: boolean;
+  @Input() roomID!: string;
 
   @Output() sidebarSetDetailEvent = new EventEmitter<{element: Chat; type: 'chat'} | {element: Poll; type: 'poll'}>();
   @Output() sidebarNicknameEvent = new EventEmitter<string>();
@@ -114,35 +114,20 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   }
 
   openSettingsDialog(): void {
-    // console.log("You've opened the settings menu!");
-    // console.log("Master-Sidebar-Component autoGainControl: " + this.autoGainControl);
-    // console.log("Master-Sidebar-Component mediaService:");
-    // console.log(this.mediaService);
+    //console.log(this.roomID);
     const dialogRef = this.dialog.open(SettingsMasterComponent, {
       height: 'auto',
       width: 'auto',
       data: {
+        mode: settingMode.STANDARD_MODE,
         autoGainControl: this.autoGainControl,
+        roomID: this.roomID,
       },
     });
 
-    dialogRef.afterClosed().subscribe(() => {
-      console.log('The dialog was closed');
-      //console.log(result);
-    });
-  }
-
-  //MIGHT BE MOVED
-  openNicknameDialog(): void {
-    const dialogRef = this.dialog.open(ChangeNicknameComponent, {
-      width: '300px',
-      data: {nickname: this.currentUser?.nickname},
-    });
-
     dialogRef.afterClosed().subscribe(result => {
-      //console.log('The dialog was closed');
-      //console.log(result);
-      if (result != null || '') this.sidebarNicknameEvent.emit(result);
+      console.log('The dialog was closed');
+      console.log(result);
     });
   }
 

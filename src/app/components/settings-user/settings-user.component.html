@@ -1,1 +1,5 @@
-<p>settings-user works!</p>
+<label>Anzeigename:</label>
+
+<div id="set-username">
+    <input cdkFocusInitial matInput [(ngModel)]="nickname" (change)="userEvent.emit(nickname)">
+</div>

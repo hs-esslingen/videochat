@@ -1,4 +1,4 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {LocalMediaService} from 'src/app/helper/local-media.service';
 import {MediaService} from 'src/app/helper/media.service';
 
@@ -11,14 +11,16 @@ export class SettingsAudioComponent implements OnInit {
   @Input() autoGainControl!: boolean; //Checked
   @Input() mediaService!: MediaService; //Checked
 
-  analyser: AnalyserNode | undefined;
-  audioCtx: AudioContext | undefined;
-
-  volume: string | undefined;
   audioDevices: MediaDeviceInfo[] | undefined;
   audioStream: MediaStreamAudioSourceNode | undefined;
   selectedAudioStream: string | undefined;
+
+  analyser: AnalyserNode | undefined;
+  audioCtx: AudioContext | undefined;
+  volume: string | undefined;
   intervalId: number | undefined;
+
+  @Output() audioDevicesEvent = new EventEmitter<MediaDeviceInfo[]>();
 
   constructor(private localMedia: LocalMediaService) {}
 
@@ -51,6 +53,7 @@ export class SettingsAudioComponent implements OnInit {
 
     //console.log(this.localMedia);
     this.audioDevices = await this.localMedia.getAudioCapabilites();
+    this.audioDevicesEvent.emit(this.audioDevices);
   }
 
   ngOnDestroy(): void {
@@ -68,13 +71,6 @@ export class SettingsAudioComponent implements OnInit {
 
     this.audioStream = this.audioCtx?.createMediaStreamSource(audio as MediaStream);
     this.audioStream?.connect(this.analyser as AnalyserNode);
-  }
-
-  close(): void {
-    if (this.audioDevices != null) {
-      clearInterval(this.intervalId);
-      // Return values;
-    }
   }
 
   toggleAutoGain(): void {

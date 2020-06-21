@@ -1,31 +1,38 @@
+@import '../../../styles/settings-style.scss';
+
 :host {
     display: flex;
-    flex-direction: row;
-    height: 500px;
+    flex-direction: column;
+    height: auto;
     width: auto;
 
-    #tabs {
+    #settings {
         display: flex;
-        flex-direction: column;
-        height: calc(100%-4px);
-        width: 296px;
-        border-style: solid;
-        border-width: 2px;
-        border-color: red;
+        flex-direction: row;
 
-        .setting-tab {
-            border-style: solid;
-            border-width: 2px;
-            height: 46px;
-            width: calc(100%-4px);
+        #tabs {
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            width: 300px;
+            padding-right: 16px;
+    
+            .setting-tab {
+                border-style: solid;
+                border-width: 2px;
+                height: 46px;
+                width: calc(100%-4px);
+            }
         }
-    }
 
-    #setting-page {
-        height: calc(100%-4px);
-        width: 696px;
-        border-style: solid;
-        border-width: 2px;
-        border-color: green;
-    }
+        #setting-page {
+            display: flex;
+            flex-direction: column;
+            min-width: 400px;
+
+            #content {
+                flex-grow: 1;
+            }
+        }
+    }      
 }

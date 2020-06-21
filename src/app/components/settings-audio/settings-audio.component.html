@@ -1,4 +1,4 @@
-<label for="nickname">Mikrofon:</label>
+<label>Mikrofon:</label>
 
 <mat-select [value]="selectedAudioStream" (selectionChange)="changeAudioStream($event.value)">
     <mat-option [value]="item.label" *ngFor="let item of audioDevices">{{item.label}}</mat-option>
@@ -15,4 +15,3 @@
         </mat-checkbox>
     </button>
 </div>
-  

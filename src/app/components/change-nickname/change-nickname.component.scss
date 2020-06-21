@@ -1,10 +1,10 @@
-h1 {
-    margin-bottom: 0px;
-  }
-  input {
+@import '../../../styles/settings-style.scss';
+
+input {
     width: calc(100% - 24px);
-  }
-  button {
+}
+
+button {
     margin-top: 8px;
     margin-bottom: 12px;
-  }
+}

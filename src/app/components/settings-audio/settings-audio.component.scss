@@ -1,14 +1,4 @@
-mat-select {
-    width: 100%;
-  
-    background-color: #0c1729;
-    border-radius: 4px;
-    margin-bottom: 8px;
-    ::ng-deep .mat-select-trigger{
-      padding: 13px 12px;
-    } 
-    
-  }
+@import '../../../styles/settings-style.scss';
 
 #volumebar {
     background-color: #0c1729;
@@ -16,6 +6,7 @@ mat-select {
     border-radius: 8px;
     height: 8px;
     padding: 4px;
+    
     div {
       transition: width 0.15s ease-out;
   

@@ -3,16 +3,15 @@ import {MediaService} from '../../helper/media.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {LocalMediaService} from '../../helper/local-media.service';
-import {JoinMeetingPopupComponent} from '../../components/join-meeting-popup/join-meeting-popup.component';
 import {ChatService} from '../../helper/chat.service';
-import {User, UserSignal, UserRole, MicrophoneState, CameraState, ScreenshareState, CurrentUser} from 'src/app/model/user';
+import {User, ScreenshareState, CurrentUser} from 'src/app/model/user';
 import {RoomService} from 'src/app/helper/room.service';
 import {ApiService} from 'src/app/helper/api.service';
 import {Subscription} from 'rxjs';
 import {Connection, State} from 'src/app/model/connection';
 import {ShortcutService} from '../../helper/shortcut.service';
-import {SignalService} from '../../helper/signal.service';
 import {SoundService} from 'src/app/helper/sound.service';
+import {SettingsMasterComponent, settingMode} from 'src/app/components/settings-master/settings-master.component';
 
 @Component({
   selector: 'app-lecture-page',
@@ -20,9 +19,6 @@ import {SoundService} from 'src/app/helper/sound.service';
   styleUrls: ['./lecture-page.component.scss'],
 })
 export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
-  // Enables / Disables debug mode, that creates some dummy users and chats
-  demo = false;
-
   @ViewChild('webcams') webcams: ElementRef<HTMLDivElement> | undefined;
   // Variables for video
   autoGainControl: boolean | undefined;
@@ -51,6 +47,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     readonly mediaService: MediaService,
     private ref: ChangeDetectorRef,
     private room: RoomService,
+    readonly chatService: ChatService,
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
@@ -58,9 +55,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     private element: ElementRef<HTMLElement>,
     private api: ApiService,
     private shortcut: ShortcutService,
-    private signal: SignalService,
-    private sound: SoundService,
-    readonly chatService: ChatService
+    private sound: SoundService
   ) {
     const webcamHeight = window.localStorage.getItem('webcamHeight');
     if (webcamHeight != null) this.webcamHeight = parseFloat(webcamHeight);
@@ -172,12 +167,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isToolbarHidden = true;
     }, 1500);
 
-    if (this.demo) {
-      this.test();
-      this.screenShareUser = this.users[0];
-      return;
-    }
-
     this.route.paramMap.subscribe(async params => {
       this.route.data.subscribe(data => {
         this.roomId = params.get('roomId') as string;
@@ -190,18 +179,28 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
           moodleToken = data.moodle.token;
           displayedRoomName = data.moodle.roomName;
         }
-
-        const dialogRef = this.dialog.open(JoinMeetingPopupComponent, {
-          width: '400px',
-          data: {nickname: this.mediaService.nickname, roomId: displayedRoomName},
+        const dialogRef = this.dialog.open(SettingsMasterComponent, {
+          width: 'auto',
+          height: 'auto',
+          data: {
+            mode: settingMode.JOIN_MEETING_MODE,
+            autoGainControl: this.autoGainControl,
+            mediaService: this.mediaService,
+            roomID: displayedRoomName,
+          },
         });
-        dialogRef.afterClosed().subscribe(async (result: {isWebcamDisabled: boolean}) => {
+
+        dialogRef.afterClosed().subscribe(async result => {
+          console.log('The dialog was closed');
+          console.log(result);
           // if popup is canceled
-          if (result == null || result.isWebcamDisabled == null) {
+          if (result == null || result === '') {
             this.localMedia.closeAudio();
             this.localMedia.closeVideo();
+            this.router.navigate(['/']);
             return;
           }
+
           // Proceed when all informations are given
           if (data.moodle != null) this.room.connectToRoom('moodle⛳' + this.roomId, result.isWebcamDisabled, moodleToken);
           else this.room.connectToRoom(this.roomId, result.isWebcamDisabled);
@@ -224,7 +223,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getScreenShareStream(user: User) {
-    if (this.demo) return new MediaStream();
     if (user.id === this.currentUser.id) return this.currentUser.stream.screen;
     if (user.consumers?.screen) return new MediaStream([user.consumers.screen?.track]);
     return undefined;
@@ -249,11 +247,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  setNickname($event: string) {
-    // console.log("Changed nickname to " + $event + "!");
-    this.mediaService.setNickname($event);
-  }
-
   getKeys(obj: object) {
     return Object.keys(obj);
   }
@@ -270,75 +263,5 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async disconnect() {
     this.router.navigate(['/' + this.roomId + '/thank-you']);
-  }
-
-  test(): void {
-    this.currentUser = {
-      id: '0',
-      nickname: 'User',
-      stream: {},
-      cameraState: CameraState.DISABLED,
-      screenshareState: ScreenshareState.DISABLED,
-      microphoneState: MicrophoneState.TALKING,
-      signal: UserSignal.NONE,
-      userRole: UserRole.MODERATOR,
-    };
-
-    // this.users.push(
-    //   {
-    //     id: '1',
-    //     nickname: 'Test_1',
-    //     consumers: {
-    //       // @ts-ignore
-    //       video: {},
-    //       // @ts-ignore
-    //       screen: {},
-    //     },
-    //     microphoneState: MicrophoneState.ENABLED,
-    //     signal: UserSignal.RAISED_HAND,
-    //   },
-    //   {
-    //     id: '2',
-    //     nickname: 'Test_2',
-    //     consumers: {
-    //       // @ts-ignore
-    //       video: {},
-    //     },
-    //     microphoneState: MicrophoneState.ENABLED,
-    //     signal: UserSignal.NONE,
-    //   },
-    //   {
-    //     id: '3',
-    //     nickname: 'Test_3',
-    //     consumers: {
-    //       // @ts-ignore
-    //       video: {},
-    //     },
-    //     microphoneState: MicrophoneState.DISABLED,
-    //     signal: UserSignal.VOTED_UP,
-    //   },
-    //   {id: '4', nickname: 'Test_4', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.VOTED_DOWN},
-    //   {id: '5', nickname: 'Test_5', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.VOTED_DOWN},
-    //   {id: '6', nickname: 'Test_6', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.VOTED_UP},
-    //   {id: '7', nickname: 'Test_7', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.VOTED_UP},
-    //   {id: '8', nickname: 'Test_8', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.VOTED_DOWN},
-    //   {id: '9', nickname: 'Test_9', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.VOTED_DOWN},
-    //   {id: '10', nickname: 'Test_10', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.VOTED_DOWN},
-    //   {id: '11', nickname: 'Test_11', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
-    //   {id: '12', nickname: 'Test_12', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
-    //   {id: '13', nickname: 'Test_13', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
-    //   {id: '14', nickname: 'Test_14', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
-    //   {id: '15', nickname: 'Test_15', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
-    //   {id: '16', nickname: 'Test_16', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
-    //   {id: '17', nickname: 'Test_17', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
-    //   {id: '18', nickname: 'Test_18', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
-    //   {id: '19', nickname: 'Test_19', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
-    //   {id: '20', nickname: 'Test_20', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
-    //   {id: '21', nickname: 'Test_21', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
-    //   {id: '22', nickname: 'Test_22', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE}
-    // );
-
-    this.chatService.addChat(this.users[0]);
-    this.chatService.addChat(this.users[1]);
   }
 }

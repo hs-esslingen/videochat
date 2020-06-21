@@ -1,10 +1,9 @@
 <div id="scroll">
     <h4>Chats</h4>
     <ng-container *ngFor="let id of getKeys(chats)">
-        <div class="object-label chat" [class.messaged]="chats[id].newMessage"
-            (click)="setSidebarDetailType(chats[id])">
+        <div class="object-label chat" [class.messaged]="chats[id].newMessage" (click)="setSidebarDetailType(chats[id])">
             <div class="status"></div>
-            <div class="nickname">{{ chats[id].id ? users[id].nickname : "Public Chat" }}</div>
+            <div class="nickname">{{ chats[id].id ? users[id].nickname : 'Public Chat' }}</div>
             <div class="signal">
                 <i *ngIf="!chats[id].newMessage" class="material-icons">chat_bubble_outline</i>
                 <i *ngIf="chats[id].newMessage" class="material-icons">chat</i>
@@ -37,9 +36,15 @@
 
     <h4>Current Users</h4>
     <label>You</label>
-    <div id="You" class="object-label" [class.talking]="currentUser?.microphoneState === 2"
-        [class.signaling]="currentUser?.signal === 1" [class.votingUp]="currentUser?.signal === 2"
-        [class.votingDown]="currentUser?.signal === 3" [class.micActive]="currentUser?.microphoneState >= 1">
+    <div
+        id="You"
+        class="object-label"
+        [class.talking]="currentUser?.microphoneState === 2"
+        [class.signaling]="currentUser?.signal === 1"
+        [class.votingUp]="currentUser?.signal === 2"
+        [class.votingDown]="currentUser?.signal === 3"
+        [class.micActive]="currentUser?.microphoneState >= 1"
+    >
         <div class="status"></div>
         <div class="nickname">{{ currentUser?.nickname }}</div>
         <div class="signal" *ngIf="currentUser?.microphoneState >= 1">
@@ -47,30 +52,34 @@
         </div>
     </div>
     <div id="user-actions">
-        <button id="raise-hand" class="small round-button" (click)="raiseHand()"
-            [class.active]="currentUser?.signal === 1" matTooltip="raise hand (h)">
+        <button id="raise-hand" class="small round-button" (click)="raiseHand()" [class.active]="currentUser?.signal === 1" matTooltip="raise hand (h)">
             <i class="material-icons">pan_tool</i>
         </button>
-        <button id="vote-up" class="small round-button" (click)="thumbsUp()" [class.active]="currentUser?.signal === 2"
-            matTooltip="vote up (u)">
+        <button id="vote-up" class="small round-button" (click)="thumbsUp()" [class.active]="currentUser?.signal === 2" matTooltip="vote up (u)">
             <i class="material-icons">thumb_up</i>
         </button>
-        <button id="vote-down" class="small round-button" (click)="thumbsDown()"
-            [class.active]="currentUser?.signal === 3" matTooltip="vote down (d)">
+        <button id="vote-down" class="small round-button" (click)="thumbsDown()" [class.active]="currentUser?.signal === 3" matTooltip="vote down (d)">
             <i class="material-icons">thumb_down</i>
         </button>
     </div>
 
     <label>Others</label>
     <div id="participants">
-        <div *ngFor="let user of activeUsers" class="object-label" [matMenuTriggerFor]="userMenu"
-            (click)="userInteraction()" [class.talking]="user.microphoneState === 2"
-            [class.signaling]="user.signal === 1" [class.votingUp]="user.signal === 2"
-            [class.votingDown]="user.signal === 3" [class.micActive]="user.microphoneState >= 1">
+        <div
+            *ngFor="let user of activeUsers"
+            class="object-label"
+            [matMenuTriggerFor]="userMenu"
+            (click)="userInteraction()"
+            [class.talking]="user.microphoneState === 2"
+            [class.signaling]="user.signal === 1"
+            [class.votingUp]="user.signal === 2"
+            [class.votingDown]="user.signal === 3"
+            [class.micActive]="user.microphoneState >= 1"
+        >
             <div class="status"></div>
             <div class="nickname">{{ user.nickname }}</div>
             <div class="signal" *ngIf="user.microphoneState >= 1">
-                <i class="material-icons">{{ user.microphoneState === 1 ? "mic" : "record_voice_over"}}</i>
+                <i class="material-icons">{{ user.microphoneState === 1 ? 'mic' : 'record_voice_over' }}</i>
             </div>
 
             <mat-menu #userMenu="matMenu" yPosition="above">
@@ -83,17 +92,6 @@
 </div>
 
 <div id="control">
-    <button id="settings" class="big round-button" (click)="openSettingsDialog()" matTooltip="open settings">
-        <i class="material-icons">settings</i>
-    </button>
-    <!-- <button id="settings" class="big round-button" [matMenuTriggerFor]="settingsMenu">
-        <i class="material-icons">settings</i>
-    </button>
-    <mat-menu #settingsMenu="matMenu" yPosition="above">
-        <button mat-menu-item (click)="openNicknameDialog()">
-            Change nickname
-        </button>
-    </mat-menu> -->
-    <button id="leave-room" class="big round-button" (click)="leaveRoom()" matTooltip="leave current room"><i
-            class="material-icons">directions_run</i></button>
+    <button id="settings" class="big round-button" (click)="openSettingsDialog()" matTooltip="open settings"><i class="material-icons">settings</i></button>
+    <button id="leave-room" class="big round-button" (click)="leaveRoom()" matTooltip="leave current room"><i class="material-icons">directions_run</i></button>
 </div>

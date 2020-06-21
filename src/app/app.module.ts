@@ -17,7 +17,6 @@ import {PrivacyPolicyComponent} from './pages/privacy-policy/privacy-policy.comp
 import {FooterComponent} from './components/footer/footer.component';
 import {ContactsPageComponent} from './pages/contacts-page/contacts-page.component';
 import {ImprintPageComponent} from './pages/imprint-page/imprint-page.component';
-import {JoinMeetingPopupComponent} from './components/join-meeting-popup/join-meeting-popup.component';
 import {LecturePageComponent} from './pages/lecture-page/lecture-page.component';
 import {MatSelectModule} from '@angular/material/select';
 import {ChatComponent} from './components/chat/chat.component';
@@ -52,7 +51,6 @@ import {SettingsUserComponent} from './components/settings-user/settings-user.co
     FooterComponent,
     ContactsPageComponent,
     ImprintPageComponent,
-    JoinMeetingPopupComponent,
     AllowUriComponent,
     LecturePageComponent,
     ChatComponent,
