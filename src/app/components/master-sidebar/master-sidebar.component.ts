@@ -4,7 +4,7 @@ import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';
 import {Poll} from 'src/app/helper/poll.service';
-import {User, userSignal} from 'src/app/helper/user.service';
+import {User, userSignal} from 'src/app/model/user';
 import {SettingsMasterComponent} from '../settings-master/settings-master.component';
 
 @Component({

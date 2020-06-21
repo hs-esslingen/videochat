@@ -1,13 +1,4 @@
-import {Injectable} from '@angular/core';
 import {Consumer} from 'mediasoup-client/lib/types';
-import {MicrophoneState} from './media.service';
-
-@Injectable({
-  providedIn: 'root',
-})
-export class UserService {
-  constructor() {}
-}
 
 export class User {
   constructor(
@@ -28,6 +19,11 @@ export class User {
       screen?: Consumer;
     }
   ) {}
+}
+
+export enum MicrophoneState {
+  ENABLED = 'mic',
+  DISABLED = 'mic_off',
 }
 
 export enum userRole {

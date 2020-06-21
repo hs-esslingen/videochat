@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../../helper/api.service';
-import {MediaService} from '../../helper/media.service';
 import {Router} from '@angular/router';
+import {RoomService} from 'src/app/helper/room.service';
 
 @Component({
   selector: 'app-header',
@@ -9,12 +9,12 @@ import {Router} from '@angular/router';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  constructor(readonly api: ApiService, readonly media: MediaService, readonly router: Router) {}
+  constructor(readonly api: ApiService, readonly room: RoomService, readonly router: Router) {}
 
   async ngOnInit(): Promise<void> {}
 
   async logout() {
-    await this.media.disconnect();
+    await this.room.disconnect();
     this.api.logout();
 
     this.api.redirectUrl = this.router.url;

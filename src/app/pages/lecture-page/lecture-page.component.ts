@@ -1,11 +1,12 @@
 import {Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
-import {MicrophoneState, ScreenshareState, CameraState, MediaService} from '../../helper/media.service';
+import {ScreenshareState, CameraState, MediaService} from '../../helper/media.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {LocalMediaService} from '../../helper/local-media.service';
 import {JoinMeetingPopupComponent} from '../../components/join-meeting-popup/join-meeting-popup.component';
 import {ChatService} from '../../helper/chat.service';
-import {User, userSignal, userRole} from 'src/app/helper/user.service';
+import {User, userSignal, userRole, MicrophoneState} from 'src/app/model/user';
+import {RoomService} from 'src/app/helper/room.service';
 
 @Component({
   selector: 'app-lecture-page',
@@ -53,6 +54,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     readonly mediaService: MediaService,
+    private room: RoomService,
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
@@ -149,8 +151,8 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         else this.mediaService.setNickname('User ' + Math.round(Math.random() * 100));
 
         try {
-          const observer = await this.mediaService.connectToRoom(this.roomId, result.isWebcamDisabled);
-          observer.subscribe(data => {
+          await this.room.connectToRoom(this.roomId, result.isWebcamDisabled);
+          this.room.mediaObservable?.subscribe(data => {
             this.autoGainControl = data.autoGainControl;
             this.cameraState = data.cameraState;
             this.microphoneState = data.microphoneState;
@@ -185,7 +187,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    this.mediaService.disconnect();
+    this.room.disconnect();
   }
 
   getScreenShareStream(user: User) {

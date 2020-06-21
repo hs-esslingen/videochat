@@ -1,8 +1,9 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {MicrophoneState, CameraState, ScreenshareState, MediaService} from '../../helper/media.service';
+import {CameraState, ScreenshareState, MediaService} from '../../helper/media.service';
 import {MatDialog} from '@angular/material/dialog';
 import {DebugDialogComponent} from '../../pages/meeting-page/meeting-page.component';
 import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';
+import {MicrophoneState} from 'src/app/model/user';
 
 @Component({
   selector: 'app-toolbar',

@@ -1,11 +1,12 @@
 import {Component, OnInit, ViewChild, ElementRef, Inject, OnDestroy} from '@angular/core';
-import {MediaService, MicrophoneState, CameraState, ScreenshareState} from '../../helper/media.service';
+import {MediaService, CameraState, ScreenshareState} from '../../helper/media.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MAT_DIALOG_DATA, MatDialogRef, MatDialog} from '@angular/material/dialog';
 import {JoinMeetingPopupComponent} from '../../components/join-meeting-popup/join-meeting-popup.component';
 import {LocalMediaService} from '../../helper/local-media.service';
 import {ChangeNicknameComponent} from 'src/app/components/change-nickname/change-nickname.component';
-import {User} from 'src/app/helper/user.service';
+import {User, MicrophoneState} from 'src/app/model/user';
+import {RoomService} from 'src/app/helper/room.service';
 
 enum Layout {
   GRID = 'GRID',
@@ -57,6 +58,7 @@ export class MeetingPageComponent implements OnInit, OnDestroy {
 
   constructor(
     readonly mediaService: MediaService,
+    readonly room: RoomService,
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
@@ -89,30 +91,29 @@ export class MeetingPageComponent implements OnInit, OnDestroy {
         if (result.nickname !== '') this.mediaService.setNickname(result.nickname);
 
         try {
-          const observer = await this.mediaService.connectToRoom(this.roomId, result.isWebcamDisabled);
-          if (observer != null)
-            observer.subscribe(
-              (data: {
-                autoGainControl: boolean | undefined;
-                cameraState: CameraState;
-                microphoneState: MicrophoneState;
-                screenshareState: ScreenshareState;
-                localStream: MediaStream | undefined;
-                localScreenshareStream: MediaStream | undefined;
-                users: User[];
-              }) => {
-                this.autoGainControl = data.autoGainControl;
-                this.cameraState = data.cameraState;
-                this.microphoneState = data.microphoneState;
-                this.screenshareState = data.screenshareState;
-                this.localStream = data.localStream;
-                this.localSchreenshareStream = data.localScreenshareStream;
-                this.users = data.users;
+          await this.room.connectToRoom(this.roomId, result.isWebcamDisabled);
+          this.room.mediaObservable?.subscribe(
+            (data: {
+              autoGainControl: boolean | undefined;
+              cameraState: CameraState;
+              microphoneState: MicrophoneState;
+              screenshareState: ScreenshareState;
+              localStream: MediaStream | undefined;
+              localScreenshareStream: MediaStream | undefined;
+              users: User[];
+            }) => {
+              this.autoGainControl = data.autoGainControl;
+              this.cameraState = data.cameraState;
+              this.microphoneState = data.microphoneState;
+              this.screenshareState = data.screenshareState;
+              this.localStream = data.localStream;
+              this.localSchreenshareStream = data.localScreenshareStream;
+              this.users = data.users;
 
-                if (!this.singleVideo || !this.users.includes(this.singleVideo)) this.singleVideo = undefined;
-                if (this.users.length <= 1) this.singleVideo = undefined;
-              }
-            );
+              if (!this.singleVideo || !this.users.includes(this.singleVideo)) this.singleVideo = undefined;
+              if (this.users.length <= 1) this.singleVideo = undefined;
+            }
+          );
         } catch (err) {
           if (err === 'DUPLICATE SESSION') {
             this.duplicateSession = true;
@@ -125,7 +126,7 @@ export class MeetingPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.mediaService.disconnect();
+    this.room.disconnect();
   }
 
   reload() {
