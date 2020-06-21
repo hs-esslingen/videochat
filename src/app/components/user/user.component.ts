@@ -2,7 +2,7 @@ import {Component, OnInit, Input, DoCheck, ViewChild, ElementRef, OnChanges, Sim
 import {WsService} from '../../helper/ws.service';
 import {Subscription} from 'rxjs';
 import {Consumer} from 'mediasoup-client/lib/types';
-import {User} from 'src/app/helper/user.service';
+import {User} from 'src/app/model/user';
 
 @Component({
   selector: 'app-user',

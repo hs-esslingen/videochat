@@ -6,7 +6,7 @@
     "watch-debug": "concurrently npm:watch-frontend npm:watch-server npm:watch-build-server",
     "build": "npm run build-frontend && npm run build-server",
     "test": "ng test",
-    "lint": "gts fix && tsc --noEmit",
+    "lint": "gts check && tsc --noEmit",
     "e2e": "ng e2e",
     "start": "cross-env MEDIASOUP_WORKER_BIN=dist/worker/mediasoup-worker node dist/server.js",
     "build-frontend": "ng build --prod",
@@ -26,7 +26,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint && npm run test-compile"
+      "pre-push": "npm run lint && npm run test-compile"
     }
   },
   "engines": {

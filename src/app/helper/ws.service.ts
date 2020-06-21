@@ -1,11 +1,14 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
+import {environment} from 'src/environments/environment';
+import {State} from '../model/connection';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WsService {
   public websocket: WebSocket | undefined;
+  public state: State = State.DISCONNECTED;
   public messageObserver:
     | Observable<{
         type: string;
@@ -14,6 +17,38 @@ export class WsService {
       }>
     | undefined;
   constructor() {}
+
+  public init(roomId: string, nickname: string): Promise<string> {
+    return new Promise((res, rej) => {
+      if (environment.production) {
+        const url = new URL(window.location.href);
+        this.connect('wss://' + url.host + '/ws');
+      } else {
+        this.connect('ws://localhost:4000/ws');
+      }
+
+      this.websocket?.addEventListener('open', async () => {
+        console.log('websocket opened');
+
+        this.send('init', {
+          roomId: roomId,
+          nickname: nickname,
+        });
+
+        this.messageObserver?.subscribe(msg => {
+          switch (msg.type) {
+            case 'init':
+              res(msg.data.id);
+              break;
+            case 'error-duplicate-session':
+              this.close();
+              rej('DUPLICATE SESSION');
+              break;
+          }
+        });
+      });
+    });
+  }
 
   public connect(url: string) {
     this.websocket = new WebSocket(url);

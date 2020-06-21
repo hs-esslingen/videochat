@@ -1,31 +1,20 @@
 import {Injectable} from '@angular/core';
 import {Consumer, Producer, Device, Transport} from 'mediasoup-client/lib/types';
-import {environment} from '../../environments/environment';
 import {ApiService} from './api.service';
 import {Observable, Subscriber} from 'rxjs';
 import {WsService} from './ws.service';
 import {LocalMediaService} from './local-media.service';
-import {User} from './user.service';
+import {User, MicrophoneState} from '../model/user';
+import {State} from '../model/connection';
 
 export enum CameraState {
   ENABLED = 'videocam',
   DISABLED = 'videocam_off',
 }
 
-export enum MicrophoneState {
-  ENABLED = 'mic',
-  DISABLED = 'mic_off',
-}
-
 export enum ScreenshareState {
   ENABLED = 'stop_screen_share',
   DISABLED = 'screen_share',
-}
-
-export enum Status {
-  CONNECTING,
-  CONNECTED,
-  DISCONNECTED,
 }
 
 @Injectable({
@@ -58,7 +47,7 @@ export class MediaService {
     | undefined;
   private recvTransport!: Transport;
   private sendTransport!: Transport;
-  private status: Status = Status.DISCONNECTED;
+  private status: State = State.DISCONNECTED;
   private autoGainControl: boolean;
   private microphoneState: MicrophoneState | undefined;
   private cameraState: CameraState | undefined;
@@ -67,8 +56,8 @@ export class MediaService {
   private localScreenshareStream: MediaStream | undefined;
   private startingCameraStream = false;
   private roomId: string | undefined;
-  private userId: string | undefined;
   private users: User[] = [];
+  private currentUser: User | undefined;
 
   public nickname: string;
 
@@ -77,8 +66,9 @@ export class MediaService {
     this.nickname = localStorage.getItem('nickname') as string;
   }
 
-  public async connectToRoom(roomId: string, isWebcamDisabled: boolean): Promise<MediaObservable> {
-    this.status = Status.CONNECTING;
+  public async init(roomId: string, isWebcamDisabled: boolean, currentUser: User): Promise<MediaObservable> {
+    this.status = State.CONNECTING;
+    this.currentUser = currentUser;
     this.roomId = roomId;
     await this.setupDevice();
 
@@ -134,7 +124,7 @@ export class MediaService {
   }
 
   toggleMirophone() {
-    if (this.status !== Status.CONNECTED) return;
+    if (this.status !== State.CONNECTED) return;
     if (this.localAudioProducer?.paused) {
       this.localAudioProducer.resume();
       this.microphoneState = MicrophoneState.ENABLED;
@@ -146,7 +136,7 @@ export class MediaService {
   }
 
   async toggleCamera() {
-    if (this.status !== Status.CONNECTED) return;
+    if (this.status !== State.CONNECTED) return;
     if (this.localVideoProducer != null && !this.localVideoProducer?.closed) {
       this.localMedia.closeVideo();
       this.localVideoProducer.close();
@@ -187,7 +177,7 @@ export class MediaService {
   }
 
   async toggleScreenshare() {
-    if (this.status !== Status.CONNECTED) return;
+    if (this.status !== State.CONNECTED) return;
     console.log('toggle: screenshare');
     if (this.localScreenProducer === undefined || this.localScreenProducer.closed) {
       // start screenshare
@@ -240,7 +230,7 @@ export class MediaService {
   }
 
   private setStatusConnecting() {
-    this.status = Status.CONNECTING;
+    this.status = State.CONNECTING;
   }
 
   private async setupDevice() {
@@ -250,97 +240,59 @@ export class MediaService {
   }
 
   private setupWebsocket() {
-    return new Promise((res, rej) => {
-      if (environment.production) {
-        const url = new URL(window.location.href);
-        this.ws.connect('wss://' + url.host + '/ws');
-      } else {
-        this.ws.connect('ws://localhost:4000/ws');
-      }
+    this.ws.messageObserver?.subscribe(msg => {
+      switch (msg.type) {
+        case 'add-user':
+          {
+            if (this.recvTransport == null || this.recvTransport.id == null) return;
 
-      this.ws.websocket?.addEventListener('open', async () => {
-        console.log('websocket opened');
-        this.updateObserver();
-        if (this.status === Status.CONNECTING) this.status = Status.CONNECTED;
-
-        this.ws.send('init', {
-          roomId: this.roomId,
-          nickname: this.nickname,
-        });
-
-        // @ts-ignore
-        if (this.status === Status.DISCONNECTED) {
-          this.ws.close();
-          this.disconnect();
-          rej();
-          return;
-        }
-      });
-
-      this.ws.messageObserver?.subscribe(msg => {
-        switch (msg.type) {
-          case 'init':
-            this.userId = msg.data.id;
-            res();
-            break;
-          case 'add-user':
-            {
-              if (this.recvTransport == null || this.recvTransport.id == null) return;
-
-              const user: User = msg.data;
-              if (!this.users.find(item => item.id === user.id)) {
-                this.users.push(user);
-                this.updateObserver();
-              }
-            }
-            break;
-          case 'update-user':
-            {
-              const user: User = msg.data;
-              const foundUser = this.users.find(item => item.id === user.id);
-              if (foundUser) {
-                foundUser.nickname = user.nickname;
-                foundUser.producers = user.producers;
-
-                if (foundUser.consumers == null) foundUser.consumers = {};
-
-                ['audio', 'video', 'screen'].forEach(type => {
-                  // add missing producers
-                  if (
-                    foundUser.consumers &&
-                    foundUser.consumers[type as 'audio' | 'video' | 'screen'] == null &&
-                    foundUser.producers[type as 'audio' | 'video' | 'screen'] != null
-                  )
-                    this.addConsumer(foundUser, type as 'audio' | 'video' | 'screen');
-
-                  // remove old producers
-                  if (
-                    foundUser.consumers &&
-                    foundUser.consumers[type as 'audio' | 'video' | 'screen'] != null &&
-                    foundUser.producers[type as 'audio' | 'video' | 'screen'] == null
-                  )
-                    this.removeConsumer(foundUser, type as 'audio' | 'video' | 'screen');
-                });
-              }
-            }
-            break;
-          case 'remove-user':
-            {
-              const user: User = msg.data;
-              this.users = this.users.filter(item => item.id !== user.id);
+            const user: User = msg.data;
+            if (!this.users.find(item => item.id === user.id)) {
+              this.users.push(user);
               this.updateObserver();
             }
-            break;
-          case 'error-duplicate-session':
-            this.status = Status.DISCONNECTED;
-            this.disconnect();
-            rej('DUPLICATE SESSION');
-            break;
+          }
+          break;
+        case 'update-user':
+          {
+            const user: User = msg.data;
+            const foundUser = this.users.find(item => item.id === user.id);
+            if (foundUser) {
+              foundUser.nickname = user.nickname;
+              foundUser.producers = user.producers;
 
-          default:
-            break;
-        }
-      });
+              if (foundUser.consumers == null) foundUser.consumers = {};
+
+              ['audio', 'video', 'screen'].forEach(type => {
+                // add missing producers
+                if (
+                  foundUser.consumers &&
+                  foundUser.consumers[type as 'audio' | 'video' | 'screen'] == null &&
+                  foundUser.producers[type as 'audio' | 'video' | 'screen'] != null
+                )
+                  this.addConsumer(foundUser, type as 'audio' | 'video' | 'screen');
+
+                // remove old producers
+                if (
+                  foundUser.consumers &&
+                  foundUser.consumers[type as 'audio' | 'video' | 'screen'] != null &&
+                  foundUser.producers[type as 'audio' | 'video' | 'screen'] == null
+                )
+                  this.removeConsumer(foundUser, type as 'audio' | 'video' | 'screen');
+              });
+            }
+          }
+          break;
+        case 'remove-user':
+          {
+            const user: User = msg.data;
+            this.users = this.users.filter(item => item.id !== user.id);
+            this.updateObserver();
+          }
+          break;
+        default:
+          break;
+      }
     });
   }
 
@@ -349,7 +301,7 @@ export class MediaService {
     const newUsers: User[] = [];
     for (const user of users) {
       // Dont add yourself
-      if (user.id === this.userId) continue;
+      if (user.id === this.currentUser?.id) continue;
 
       const foundUser = this.users.find(item => item.id === user.id);
       if (foundUser) {
@@ -477,7 +429,7 @@ export class MediaService {
   }
 
   public async disconnect() {
-    if (this.status !== Status.CONNECTING) {
+    if (this.status !== State.CONNECTING) {
       this.recvTransport?.close();
       this.sendTransport?.close();
       this.localAudioProducer?.close();
@@ -486,11 +438,10 @@ export class MediaService {
       this.localVideoProducer = undefined;
       this.localScreenshareStream = undefined;
       this.screenshareState = ScreenshareState.DISABLED;
-      this.ws.close();
       this.localMedia.closeAudio();
       this.localMedia.closeVideo();
     }
-    this.status = Status.DISCONNECTED;
+    this.status = State.DISCONNECTED;
   }
 }
 
