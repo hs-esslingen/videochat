@@ -8,8 +8,8 @@ import {MediaService} from 'src/app/helper/media.service';
   styleUrls: ['./settings-audio.component.scss'],
 })
 export class SettingsAudioComponent implements OnInit {
-  @Input() autoGainControl!: boolean; //Checked
-  @Input() mediaService!: MediaService; //Checked
+  @Input() autoGainControl!: boolean;
+  @Input() mediaService!: MediaService;
 
   audioDevices: MediaDeviceInfo[] | undefined;
   audioStream: MediaStreamAudioSourceNode | undefined;

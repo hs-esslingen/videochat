@@ -25,7 +25,6 @@ import {VideoComponent} from './components/video/video.component';
 import {AudioComponent} from './components/audio/audio.component';
 import {MasterSidebarComponent} from './components/master-sidebar/master-sidebar.component';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
-import {ChangeNicknameComponent} from './components/change-nickname/change-nickname.component';
 import {PollComponent} from './components/poll/poll.component';
 import {SettingsMasterComponent} from './components/settings-master/settings-master.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
@@ -58,7 +57,6 @@ import {SettingsUserComponent} from './components/settings-user/settings-user.co
     VideoComponent,
     AudioComponent,
     MasterSidebarComponent,
-    ChangeNicknameComponent,
     PollComponent,
     SettingsMasterComponent,
     MoodlePopupComponent,

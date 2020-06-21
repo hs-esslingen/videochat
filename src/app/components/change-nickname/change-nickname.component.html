@@ -1,8 +1,0 @@
-<label>Nickname</label>
-<div mat-dialog-content>
-  <p>Bitte wähle einen Nickname</p>
-  <input cdkFocusInitial matInput [(ngModel)]="data.nickname" (keydown.enter)="close()">
-</div>
-<div mat-dialog-actions align="end">
-  <button mat-button class="button" [mat-dialog-close]="data.nickname" (click)="close()">Speichern</button>
-</div>

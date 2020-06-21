@@ -33,21 +33,21 @@ export class SettingsMasterComponent implements OnInit {
     this.mode = this.data.mode;
     this.nickname = this.data.mediaService.nickname;
     if (this.data.roomID !== undefined) this.roomID = this.data.roomID;
-    console.log('Code reached');
 
     switch (this.mode) {
       case settingMode.STANDARD_MODE:
-        this.modules = {tabs: true, userSettings: true, videoSettings: true, audioSettings: true};
+        this.modules = {room: true, tabs: true, userSettings: true, videoSettings: true, audioSettings: true};
         this.settingPage = settingPages.USER_SETTINGS;
         break;
 
       case settingMode.JOIN_MEETING_MODE:
-        this.modules = {tabs: false, userSettings: true, videoSettings: true, audioSettings: true};
+        this.modules = {room: true, tabs: false, userSettings: true, videoSettings: true, audioSettings: true};
         this.settingPage = undefined;
         break;
 
       case settingMode.INDIVIDUAL_MODE:
         this.modules = {
+          room: this.data.modules?.room,
           tabs: this.data.modules?.tabs,
           userSettings: this.data.modules?.userSettings,
           videoSettings: this.data.modules?.videoSettings,
@@ -60,7 +60,6 @@ export class SettingsMasterComponent implements OnInit {
         console.log('An unexpected error has occured!');
         break;
     }
-    //console.log(this.modules);
   }
 
   saveChanges(): void {
@@ -104,6 +103,7 @@ export enum settingMode {
 }
 
 export interface SettingModularity {
+  room?: boolean;
   tabs?: boolean;
   userSettings?: boolean;
   videoSettings?: boolean;

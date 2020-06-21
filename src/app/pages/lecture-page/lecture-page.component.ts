@@ -174,11 +174,11 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         let displayedRoomName = this.roomId;
         let moodleToken: string;
 
-        console.log(data);
         if (data.moodle != null) {
           moodleToken = data.moodle.token;
           displayedRoomName = data.moodle.roomName;
         }
+
         const dialogRef = this.dialog.open(SettingsMasterComponent, {
           width: 'auto',
           height: 'auto',

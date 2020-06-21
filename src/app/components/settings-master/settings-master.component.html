@@ -1,4 +1,4 @@
-<h1 mat-dialog-title *ngIf="roomID !== undefined">Raum: {{roomID}}</h1>
+<h1 mat-dialog-title *ngIf="roomID !== undefined && modules.room === true">Raum: {{roomID}}</h1>
 
 <div id="settings">
     <div *ngIf="modules.tabs === true" id="tabs">
