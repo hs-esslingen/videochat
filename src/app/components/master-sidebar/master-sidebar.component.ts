@@ -4,7 +4,7 @@ import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';
 import {Poll} from 'src/app/helper/poll.service';
-import {User, userSignal} from 'src/app/model/user';
+import {User, UserSignal} from 'src/app/model/user';
 import {SettingsMasterComponent} from '../settings-master/settings-master.component';
 
 @Component({
@@ -18,7 +18,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   @Input() users!: User[];
 
   @Output() sidebarSetDetailEvent = new EventEmitter<{element: Record<string, any>; type: string}>();
-  @Output() sidebarSignalEvent = new EventEmitter<userSignal>();
+  @Output() sidebarSignalEvent = new EventEmitter<UserSignal>();
   @Output() sidebarNicknameEvent = new EventEmitter<string>();
   @Output() sidebarDisconnectEvent = new EventEmitter<null>();
   @Output() sidebarToggleAutogainEvent = new EventEmitter<null>();
@@ -74,15 +74,15 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
 
   raiseHand(): void {
     //console.log("You've raised your Hand");
-    this.sidebarSignalEvent.emit(userSignal.RAISED_HAND);
+    this.sidebarSignalEvent.emit(UserSignal.RAISED_HAND);
   }
   thumbsUp(): void {
     //console.log("You've voted up!");
-    this.sidebarSignalEvent.emit(userSignal.VOTED_UP);
+    this.sidebarSignalEvent.emit(UserSignal.VOTED_UP);
   }
   thumbsDown(): void {
     //console.log("You've voted down!");
-    this.sidebarSignalEvent.emit(userSignal.VOTED_DOWN);
+    this.sidebarSignalEvent.emit(UserSignal.VOTED_DOWN);
   }
 
   //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!

@@ -5,7 +5,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {LocalMediaService} from '../../helper/local-media.service';
 import {JoinMeetingPopupComponent} from '../../components/join-meeting-popup/join-meeting-popup.component';
 import {ChatService} from '../../helper/chat.service';
-import {User, userSignal, userRole, MicrophoneState} from 'src/app/model/user';
+import {User, UserSignal, UserRole, MicrophoneState} from 'src/app/model/user';
 import {RoomService} from 'src/app/helper/room.service';
 
 @Component({
@@ -43,8 +43,8 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     producers: {},
     microphoneState: MicrophoneState.DISABLED,
     isTalking: false,
-    signal: userSignal.NONE,
-    userRole: userRole.USER,
+    signal: UserSignal.NONE,
+    userRole: UserRole.USER,
   };
   users: User[] = [];
 
@@ -216,9 +216,9 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  setSidebarSignal($event: userSignal) {
+  setSidebarSignal($event: UserSignal) {
     if ($event !== this.currentUser.signal) this.currentUser.signal = $event;
-    else this.currentUser.signal = userSignal.NONE;
+    else this.currentUser.signal = UserSignal.NONE;
   }
 
   setNickname($event: string) {
@@ -247,8 +247,8 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       producers: {},
       microphoneState: MicrophoneState.DISABLED,
       isTalking: false,
-      signal: userSignal.NONE,
-      userRole: userRole.MODERATOR,
+      signal: UserSignal.NONE,
+      userRole: UserRole.MODERATOR,
     };
 
     this.users.push(
@@ -263,7 +263,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         microphoneState: MicrophoneState.ENABLED,
         isTalking: true,
-        signal: userSignal.RAISED_HAND,
+        signal: UserSignal.RAISED_HAND,
       },
       {
         id: '2',
@@ -274,7 +274,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         microphoneState: MicrophoneState.ENABLED,
         isTalking: false,
-        signal: userSignal.NONE,
+        signal: UserSignal.NONE,
       },
       {
         id: '3',
@@ -285,27 +285,27 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         microphoneState: MicrophoneState.DISABLED,
         isTalking: true,
-        signal: userSignal.VOTED_UP,
+        signal: UserSignal.VOTED_UP,
       },
-      {id: '4', nickname: 'Test_4', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: true, signal: userSignal.VOTED_DOWN},
-      {id: '5', nickname: 'Test_5', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: true, signal: userSignal.VOTED_DOWN},
-      {id: '6', nickname: 'Test_6', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.VOTED_UP},
-      {id: '7', nickname: 'Test_7', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.VOTED_UP},
-      {id: '8', nickname: 'Test_8', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.VOTED_DOWN},
-      {id: '9', nickname: 'Test_9', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.VOTED_DOWN},
-      {id: '10', nickname: 'Test_10', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.VOTED_DOWN},
-      {id: '11', nickname: 'Test_11', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.NONE},
-      {id: '12', nickname: 'Test_12', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.NONE},
-      {id: '13', nickname: 'Test_13', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.NONE},
-      {id: '14', nickname: 'Test_14', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.NONE},
-      {id: '15', nickname: 'Test_15', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.NONE},
-      {id: '16', nickname: 'Test_16', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.NONE},
-      {id: '17', nickname: 'Test_17', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.NONE},
-      {id: '18', nickname: 'Test_18', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.NONE},
-      {id: '19', nickname: 'Test_19', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.NONE},
-      {id: '20', nickname: 'Test_20', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.NONE},
-      {id: '21', nickname: 'Test_21', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.NONE},
-      {id: '22', nickname: 'Test_22', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: userSignal.NONE}
+      {id: '4', nickname: 'Test_4', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: true, signal: UserSignal.VOTED_DOWN},
+      {id: '5', nickname: 'Test_5', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: true, signal: UserSignal.VOTED_DOWN},
+      {id: '6', nickname: 'Test_6', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.VOTED_UP},
+      {id: '7', nickname: 'Test_7', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.VOTED_UP},
+      {id: '8', nickname: 'Test_8', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.VOTED_DOWN},
+      {id: '9', nickname: 'Test_9', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.VOTED_DOWN},
+      {id: '10', nickname: 'Test_10', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.VOTED_DOWN},
+      {id: '11', nickname: 'Test_11', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
+      {id: '12', nickname: 'Test_12', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
+      {id: '13', nickname: 'Test_13', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
+      {id: '14', nickname: 'Test_14', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
+      {id: '15', nickname: 'Test_15', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
+      {id: '16', nickname: 'Test_16', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
+      {id: '17', nickname: 'Test_17', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
+      {id: '18', nickname: 'Test_18', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
+      {id: '19', nickname: 'Test_19', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
+      {id: '20', nickname: 'Test_20', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
+      {id: '21', nickname: 'Test_21', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
+      {id: '22', nickname: 'Test_22', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE}
     );
 
     this.chatService.addChat(this.users[0]);

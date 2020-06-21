@@ -1,24 +1,26 @@
 import {Consumer} from 'mediasoup-client/lib/types';
 
 export class User {
-  constructor(
-    public id: string,
-    public nickname: string,
-    public signal: userSignal,
-    public microphoneState: MicrophoneState,
-    public isTalking: boolean,
-    public userRole: userRole,
-    public producers: {
-      audio?: string;
-      video?: string;
-      screen?: string;
-    },
-    public consumers?: {
-      audio?: Consumer;
-      video?: Consumer;
-      screen?: Consumer;
-    }
-  ) {}
+  public id: string;
+  public nickname: string;
+  public signal: UserSignal = UserSignal.NONE;
+  public microphoneState: MicrophoneState = MicrophoneState.DISABLED;
+  public isTalking = false;
+  public userRole: UserRole = UserRole.USER;
+  public producers: {
+    audio?: string;
+    video?: string;
+    screen?: string;
+  } = {};
+  public consumers?: {
+    audio?: Consumer;
+    video?: Consumer;
+    screen?: Consumer;
+  };
+  constructor(id: string, nickname: string) {
+    this.id = id;
+    this.nickname = nickname;
+  }
 }
 
 export enum MicrophoneState {
@@ -26,12 +28,12 @@ export enum MicrophoneState {
   DISABLED = 'mic_off',
 }
 
-export enum userRole {
+export enum UserRole {
   USER = 0,
   MODERATOR = 1,
 }
 
-export enum userSignal {
+export enum UserSignal {
   NONE = 0,
   RAISED_HAND = 1,
   VOTED_UP = 2,

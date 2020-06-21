@@ -56,8 +56,8 @@ export class MediaService {
   private localScreenshareStream: MediaStream | undefined;
   private startingCameraStream = false;
   private roomId: string | undefined;
-  private userId: string | undefined;
   private users: User[] = [];
+  private currentUser: User | undefined;
 
   public nickname: string;
 
@@ -66,8 +66,9 @@ export class MediaService {
     this.nickname = localStorage.getItem('nickname') as string;
   }
 
-  public async init(roomId: string, isWebcamDisabled: boolean): Promise<MediaObservable> {
+  public async init(roomId: string, isWebcamDisabled: boolean, currentUser: User): Promise<MediaObservable> {
     this.status = State.CONNECTING;
+    this.currentUser = currentUser;
     this.roomId = roomId;
     await this.setupDevice();
 
@@ -300,7 +301,7 @@ export class MediaService {
     const newUsers: User[] = [];
     for (const user of users) {
       // Dont add yourself
-      if (user.id === this.userId) continue;
+      if (user.id === this.currentUser?.id) continue;
 
       const foundUser = this.users.find(item => item.id === user.id);
       if (foundUser) {
