@@ -47,7 +47,7 @@ export class MediaService {
     | undefined;
   private recvTransport!: Transport;
   private sendTransport!: Transport;
-  private status: State = State.DISCONNECTED;
+  private state: State = State.DISCONNECTED;
   private autoGainControl: boolean;
   private microphoneState: MicrophoneState | undefined;
   private cameraState: CameraState | undefined;
@@ -67,7 +67,7 @@ export class MediaService {
   }
 
   public async init(roomId: string, isWebcamDisabled: boolean, currentUser: User): Promise<MediaObservable> {
-    this.status = State.CONNECTING;
+    this.state = State.CONNECTING;
     this.currentUser = currentUser;
     this.roomId = roomId;
     await this.setupDevice();
@@ -103,6 +103,8 @@ export class MediaService {
       this.microphoneState = MicrophoneState.DISABLED;
     }
 
+    this.state = State.CONNECTED;
+
     this.addExistingUsers();
 
     // Push an inital update
@@ -124,7 +126,7 @@ export class MediaService {
   }
 
   toggleMirophone() {
-    if (this.status !== State.CONNECTED) return;
+    if (this.state !== State.CONNECTED) return;
     if (this.localAudioProducer?.paused) {
       this.localAudioProducer.resume();
       this.microphoneState = MicrophoneState.ENABLED;
@@ -136,7 +138,7 @@ export class MediaService {
   }
 
   async toggleCamera() {
-    if (this.status !== State.CONNECTED) return;
+    if (this.state !== State.CONNECTED) return;
     if (this.localVideoProducer != null && !this.localVideoProducer?.closed) {
       this.localMedia.closeVideo();
       this.localVideoProducer.close();
@@ -177,7 +179,7 @@ export class MediaService {
   }
 
   async toggleScreenshare() {
-    if (this.status !== State.CONNECTED) return;
+    if (this.state !== State.CONNECTED) return;
     console.log('toggle: screenshare');
     if (this.localScreenProducer === undefined || this.localScreenProducer.closed) {
       // start screenshare
@@ -230,7 +232,7 @@ export class MediaService {
   }
 
   private setStatusConnecting() {
-    this.status = State.CONNECTING;
+    this.state = State.CONNECTING;
   }
 
   private async setupDevice() {
@@ -429,7 +431,7 @@ export class MediaService {
   }
 
   public async disconnect() {
-    if (this.status !== State.CONNECTING) {
+    if (this.state !== State.CONNECTING) {
       this.recvTransport?.close();
       this.sendTransport?.close();
       this.localAudioProducer?.close();
@@ -441,7 +443,7 @@ export class MediaService {
       this.localMedia.closeAudio();
       this.localMedia.closeVideo();
     }
-    this.status = State.DISCONNECTED;
+    this.state = State.DISCONNECTED;
   }
 }
 
