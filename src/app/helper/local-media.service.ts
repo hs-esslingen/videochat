@@ -19,14 +19,26 @@ export class LocalMediaService {
 
   async getAudioCapabilites(): Promise<MediaDeviceInfo[]> {
     // refresh capabilites
-    this.capabilities = await navigator.mediaDevices.enumerateDevices();
-    return this.capabilities.filter(item => item.kind === 'audioinput');
+    try {
+      this.capabilities = await navigator.mediaDevices.enumerateDevices();
+      console.log(this.capabilities);
+      return this.capabilities.filter(item => item.kind === 'audioinput');
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   async getVideoCapabilites(): Promise<MediaDeviceInfo[]> {
     // refresh capabilites
-    this.capabilities = await navigator.mediaDevices.enumerateDevices();
-    return this.capabilities.filter(item => item.kind === 'videoinput');
+    try {
+      this.capabilities = await navigator.mediaDevices.enumerateDevices();
+      console.log(this.capabilities);
+      return this.capabilities.filter(item => item.kind === 'videoinput');
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   async getVideoTrack(label?: string, forceUpdate = false) {

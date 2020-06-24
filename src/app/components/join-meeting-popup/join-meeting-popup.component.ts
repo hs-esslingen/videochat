@@ -48,9 +48,13 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.audioCtx = new AudioContext();
+    console.log('ng-init');
 
+    console.log('get capabilities');
+    this.videoDevices = await this.localMedia.getVideoCapabilites();
+    this.audioDevices = await this.localMedia.getAudioCapabilites();
     try {
+      console.log('get video');
       const videoStream = await this.localMedia.getVideoTrack();
       const videoTracks = videoStream.getVideoTracks();
       this.videoTrack = new MediaStream(videoTracks);
@@ -58,10 +62,13 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
         this.selectedVideoStream = videoTracks[0].label;
       }
     } catch (error) {
+      console.error(error);
       this.selectedVideoStream = 'none';
     }
 
     try {
+      console.log('get audio');
+      this.audioCtx = new AudioContext();
       this.analyser = this.audioCtx.createAnalyser();
       const audioStream = await this.localMedia.getAudioTrack();
       if (audioStream) {
@@ -82,9 +89,10 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
         this.selectedAudioStream = audio.label;
       }
     } catch (error) {
+      console.error(error);
       // ingore error
     }
-
+    console.log('getting capabilities (again)');
     this.videoDevices = await this.localMedia.getVideoCapabilites();
     this.audioDevices = await this.localMedia.getAudioCapabilites();
   }
