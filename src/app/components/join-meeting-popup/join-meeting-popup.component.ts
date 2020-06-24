@@ -58,6 +58,7 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
         this.selectedVideoStream = videoTracks[0].label;
       }
     } catch (error) {
+      console.error(error);
       this.selectedVideoStream = 'none';
     }
 
@@ -82,9 +83,10 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
         this.selectedAudioStream = audio.label;
       }
     } catch (error) {
+      console.error(error);
       // ingore error
     }
-
+    console.log('getting capabilities');
     this.videoDevices = await this.localMedia.getVideoCapabilites();
     this.audioDevices = await this.localMedia.getAudioCapabilites();
   }
