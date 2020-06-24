@@ -48,8 +48,6 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.audioCtx = new AudioContext();
-
     try {
       const videoStream = await this.localMedia.getVideoTrack();
       const videoTracks = videoStream.getVideoTracks();
@@ -63,6 +61,7 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
     }
 
     try {
+      this.audioCtx = new AudioContext();
       this.analyser = this.audioCtx.createAnalyser();
       const audioStream = await this.localMedia.getAudioTrack();
       if (audioStream) {
