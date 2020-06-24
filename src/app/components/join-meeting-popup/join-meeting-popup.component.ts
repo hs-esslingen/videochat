@@ -48,13 +48,10 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    console.log('ng-init');
-
-    console.log('get capabilities');
+    // TODO: Visualize loading, if devices take longer to respond
     this.videoDevices = await this.localMedia.getVideoCapabilites();
     this.audioDevices = await this.localMedia.getAudioCapabilites();
     try {
-      console.log('get video');
       const videoStream = await this.localMedia.getVideoTrack();
       const videoTracks = videoStream.getVideoTracks();
       this.videoTrack = new MediaStream(videoTracks);
@@ -67,38 +64,46 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
     }
 
     try {
-      console.log('get audio');
-      this.audioCtx = new AudioContext();
-      this.analyser = this.audioCtx.createAnalyser();
       const audioStream = await this.localMedia.getAudioTrack();
+
       if (audioStream) {
+        this.setupAudioVolumeBar(audioStream);
+
         const audio = audioStream.getAudioTracks()[0];
-        this.audioStream = this.audioCtx.createMediaStreamSource(audioStream);
-
-        this.audioStream.connect(this.analyser);
-
-        const array = new Uint8Array(this.analyser.fftSize);
-
-        // @ts-ignore
-        this.intervalId = setInterval(() => {
-          this.analyser?.getByteTimeDomainData(array);
-          const volume = Math.max(0, Math.max(...array) - 128) / 128;
-          this.volume = volume * 100 + '%';
-        }, 100);
-
         this.selectedAudioStream = audio.label;
       }
     } catch (error) {
       console.error(error);
       // ingore error
     }
-    console.log('getting capabilities (again)');
     this.videoDevices = await this.localMedia.getVideoCapabilites();
     this.audioDevices = await this.localMedia.getAudioCapabilites();
   }
 
   ngOnDestroy(): void {
     clearInterval(this.intervalId);
+  }
+
+  setupAudioVolumeBar(audioStream: MediaStream) {
+    try {
+      if (this.audioCtx != null) return;
+      this.audioCtx = new AudioContext();
+      this.analyser = this.audioCtx.createAnalyser();
+      this.audioStream = this.audioCtx.createMediaStreamSource(audioStream);
+      this.audioStream.connect(this.analyser);
+      const array = new Uint8Array(this.analyser.fftSize);
+
+      // @ts-ignore
+      this.intervalId = setInterval(() => {
+        this.analyser?.getByteTimeDomainData(array);
+        const volume = Math.max(0, Math.max(...array) - 128) / 128;
+        // convert to logarythmic, this will this will represent actual volume better
+        this.volume = Math.sqrt(volume) * 100 + '%';
+      }, 100);
+    } catch (error) {
+      // TODO: show button to activate audio volume bar
+      // Some browsers don't allow creating an audio context, without user interaction
+    }
   }
 
   async changeVideoStream(label: string) {
@@ -125,6 +130,7 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
     }
 
     const audio = await this.localMedia.getAudioTrack(label);
+    if (audio) this.setupAudioVolumeBar(audio);
 
     this.audioStream = this.audioCtx?.createMediaStreamSource(audio as MediaStream);
     this.audioStream?.connect(this.analyser as AnalyserNode);

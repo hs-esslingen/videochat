@@ -21,7 +21,6 @@ export class LocalMediaService {
     // refresh capabilites
     try {
       this.capabilities = await navigator.mediaDevices.enumerateDevices();
-      console.log(this.capabilities);
       return this.capabilities.filter(item => item.kind === 'audioinput');
     } catch (error) {
       console.error(error);
@@ -33,7 +32,6 @@ export class LocalMediaService {
     // refresh capabilites
     try {
       this.capabilities = await navigator.mediaDevices.enumerateDevices();
-      console.log(this.capabilities);
       return this.capabilities.filter(item => item.kind === 'videoinput');
     } catch (error) {
       console.error(error);
