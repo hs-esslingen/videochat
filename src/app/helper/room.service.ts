@@ -16,7 +16,7 @@ export class RoomService {
 
   async connectToRoom(roomId: string, isWebcamDisabled: boolean) {
     this.currentUser = new User(await this.ws.init(roomId, this.nickname), this.nickname);
-    this.mediaObservable = await this.mediaSevice.init(roomId, isWebcamDisabled, this.currentUser);
+    this.mediaObservable = await this.mediaSevice.init(roomId, isWebcamDisabled, this.currentUser.id);
   }
 
   async disconnect() {

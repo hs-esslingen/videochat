@@ -1,6 +1,6 @@
 <div id="content" (mousemove)="onMousemove()">
     <div id="main">
-        <div #webcams id="webcams" [style.height]="screenShareUser ? webcamHeight * 100 + '%' : '100%'">
+        <div #webcams id="webcams" [style.height]="screenShareUser ? webcamHeight * 100 + '%' : '99%'">
             <ng-container *ngFor="let user of users">
                 <div *ngIf="user.consumers?.video != undefined" class="video-element">
                     <app-video [video]="user.consumers?.video?.track"></app-video>
@@ -11,34 +11,23 @@
             </div>
         </div>
         <div id="divider" *ngIf="screenShareUser != undefined" (pointerdown)="startDividerDrag()"></div>
-        <div id="screenshare" *ngIf="screenShareUser != undefined" [style.height]="'calc(' + (1 - webcamHeight) * 100 + '% - 12px)'">
+        <div id="screenshare" *ngIf="screenShareUser != undefined"
+            [style.height]="'calc(' + (1 - webcamHeight) * 99 + '% - 12px)'">
             <video autoplay playsinline [srcObject]="screenShareStream"></video>
         </div>
 
         <app-audio *ngFor="let user of users" [audio]="user.consumers?.audio?.track"></app-audio>
 
-        <app-toolbar
-            id="toolbar"
-            [class.hidden]="isToolbarHidden"
-            [microphoneState]="microphoneState"
-            [cameraState]="cameraState"
-            [screenshareState]="screenshareState"
-        ></app-toolbar>
+        <app-toolbar id="toolbar" [class.hidden]="isToolbarHidden" [microphoneState]="microphoneState"
+            [cameraState]="cameraState" [screenshareState]="screenshareState"></app-toolbar>
     </div>
 
     <app-chat *ngIf="detailType === 'chat'" class="detail" [childData]="sidebarDetail" [user]="currentUser"></app-chat>
     <app-poll *ngIf="detailType === 'poll'" class="detail"></app-poll>
 
-    <app-master
-        id="master"
-        [currentUser]="currentUser"
-        [users]="users"
-        [autoGainControl]="autoGainControl"
-        (sidebarSetDetailEvent)="setSidebarDetail($event)"
-        (sidebarSignalEvent)="setSidebarSignal($event)"
-        (sidebarNicknameEvent)="setNickname($event)"
-        (sidebarDisconnectEvent)="disconnect()"
+    <app-master id="master" [currentUser]="currentUser" [users]="users" [autoGainControl]="autoGainControl"
+        (sidebarSetDetailEvent)="setSidebarDetail($event)" (sidebarSignalEvent)="setSidebarSignal($event)"
+        (sidebarNicknameEvent)="setNickname($event)" (sidebarDisconnectEvent)="disconnect()"
         (sidebarToggleAutogainEvent)="mediaService.toggleAutoGainControl()"
-        [class.detail-open]="detailType != undefined"
-    ></app-master>
+        [class.detail-open]="detailType != undefined"></app-master>
 </div>

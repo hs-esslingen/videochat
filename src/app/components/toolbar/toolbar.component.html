@@ -4,9 +4,8 @@
       [class.disabled]="screenshareState === 'stop_screen_share'">
       <i class="material-icons">{{ screenshareState }}</i>
     </button>
-    <button class="microphone toggle" (click)="mediaService.toggleMirophone()"
-      [class.disabled]="microphoneState === 'mic_off'">
-      <i class="material-icons">{{ microphoneState }}</i>
+    <button class="microphone toggle" (click)="mediaService.toggleMirophone()" [class.disabled]="microphoneState === 0">
+      <i class="material-icons">{{ microphoneState == 0 ? "mic_off" : "mic" }}</i>
     </button>
     <button class="camera toggle" (click)="mediaService.toggleCamera()"
       [class.disabled]="cameraState === 'videocam_off'">

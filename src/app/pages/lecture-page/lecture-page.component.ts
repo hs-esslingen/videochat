@@ -7,6 +7,7 @@ import {JoinMeetingPopupComponent} from '../../components/join-meeting-popup/joi
 import {ChatService} from '../../helper/chat.service';
 import {User, UserSignal, UserRole, MicrophoneState} from 'src/app/model/user';
 import {RoomService} from 'src/app/helper/room.service';
+import {ApiService} from 'src/app/helper/api.service';
 
 @Component({
   selector: 'app-lecture-page',
@@ -42,7 +43,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     nickname: 'User',
     producers: {},
     microphoneState: MicrophoneState.DISABLED,
-    isTalking: false,
     signal: UserSignal.NONE,
     userRole: UserRole.USER,
   };
@@ -60,6 +60,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     private dialog: MatDialog,
     private localMedia: LocalMediaService,
     private element: ElementRef<HTMLElement>,
+    private api: ApiService,
     readonly chatService: ChatService
   ) {
     const webcamHeight = window.localStorage.getItem('webcamHeight');
@@ -91,7 +92,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       const maxHeightPerElement = clientHeight / Math.ceil(numVideos / colums);
       const maxWidthPerElement = clientWidth / colums;
-      const maxRatio = Math.min((maxHeightPerElement * (4 / 3)) / clientWidth, maxWidthPerElement / clientWidth);
+      const maxRatio = Math.min(Math.min((maxHeightPerElement * (4 / 3)) / clientWidth, maxWidthPerElement / clientWidth), 1);
       this.element.nativeElement.style.setProperty('--max-video-flex-basis', maxRatio * 100 - 1 + '%');
     }
   }
@@ -216,9 +217,10 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  setSidebarSignal($event: UserSignal) {
+  async setSidebarSignal($event: UserSignal) {
     if ($event !== this.currentUser.signal) this.currentUser.signal = $event;
     else this.currentUser.signal = UserSignal.NONE;
+    await this.api.setUserSignal(this.roomId, this.currentUser.signal);
   }
 
   setNickname($event: string) {
@@ -245,8 +247,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       id: '0',
       nickname: 'User',
       producers: {},
-      microphoneState: MicrophoneState.DISABLED,
-      isTalking: false,
+      microphoneState: MicrophoneState.TALKING,
       signal: UserSignal.NONE,
       userRole: UserRole.MODERATOR,
     };
@@ -262,7 +263,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
           screen: {},
         },
         microphoneState: MicrophoneState.ENABLED,
-        isTalking: true,
         signal: UserSignal.RAISED_HAND,
       },
       {
@@ -273,7 +273,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
           video: {},
         },
         microphoneState: MicrophoneState.ENABLED,
-        isTalking: false,
         signal: UserSignal.NONE,
       },
       {
@@ -284,28 +283,27 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
           video: {},
         },
         microphoneState: MicrophoneState.DISABLED,
-        isTalking: true,
         signal: UserSignal.VOTED_UP,
       },
-      {id: '4', nickname: 'Test_4', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: true, signal: UserSignal.VOTED_DOWN},
-      {id: '5', nickname: 'Test_5', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: true, signal: UserSignal.VOTED_DOWN},
-      {id: '6', nickname: 'Test_6', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.VOTED_UP},
-      {id: '7', nickname: 'Test_7', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.VOTED_UP},
-      {id: '8', nickname: 'Test_8', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.VOTED_DOWN},
-      {id: '9', nickname: 'Test_9', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.VOTED_DOWN},
-      {id: '10', nickname: 'Test_10', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.VOTED_DOWN},
-      {id: '11', nickname: 'Test_11', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
-      {id: '12', nickname: 'Test_12', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
-      {id: '13', nickname: 'Test_13', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
-      {id: '14', nickname: 'Test_14', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
-      {id: '15', nickname: 'Test_15', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
-      {id: '16', nickname: 'Test_16', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
-      {id: '17', nickname: 'Test_17', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
-      {id: '18', nickname: 'Test_18', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
-      {id: '19', nickname: 'Test_19', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
-      {id: '20', nickname: 'Test_20', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
-      {id: '21', nickname: 'Test_21', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE},
-      {id: '22', nickname: 'Test_22', producers: {}, microphoneState: MicrophoneState.DISABLED, isTalking: false, signal: UserSignal.NONE}
+      {id: '4', nickname: 'Test_4', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.VOTED_DOWN},
+      {id: '5', nickname: 'Test_5', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.VOTED_DOWN},
+      {id: '6', nickname: 'Test_6', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.VOTED_UP},
+      {id: '7', nickname: 'Test_7', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.VOTED_UP},
+      {id: '8', nickname: 'Test_8', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.VOTED_DOWN},
+      {id: '9', nickname: 'Test_9', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.VOTED_DOWN},
+      {id: '10', nickname: 'Test_10', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.VOTED_DOWN},
+      {id: '11', nickname: 'Test_11', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
+      {id: '12', nickname: 'Test_12', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
+      {id: '13', nickname: 'Test_13', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
+      {id: '14', nickname: 'Test_14', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
+      {id: '15', nickname: 'Test_15', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
+      {id: '16', nickname: 'Test_16', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
+      {id: '17', nickname: 'Test_17', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
+      {id: '18', nickname: 'Test_18', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
+      {id: '19', nickname: 'Test_19', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
+      {id: '20', nickname: 'Test_20', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
+      {id: '21', nickname: 'Test_21', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE},
+      {id: '22', nickname: 'Test_22', producers: {}, microphoneState: MicrophoneState.DISABLED, signal: UserSignal.NONE}
     );
 
     this.chatService.addChat(this.users[0]);

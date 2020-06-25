@@ -18,8 +18,7 @@
 
   <div id="streams" [class.single]="singleVideo">
     <app-user class="user" *ngFor="let user of users" (click)="toggleSingleGrid(user)" [user]="user"
-      [small]="singleVideo != undefined"
-      [selected]="singleVideo == user"></app-user>
+      [small]="singleVideo != undefined" [selected]="singleVideo == user"></app-user>
 
     <video class="user" *ngIf="localSchreenshareStream" [srcObject]="localSchreenshareStream" [volume]="0" autoplay
       playinline></video>
@@ -37,8 +36,8 @@
     </div>
     <div class="center">
       <button class="microphone toggle" (click)="mediaService.toggleMirophone()"
-        [class.disabled]="microphoneState === 'mic_off'">
-        <i class="material-icons">{{ microphoneState }}</i>
+        [class.disabled]="microphoneState === 0">
+        <i class="material-icons">{{  microphoneState == 0 ? "mic_off" : "mic"  }}</i>
       </button>
       <button class="end-call" (click)="disconnect()">
         <i class="material-icons">call_end</i>

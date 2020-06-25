@@ -57,7 +57,8 @@ export class MediaService {
   private startingCameraStream = false;
   private roomId: string | undefined;
   private users: User[] = [];
-  private currentUser: User | undefined;
+  private userId: string | undefined;
+  private audioIntervalId = 0;
 
   public nickname: string;
 
@@ -66,9 +67,9 @@ export class MediaService {
     this.nickname = localStorage.getItem('nickname') as string;
   }
 
-  public async init(roomId: string, isWebcamDisabled: boolean, currentUser: User): Promise<MediaObservable> {
+  public async init(roomId: string, isWebcamDisabled: boolean, userId: string): Promise<MediaObservable> {
     this.state = State.CONNECTING;
-    this.currentUser = currentUser;
+    this.userId = userId;
     this.roomId = roomId;
     await this.setupDevice();
 
@@ -95,8 +96,34 @@ export class MediaService {
       if (audioTracks && audioTracks.getAudioTracks().length > 0) {
         this.microphoneState = MicrophoneState.ENABLED;
         await this.sendAudio(audioTracks);
+
+        const audioCtx = new AudioContext();
+        const analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 2048;
+        const audioStream = audioCtx.createMediaStreamSource(audioTracks);
+        audioStream.connect(analyser);
+        const array = new Uint8Array(analyser.fftSize);
+
+        this.audioIntervalId = (setInterval(() => {
+          analyser?.getByteTimeDomainData(array);
+          const volume = Math.max(0, Math.max(...array) - 128) / 128;
+          // convert to logarythmic, this will this will represent actual volume better
+          const perceivedVolume = Math.sqrt(volume);
+          if (perceivedVolume > 0.1 && this.microphoneState === MicrophoneState.ENABLED) {
+            this.microphoneState = MicrophoneState.TALKING;
+            // this.api.setMicrophoneState(roomId, this.microphoneState);
+            this.updateObserver();
+          } else if (perceivedVolume < 0.1 && this.microphoneState === MicrophoneState.TALKING) {
+            this.microphoneState = MicrophoneState.ENABLED;
+            // this.api.setMicrophoneState(roomId, this.microphoneState);
+            this.updateObserver();
+          }
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        }, 500) as any) as number;
+        this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
       } else {
         this.microphoneState = MicrophoneState.DISABLED;
+        this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
       }
     } catch (error) {
       console.log('AUDIO ERROR');
@@ -130,9 +157,11 @@ export class MediaService {
     if (this.localAudioProducer?.paused) {
       this.localAudioProducer.resume();
       this.microphoneState = MicrophoneState.ENABLED;
+      this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
     } else {
       this.localAudioProducer?.pause();
       this.microphoneState = MicrophoneState.DISABLED;
+      this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
     }
     this.updateObserver();
   }
@@ -262,6 +291,8 @@ export class MediaService {
             if (foundUser) {
               foundUser.nickname = user.nickname;
               foundUser.producers = user.producers;
+              foundUser.signal = user.signal;
+              foundUser.microphoneState = user.microphoneState;
 
               if (foundUser.consumers == null) foundUser.consumers = {};
 
@@ -303,7 +334,7 @@ export class MediaService {
     const newUsers: User[] = [];
     for (const user of users) {
       // Dont add yourself
-      if (user.id === this.currentUser?.id) continue;
+      if (user.id === this.userId) continue;
 
       const foundUser = this.users.find(item => item.id === user.id);
       if (foundUser) {
@@ -442,6 +473,7 @@ export class MediaService {
       this.screenshareState = ScreenshareState.DISABLED;
       this.localMedia.closeAudio();
       this.localMedia.closeVideo();
+      clearInterval(this.audioIntervalId);
     }
     this.state = State.DISCONNECTED;
   }

@@ -1,8 +1,9 @@
-import {Worker, Router, MediaKind, RtpParameters, Transport, DtlsParameters, RtpCapabilities} from 'mediasoup/lib/types';
+import {Worker, Router, MediaKind, RtpParameters, Transport, DtlsParameters, RtpCapabilities, AudioLevelObserver} from 'mediasoup/lib/types';
 import * as mediasoup from 'mediasoup';
 import * as WebSocket from 'ws';
 import {MyWebSocket} from 'src-server/server';
 import {getLogger} from 'log4js';
+import {Producer} from 'mediasoup-client/lib/types';
 
 const logger = getLogger('room');
 
@@ -16,6 +17,7 @@ export class Room {
   private producers: mediasoup.types.Producer[] = [];
   private websockets: WebSocket[] = [];
   private users: {[sessionId: string]: User} = {};
+  private audioLevelObserver: AudioLevelObserver | undefined;
 
   private messages: Message[] = [];
 
@@ -33,6 +35,47 @@ export class Room {
         delete Room.rooms[this.roomId];
       }
     }, 5000);
+
+    this.getRouter().then(async () => {
+      // this.audioLevelObserver = await this.router.createAudioLevelObserver({
+      //   maxEntries: 1,
+      //   threshold: -80,
+      //   interval: 1000,
+      // });
+      // this.audioLevelObserver.addListener('volumes', (volumes: {producer: Producer; volume: number}[]) => {
+      //   for (const sessionId in this.users) {
+      //     const user = this.users[sessionId];
+      //     if (user.microphoneState === MicrophoneState.DISABLED) return;
+      //     if (volumes.find((item: {producer: Producer; volume: number}) => item.producer.appData.userId === user.id)) {
+      //       if (user.microphoneState === MicrophoneState.ENABLED) {
+      //         user.microphoneState = MicrophoneState.TALKING;
+      //         this.broadcastMessage({
+      //           type: 'update-user',
+      //           data: this.getPublicUser(user),
+      //         });
+      //       }
+      //     } else if (user.microphoneState === MicrophoneState.TALKING) {
+      //       user.microphoneState = MicrophoneState.ENABLED;
+      //       this.broadcastMessage({
+      //         type: 'update-user',
+      //         data: this.getPublicUser(user),
+      //       });
+      //     }
+      //   }
+      // });
+      // this.audioLevelObserver.addListener('silence', () => {
+      //   for (const sessionId in this.users) {
+      //     const user = this.users[sessionId];
+      //     if (user.microphoneState === MicrophoneState.TALKING) {
+      //       user.microphoneState = MicrophoneState.ENABLED;
+      //       this.broadcastMessage({
+      //         type: 'update-user',
+      //         data: this.getPublicUser(user),
+      //       });
+      //     }
+      //   }
+      // });
+    });
   }
 
   static getRoom(roomId: string) {
@@ -157,10 +200,18 @@ export class Room {
     });
   }
 
-  async produce(transportId: string, kind: MediaKind, rtpParameters: RtpParameters, appData: {type: 'audio' | 'video' | 'screen'}, sessionID: string) {
+  async produce(
+    transportId: string,
+    kind: MediaKind,
+    rtpParameters: RtpParameters,
+    appData: {type: 'audio' | 'video' | 'screen'; userId?: string},
+    sessionID: string
+  ) {
     const trans = this.transports[transportId];
     if (trans) {
       if (this.users[sessionID] == null) throw new Error('User is not inizialized');
+      const user = this.users[sessionID];
+      appData.userId = user.id;
       const producer = await trans.produce({
         kind,
         rtpParameters,
@@ -168,24 +219,28 @@ export class Room {
       });
 
       // Close old Producer if it is still open
-      if (this.users[sessionID].producers[appData.type] != null) {
-        const oldProdId = this.users[sessionID].producers[appData.type];
+      if (user.producers[appData.type] != null) {
+        const oldProdId = user.producers[appData.type];
         const oldProd = this.producers.find(prod => prod.id === oldProdId);
         if (oldProd && !oldProd.closed) {
           oldProd.close();
         }
       }
 
-      this.users[sessionID].producers[appData.type] = producer.id;
+      user.producers[appData.type] = producer.id;
       this.broadcastMessage(
         {
           type: 'update-user',
-          data: this.getPublicUser(this.users[sessionID]),
+          data: this.getPublicUser(user),
         },
         sessionID
       );
 
       this.producers.push(producer);
+
+      if (kind === 'audio') {
+        this.audioLevelObserver?.addProducer({producerId: producer.id});
+      }
 
       setTimeout(() => {
         this.broadcastMessage({
@@ -201,17 +256,6 @@ export class Room {
         producer.close();
       });
 
-      producer.observer.on('close', () => {
-        this.producers = this.producers.filter(prod => prod.id !== producer.id);
-
-        this.broadcastMessage({
-          type: 'remove-producer',
-          data: {
-            id: producer.id,
-            kind: producer.kind,
-          },
-        });
-      });
       return {id: producer.id};
     } else {
       throw new Error('Transport is not existing');
@@ -305,6 +349,36 @@ export class Room {
     });
   }
 
+  async setUserSignal(sessionID: string, signal: UserSignal) {
+    if (this.users[sessionID] == null) throw new Error('User is not inizialized');
+    if (UserSignal[signal] == null) throw new Error('Signal does not exist');
+    const user = this.users[sessionID];
+    user.signal = signal;
+
+    this.broadcastMessage(
+      {
+        type: 'update-user',
+        data: this.getPublicUser(user),
+      },
+      user.ws
+    );
+  }
+
+  async setMicrophoneState(sessionID: string, microphoneState: MicrophoneState) {
+    if (this.users[sessionID] == null) throw new Error('User is not inizialized');
+    if (MicrophoneState[microphoneState] == null) throw new Error('Signal does not exist');
+    const user = this.users[sessionID];
+    user.microphoneState = microphoneState;
+
+    this.broadcastMessage(
+      {
+        type: 'update-user',
+        data: this.getPublicUser(user),
+      },
+      user.ws
+    );
+  }
+
   initWebsocket(ws: WebSocket, initData: WebsocketUserInfo, sessionID: string, {email}: {email: string}) {
     const transports: Transport[] = [];
     let init = false;
@@ -314,6 +388,8 @@ export class Room {
       nickname: initData.nickname,
       transports,
       producers: {},
+      microphoneState: initData.microphoneState,
+      signal: UserSignal.NONE,
     };
     logger.trace(user.id);
 
@@ -329,11 +405,7 @@ export class Room {
       this.broadcastMessage(
         {
           type: 'remove-user',
-          data: {
-            id: user.id,
-            nickname: user.nickname,
-            producers: user.producers,
-          },
+          data: this.getPublicUser(user),
         },
         ws
       );
@@ -363,11 +435,7 @@ export class Room {
             this.broadcastMessage(
               {
                 type: 'update-user',
-                data: {
-                  id: user.id,
-                  nickname: user.nickname,
-                  producers: user.producers,
-                },
+                data: this.getPublicUser(user),
               },
               ws
             );
@@ -385,11 +453,7 @@ export class Room {
       this.broadcastMessage(
         {
           type: 'add-user',
-          data: {
-            id: user.id,
-            nickname: user.nickname,
-            producers: user.producers,
-          },
+          data: this.getPublicUser(user),
         },
         ws
       );
@@ -419,6 +483,8 @@ export class Room {
       id: user.id,
       nickname: user.nickname,
       producers: user.producers,
+      signal: user.signal,
+      microphoneState: user.microphoneState,
     };
   }
 
@@ -489,10 +555,14 @@ export interface User {
     screen?: string;
   };
   transports: Transport[];
+  signal: UserSignal;
+  microphoneState: MicrophoneState;
+  role?: UserRole;
 }
 
 export interface WebsocketUserInfo {
   nickname: string;
+  microphoneState: MicrophoneState;
   producers: {
     audio?: string;
     video?: string;
@@ -505,4 +575,22 @@ export interface Message {
   to?: string;
   time: number;
   message: string;
+}
+
+export enum UserSignal {
+  NONE = 0,
+  RAISED_HAND = 1,
+  VOTED_UP = 2,
+  VOTED_DOWN = 3,
+}
+
+export enum MicrophoneState {
+  DISABLED = 0,
+  ENABLED = 1,
+  TALKING = 2,
+}
+
+export enum UserRole {
+  USER = 0,
+  MODERATOR = 1,
 }

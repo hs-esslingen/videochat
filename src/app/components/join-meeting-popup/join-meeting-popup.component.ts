@@ -65,10 +65,8 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
 
     try {
       const audioStream = await this.localMedia.getAudioTrack();
-
       if (audioStream) {
         this.setupAudioVolumeBar(audioStream);
-
         const audio = audioStream.getAudioTracks()[0];
         this.selectedAudioStream = audio.label;
       }
