@@ -111,11 +111,11 @@ export class MediaService {
           const perceivedVolume = Math.sqrt(volume);
           if (perceivedVolume > 0.1 && this.microphoneState === MicrophoneState.ENABLED) {
             this.microphoneState = MicrophoneState.TALKING;
-            // this.api.setMicrophoneState(roomId, this.microphoneState);
+            this.api.setMicrophoneState(roomId, this.microphoneState);
             this.updateObserver();
           } else if (perceivedVolume < 0.1 && this.microphoneState === MicrophoneState.TALKING) {
             this.microphoneState = MicrophoneState.ENABLED;
-            // this.api.setMicrophoneState(roomId, this.microphoneState);
+            this.api.setMicrophoneState(roomId, this.microphoneState);
             this.updateObserver();
           }
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
