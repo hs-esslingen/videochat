@@ -13,9 +13,7 @@ export class RoomService {
   private mediaSubscription?: Subscription;
   private currentUser: CurrentUser;
   private users: User[] = [];
-  nickname: string;
   constructor(private mediaSevice: MediaService, private ws: WsService, private api: ApiService) {
-    this.nickname = localStorage.getItem('nickname') as string;
     this.roomSubject = new Subject();
     this.currentUser = this.initCurrentUser();
   }
@@ -54,7 +52,8 @@ export class RoomService {
   }
 
   async connectToRoom(roomId: string, isWebcamDisabled: boolean) {
-    this.currentUser.id = await this.ws.init(roomId, this.nickname);
+    this.currentUser.nickname = this.api.displayName;
+    this.currentUser.id = await this.ws.init(roomId, this.api.displayName);
     this.mediaSubscription = (await this.mediaSevice.init(roomId, isWebcamDisabled, this.currentUser.id)).subscribe(data => {
       this.currentUser.cameraState = data.cameraState;
       this.currentUser.microphoneState = data.microphoneState;
