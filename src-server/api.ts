@@ -151,6 +151,7 @@ export class Api {
       function onMessage(e: WebSocket.MessageEvent) {
         const msg = JSON.parse(e.data as string);
         if (msg.type === 'init') {
+          if (ws.user.email == null) return;
           Room.getRoom(msg.data.roomId).initWebsocket(ws, msg.data, ws.sessionID, ws.user);
           ws.removeEventListener('message', onMessage);
         }

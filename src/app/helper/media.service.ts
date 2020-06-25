@@ -4,18 +4,8 @@ import {ApiService} from './api.service';
 import {Observable, Subscriber} from 'rxjs';
 import {WsService} from './ws.service';
 import {LocalMediaService} from './local-media.service';
-import {User, MicrophoneState} from '../model/user';
+import {User, MicrophoneState, CameraState, ScreenshareState} from '../model/user';
 import {State} from '../model/connection';
-
-export enum CameraState {
-  ENABLED = 'videocam',
-  DISABLED = 'videocam_off',
-}
-
-export enum ScreenshareState {
-  ENABLED = 'stop_screen_share',
-  DISABLED = 'screen_share',
-}
 
 @Injectable({
   providedIn: 'root',

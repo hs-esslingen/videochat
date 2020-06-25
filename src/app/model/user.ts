@@ -22,6 +22,30 @@ export class User {
   }
 }
 
+export interface CurrentUser {
+  id: string;
+  nickname: string;
+  stream: {
+    video?: MediaStream;
+    screen?: MediaStream;
+  };
+  microphoneState: MicrophoneState;
+  screenshareState: ScreenshareState;
+  cameraState: CameraState;
+  userRole: UserRole;
+  signal: UserSignal;
+}
+
+export enum CameraState {
+  ENABLED = 'videocam',
+  DISABLED = 'videocam_off',
+}
+
+export enum ScreenshareState {
+  ENABLED = 'stop_screen_share',
+  DISABLED = 'screen_share',
+}
+
 export enum MicrophoneState {
   DISABLED = 0,
   ENABLED = 1,

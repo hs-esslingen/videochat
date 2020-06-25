@@ -5,7 +5,6 @@ import {LocalMediaService} from '../../helper/local-media.service';
 
 interface JoinMeetingData {
   roomId: string;
-  nickname: string;
 }
 
 @Component({
@@ -41,7 +40,6 @@ export class JoinMeetingPopupComponent implements OnInit, OnDestroy {
     if (this.audioDevices != null) {
       clearInterval(this.intervalId);
       this.dialogRef.close({
-        nickname: this.data.nickname,
         isWebcamDisabled: this.selectedVideoStream === 'none',
       });
     }

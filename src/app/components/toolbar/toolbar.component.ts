@@ -1,23 +1,33 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {CameraState, ScreenshareState, MediaService} from '../../helper/media.service';
+import {Component, OnInit, Input, OnDestroy} from '@angular/core';
+import {MediaService} from '../../helper/media.service';
 import {MatDialog} from '@angular/material/dialog';
-import {DebugDialogComponent} from '../../pages/meeting-page/meeting-page.component';
 import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';
-import {MicrophoneState} from 'src/app/model/user';
+import {CurrentUser} from 'src/app/model/user';
+import {RoomService} from 'src/app/helper/room.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
 })
-export class ToolbarComponent implements OnInit {
-  @Input() microphoneState: MicrophoneState = MicrophoneState.ENABLED;
-  @Input() cameraState: CameraState = CameraState.DISABLED;
-  @Input() screenshareState: ScreenshareState = ScreenshareState.DISABLED;
+export class ToolbarComponent implements OnInit, OnDestroy {
+  currentUser: CurrentUser;
+  subscription?: Subscription;
 
-  constructor(readonly mediaService: MediaService, private dialog: MatDialog) {}
+  constructor(readonly mediaService: MediaService, private dialog: MatDialog, private room: RoomService) {
+    this.currentUser = room.getRoomInfo().currentUser;
+  }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.subscription = this.room.subscribe(data => {
+      this.currentUser = data.currentUser;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+  }
 
   openNicknameDialog(): void {
     const dialogRef = this.dialog.open(ChangeNicknameComponent, {
@@ -30,17 +40,5 @@ export class ToolbarComponent implements OnInit {
       console.log(result);
       if (result != null || '') this.mediaService.setNickname(result);
     });
-  }
-  async openDebugDialog() {
-    if (this.mediaService.LocalVideoProducer) {
-      const dialogRef = this.dialog.open(DebugDialogComponent, {
-        width: '1200px',
-        data: await this.mediaService.LocalVideoProducer.getStats(),
-      });
-
-      dialogRef.afterClosed().subscribe(() => {
-        console.log('The dialog was closed');
-      });
-    }
   }
 }

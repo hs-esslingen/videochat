@@ -1,15 +1,16 @@
 <div id="toolbar">
   <div class="center">
     <button class="screen-share toggle" (click)="mediaService.toggleScreenshare()"
-      [class.disabled]="screenshareState === 'stop_screen_share'">
-      <i class="material-icons">{{ screenshareState }}</i>
+      [class.disabled]="currentUser.screenshareState === 'stop_screen_share'">
+      <i class="material-icons">{{ currentUser.screenshareState }}</i>
     </button>
-    <button class="microphone toggle" (click)="mediaService.toggleMirophone()" [class.disabled]="microphoneState === 0">
-      <i class="material-icons">{{ microphoneState == 0 ? "mic_off" : "mic" }}</i>
+    <button class="microphone toggle" (click)="mediaService.toggleMirophone()"
+      [class.disabled]="currentUser.microphoneState === 0">
+      <i class="material-icons">{{ currentUser.microphoneState == 0 ? "mic_off" : "mic" }}</i>
     </button>
     <button class="camera toggle" (click)="mediaService.toggleCamera()"
-      [class.disabled]="cameraState === 'videocam_off'">
-      <i class="material-icons">{{ cameraState }}</i>
+      [class.disabled]="currentUser.cameraState === 'videocam_off'">
+      <i class="material-icons">{{ currentUser.cameraState }}</i>
     </button>
   </div>
 </div>

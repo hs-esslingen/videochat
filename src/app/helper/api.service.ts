@@ -11,6 +11,7 @@ export class ApiService {
   public initialLoading = true;
   public redirectUrl: string | undefined;
   public isLoggedIn: boolean | undefined;
+  public displayName = '';
   private moodleCourses:
     | {
         fullname: string;
@@ -28,11 +29,12 @@ export class ApiService {
     return this.token;
   }
 
-  public async checkLogin() {
+  public async checkLogin(): Promise<boolean> {
     try {
       const data = (await this.http.get('/auth/check').toPromise()) as {email: string; displayName: string};
       window.localStorage.setItem('email', data.email);
       window.localStorage.setItem('displayName', data.displayName);
+      this.displayName = data.displayName;
       this.isLoggedIn = true;
       return true;
     } catch (e) {
@@ -40,7 +42,7 @@ export class ApiService {
         if (this.token) {
           await this.jwtLogin();
           this.isLoggedIn = true;
-          return true;
+          return this.checkLogin();
         }
       } catch (e) {
         // ingore error
