@@ -1,7 +1,5 @@
 <h1 mat-dialog-title>Raum: {{data.roomId}}</h1>
 <div mat-dialog-content>
-  <label for="nickname">Anzeigename:</label>
-  <input id="nickname" cdkFocusInitial matInput [(ngModel)]="data.nickname" (keydown.enter)="close()">
   <label>Webcam:</label>
   <mat-select [value]="selectedVideoStream" (selectionChange)="changeVideoStream($event.value)">
     <mat-option value="none">Deaktiviert</mat-option>

@@ -1,11 +1,11 @@
 import {Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
-import {ScreenshareState, CameraState, MediaService} from '../../helper/media.service';
+import {MediaService} from '../../helper/media.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {LocalMediaService} from '../../helper/local-media.service';
 import {JoinMeetingPopupComponent} from '../../components/join-meeting-popup/join-meeting-popup.component';
 import {ChatService} from '../../helper/chat.service';
-import {User, UserSignal, UserRole, MicrophoneState} from 'src/app/model/user';
+import {User, UserSignal, UserRole, MicrophoneState, CameraState, ScreenshareState, CurrentUser} from 'src/app/model/user';
 import {RoomService} from 'src/app/helper/room.service';
 import {ApiService} from 'src/app/helper/api.service';
 
@@ -21,31 +21,19 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('webcams') webcams: ElementRef<HTMLDivElement> | undefined;
   // Variables for video
   autoGainControl: boolean | undefined;
-  microphoneState: MicrophoneState = MicrophoneState.ENABLED;
-  cameraState: CameraState = CameraState.DISABLED;
-  screenshareState: ScreenshareState = ScreenshareState.DISABLED;
-  localStream: MediaStream | undefined;
-  localSchreenshareStream: MediaStream | undefined;
+  currentUser: CurrentUser;
   roomId!: string;
   moveTimout: number | undefined;
   isToolbarHidden = false;
   isMobile = false;
   roomUrl: string | undefined;
   duplicateSession = false;
+  numWebcams = 0;
 
   screenShareUser: User | undefined;
   screenShareStream: MediaStream | undefined;
   webcamHeight = 0.2;
 
-  // Variables for Users
-  currentUser: User = {
-    id: '0',
-    nickname: 'User',
-    producers: {},
-    microphoneState: MicrophoneState.DISABLED,
-    signal: UserSignal.NONE,
-    userRole: UserRole.USER,
-  };
   users: User[] = [];
 
   // Variables for sidebar
@@ -65,6 +53,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {
     const webcamHeight = window.localStorage.getItem('webcamHeight');
     if (webcamHeight != null) this.webcamHeight = parseFloat(webcamHeight);
+    this.currentUser = room.getRoomInfo().currentUser;
   }
 
   @HostListener('window:resize', ['$event'])
@@ -80,17 +69,17 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.webcams?.nativeElement)
       this.element.nativeElement.style.setProperty('--max-video-width', (this.webcams?.nativeElement?.clientHeight / 3) * 4 - 5 + 'px');
 
-    let numVideos = this.users.filter(user => user.consumers?.video != null).length;
-    if (this.localStream != null) numVideos++;
+    this.numWebcams = this.users.filter(user => user.consumers?.video != null).length;
+    if (this.currentUser.stream.video != null) this.numWebcams++;
 
     const clientWidth = this.webcams?.nativeElement?.clientWidth;
     const clientHeight = this.webcams?.nativeElement?.clientHeight;
     if (clientHeight && clientWidth) {
       let colums = 1;
-      while ((1 / (colums + 1)) * clientWidth * (3 / 4) * Math.ceil(numVideos / colums) > clientHeight) {
+      while ((1 / (colums + 1)) * clientWidth * (3 / 4) * Math.ceil(this.numWebcams / colums) > clientHeight) {
         colums++;
       }
-      const maxHeightPerElement = clientHeight / Math.ceil(numVideos / colums);
+      const maxHeightPerElement = clientHeight / Math.ceil(this.numWebcams / colums);
       const maxWidthPerElement = clientWidth / colums;
       const maxRatio = Math.min(Math.min((maxHeightPerElement * (4 / 3)) / clientWidth, maxWidthPerElement / clientWidth), 1);
       this.element.nativeElement.style.setProperty('--max-video-flex-basis', maxRatio * 100 - 1 + '%');
@@ -130,10 +119,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       // don't actually connect if demo is enabled
       if (this.demo) return;
 
-      // Initialize User
-      this.currentUser.nickname = this.mediaService.nickname;
-      this.currentUser.microphoneState = this.microphoneState;
-
       this.roomId = params.get('roomId') as string;
       const dialogRef = this.dialog.open(JoinMeetingPopupComponent, {
         width: '400px',
@@ -153,19 +138,13 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
         try {
           await this.room.connectToRoom(this.roomId, result.isWebcamDisabled);
-          this.room.mediaObservable?.subscribe(data => {
-            this.autoGainControl = data.autoGainControl;
-            this.cameraState = data.cameraState;
-            this.microphoneState = data.microphoneState;
-            this.currentUser.microphoneState = this.microphoneState;
-            this.screenshareState = data.screenshareState;
-            this.localStream = data.localStream;
-            this.localSchreenshareStream = data.localScreenshareStream;
-            this.currentUser.nickname = this.mediaService.nickname;
+
+          this.room.subscribe(data => {
             this.users = data.users;
+            this.currentUser = data.currentUser;
 
             let screenShareUser = this.users.find(item => item.consumers?.screen != null);
-            if (this.screenshareState === ScreenshareState.ENABLED) screenShareUser = this.currentUser;
+            if (this.currentUser.screenshareState === ScreenshareState.ENABLED) screenShareUser = new User(this.currentUser.id, this.currentUser.nickname);
 
             if (screenShareUser != null && screenShareUser !== this.screenShareUser) {
               this.screenShareStream = this.getScreenShareStream(screenShareUser);
@@ -193,7 +172,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getScreenShareStream(user: User) {
     if (this.demo) return new MediaStream();
-    if (user === this.currentUser) return this.localSchreenshareStream;
+    if (user.id === this.currentUser.id) return this.currentUser.stream.screen;
     if (user.consumers?.screen) return new MediaStream([user.consumers.screen?.track]);
     return undefined;
   }
@@ -246,7 +225,9 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     this.currentUser = {
       id: '0',
       nickname: 'User',
-      producers: {},
+      stream: {},
+      cameraState: CameraState.DISABLED,
+      screenshareState: ScreenshareState.DISABLED,
       microphoneState: MicrophoneState.TALKING,
       signal: UserSignal.NONE,
       userRole: UserRole.MODERATOR,

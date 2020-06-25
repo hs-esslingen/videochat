@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
-import {MeetingPageComponent} from './pages/meeting-page/meeting-page.component';
 import {ThankYouPageComponent} from './pages/thank-you-page/thank-you-page.component';
 import {OverviewPageComponent} from './pages/overview-page/overview-page.component';
 import {PrivacyPolicyComponent} from './pages/privacy-policy/privacy-policy.component';
@@ -17,7 +16,7 @@ const routes: Routes = [
   {path: 'login', component: LoginPageComponent},
   // TODO: Create lecture Overiview Page
   // { path: "lecture", component: LecturePageComponent, canActivate: [AuthGuard]  },
-  {path: ':roomId', component: MeetingPageComponent, canActivate: [AuthGuard]},
+  {path: ':roomId', component: LecturePageComponent, canActivate: [AuthGuard]},
   {path: ':roomId/thank-you', component: ThankYouPageComponent, canActivate: [AuthGuard]},
   {path: 'lecture/:roomId', component: LecturePageComponent, canActivate: [AuthGuard]},
   {path: '**', component: OverviewPageComponent, canActivate: [AuthGuard]},
