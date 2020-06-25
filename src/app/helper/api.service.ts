@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {TransportOptions, RtpParameters, MediaKind, RtpCapabilities, DtlsParameters} from 'mediasoup-client/lib/types';
-import {User} from '../model/user';
+import {User, UserSignal, MicrophoneState} from '../model/user';
 
 @Injectable({
   providedIn: 'root',
@@ -164,5 +164,21 @@ export class ApiService {
 
   public getUsers(roomId: string): Promise<User[]> {
     return this.http.get(`/api/room/${roomId}/users`).toPromise() as Promise<User[]>;
+  }
+
+  public setUserSignal(roomId: string, signal: UserSignal) {
+    return this.http
+      .post(`/api/room/${roomId}/user-signal`, {
+        signal,
+      })
+      .toPromise() as Promise<object>;
+  }
+
+  public setMicrophoneState(roomId: string, microphoneState: MicrophoneState) {
+    return this.http
+      .post(`/api/room/${roomId}/microphone-state`, {
+        microphoneState,
+      })
+      .toPromise() as Promise<object>;
   }
 }

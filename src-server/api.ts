@@ -99,6 +99,24 @@ export class Api {
       res.status(201).send();
     });
 
+    this.api.post('/room/:roomId/user-signal', async (req, res) => {
+      try {
+        Room.getRoom(req.params.roomId).setUserSignal(req.sessionID as string, req.body.signal);
+        res.status(201).send();
+      } catch (error) {
+        res.status(400).send(error);
+      }
+    });
+
+    this.api.post('/room/:roomId/microphone-state', async (req, res) => {
+      try {
+        Room.getRoom(req.params.roomId).setMicrophoneState(req.sessionID as string, req.body.microphoneState);
+        res.status(201).send();
+      } catch (error) {
+        res.status(400).send(error);
+      }
+    });
+
     this.api.get('/moodle/courses', async (req, res) => {
       const params = new URLSearchParams();
       params.append('wstoken', req.query.token);

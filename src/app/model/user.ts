@@ -5,7 +5,6 @@ export class User {
   public nickname: string;
   public signal: UserSignal = UserSignal.NONE;
   public microphoneState: MicrophoneState = MicrophoneState.DISABLED;
-  public isTalking = false;
   public userRole: UserRole = UserRole.USER;
   public producers: {
     audio?: string;
@@ -24,8 +23,9 @@ export class User {
 }
 
 export enum MicrophoneState {
-  ENABLED = 'mic',
-  DISABLED = 'mic_off',
+  DISABLED = 0,
+  ENABLED = 1,
+  TALKING = 2,
 }
 
 export enum UserRole {
