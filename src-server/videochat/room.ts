@@ -378,7 +378,7 @@ export class Room {
       .map(user => this.getPublicUser(user));
   }
 
-  async setUserSignal(sessionID: string, signal: UserSignal) {
+  setUserSignal(sessionID: string, signal: UserSignal) {
     if (this.users[sessionID] == null) throw new Error('User is not inizialized');
     if (UserSignal[signal] == null) throw new Error('Signal does not exist');
     const user = this.users[sessionID];
@@ -434,23 +434,6 @@ export class Room {
 
       // Check if seesion id already exists
       logger.info(`${this.roomId}: ${user.nickname || 'User'} (${email}) joined`);
-      this.broadcastMessage(
-        {
-          type: 'add-user',
-          data: this.getPublicUser(user),
-        },
-        ws
-      );
-      this.users[sessionID] = user;
-      ws.send(
-        JSON.stringify({
-          type: 'init',
-          data: {
-            id: user.id,
-          },
-        })
-      );
-      this.websockets.push(ws);
     } else if (this.users[sessionID].state === UserConnectionState.DISCONNECTED) {
       user = this.users[sessionID];
       user.ws = ws;
@@ -464,6 +447,23 @@ export class Room {
       ws.close();
       return;
     }
+    this.broadcastMessage(
+      {
+        type: 'add-user',
+        data: this.getPublicUser(user),
+      },
+      ws
+    );
+    this.users[sessionID] = user;
+    ws.send(
+      JSON.stringify({
+        type: 'init',
+        data: {
+          id: user.id,
+        },
+      })
+    );
+    this.websockets.push(ws);
     logger.trace(user.id);
 
     ws.on('close', () => {
