@@ -81,7 +81,7 @@ export class Api {
       res.json(Room.getRoom(req.params.roomId).getUsers());
     });
 
-    this.api.get('/room/:roomId/restart-ice', async (req, res) => {
+    this.api.post('/room/:roomId/restart-ice', async (req, res) => {
       try {
         const data = await Room.getRoom(req.params.roomId).restartIce(req.sessionID as string, req.body.id);
         res.json(data);

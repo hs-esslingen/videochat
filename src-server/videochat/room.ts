@@ -36,6 +36,8 @@ export class Room {
           const producerId = user.producers[type as 'audio' | 'video' | 'screen'];
           if (producerId) {
             const producer = this.producers[producerId];
+            if (producer.paused) continue;
+            if (producer.closed) continue;
             logger.debug(`${user.nickname} - ${type} - ${producer?.score.map(i => i.score).join(',')}`);
             if (producer?.score.reduce((a, b) => a + b.score, 0) === 0 && user.ws.OPEN) {
               user.state = UserConnectionState.DANGLING;
