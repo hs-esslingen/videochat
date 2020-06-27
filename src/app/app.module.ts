@@ -11,7 +11,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {LoginPageComponent} from './pages/login-page/login-page.component';
 import {HeaderComponent} from './components/header/header.component';
 import {ThankYouPageComponent} from './pages/thank-you-page/thank-you-page.component';
-import {UserComponent} from './components/user/user.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {OverviewPageComponent, AllowUriComponent} from './pages/overview-page/overview-page.component';
 import {PrivacyPolicyComponent} from './pages/privacy-policy/privacy-policy.component';
@@ -37,7 +36,6 @@ import {SettingsMasterComponent} from './components/settings-master/settings-mas
     LoginPageComponent,
     HeaderComponent,
     ThankYouPageComponent,
-    UserComponent,
     OverviewPageComponent,
     PrivacyPolicyComponent,
     FooterComponent,
