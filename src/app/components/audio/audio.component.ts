@@ -17,6 +17,7 @@ export class AudioComponent implements OnInit, OnChanges {
     this.audioStream = new MediaStream([this.audio]);
   }
   ngOnChanges(): void {
+    if (!(this.audio instanceof MediaStreamTrack)) return;
     this.audioStream = new MediaStream([this.audio]);
   }
 }

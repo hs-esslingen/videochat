@@ -49,6 +49,7 @@ export class MediaService {
   private users: User[] = [];
   private userId: string | undefined;
   private audioIntervalId = 0;
+  private audioCtx?: AudioContext;
 
   public nickname: string;
 
@@ -81,44 +82,7 @@ export class MediaService {
       this.cameraState = CameraState.DISABLED;
     }
 
-    try {
-      const audioTracks = await this.localMedia.getAudioTrack();
-      if (audioTracks && audioTracks.getAudioTracks().length > 0) {
-        this.microphoneState = MicrophoneState.ENABLED;
-        await this.sendAudio(audioTracks);
-
-        const audioCtx = new AudioContext();
-        const analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 2048;
-        const audioStream = audioCtx.createMediaStreamSource(audioTracks);
-        audioStream.connect(analyser);
-        const array = new Uint8Array(analyser.fftSize);
-
-        this.audioIntervalId = (setInterval(() => {
-          analyser?.getByteTimeDomainData(array);
-          const volume = Math.max(0, Math.max(...array) - 128) / 128;
-          // convert to logarythmic, this will this will represent actual volume better
-          const perceivedVolume = Math.sqrt(volume);
-          if (perceivedVolume > 0.1 && this.microphoneState === MicrophoneState.ENABLED) {
-            this.microphoneState = MicrophoneState.TALKING;
-            this.api.setMicrophoneState(roomId, this.microphoneState);
-            this.updateObserver();
-          } else if (perceivedVolume < 0.1 && this.microphoneState === MicrophoneState.TALKING) {
-            this.microphoneState = MicrophoneState.ENABLED;
-            this.api.setMicrophoneState(roomId, this.microphoneState);
-            this.updateObserver();
-          }
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        }, 500) as any) as number;
-        this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
-      } else {
-        this.microphoneState = MicrophoneState.DISABLED;
-        this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
-      }
-    } catch (error) {
-      console.log('AUDIO ERROR');
-      this.microphoneState = MicrophoneState.DISABLED;
-    }
+    await this.setupAudio();
 
     this.state = State.CONNECTED;
 
@@ -135,6 +99,47 @@ export class MediaService {
     return observable;
   }
 
+  async setupAudio() {
+    try {
+      const audioTracks = await this.localMedia.getAudioTrack();
+      if (audioTracks && audioTracks.getAudioTracks().length > 0) {
+        this.microphoneState = MicrophoneState.ENABLED;
+        await this.sendAudio(audioTracks);
+
+        this.audioCtx = new AudioContext();
+        const analyser = this.audioCtx.createAnalyser();
+        analyser.fftSize = 2048;
+        const audioStream = this.audioCtx.createMediaStreamSource(audioTracks);
+        audioStream.connect(analyser);
+        const array = new Uint8Array(analyser.fftSize);
+
+        this.audioIntervalId = (setInterval(() => {
+          analyser?.getByteTimeDomainData(array);
+          const volume = Math.max(0, Math.max(...array) - 128) / 128;
+          // convert to logarythmic, this will this will represent actual volume better
+          const perceivedVolume = Math.sqrt(volume);
+          if (perceivedVolume > 0.1 && this.microphoneState === MicrophoneState.ENABLED) {
+            this.microphoneState = MicrophoneState.TALKING;
+            this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
+            this.updateObserver();
+          } else if (perceivedVolume < 0.1 && this.microphoneState === MicrophoneState.TALKING) {
+            this.microphoneState = MicrophoneState.ENABLED;
+            this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
+            this.updateObserver();
+          }
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        }, 500) as any) as number;
+        this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
+      } else {
+        this.microphoneState = MicrophoneState.DISABLED;
+        this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
+      }
+    } catch (error) {
+      console.log('AUDIO ERROR');
+      this.microphoneState = MicrophoneState.DISABLED;
+    }
+  }
+
   setNickname(nickname: string) {
     this.nickname = nickname;
     window.localStorage.setItem('nickname', nickname);
@@ -142,8 +147,11 @@ export class MediaService {
     this.updateObserver();
   }
 
-  toggleMirophone() {
+  async toggleMirophone() {
     if (this.state !== State.CONNECTED) return;
+    if (this.localAudioProducer == null || this.localAudioProducer.closed) {
+      await this.setupAudio();
+    }
     if (this.localAudioProducer?.paused) {
       this.localAudioProducer.resume();
       this.microphoneState = MicrophoneState.ENABLED;
@@ -313,6 +321,24 @@ export class MediaService {
             this.updateObserver();
           }
           break;
+        case 'remove-producer':
+          {
+            console.log('REOMVING PRODUCER');
+            if (msg.data.id === this.localScreenProducer?.id) {
+              this.screenshareState = ScreenshareState.DISABLED;
+              this.localScreenProducer?.close();
+              this.localScreenProducer = undefined;
+              this.updateObserver();
+            } else if (msg.data.id === this.localAudioProducer?.id) {
+              this.microphoneState = MicrophoneState.DISABLED;
+              this.localAudioProducer?.close();
+              this.localAudioProducer = undefined;
+              clearInterval(this.audioIntervalId);
+              this.audioCtx?.close();
+              this.updateObserver();
+            }
+          }
+          break;
         default:
           break;
       }
@@ -464,6 +490,7 @@ export class MediaService {
       this.localMedia.closeAudio();
       this.localMedia.closeVideo();
       clearInterval(this.audioIntervalId);
+      this.audioCtx?.close();
     }
     this.state = State.DISCONNECTED;
   }
