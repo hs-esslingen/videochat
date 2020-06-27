@@ -3,7 +3,6 @@ import * as mediasoup from 'mediasoup';
 import * as WebSocket from 'ws';
 import {MyWebSocket} from 'src-server/server';
 import {getLogger} from 'log4js';
-import {Producer} from 'mediasoup-client/lib/types';
 
 const logger = getLogger('room');
 
@@ -17,6 +16,7 @@ export class Room {
   private producers: mediasoup.types.Producer[] = [];
   private websockets: WebSocket[] = [];
   private users: {[sessionId: string]: User} = {};
+  private currentScreenshare?: mediasoup.types.Producer;
   private audioLevelObserver: AudioLevelObserver | undefined;
 
   private messages: Message[] = [];
@@ -212,6 +212,14 @@ export class Room {
       if (this.users[sessionID] == null) throw new Error('User is not inizialized');
       const user = this.users[sessionID];
       appData.userId = user.id;
+
+      if (appData.type === 'screen' && this.currentScreenshare != null) {
+        const user = Object.keys(this.users)
+          .map(k => this.users[k])
+          .find(u => u.id === this.currentScreenshare?.appData.userId);
+        if (user) this.closeProducer(this.currentScreenshare, user);
+      }
+
       const producer = await trans.produce({
         kind,
         rtpParameters,
@@ -236,6 +244,8 @@ export class Room {
         sessionID
       );
 
+      if (appData.type === 'screen') this.currentScreenshare = producer;
+
       this.producers.push(producer);
 
       if (kind === 'audio') {
@@ -256,38 +266,48 @@ export class Room {
         producer.close();
       });
 
+      producer.on('close', () => {
+        if (producer === this.currentScreenshare) this.currentScreenshare = undefined;
+      });
+
       return {id: producer.id};
     } else {
       throw new Error('Transport is not existing');
     }
   }
 
-  closeProducer(id: string, sessionID: string) {
+  closeProducer(producer: mediasoup.types.Producer, user: User) {
     return new Promise(res => {
-      if (this.users[sessionID] == null) throw new Error('User is not inizialized');
-      for (const type in this.users[sessionID].producers) {
-        if (Object.prototype.hasOwnProperty.call(this.users[sessionID].producers, type)) {
-          const producerId = this.users[sessionID].producers[type as 'audio' | 'video' | 'screen'];
+      user.producers[producer.appData.type as 'audio' | 'video' | 'screen'] = undefined;
+      this.broadcastMessage({
+        type: 'remove-producer',
+        data: {
+          id: producer.id,
+          kind: producer.kind,
+        },
+      });
+
+      this.broadcastMessage({
+        type: 'update-user',
+        data: this.getPublicUser(user),
+      });
+      setTimeout(() => {
+        producer.close();
+        res();
+      }, 300);
+    });
+  }
+
+  findAndCloseProducer(id: string, sessionId: string) {
+    return new Promise(res => {
+      if (this.users[sessionId] == null) throw new Error('User is not inizialized');
+      for (const type in this.users[sessionId].producers) {
+        if (Object.prototype.hasOwnProperty.call(this.users[sessionId].producers, type)) {
+          const producerId = this.users[sessionId].producers[type as 'audio' | 'video' | 'screen'];
           if (producerId === id) {
             const producer = this.producers.find(prod => prod.id === id);
-            this.users[sessionID].producers[type as 'audio' | 'video' | 'screen'] = undefined;
             if (producer) {
-              this.broadcastMessage({
-                type: 'remove-producer',
-                data: {
-                  id: producer.id,
-                  kind: producer.kind,
-                },
-              });
-
-              this.broadcastMessage({
-                type: 'update-user',
-                data: this.getPublicUser(this.users[sessionID]),
-              });
-              setTimeout(() => {
-                producer.close();
-                res();
-              }, 300);
+              res(this.closeProducer(producer, this.users[sessionId]));
             }
           }
         }
