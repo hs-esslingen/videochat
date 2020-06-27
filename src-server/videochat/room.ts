@@ -37,7 +37,7 @@ export class Room {
           if (producerId) {
             const producer = this.producers[producerId];
             logger.debug(`${user.nickname} - ${type} - ${producer?.score.map(i => i.score).join(',')}`);
-            if (producer?.score.map(a => a.score).reduce((a, b) => a + b) === 0 && user.ws.OPEN) {
+            if (producer?.score.reduce((a, b) => a + b.score, 0) === 0 && user.ws.OPEN) {
               user.state = UserConnectionState.DANGLING;
               logger.debug(`${user.nickname} - ${type} - lost connection`);
               user.ws.send(
