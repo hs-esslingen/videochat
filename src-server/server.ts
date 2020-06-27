@@ -227,7 +227,7 @@ if (process.env.NODE_ENV === 'production') {
 app.get('/auth/moodle', (req, res) => {
   res.set('Content-Type', 'text/html; charset=UTF-8');
   let token;
-  const queryString: string = req.query.token;
+  const queryString: string = req.query.token as string;
   if (queryString) {
     const split = queryString.split('://token=');
     if (split.length > 1) {

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {TransportOptions, RtpParameters, MediaKind, RtpCapabilities, DtlsParameters} from 'mediasoup-client/lib/types';
+import {TransportOptions, RtpParameters, RtpCapabilities, DtlsParameters, IceParameters} from 'mediasoup-client/lib/types';
 import {User, UserSignal, MicrophoneState} from '../model/user';
 
 @Injectable({
@@ -130,22 +130,6 @@ export class ApiService {
       .toPromise() as Promise<object>;
   }
 
-  public getProducers(
-    roomId: string
-  ): Promise<
-    {
-      kind: MediaKind;
-      producerId: string;
-    }[]
-  > {
-    return this.http.get(`/api/room/${roomId}/producers`).toPromise() as Promise<
-      {
-        kind: MediaKind;
-        producerId: string;
-      }[]
-    >;
-  }
-
   public addConsumer(roomId: string, id: string, rtpCapabilities: RtpCapabilities, producerId: string): Promise<{id: string; rtpParameters: RtpParameters}> {
     return this.http
       .post(`/api/room/${roomId}/add-consumer`, {
@@ -162,6 +146,14 @@ export class ApiService {
         id,
       })
       .toPromise();
+  }
+
+  public restartIce(roomId: string, id: string): Promise<IceParameters> {
+    return this.http
+      .post(`/api/room/${roomId}/restart-ice`, {
+        id,
+      })
+      .toPromise() as Promise<IceParameters>;
   }
 
   public getUsers(roomId: string): Promise<User[]> {

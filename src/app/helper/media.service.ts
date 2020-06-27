@@ -268,6 +268,17 @@ export class MediaService {
     this.device.load({routerRtpCapabilities});
   }
 
+  private async restartIce() {
+    if (this.sendTransport != null) {
+      const iceParameters = await this.api.restartIce(this.roomId as string, this.sendTransport.id);
+      this.sendTransport.restartIce({iceParameters});
+    }
+    if (this.recvTransport != null) {
+      const iceParameters = await this.api.restartIce(this.roomId as string, this.recvTransport.id);
+      this.recvTransport.restartIce({iceParameters});
+    }
+  }
+
   private setupWebsocket() {
     this.ws.messageObserver?.subscribe(msg => {
       switch (msg.type) {
@@ -319,6 +330,11 @@ export class MediaService {
             const user: User = msg.data;
             this.users = this.users.filter(item => item.id !== user.id);
             this.updateObserver();
+          }
+          break;
+        case 'reconnect':
+          {
+            this.restartIce();
           }
           break;
         case 'remove-producer':

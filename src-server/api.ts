@@ -77,12 +77,17 @@ export class Api {
       }
     });
 
-    this.api.get('/room/:roomId/producers', async (req, res) => {
-      res.json(Room.getRoom(req.params.roomId).getProducers());
-    });
-
     this.api.get('/room/:roomId/users', async (req, res) => {
       res.json(Room.getRoom(req.params.roomId).getUsers());
+    });
+
+    this.api.get('/room/:roomId/restart-ice', async (req, res) => {
+      try {
+        const data = await Room.getRoom(req.params.roomId).restartIce(req.sessionID as string, req.body.id);
+        res.json(data);
+      } catch (error) {
+        res.status(400).send(error);
+      }
     });
 
     this.api.post('/room/:roomId/add-consumer', async (req, res) => {
@@ -119,7 +124,7 @@ export class Api {
 
     this.api.get('/moodle/courses', async (req, res) => {
       const params = new URLSearchParams();
-      params.append('wstoken', req.query.token);
+      params.append('wstoken', req.query.token as string);
       params.append('moodlewssettingfilter', 'true');
       params.append('moodlewssettingfileurl', 'true');
       params.append('wsfunction', 'core_webservice_get_site_info');
@@ -151,7 +156,7 @@ export class Api {
       function onMessage(e: WebSocket.MessageEvent) {
         const msg = JSON.parse(e.data as string);
         if (msg.type === 'init') {
-          if (ws.user.email == null) return;
+          if (ws.user?.email == null) return;
           Room.getRoom(msg.data.roomId).initWebsocket(ws, msg.data, ws.sessionID, ws.user);
           ws.removeEventListener('message', onMessage);
         }

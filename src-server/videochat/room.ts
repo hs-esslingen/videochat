@@ -1,4 +1,4 @@
-import {Worker, Router, MediaKind, RtpParameters, Transport, DtlsParameters, RtpCapabilities, AudioLevelObserver} from 'mediasoup/lib/types';
+import {Worker, Router, MediaKind, RtpParameters, DtlsParameters, RtpCapabilities, AudioLevelObserver, WebRtcTransport} from 'mediasoup/lib/types';
 import * as mediasoup from 'mediasoup';
 import * as WebSocket from 'ws';
 import {MyWebSocket} from 'src-server/server';
@@ -13,28 +13,44 @@ export class Room {
   private router!: Router;
   private transports: {[id: string]: mediasoup.types.WebRtcTransport} = {};
   private consumers: {[id: string]: mediasoup.types.Consumer} = {};
-  private producers: mediasoup.types.Producer[] = [];
+  private producers: {[id: string]: mediasoup.types.Producer} = {};
   private websockets: WebSocket[] = [];
   private users: {[sessionId: string]: User} = {};
   private currentScreenshare?: mediasoup.types.Producer;
   private audioLevelObserver: AudioLevelObserver | undefined;
+  private checkConnectionInterval: NodeJS.Timeout;
 
   private messages: Message[] = [];
 
   private constructor(private roomId: string) {
     // Delete Room if nobody has joined after 10 Seconds
     setTimeout(() => {
-      if (Room.rooms[roomId] && Object.keys(Room.rooms[roomId].users).length === 0 && this === Room.rooms[roomId]) {
-        logger.warn(
-          'Deleting Room ' +
-            this.roomId +
-            ' 5s timeout, this only happens if a user joined and left very fast \n' +
-            'without establishing a websocket connection'
-        );
-        this.router?.close();
-        delete Room.rooms[this.roomId];
-      }
+      this.checkRoomDeletion();
     }, 5000);
+
+    this.checkConnectionInterval = (setInterval(() => {
+      for (const sessionId in this.users) {
+        const user = this.users[sessionId];
+        if (user.state !== UserConnectionState.CONNECTED) continue;
+        for (const type in user.producers) {
+          const producerId = user.producers[type as 'audio' | 'video' | 'screen'];
+          if (producerId) {
+            const producer = this.producers[producerId];
+            logger.debug(`${user.nickname} - ${type} - ${producer?.score.map(i => i.score).join(',')}`);
+            if (producer?.score.map(a => a.score).reduce((a, b) => a + b) === 0 && user.ws.OPEN) {
+              user.state = UserConnectionState.DANGLING;
+              logger.debug(`${user.nickname} - ${type} - lost connection`);
+              user.ws.send(
+                JSON.stringify({
+                  type: 'reconnect',
+                  data: {},
+                })
+              );
+            }
+          }
+        }
+      }
+    }, 1000) as unknown) as NodeJS.Timeout;
 
     this.getRouter().then(async () => {
       // this.audioLevelObserver = await this.router.createAudioLevelObserver({
@@ -227,9 +243,9 @@ export class Room {
       });
 
       // Close old Producer if it is still open
-      if (user.producers[appData.type] != null) {
-        const oldProdId = user.producers[appData.type];
-        const oldProd = this.producers.find(prod => prod.id === oldProdId);
+      const oldProdId = user.producers[appData.type];
+      if (oldProdId != null) {
+        const oldProd = this.producers[oldProdId];
         if (oldProd && !oldProd.closed) {
           oldProd.close();
         }
@@ -246,7 +262,7 @@ export class Room {
 
       if (appData.type === 'screen') this.currentScreenshare = producer;
 
-      this.producers.push(producer);
+      this.producers[producer.id] = producer;
 
       if (kind === 'audio') {
         this.audioLevelObserver?.addProducer({producerId: producer.id});
@@ -305,22 +321,13 @@ export class Room {
         if (Object.prototype.hasOwnProperty.call(this.users[sessionId].producers, type)) {
           const producerId = this.users[sessionId].producers[type as 'audio' | 'video' | 'screen'];
           if (producerId === id) {
-            const producer = this.producers.find(prod => prod.id === id);
+            const producer = this.producers[producerId];
             if (producer) {
               res(this.closeProducer(producer, this.users[sessionId]));
             }
           }
         }
       }
-    });
-  }
-
-  getProducers() {
-    return this.producers.map(prod => {
-      return {
-        producerId: prod.id,
-        kind: prod.kind,
-      };
     });
   }
 
@@ -363,10 +370,10 @@ export class Room {
   }
 
   getUsers() {
-    return Object.keys(this.users).map(sessionId => {
-      const user = this.users[sessionId];
-      return this.getPublicUser(user);
-    });
+    return Object.keys(this.users)
+      .map(sessionId => this.users[sessionId])
+      .filter(user => user.state === UserConnectionState.CONNECTED)
+      .map(user => this.getPublicUser(user));
   }
 
   async setUserSignal(sessionID: string, signal: UserSignal) {
@@ -399,24 +406,68 @@ export class Room {
     );
   }
 
+  async restartIce(sessionId: string, id: string) {
+    const user = this.users[sessionId];
+    if (user == null) throw new Error('User is not inizialized');
+    user.state = UserConnectionState.CONNECTED;
+    const transport = user.transports.find(t => t.id === id);
+    if (transport == null) throw new Error('Transport not found');
+    return transport.restartIce();
+  }
+
   initWebsocket(ws: WebSocket, initData: WebsocketUserInfo, sessionID: string, {email}: {email: string}) {
-    const transports: Transport[] = [];
-    let init = false;
-    const user: User = {
-      id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-      ws: ws,
-      nickname: initData.nickname,
-      transports,
-      producers: {},
-      microphoneState: initData.microphoneState,
-      signal: UserSignal.NONE,
-    };
+    const transports: WebRtcTransport[] = [];
+    let user: User;
+    if (this.users[sessionID] == null) {
+      user = {
+        id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+        ws: ws,
+        nickname: initData.nickname,
+        transports,
+        producers: {},
+        microphoneState: initData.microphoneState,
+        signal: UserSignal.NONE,
+        state: UserConnectionState.CONNECTED,
+      };
+
+      // Check if seesion id already exists
+      logger.info(`${this.roomId}: ${user.nickname || 'User'} (${email}) joined`);
+      this.broadcastMessage(
+        {
+          type: 'add-user',
+          data: this.getPublicUser(user),
+        },
+        ws
+      );
+      this.users[sessionID] = user;
+      ws.send(
+        JSON.stringify({
+          type: 'init',
+          data: {
+            id: user.id,
+          },
+        })
+      );
+      this.websockets.push(ws);
+    } else if (this.users[sessionID].state === UserConnectionState.DISCONNECTED) {
+      user = this.users[sessionID];
+      user.ws = ws;
+      logger.info(`${this.roomId}: ${user.nickname || 'User'} (${email}) reconnected`);
+    } else {
+      ws.send(
+        JSON.stringify({
+          type: 'error-duplicate-session',
+        })
+      );
+      ws.close();
+      return;
+    }
     logger.trace(user.id);
 
     ws.on('close', () => {
-      if (init === false) return;
       logger.info(`${this.roomId}: ${user.nickname || 'User'} (${email}) left`);
-      delete this.users[sessionID];
+      this.users[sessionID].state = UserConnectionState.DISCONNECTED;
+      this.users[sessionID].producers = {};
 
       for (const transport of transports) {
         transport.close();
@@ -432,16 +483,7 @@ export class Room {
 
       this.websockets = this.websockets.filter(item => item !== ws);
 
-      if (Object.keys(this.users).length === 0) {
-        logger.info('Deleting Room ' + this.roomId);
-        this.router.close();
-        // Only delete room from rooms array if the room is the current room
-        if (this === Room.rooms[this.roomId]) {
-          delete Room.rooms[this.roomId];
-        } else {
-          logger.warn('Did not delete room globally, because it was overwritten');
-        }
-      }
+      this.checkRoomDeletion();
     });
 
     ws.on('message', e => {
@@ -466,35 +508,24 @@ export class Room {
           break;
       }
     });
+  }
 
-    // Check if seesion id already exists
-    if (this.users[sessionID] == null) {
-      logger.info(`${this.roomId}: ${user.nickname || 'User'} (${email}) joined`);
-      this.broadcastMessage(
-        {
-          type: 'add-user',
-          data: this.getPublicUser(user),
-        },
-        ws
-      );
-      this.users[sessionID] = user;
-      ws.send(
-        JSON.stringify({
-          type: 'init',
-          data: {
-            id: user.id,
-          },
-        })
-      );
-      init = true;
-      this.websockets.push(ws);
-    } else {
-      ws.send(
-        JSON.stringify({
-          type: 'error-duplicate-session',
-        })
-      );
-      ws.close();
+  private checkRoomDeletion() {
+    if (
+      Room.rooms[this.roomId] &&
+      Object.keys(this.users)
+        .map(sessionId => this.users[sessionId])
+        .filter(user => user.state === UserConnectionState.CONNECTED).length === 0
+    ) {
+      logger.info('Deleting Room ' + this.roomId);
+      this.router?.close();
+      clearInterval(this.checkConnectionInterval);
+      // Only delete room from rooms array if the room is the current room
+      if (this === Room.rooms[this.roomId]) {
+        delete Room.rooms[this.roomId];
+      } else {
+        logger.warn('Did not delete room globally, because it was overwritten');
+      }
     }
   }
 
@@ -574,10 +605,11 @@ export interface User {
     video?: string;
     screen?: string;
   };
-  transports: Transport[];
+  transports: WebRtcTransport[];
   signal: UserSignal;
   microphoneState: MicrophoneState;
   role?: UserRole;
+  state: UserConnectionState;
 }
 
 export interface WebsocketUserInfo {
@@ -588,7 +620,7 @@ export interface WebsocketUserInfo {
     video?: string;
     screen?: string;
   };
-  transports?: Transport[];
+  transports?: WebRtcTransport[];
 }
 export interface Message {
   from: string;
@@ -613,4 +645,9 @@ export enum MicrophoneState {
 export enum UserRole {
   USER = 0,
   MODERATOR = 1,
+}
+enum UserConnectionState {
+  CONNECTED = 0,
+  DANGLING = 1, // WS is still connected, but webrtc connection is lost
+  DISCONNECTED = 2,
 }
