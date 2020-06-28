@@ -9,7 +9,7 @@ module.exports = {
   entry: {
     server: './src-server/server.ts',
   },
-  devtool: 'eval-source-map',
+  devtool: 'source-map',
   target: 'node',
   resolve: {
     extensions: ['.ts', '.js'],

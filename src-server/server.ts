@@ -10,10 +10,13 @@ import * as saml from 'passport-saml';
 import * as jwtPassport from 'passport-jwt';
 import * as jwt from 'jsonwebtoken';
 import * as session from 'express-session';
+import * as redis from 'redis';
+import * as connectRedis from 'connect-redis';
 import {readFileSync} from 'fs';
 import * as bodyParser from 'body-parser';
 import {getLogger, configure, Configuration} from 'log4js';
 import {Email} from './email';
+import {Producer} from 'mediasoup-client/lib/types';
 
 export const logger = getLogger('server');
 initLogger();
@@ -63,6 +66,16 @@ const jwtStrategy = new jwtPassport.Strategy(
   }
 );
 
+let store;
+
+if (process.env.SESSION_STORE === 'redis') {
+  store = new (connectRedis(session))({
+    client: redis.createClient({host: process.env.SESSION_STORE_HOST, port: parseInt(process.env.SESSION_STORE_PORT || '6379')}),
+  });
+} else {
+  store = new session.MemoryStore();
+}
+
 let samlStrategy: saml.Strategy;
 if (process.env.NODE_ENV === 'production') {
   samlStrategy = new saml.Strategy(
@@ -94,7 +107,7 @@ if (process.env.NODE_ENV === 'production') {
 passport.use(jwtStrategy);
 
 const api = new Api(wss);
-const expressSession = session({secret: process.env.SESSION_SECRET as string});
+const expressSession = session({store: store, secret: process.env.SESSION_SECRET as string});
 app.use(expressSession);
 app.use(passport.initialize());
 app.use(passport.session());

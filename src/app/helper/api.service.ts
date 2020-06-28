@@ -59,17 +59,14 @@ export class ApiService {
   }
 
   public async jwtLogin() {
-    try {
-      await this.http
-        .get('/auth/jwt', {
-          headers: {
-            'x-token': this.token as string,
-          },
-        })
-        .toPromise();
-    } catch (error) {
-      return false;
-    }
+    await this.http
+      .get('/auth/jwt', {
+        headers: {
+          'x-token': this.token as string,
+        },
+      })
+      .toPromise();
+
     this.isLoggedIn = true;
     return true;
   }
@@ -154,6 +151,10 @@ export class ApiService {
         id,
       })
       .toPromise() as Promise<IceParameters>;
+  }
+
+  public disconnect(roomId: string): Promise<object> {
+    return this.http.get(`/api/room/${roomId}/disconnect`).toPromise();
   }
 
   public getUsers(roomId: string): Promise<User[]> {

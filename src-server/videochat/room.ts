@@ -38,8 +38,8 @@ export class Room {
             const producer = this.producers[producerId];
             if (producer.paused) continue;
             if (producer.closed) continue;
-            logger.debug(`${user.nickname} - ${type} - ${producer?.score.map(i => i.score).join(',')}`);
-            if (producer?.score.reduce((a, b) => a + b.score, 0) === 0 && user.ws.OPEN) {
+            if (producer == null) continue;
+            if (producer.score.length > 0 && producer.score.reduce((a, b) => a + b.score, 0) === 0 && user.ws.OPEN) {
               user.state = UserConnectionState.DANGLING;
               logger.debug(`${user.nickname} - ${type} - lost connection`);
               user.ws.send(
@@ -187,7 +187,7 @@ export class Room {
 
     await this.getRouter();
     const trans = await this.router.createWebRtcTransport({
-      listenIps: [{ip: process.env.IP || '127.0.0.1', announcedIp: undefined}],
+      listenIps: [{ip: process.env.IP || '127.0.0.1', announcedIp: process.env.ANNOUNCED_IP}],
       enableUdp: true,
       enableTcp: true,
       preferUdp: true,
@@ -393,7 +393,7 @@ export class Room {
     );
   }
 
-  async setMicrophoneState(sessionID: string, microphoneState: MicrophoneState) {
+  setMicrophoneState(sessionID: string, microphoneState: MicrophoneState) {
     if (this.users[sessionID] == null) throw new Error('User is not inizialized');
     if (MicrophoneState[microphoneState] == null) throw new Error('Signal does not exist');
     const user = this.users[sessionID];
@@ -417,14 +417,15 @@ export class Room {
     return transport.restartIce();
   }
 
-  initWebsocket(ws: WebSocket, initData: WebsocketUserInfo, sessionID: string, {email}: {email: string}) {
+  initWebsocket(ws: WebSocket, initData: WebsocketUserInfo, sessionId: string, {email}: {email: string}) {
     const transports: WebRtcTransport[] = [];
     let user: User;
-    if (this.users[sessionID] == null) {
+    if (this.users[sessionId] == null) {
       user = {
         id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
         ws: ws,
         nickname: initData.nickname,
+        email,
         transports,
         producers: {},
         microphoneState: initData.microphoneState,
@@ -434,8 +435,9 @@ export class Room {
 
       // Check if seesion id already exists
       logger.info(`${this.roomId}: ${user.nickname || 'User'} (${email}) joined`);
-    } else if (this.users[sessionID].state === UserConnectionState.DISCONNECTED) {
-      user = this.users[sessionID];
+    } else if (this.users[sessionId].state !== UserConnectionState.CONNECTED) {
+      user = this.users[sessionId];
+      user.state = UserConnectionState.CONNECTED;
       user.ws = ws;
       logger.info(`${this.roomId}: ${user.nickname || 'User'} (${email}) reconnected`);
     } else {
@@ -454,7 +456,7 @@ export class Room {
       },
       ws
     );
-    this.users[sessionID] = user;
+    this.users[sessionId] = user;
     ws.send(
       JSON.stringify({
         type: 'init',
@@ -467,25 +469,20 @@ export class Room {
     logger.trace(user.id);
 
     ws.on('close', () => {
-      logger.info(`${this.roomId}: ${user.nickname || 'User'} (${email}) left`);
-      this.users[sessionID].state = UserConnectionState.DISCONNECTED;
-      this.users[sessionID].producers = {};
-
-      for (const transport of transports) {
-        transport.close();
-      }
-
-      this.broadcastMessage(
-        {
-          type: 'remove-user',
-          data: this.getPublicUser(user),
-        },
-        ws
-      );
-
-      this.websockets = this.websockets.filter(item => item !== ws);
-
-      this.checkRoomDeletion();
+      this.websockets = this.websockets.filter(item => item !== user.ws);
+      if (this.users[sessionId].state === UserConnectionState.DISCONNECTED) return;
+      logger.info(`${this.roomId}: ${user.nickname || 'User'} (${email}) dangling`);
+      this.users[sessionId].state = UserConnectionState.DANGLING;
+      setTimeout(() => {
+        if (this.users[sessionId].state === UserConnectionState.DANGLING) {
+          try {
+            this.disconnect(sessionId);
+          } catch (error) {
+            // ingore error
+            this.checkRoomDeletion();
+          }
+        }
+      }, 10000);
     });
 
     ws.on('message', e => {
@@ -512,12 +509,81 @@ export class Room {
     });
   }
 
+  disconnect(sessionId: string) {
+    const user = this.users[sessionId];
+    if (user == null) throw new Error('User is not inizialized');
+    logger.info(`${this.roomId}: ${user.nickname || 'User'} (${user.email}) left`);
+    user.state = UserConnectionState.DISCONNECTED;
+    user.producers = {};
+    for (const transport of user.transports) {
+      transport.close();
+    }
+
+    this.broadcastMessage(
+      {
+        type: 'remove-user',
+        data: this.getPublicUser(user),
+      },
+      user.ws
+    );
+
+    this.websockets = this.websockets.filter(item => item !== user.ws);
+
+    this.checkRoomDeletion();
+  }
+
+  reconnect(ws: WebSocket, sessionId: string) {
+    const user = this.users[sessionId];
+    if (user == null || user.state !== UserConnectionState.DANGLING) {
+      let message = '';
+      if (user == null) message = 'User is not inizialized';
+      if (user?.state !== UserConnectionState.DANGLING) message = 'User is not dangling';
+      logger.info(`${this.roomId}: ${user?.nickname || 'User'} (${user?.email}) reconnect failed`);
+      ws.send(
+        JSON.stringify({
+          type: 'reconnect-failed',
+          data: {
+            message,
+          },
+        })
+      );
+      return;
+    }
+    logger.info(`${this.roomId}: ${user.nickname || 'User'} (${user.email}) reconnected`);
+    user.ws = ws;
+    user.state = UserConnectionState.CONNECTED;
+    this.websockets.push(ws);
+    ws.send(
+      JSON.stringify({
+        type: 'reconnect',
+        data: this.getPublicUser(user),
+      })
+    );
+
+    ws.on('close', () => {
+      this.websockets = this.websockets.filter(item => item !== user.ws);
+      if (this.users[sessionId].state === UserConnectionState.DISCONNECTED) return;
+      logger.info(`${this.roomId}: ${user.nickname || 'User'} (${user.email}) dangling`);
+      this.users[sessionId].state = UserConnectionState.DANGLING;
+      setTimeout(() => {
+        if (this.users[sessionId].state === UserConnectionState.DANGLING) {
+          try {
+            this.disconnect(sessionId);
+          } catch (error) {
+            // ingore error
+            this.checkRoomDeletion();
+          }
+        }
+      }, 10000);
+    });
+  }
+
   private checkRoomDeletion() {
     if (
       Room.rooms[this.roomId] &&
       Object.keys(this.users)
         .map(sessionId => this.users[sessionId])
-        .filter(user => user.state === UserConnectionState.CONNECTED).length === 0
+        .filter(user => user.state !== UserConnectionState.DISCONNECTED).length === 0
     ) {
       logger.info('Deleting Room ' + this.roomId);
       this.router?.close();
@@ -602,6 +668,7 @@ export interface User {
   id: string;
   ws: WebSocket;
   nickname: string;
+  email: string;
   producers: {
     audio?: string;
     video?: string;

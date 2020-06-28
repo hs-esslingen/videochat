@@ -21,6 +21,8 @@
         <app-audio *ngFor="let user of users" [audio]="user.consumers?.audio?.track"></app-audio>
 
         <app-toolbar id="toolbar" [class.hidden]="isToolbarHidden"></app-toolbar>
+
+
     </div>
 
     <app-chat *ngIf="detailType === 'chat'" class="detail" [childData]="sidebarDetail" [user]="currentUser"></app-chat>
@@ -31,4 +33,29 @@
         (sidebarNicknameEvent)="setNickname($event)" (sidebarDisconnectEvent)="disconnect()"
         (sidebarToggleAutogainEvent)="mediaService.toggleAutoGainControl()"
         [class.detail-open]="detailType != undefined"></app-master>
+</div>
+
+<div id="status">
+    <div id="no-user" class="infobox" *ngIf="connection.state === 1 && users != undefined && users.length === 0">
+        <h2>Zur Zeit befindet sich niemand in diesem Raum</h2>
+        <input type="text" readonly [value]="roomUrl" (click)="$event.target.focus();$event.target.select()">
+    </div>
+    <div id="duplicate-session" class="infobox" *ngIf="connection.duplicateSession">
+        <h2>Es besteht bereits eine Verbindung zu diesem Raum</h2>
+        <button class="button" (click)="reload()">Erneut Versuchen</button>
+    </div>
+    <div id="duplicate-session" class="infobox" *ngIf="connection.state === 3">
+        <h2>Verbindung zum Server verloren</h2>
+        <div class="spinner">
+            <mat-spinner diameter="30"></mat-spinner>
+            <span>Die Verbindung wird wiederhergestellt...</span>
+        </div>
+    </div>
+    <div id="duplicate-session" class="infobox" *ngIf="connection.state === 0">
+        <h2>Die Verbindung wird hergestellt</h2>
+        <div class="spinner">
+            <mat-spinner diameter="30"></mat-spinner>
+            <span>Bitte Warten...</span>
+        </div>
+    </div>
 </div>

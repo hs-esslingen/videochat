@@ -29,6 +29,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {ChangeNicknameComponent} from './components/change-nickname/change-nickname.component';
 import {PollComponent} from './components/poll/poll.component';
 import {SettingsMasterComponent} from './components/settings-master/settings-master.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import {SettingsMasterComponent} from './components/settings-master/settings-mas
     ReactiveFormsModule,
     MatSelectModule,
     MatButtonToggleModule,
+    MatProgressSpinnerModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
