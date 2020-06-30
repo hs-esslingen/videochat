@@ -274,7 +274,7 @@ export class MediaService {
   private async setupDevice() {
     this.device = new Device();
     const routerRtpCapabilities = await this.api.getCapabilities(this.roomId as string);
-    this.device.load({routerRtpCapabilities});
+    await this.device.load({routerRtpCapabilities});
   }
 
   private setupWebsocket() {
@@ -362,7 +362,6 @@ export class MediaService {
 
   async addExistingUsers() {
     const users = await this.api.getUsers(this.roomId as string);
-    const newUsers: User[] = [];
     const promises: Promise<void>[] = [];
     for (const user of users) {
       promises.push(
@@ -384,7 +383,7 @@ export class MediaService {
               // add missing producers
               if (
                 (foundUser.consumers && foundUser.consumers[type] == null && user.producers[type] != null) ||
-                user.producers[type] !== foundUser.producers[type]
+                (user.producers[type] != null && user.producers[type] !== foundUser.producers[type])
               )
                 await this.addConsumer(foundUser, type);
             }
@@ -392,19 +391,18 @@ export class MediaService {
             this.users[index] = Object.assign(foundUser, user);
             return res();
           }
+          this.users.push(user);
 
           for (const key in user.producers) {
             if (Object.prototype.hasOwnProperty.call(user.producers, key)) {
               await this.addConsumer(user, key as 'audio' | 'video' | 'screen');
             }
           }
-          newUsers.push(user);
           res();
         })
       );
     }
     await Promise.all(promises);
-    this.users.push(...newUsers);
     this.triggerSubject();
   }
 
@@ -424,11 +422,16 @@ export class MediaService {
 
     const consume = await this.api.addConsumer(this.roomId as string, this.recvTransport.id, this.device.rtpCapabilities, producerId as string);
 
-    const consumer = await this.recvTransport.consume({
-      id: consume.id,
-      kind: type === 'audio' ? 'audio' : 'video',
-      producerId,
-      rtpParameters: consume.rtpParameters,
+    console.log('getting conumer');
+    const consumer: Consumer = await new Promise(async res => {
+      const consumer = await this.recvTransport.consume({
+        id: consume.id,
+        kind: type === 'audio' ? 'audio' : 'video',
+        producerId,
+        rtpParameters: consume.rtpParameters,
+      });
+      console.log('got conumer');
+      res(consumer);
     });
 
     if (!user.consumers) user.consumers = {};

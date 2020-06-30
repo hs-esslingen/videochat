@@ -120,6 +120,7 @@ export class RoomService {
           state: State.CONNECTED,
         };
         this.triggerSubject();
+        this.mediaSevice.addExistingUsers();
       } catch (error) {
         console.log('WS RECONNECT FAILED RESTARTING CONNECTION');
         const cameraDisabled = this.currentUser?.cameraState !== CameraState.ENABLED;
