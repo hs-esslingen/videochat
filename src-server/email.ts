@@ -5,7 +5,7 @@ import * as Mail from 'nodemailer/lib/mailer';
 export const logger = getLogger();
 
 export class Email {
-  private transporter!: Mail;
+  private transporter?: Mail;
 
   readonly SENDER_NAME = process.env.MAIL_SENDER_NAME || 'HSE Chat';
   readonly SENDER_EMAIL = process.env.MAIL_SENDER_EMAIL || 'noreply@hse-chat.app';
@@ -53,7 +53,7 @@ export class Email {
 
   private verifyConnection() {
     // verify connection configuration
-    this.transporter.verify((error: Error | null, success: true) => {
+    this.transporter?.verify((error: Error | null, success: true) => {
       if (error) {
         logger.error(error);
       }
@@ -75,10 +75,10 @@ export class Email {
       html,
     };
 
-    const info = await this.transporter.sendMail(message);
-    logger.debug('E-Mail sent! messageID: ', info.messageId, ' - envelope: ', info.envelope);
+    const info = await this.transporter?.sendMail(message);
+    logger.debug('E-Mail sent! messageID: ', info?.messageId, ' - envelope: ', info?.envelope);
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' && info) {
       // Preview only available when sending through an Ethereal account
       logger.debug('Preview URL: ', nodemailer.getTestMessageUrl(info));
     }

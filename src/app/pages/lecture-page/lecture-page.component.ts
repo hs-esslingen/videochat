@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
+import {Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef} from '@angular/core';
 import {MediaService} from '../../helper/media.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
@@ -8,6 +8,8 @@ import {ChatService} from '../../helper/chat.service';
 import {User, UserSignal, UserRole, MicrophoneState, CameraState, ScreenshareState, CurrentUser} from 'src/app/model/user';
 import {RoomService} from 'src/app/helper/room.service';
 import {ApiService} from 'src/app/helper/api.service';
+import {Subscription} from 'rxjs';
+import {Connection, State} from 'src/app/model/connection';
 
 @Component({
   selector: 'app-lecture-page',
@@ -29,6 +31,8 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   roomUrl: string | undefined;
   duplicateSession = false;
   numWebcams = 0;
+  connection: Connection;
+  roomSubscription?: Subscription;
 
   screenShareUser: User | undefined;
   screenShareStream: MediaStream | undefined;
@@ -42,6 +46,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     readonly mediaService: MediaService,
+    private ref: ChangeDetectorRef,
     private room: RoomService,
     private router: Router,
     private route: ActivatedRoute,
@@ -54,6 +59,14 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     const webcamHeight = window.localStorage.getItem('webcamHeight');
     if (webcamHeight != null) this.webcamHeight = parseFloat(webcamHeight);
     this.currentUser = room.getRoomInfo().currentUser;
+    this.connection = {
+      state: State.DISCONNECTED,
+    };
+  }
+
+  @HostListener('window:beforeunload')
+  pageClose() {
+    if (this.connection.state !== State.FAILED && this.connection.state !== State.DISCONNECTED) this.api.disconnect(this.roomId);
   }
 
   @HostListener('window:resize', ['$event'])
@@ -103,6 +116,29 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.roomSubscription = this.room.subscribe(data => {
+      this.users = data.users;
+      this.currentUser = data.currentUser;
+      this.connection = data.connection;
+
+      let screenShareUser = this.users.find(item => item.consumers?.screen != null);
+      if (this.currentUser.screenshareState === ScreenshareState.ENABLED) screenShareUser = new User(this.currentUser.id, this.currentUser.nickname);
+
+      if (screenShareUser != null && screenShareUser !== this.screenShareUser) {
+        this.screenShareStream = this.getScreenShareStream(screenShareUser);
+      }
+      this.screenShareUser = screenShareUser;
+
+      this.ref.detectChanges();
+      // wait two animation frames
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          this.recalculateMaxVideoWidth();
+          this.ref.detectChanges();
+        });
+      });
+    });
+
     if (this.demo) {
       this.test();
       this.screenShareUser = this.users[0];
@@ -133,41 +169,18 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         // Proceed when all informations are given
 
-        if (result.nickname !== '') this.mediaService.setNickname(result.nickname);
-        else this.mediaService.setNickname('User ' + Math.round(Math.random() * 100));
-
-        try {
-          await this.room.connectToRoom(this.roomId, result.isWebcamDisabled);
-
-          this.room.subscribe(data => {
-            this.users = data.users;
-            this.currentUser = data.currentUser;
-
-            let screenShareUser = this.users.find(item => item.consumers?.screen != null);
-            if (this.currentUser.screenshareState === ScreenshareState.ENABLED) screenShareUser = new User(this.currentUser.id, this.currentUser.nickname);
-
-            if (screenShareUser != null && screenShareUser !== this.screenShareUser) {
-              this.screenShareStream = this.getScreenShareStream(screenShareUser);
-            }
-            this.screenShareUser = screenShareUser;
-
-            requestAnimationFrame(() => {
-              this.recalculateMaxVideoWidth();
-            });
-          });
-        } catch (err) {
-          if (err === 'DUPLICATE SESSION') {
-            this.duplicateSession = true;
-          } else {
-            console.error(err);
-          }
-        }
+        this.room.connectToRoom(this.roomId, result.isWebcamDisabled);
       });
     });
   }
 
   ngOnDestroy() {
+    this.roomSubscription?.unsubscribe();
     this.room.disconnect();
+  }
+
+  reload() {
+    window.location.reload();
   }
 
   getScreenShareStream(user: User) {

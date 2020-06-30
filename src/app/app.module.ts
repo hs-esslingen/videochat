@@ -11,7 +11,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {LoginPageComponent} from './pages/login-page/login-page.component';
 import {HeaderComponent} from './components/header/header.component';
 import {ThankYouPageComponent} from './pages/thank-you-page/thank-you-page.component';
-import {UserComponent} from './components/user/user.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {OverviewPageComponent, AllowUriComponent} from './pages/overview-page/overview-page.component';
 import {PrivacyPolicyComponent} from './pages/privacy-policy/privacy-policy.component';
@@ -30,6 +29,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {ChangeNicknameComponent} from './components/change-nickname/change-nickname.component';
 import {PollComponent} from './components/poll/poll.component';
 import {SettingsMasterComponent} from './components/settings-master/settings-master.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -37,7 +37,6 @@ import {SettingsMasterComponent} from './components/settings-master/settings-mas
     LoginPageComponent,
     HeaderComponent,
     ThankYouPageComponent,
-    UserComponent,
     OverviewPageComponent,
     PrivacyPolicyComponent,
     FooterComponent,
@@ -67,6 +66,7 @@ import {SettingsMasterComponent} from './components/settings-master/settings-mas
     ReactiveFormsModule,
     MatSelectModule,
     MatButtonToggleModule,
+    MatProgressSpinnerModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -9,7 +9,7 @@ module.exports = {
   entry: {
     server: './src-server/server.ts',
   },
-  devtool: 'eval-source-map',
+  devtool: 'source-map',
   target: 'node',
   resolve: {
     extensions: ['.ts', '.js'],
@@ -46,6 +46,6 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.MEDIASOUP_WORKER_BIN': 'worker/mediasoup-worker',
     }),
-    new CopyPlugin([{from: 'node_modules/mediasoup/worker/out/Release', to: 'worker'}]),
+    new CopyPlugin({patterns: [{from: 'node_modules/mediasoup/worker/out/Release', to: 'worker'}]}),
   ],
 };

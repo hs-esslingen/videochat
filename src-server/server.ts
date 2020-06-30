@@ -10,6 +10,8 @@ import * as saml from 'passport-saml';
 import * as jwtPassport from 'passport-jwt';
 import * as jwt from 'jsonwebtoken';
 import * as session from 'express-session';
+import * as redis from 'redis';
+import * as connectRedis from 'connect-redis';
 import {readFileSync} from 'fs';
 import * as bodyParser from 'body-parser';
 import {getLogger, configure, Configuration} from 'log4js';
@@ -63,6 +65,16 @@ const jwtStrategy = new jwtPassport.Strategy(
   }
 );
 
+let store;
+
+if (process.env.SESSION_STORE === 'redis') {
+  store = new (connectRedis(session))({
+    client: redis.createClient({host: process.env.SESSION_STORE_HOST, port: parseInt(process.env.SESSION_STORE_PORT || '6379')}),
+  });
+} else {
+  store = new session.MemoryStore();
+}
+
 let samlStrategy: saml.Strategy;
 if (process.env.NODE_ENV === 'production') {
   samlStrategy = new saml.Strategy(
@@ -94,7 +106,7 @@ if (process.env.NODE_ENV === 'production') {
 passport.use(jwtStrategy);
 
 const api = new Api(wss);
-const expressSession = session({secret: process.env.SESSION_SECRET as string});
+const expressSession = session({store: store, secret: process.env.SESSION_SECRET as string});
 app.use(expressSession);
 app.use(passport.initialize());
 app.use(passport.session());
@@ -227,7 +239,7 @@ if (process.env.NODE_ENV === 'production') {
 app.get('/auth/moodle', (req, res) => {
   res.set('Content-Type', 'text/html; charset=UTF-8');
   let token;
-  const queryString: string = req.query.token;
+  const queryString: string = req.query.token as string;
   if (queryString) {
     const split = queryString.split('://token=');
     if (split.length > 1) {
@@ -296,7 +308,14 @@ app.use('*', (req, res) => {
 
 wss.on('connection', (ws: MyWebSocket) => {
   ws.isAlive = true;
-  ws.on('pong', () => (ws.isAlive = true));
+  ws.on('message', e => {
+    try {
+      const msg = JSON.parse(e as string);
+      if (msg.type === 'pong') ws.isAlive = true;
+    } catch (error) {
+      // ingore
+    }
+  });
 });
 
 const interval = setInterval(() => {
@@ -306,9 +325,10 @@ const interval = setInterval(() => {
       if (myWs.isAlive === false) return ws.terminate();
 
       myWs.isAlive = false;
-      myWs.ping(() => {});
+      myWs.send(JSON.stringify({type: 'ping'}));
+      // myWs.ping(() => {});
     });
-}, 10000);
+}, 2000);
 
 wss.on('close', () => {
   clearInterval(interval);

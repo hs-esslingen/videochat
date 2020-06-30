@@ -11,7 +11,7 @@
         </div>
     </ng-container>
 
-    <ng-container *ngIf="polls.length != 0 || currentUser.userRole == 1">
+    <ng-container *ngIf="polls.length != 0 || currentUser?.userRole == 1">
         <h4>Polls</h4>
         <ng-container *ngFor="let poll of polls">
             <div class="object-label chat" (click)="setSidebarDetailType(poll)">
@@ -23,7 +23,7 @@
                 </div>
             </div>
         </ng-container>
-        <ng-container *ngIf="currentUser.userRole == 1">
+        <ng-container *ngIf="currentUser?.userRole == 1">
             <div class="object-label chat" (click)="createPoll()">
                 <div class="status"></div>
                 <div class="nickname">Add a new poll</div>
@@ -36,25 +36,25 @@
 
     <h4>Current Users</h4>
     <label>You</label>
-    <div id="You" class="object-label" [class.talking]="currentUser.microphoneState === 2"
-        [class.signaling]="currentUser.signal === 1" [class.votingUp]="currentUser.signal === 2"
-        [class.votingDown]="currentUser.signal === 3" [class.micActive]="currentUser.microphoneState >= 1">
+    <div id="You" class="object-label" [class.talking]="currentUser?.microphoneState === 2"
+        [class.signaling]="currentUser?.signal === 1" [class.votingUp]="currentUser?.signal === 2"
+        [class.votingDown]="currentUser?.signal === 3" [class.micActive]="currentUser?.microphoneState >= 1">
         <div class="status"></div>
-        <div class="nickname">{{ currentUser.nickname }}</div>
-        <div class="signal" *ngIf="currentUser.microphoneState >= 1">
-            <i class="material-icons">{{ currentUser.microphoneState === 1 ? "mic" : "record_voice_over"}}</i>
+        <div class="nickname">{{ currentUser?.nickname }}</div>
+        <div class="signal" *ngIf="currentUser?.microphoneState >= 1">
+            <i class="material-icons">{{ currentUser?.microphoneState === 1 ? "mic" : "record_voice_over"}}</i>
         </div>
     </div>
     <div id="user-actions">
         <button id="raise-hand" class="small round-button" (click)="raiseHand()"
-            [class.active]="currentUser.signal === 1">
+            [class.active]="currentUser?.signal === 1">
             <i class="material-icons">pan_tool</i>
         </button>
-        <button id="vote-up" class="small round-button" (click)="thumbsUp()" [class.active]="currentUser.signal === 2">
+        <button id="vote-up" class="small round-button" (click)="thumbsUp()" [class.active]="currentUser?.signal === 2">
             <i class="material-icons">thumb_up</i>
         </button>
         <button id="vote-down" class="small round-button" (click)="thumbsDown()"
-            [class.active]="currentUser.signal === 3">
+            [class.active]="currentUser?.signal === 3">
             <i class="material-icons">thumb_down</i>
         </button>
     </div>

@@ -1,11 +1,12 @@
-import {Component, OnInit, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import {ChatService, Chat} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';
 import {Poll} from 'src/app/helper/poll.service';
-import {User, UserSignal} from 'src/app/model/user';
+import {User, UserSignal, CurrentUser} from 'src/app/model/user';
 import {SettingsMasterComponent} from '../settings-master/settings-master.component';
+import {RoomService} from 'src/app/helper/room.service';
 
 @Component({
   selector: 'app-master',
@@ -13,9 +14,8 @@ import {SettingsMasterComponent} from '../settings-master/settings-master.compon
   styleUrls: ['./master-sidebar.component.scss'],
 })
 export class MasterSidebarComponent implements OnInit, OnDestroy {
-  @Input() autoGainControl: boolean | undefined;
-  @Input() currentUser!: User;
-  @Input() users!: User[];
+  currentUser?: CurrentUser;
+  users?: User[];
 
   @Output() sidebarSetDetailEvent = new EventEmitter<{element: Record<string, any>; type: string}>();
   @Output() sidebarSignalEvent = new EventEmitter<UserSignal>();
@@ -28,12 +28,13 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
 
   // Variables for chats
   chats: Chat[] = [];
-  chatSubscription: Subscription | undefined;
+  chatSubscription?: Subscription;
+  roomSubscription?: Subscription;
 
   //Variables for polls
   polls: Poll[] = [];
 
-  constructor(readonly chatService: ChatService, private dialog: MatDialog) {}
+  constructor(readonly chatService: ChatService, private dialog: MatDialog, private room: RoomService, private ref: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreshes or rejoins)
@@ -44,6 +45,12 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
       this.chats = data.chats;
     });
 
+    this.room.subscribe(data => {
+      this.currentUser = data.currentUser;
+      this.users = data.users;
+      this.ref.detectChanges();
+    });
+
     if (this.demo) {
       this.polls.push(new Poll('0', 'Poll_1'));
       this.polls.push(new Poll('1', 'Poll_2'));
@@ -52,6 +59,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.chatSubscription?.unsubscribe();
+    this.roomSubscription?.unsubscribe();
   }
 
   setSidebarDetailType(obj: Record<string, any>): void {
@@ -108,7 +116,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   openNicknameDialog(): void {
     const dialogRef = this.dialog.open(ChangeNicknameComponent, {
       width: '300px',
-      data: {nickname: this.currentUser.nickname},
+      data: {nickname: this.currentUser?.nickname},
     });
 
     dialogRef.afterClosed().subscribe(result => {
