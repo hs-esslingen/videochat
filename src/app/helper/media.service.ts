@@ -50,6 +50,7 @@ export class MediaService {
   private userId: string | undefined;
   private audioIntervalId = 0;
   private audioCtx?: AudioContext;
+  private currentlyAdding: {[key: string]: string} = {};
 
   public nickname: string;
 
@@ -409,8 +410,17 @@ export class MediaService {
 
   private async addConsumer(user: User, type: 'audio' | 'video' | 'screen') {
     const producerId = user.producers[type];
-    if (producerId === this.localVideoProducer?.id || producerId === this.localAudioProducer?.id || producerId === this.localScreenProducer?.id) return;
+    if (
+      producerId == null ||
+      producerId === this.localVideoProducer?.id ||
+      producerId === this.localAudioProducer?.id ||
+      producerId === this.localScreenProducer?.id ||
+      this.currentlyAdding[producerId] != null
+    )
+      return;
     console.log('ADDING: ' + type);
+
+    this.currentlyAdding[producerId] = producerId;
 
     const consume = await this.api.addConsumer(this.roomId as string, this.recvTransport.id, this.device.rtpCapabilities, producerId as string);
 
@@ -437,6 +447,7 @@ export class MediaService {
       console.log('track ended');
       this.removeConsumer(user, type);
     });
+    delete this.currentlyAdding[producerId];
   }
 
   private removeConsumer(user: User, type: 'audio' | 'video' | 'screen') {
