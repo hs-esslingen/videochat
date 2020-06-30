@@ -23,127 +23,118 @@ export class WsService {
 
   public init(roomId: string, nickname: string): Promise<string> {
     return new Promise((res, rej) => {
-      try {
-        if (environment.production) {
-          const url = new URL(window.location.href);
-          this.connect('wss://' + url.host + '/ws');
-        } else {
-          this.connect('ws://localhost:4000/ws');
-        }
-      } catch (error) {
-        rej(error);
-      }
+      this.connect()
+        .then(() => {
+          const sub = this.messageSubject?.subscribe(msg => {
+            console.log('message');
+            console.log(msg);
+            switch (msg.type) {
+              case 'init':
+                this.connectionSubject.next({
+                  state: this.state,
+                });
+                this.state = State.CONNECTED;
+                res(msg.data.id);
+                sub.unsubscribe();
+                break;
+              case 'error-duplicate-session':
+                this.state = State.FAILED;
+                this.connectionSubject.next({
+                  state: this.state,
+                });
+                this.close();
+                rej('DUPLICATE SESSION');
+                sub.unsubscribe();
+                break;
+            }
+          });
 
-      setTimeout(() => rej('timeout'), 2000);
-
-      this.websocket.addEventListener('open', async () => {
-        console.log('websocket opened');
-
-        this.send('init', {
-          roomId: roomId,
-          nickname: nickname,
-          microphoneState: MicrophoneState.ENABLED,
-        });
-
-        this.messageSubject?.subscribe(msg => {
-          switch (msg.type) {
-            case 'init':
-              this.connectionSubject.next({
-                state: this.state,
-              });
-              this.state = State.CONNECTED;
-              res(msg.data.id);
-              break;
-            case 'error-duplicate-session':
-              this.state = State.FAILED;
-              this.connectionSubject.next({
-                state: this.state,
-              });
-              this.close();
-              rej('DUPLICATE SESSION');
-              break;
-          }
-        });
-      });
+          this.send('init', {
+            roomId: roomId,
+            nickname: nickname,
+            microphoneState: MicrophoneState.ENABLED,
+          });
+        })
+        .catch(e => rej(e));
     });
   }
 
   public reconnect(roomId: string): Promise<string> {
     if (this.state !== State.RECONNECTING) throw new Error(`Not Reconnecting Current WS State: ${State[this.state]}`);
     return new Promise((res, rej) => {
-      try {
-        if (environment.production) {
-          const url = new URL(window.location.href);
-          this.connect('wss://' + url.host + '/ws');
-        } else {
-          this.connect('ws://localhost:4000/ws');
-        }
-      } catch (error) {
-        console.log('connection failed');
-        rej(error);
-      }
+      this.connect()
+        .then(() => {
+          const sub = this.messageSubject?.subscribe(msg => {
+            switch (msg.type) {
+              case 'reconnect':
+                console.log('reconnected');
+                this.state = State.CONNECTED;
+                this.connectionSubject.next({
+                  state: this.state,
+                });
+                sub.unsubscribe();
+                res(msg.data.id);
+                break;
+              case 'reconnect-failed':
+                this.state = State.DISCONNECTED;
+                this.connectionSubject.next({
+                  state: this.state,
+                });
 
-      setTimeout(() => rej('timeout'), 5000);
+                console.log('reconnection failed');
+                this.close();
+                sub.unsubscribe();
+                rej('RECONNECT FAILED');
+                break;
+            }
+          });
 
-      this.websocket.addEventListener('open', async () => {
-        console.log('websocket opened');
-
-        this.send('reconnect', {
-          roomId: roomId,
-        });
-
-        this.messageSubject?.subscribe(msg => {
-          switch (msg.type) {
-            case 'reconnect':
-              console.log('reconnected');
-              this.state = State.CONNECTED;
-              this.connectionSubject.next({
-                state: this.state,
-              });
-
-              res(msg.data.id);
-              break;
-            case 'reconnect-failed':
-              this.state = State.DISCONNECTED;
-              this.connectionSubject.next({
-                state: this.state,
-              });
-
-              console.log('reconnection failed');
-              this.close();
-              rej('RECONNECT FAILED');
-              break;
-          }
-        });
-      });
+          this.send('reconnect', {
+            roomId: roomId,
+          });
+        })
+        .catch(e => rej(e));
     });
   }
 
-  public connect(url: string) {
-    this.websocket = new WebSocket(url);
-    this.websocket.addEventListener('message', ev => {
-      const msg = JSON.parse(ev.data);
-      this.messageSubject.next({
-        type: msg.type,
-        data: msg.data,
-      });
-    });
-
-    this.websocket.addEventListener('error', e => {
-      console.log('WEBSOCKET ERROR');
-      console.log(e);
-    });
-
-    this.websocket.addEventListener('close', e => {
-      console.log('WEBSOCKET CLOSED');
-      console.log(e);
-      if (this.state === State.CONNECTED) {
-        this.state = State.RECONNECTING;
-        this.connectionSubject.next({
-          state: this.state,
-        });
-        // reconnect
+  public connect() {
+    return new Promise((res, rej) => {
+      if (environment.production) {
+        const url = new URL(window.location.href);
+        this.websocket = new WebSocket('wss://' + url.host + '/ws');
+      } else {
+        this.websocket = new WebSocket('ws://localhost:4000/ws');
       }
+      this.websocket.addEventListener('message', ev => {
+        const msg = JSON.parse(ev.data);
+        this.messageSubject.next({
+          type: msg.type,
+          data: msg.data,
+        });
+      });
+
+      this.websocket.addEventListener('error', e => {
+        rej();
+        console.log('WEBSOCKET ERROR');
+        console.log(e);
+      });
+
+      this.websocket.addEventListener('close', e => {
+        console.log('WEBSOCKET CLOSED');
+        console.log(e);
+        if (this.state === State.CONNECTED) {
+          this.state = State.RECONNECTING;
+          this.connectionSubject.next({
+            state: this.state,
+          });
+          // reconnect
+        }
+      });
+      // setTimeout(() => rej('timeout'), 5000);
+      this.websocket.addEventListener('open', async () => {
+        console.log('websocket opened');
+        res();
+      });
     });
   }
 

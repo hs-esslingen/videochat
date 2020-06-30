@@ -16,7 +16,6 @@ import {readFileSync} from 'fs';
 import * as bodyParser from 'body-parser';
 import {getLogger, configure, Configuration} from 'log4js';
 import {Email} from './email';
-import {Producer} from 'mediasoup-client/lib/types';
 
 export const logger = getLogger('server');
 initLogger();
