@@ -107,6 +107,7 @@ export class MediaService {
         audioStream.connect(analyser);
         const array = new Uint8Array(analyser.fftSize);
 
+        if (this.audioIntervalId) clearInterval(this.audioIntervalId);
         this.audioIntervalId = (setInterval(() => {
           analyser?.getByteTimeDomainData(array);
           const volume = Math.max(0, Math.max(...array) - 128) / 128;
@@ -356,7 +357,7 @@ export class MediaService {
     });
   }
 
-  private async addExistingUsers() {
+  async addExistingUsers() {
     const users = await this.api.getUsers(this.roomId as string);
     const newUsers: User[] = [];
     for (const user of users) {
@@ -366,7 +367,7 @@ export class MediaService {
       const foundUser = this.users.find(item => item.id === user.id);
       if (foundUser) {
         console.log('User already exits ... updating');
-        foundUser.nickname = user.nickname;
+        Object.assign(foundUser, user);
         return;
       }
 
@@ -425,6 +426,9 @@ export class MediaService {
     this.sendTransport = this.device.createSendTransport(params);
     this.sendTransport.on('connectionstatechange', c => {
       console.log('connection state: ' + c);
+      if (c === 'disconnected') {
+        // TODO: Ping server if he is still responding, otherwise reconnect
+      }
     });
     this.addProduceCallbacks(this.sendTransport);
   }
@@ -504,8 +508,6 @@ export class MediaService {
       this.localVideoProducer = undefined;
       this.localScreenshareStream = undefined;
       this.screenshareState = ScreenshareState.DISABLED;
-      this.localMedia.closeAudio();
-      this.localMedia.closeVideo();
       clearInterval(this.audioIntervalId);
       this.audioCtx?.close();
     }

@@ -5,6 +5,7 @@ import {User, CurrentUser, CameraState, MicrophoneState, ScreenshareState, UserS
 import {Subject, Subscription} from 'rxjs';
 import {ApiService} from './api.service';
 import {State, Connection} from '../model/connection';
+import {LocalMediaService} from './local-media.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ export class RoomService {
   private users: User[] = [];
   private roomId!: string;
 
-  constructor(private mediaSevice: MediaService, private ws: WsService, private api: ApiService) {
+  constructor(private mediaSevice: MediaService, private ws: WsService, private api: ApiService, private localMedia: LocalMediaService) {
     this.roomSubject = new Subject();
     this.currentUser = this.initCurrentUser();
     this.connection = {
@@ -90,14 +91,15 @@ export class RoomService {
         this.connection = {
           state: State.CONNECTED,
         };
+        this.triggerSubject();
       }, 500);
-      this.triggerSubject();
     } catch (error) {
       if (error === 'DUPLICATE SESSION') {
         this.connection.state = State.FAILED;
         this.connection.duplicateSession = true;
         this.triggerSubject();
       } else {
+        console.log('Connection Failed trying again...');
         setTimeout(() => {
           this.connectToRoom(roomId, isWebcamDisabled);
         }, 1000);
@@ -106,19 +108,29 @@ export class RoomService {
     }
   }
 
-  private async reconnect() {
-    try {
-      console.log('RECONNECTING');
-      await this.ws.reconnect(this.roomId);
-      this.mediaSevice.restartIce();
-    } catch (error) {
-      const cameraDisabled = this.currentUser?.cameraState !== CameraState.ENABLED;
-      this.connection.state = State.RECONNECTING;
-      this.currentUser = this.initCurrentUser();
-      this.triggerSubject();
-      await this.mediaSevice.disconnect();
-      await this.connectToRoom(this.roomId, cameraDisabled);
-    }
+  private reconnect() {
+    this.connection.state = State.RECONNECTING;
+    this.triggerSubject();
+    setTimeout(async () => {
+      try {
+        console.log('RECONNECTING');
+        await this.ws.reconnect(this.roomId);
+        this.mediaSevice.restartIce();
+        this.connection = {
+          state: State.CONNECTED,
+        };
+        this.triggerSubject();
+      } catch (error) {
+        console.log('WS RECONNECT FAILED RESTARTING CONNECTION');
+        const cameraDisabled = this.currentUser?.cameraState !== CameraState.ENABLED;
+        this.currentUser = this.initCurrentUser();
+        this.triggerSubject();
+        await this.mediaSevice.disconnect();
+        this.localMedia.closeAudio();
+        this.localMedia.closeVideo();
+        await this.connectToRoom(this.roomId, cameraDisabled);
+      }
+    }, 1000);
   }
 
   async disconnect() {
@@ -129,6 +141,8 @@ export class RoomService {
     }
     await this.mediaSevice.disconnect();
     this.ws.close();
+    this.localMedia.closeAudio();
+    this.localMedia.closeVideo();
     this.currentUser = this.initCurrentUser();
     this.connection = {
       state: State.DISCONNECTED,

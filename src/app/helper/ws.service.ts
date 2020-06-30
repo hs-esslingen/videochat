@@ -11,6 +11,7 @@ export class WsService {
   public websocket!: WebSocket;
   public state: State = State.DISCONNECTED;
   public connectionSubject: Subject<Connection>;
+  private pingTimeout?: number;
   public messageSubject: Subject<{
     type: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -99,6 +100,15 @@ export class WsService {
 
   public connect() {
     return new Promise((res, rej) => {
+      console.log('Connecting to WS');
+      if (this.state !== State.RECONNECTING) this.state = State.CONNECTING;
+      if (this.websocket) {
+        console.log('Old ws state: ' + WsReadyState[this.websocket.readyState]);
+        if (this.websocket.readyState === WsReadyState.OPEN) {
+          this.websocket.close();
+        }
+        console.log();
+      }
       if (environment.production) {
         const url = new URL(window.location.href);
         this.websocket = new WebSocket('wss://' + url.host + '/ws');
@@ -107,6 +117,14 @@ export class WsService {
       }
       this.websocket.addEventListener('message', ev => {
         const msg = JSON.parse(ev.data);
+        if (msg.type === 'ping') {
+          this.websocket.send(JSON.stringify({type: 'pong'}));
+          clearTimeout(this.pingTimeout);
+          this.pingTimeout = (setTimeout(() => {
+            this.websocket.close();
+          }, 3000) as unknown) as number;
+          return;
+        }
         this.messageSubject.next({
           type: msg.type,
           data: msg.data,
@@ -114,9 +132,9 @@ export class WsService {
       });
 
       this.websocket.addEventListener('error', e => {
-        rej();
         console.log('WEBSOCKET ERROR');
         console.log(e);
+        rej();
       });
 
       this.websocket.addEventListener('close', e => {
@@ -140,7 +158,9 @@ export class WsService {
 
   public send<T>(type: string, data: T) {
     if (this.websocket) {
-      if (this.websocket.readyState !== 1) {
+      if (this.websocket.readyState >= WsReadyState.CLOSING) {
+        return;
+      } else if (this.websocket.readyState <= WsReadyState.CONNECTING) {
         setTimeout(() => {
           this.send(type, data);
         }, 500);
@@ -155,7 +175,15 @@ export class WsService {
   }
 
   public close() {
+    clearTimeout(this.pingTimeout);
     this.state = State.DISCONNECTED;
     if (this.websocket) this.websocket.close();
   }
+}
+
+export enum WsReadyState {
+  CONNECTING = 0,
+  OPEN = 1,
+  CLOSING = 2,
+  CLOSED = 3,
 }

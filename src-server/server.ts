@@ -308,7 +308,14 @@ app.use('*', (req, res) => {
 
 wss.on('connection', (ws: MyWebSocket) => {
   ws.isAlive = true;
-  ws.on('pong', () => (ws.isAlive = true));
+  ws.on('message', e => {
+    try {
+      const msg = JSON.parse(e as string);
+      if (msg.type === 'pong') ws.isAlive = true;
+    } catch (error) {
+      // ingore
+    }
+  });
 });
 
 const interval = setInterval(() => {
@@ -318,9 +325,10 @@ const interval = setInterval(() => {
       if (myWs.isAlive === false) return ws.terminate();
 
       myWs.isAlive = false;
-      myWs.ping(() => {});
+      myWs.send(JSON.stringify({type: 'ping'}));
+      // myWs.ping(() => {});
     });
-}, 10000);
+}, 2000);
 
 wss.on('close', () => {
   clearInterval(interval);

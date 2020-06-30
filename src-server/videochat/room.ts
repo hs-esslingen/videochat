@@ -44,10 +44,17 @@ export class Room {
               logger.debug(`${user.nickname} - ${type} - lost connection`);
               user.ws.send(
                 JSON.stringify({
-                  type: 'reconnect',
+                  type: 'restart-ice',
                   data: {},
                 })
               );
+              if (user.danglingTimeout) clearTimeout(user.danglingTimeout);
+              user.danglingTimeout = (setTimeout(() => {
+                if (user.state === UserConnectionState.DANGLING) {
+                  logger.debug(`${user.nickname} - dangling timeout`);
+                  this.disconnect(sessionId);
+                }
+              }, 10000) as unknown) as NodeJS.Timeout;
             }
           }
         }
@@ -408,12 +415,16 @@ export class Room {
     );
   }
 
-  async restartIce(sessionId: string, id: string) {
+  restartIce(sessionId: string, id: string) {
     const user = this.users[sessionId];
     if (user == null) throw new Error('User is not inizialized');
-    user.state = UserConnectionState.CONNECTED;
+    if (user.state === UserConnectionState.WS_CLOSED || user.state === UserConnectionState.DISCONNECTED) throw new Error('User is not connected');
     const transport = user.transports.find(t => t.id === id);
     if (transport == null) throw new Error('Transport not found');
+    setTimeout(() => {
+      if (user.state !== UserConnectionState.DANGLING) return;
+      user.state = UserConnectionState.CONNECTED;
+    }, 1000);
     return transport.restartIce();
   }
 
@@ -438,8 +449,10 @@ export class Room {
     } else if (this.users[sessionId].state !== UserConnectionState.CONNECTED) {
       user = this.users[sessionId];
       user.state = UserConnectionState.CONNECTED;
+      user.producers = {};
+      user.transports = [];
       user.ws = ws;
-      logger.info(`${this.roomId}: ${user.nickname || 'User'} (${email}) reconnected`);
+      logger.info(`${this.roomId}: ${user.nickname || 'User'} (${email}) joined (reconnect)`);
     } else {
       ws.send(
         JSON.stringify({
@@ -468,45 +481,7 @@ export class Room {
     this.websockets.push(ws);
     logger.trace(user.id);
 
-    ws.on('close', () => {
-      this.websockets = this.websockets.filter(item => item !== user.ws);
-      if (this.users[sessionId].state === UserConnectionState.DISCONNECTED) return;
-      logger.info(`${this.roomId}: ${user.nickname || 'User'} (${email}) dangling`);
-      this.users[sessionId].state = UserConnectionState.DANGLING;
-      setTimeout(() => {
-        if (this.users[sessionId].state === UserConnectionState.DANGLING) {
-          try {
-            this.disconnect(sessionId);
-          } catch (error) {
-            // ingore error
-            this.checkRoomDeletion();
-          }
-        }
-      }, 10000);
-    });
-
-    ws.on('message', e => {
-      const msg = JSON.parse(e.toString());
-      switch (msg.type) {
-        case 'update':
-          {
-            const data: WebsocketUserInfo = msg.data;
-            if (data.nickname) user.nickname = data.nickname;
-
-            this.broadcastMessage(
-              {
-                type: 'update-user',
-                data: this.getPublicUser(user),
-              },
-              ws
-            );
-          }
-          break;
-
-        default:
-          break;
-      }
-    });
+    this.wsOnClose(ws, sessionId, this.users[sessionId]);
   }
 
   disconnect(sessionId: string) {
@@ -534,10 +509,11 @@ export class Room {
 
   reconnect(ws: WebSocket, sessionId: string) {
     const user = this.users[sessionId];
-    if (user == null || user.state !== UserConnectionState.DANGLING) {
+    if (user == null || user.state !== UserConnectionState.WS_CLOSED) {
       let message = '';
       if (user == null) message = 'User is not inizialized';
-      if (user?.state !== UserConnectionState.DANGLING) message = 'User is not dangling';
+      if (user?.state === UserConnectionState.DISCONNECTED) message = 'User already disconnected';
+      else if (user?.state !== UserConnectionState.WS_CLOSED) message = 'User ws in not closed';
       logger.info(`${this.roomId}: ${user?.nickname || 'User'} (${user?.email}) reconnect failed`);
       ws.send(
         JSON.stringify({
@@ -560,13 +536,18 @@ export class Room {
       })
     );
 
+    this.wsOnClose(ws, sessionId, this.users[sessionId]);
+  }
+
+  private wsOnClose(ws: WebSocket, sessionId: string, user: User) {
     ws.on('close', () => {
       this.websockets = this.websockets.filter(item => item !== user.ws);
-      if (this.users[sessionId].state === UserConnectionState.DISCONNECTED) return;
-      logger.info(`${this.roomId}: ${user.nickname || 'User'} (${user.email}) dangling`);
-      this.users[sessionId].state = UserConnectionState.DANGLING;
-      setTimeout(() => {
-        if (this.users[sessionId].state === UserConnectionState.DANGLING) {
+      if (user.state === UserConnectionState.DISCONNECTED) return;
+      logger.info(`${this.roomId}: ${user.nickname || 'User'} (${user.email}) ws closed`);
+      user.state = UserConnectionState.WS_CLOSED;
+      if (user.closeTimeout) clearTimeout(user.closeTimeout);
+      user.closeTimeout = (setTimeout(() => {
+        if (user.state === UserConnectionState.WS_CLOSED) {
           try {
             this.disconnect(sessionId);
           } catch (error) {
@@ -574,7 +555,7 @@ export class Room {
             this.checkRoomDeletion();
           }
         }
-      }, 10000);
+      }, 10000) as unknown) as NodeJS.Timeout;
     });
   }
 
@@ -678,6 +659,8 @@ export interface User {
   signal: UserSignal;
   microphoneState: MicrophoneState;
   role?: UserRole;
+  danglingTimeout?: NodeJS.Timeout;
+  closeTimeout?: NodeJS.Timeout;
   state: UserConnectionState;
 }
 
@@ -718,5 +701,6 @@ export enum UserRole {
 enum UserConnectionState {
   CONNECTED = 0,
   DANGLING = 1, // WS is still connected, but webrtc connection is lost
-  DISCONNECTED = 2,
+  WS_CLOSED = 2, // WS is still connected, but webrtc connection is lost
+  DISCONNECTED = 3,
 }
