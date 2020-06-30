@@ -1,3 +1,4 @@
+/* eslint-disable no-async-promise-executor */
 import {Injectable} from '@angular/core';
 import {Consumer, Producer, Device, Transport} from 'mediasoup-client/lib/types';
 import {ApiService} from './api.service';
@@ -6,6 +7,7 @@ import {WsService} from './ws.service';
 import {LocalMediaService} from './local-media.service';
 import {User, MicrophoneState, CameraState, ScreenshareState} from '../model/user';
 import {State} from '../model/connection';
+import {promise} from 'protractor';
 
 @Injectable({
   providedIn: 'root',
@@ -360,25 +362,49 @@ export class MediaService {
   async addExistingUsers() {
     const users = await this.api.getUsers(this.roomId as string);
     const newUsers: User[] = [];
+    const promises: Promise<void>[] = [];
     for (const user of users) {
-      // Dont add yourself
-      if (user.id === this.userId) continue;
+      promises.push(
+        new Promise(async res => {
+          // Don't add yourself
+          if (user.id === this.userId) return res();
 
-      const foundUser = this.users.find(item => item.id === user.id);
-      if (foundUser) {
-        console.log('User already exits ... updating');
-        Object.assign(foundUser, user);
-        return;
-      }
+          const foundUser = this.users.find(item => item.id === user.id);
+          if (foundUser) {
+            console.log('User already exits ... updating');
+            for (const _type of ['audio', 'video', 'screen']) {
+              const type = _type as 'audio' | 'video' | 'screen';
+              // remove old producers
+              if (
+                (foundUser.consumers && foundUser.consumers[type] != null && user.producers[type] == null) ||
+                user.producers[type] !== foundUser.producers[type]
+              )
+                await this.removeConsumer(foundUser, type);
+              // add missing producers
+              if (
+                (foundUser.consumers && foundUser.consumers[type] == null && user.producers[type] != null) ||
+                user.producers[type] !== foundUser.producers[type]
+              )
+                await this.addConsumer(foundUser, type);
+            }
+            const index = this.users.indexOf(foundUser);
+            this.users[index] = Object.assign(foundUser, user);
+            return res();
+          }
 
-      for (const key in user.producers) {
-        if (Object.prototype.hasOwnProperty.call(user.producers, key)) {
-          this.addConsumer(user, key as 'audio' | 'video' | 'screen');
-        }
-      }
-      newUsers.push(user);
+          for (const key in user.producers) {
+            if (Object.prototype.hasOwnProperty.call(user.producers, key)) {
+              await this.addConsumer(user, key as 'audio' | 'video' | 'screen');
+            }
+          }
+          newUsers.push(user);
+          res();
+        })
+      );
     }
+    await Promise.all(promises);
     this.users.push(...newUsers);
+    this.triggerSubject();
   }
 
   private async addConsumer(user: User, type: 'audio' | 'video' | 'screen') {
