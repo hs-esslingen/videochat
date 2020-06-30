@@ -453,7 +453,8 @@ export class MediaService {
     this.sendTransport.on('connectionstatechange', c => {
       console.log('connection state: ' + c);
       if (c === 'disconnected') {
-        // TODO: Ping server if he is still responding, otherwise reconnect
+        // Ping server if he is still responding, otherwise reconnect
+        // May not be needed, because ws are already used to check if the connection failed
       }
     });
     this.addProduceCallbacks(this.sendTransport);
