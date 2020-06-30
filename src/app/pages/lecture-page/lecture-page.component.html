@@ -28,10 +28,9 @@
     <app-chat *ngIf="detailType === 'chat'" class="detail" [childData]="sidebarDetail" [user]="currentUser"></app-chat>
     <app-poll *ngIf="detailType === 'poll'" class="detail"></app-poll>
 
-    <app-master id="master" [currentUser]="currentUser" [users]="users" [autoGainControl]="autoGainControl"
-        (sidebarSetDetailEvent)="setSidebarDetail($event)" (sidebarSignalEvent)="setSidebarSignal($event)"
-        (sidebarNicknameEvent)="setNickname($event)" (sidebarDisconnectEvent)="disconnect()"
-        (sidebarToggleAutogainEvent)="mediaService.toggleAutoGainControl()"
+    <app-master id="master" (sidebarSetDetailEvent)="setSidebarDetail($event)"
+        (sidebarSignalEvent)="setSidebarSignal($event)" (sidebarNicknameEvent)="setNickname($event)"
+        (sidebarDisconnectEvent)="disconnect()" (sidebarToggleAutogainEvent)="mediaService.toggleAutoGainControl()"
         [class.detail-open]="detailType != undefined"></app-master>
 </div>
 

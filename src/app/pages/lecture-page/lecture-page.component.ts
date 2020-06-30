@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
+import {Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef} from '@angular/core';
 import {MediaService} from '../../helper/media.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
@@ -46,6 +46,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     readonly mediaService: MediaService,
+    private ref: ChangeDetectorRef,
     private room: RoomService,
     private router: Router,
     private route: ActivatedRoute,
@@ -128,8 +129,13 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       this.screenShareUser = screenShareUser;
 
+      this.ref.detectChanges();
+      // wait two animation frames
       requestAnimationFrame(() => {
-        this.recalculateMaxVideoWidth();
+        requestAnimationFrame(() => {
+          this.recalculateMaxVideoWidth();
+          this.ref.detectChanges();
+        });
       });
     });
 
