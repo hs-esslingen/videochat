@@ -1,7 +1,7 @@
 import {User} from './user';
 
 export class Chat {
-  constructor(public id: string, public messages: Message[] = [], public newMessage: boolean = false, public partnerId?: string) {}
+  constructor(public id?: string, public messages: Message[] = [], public newMessage: boolean = false, public partnerId?: string) {}
 }
 
 export interface Message {

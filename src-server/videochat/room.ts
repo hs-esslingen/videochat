@@ -140,7 +140,7 @@ export class Room {
     logger.trace(message, to);
 
     const m: Message = {
-      from: user.nickname,
+      from: user.id,
       // send to User.id
       to,
       time: Date.now(),
@@ -428,14 +428,14 @@ export class Room {
     return transport.restartIce();
   }
 
-  initWebsocket(ws: WebSocket, initData: WebsocketUserInfo, sessionId: string, {email}: {email: string}) {
+  initWebsocket(ws: WebSocket, initData: WebsocketUserInfo, sessionId: string, {email, displayName}: {email: string; displayName: string}) {
     const transports: WebRtcTransport[] = [];
     let user: User;
     if (this.users[sessionId] == null) {
       user = {
         id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
         ws: ws,
-        nickname: initData.nickname,
+        nickname: displayName,
         email,
         transports,
         producers: {},

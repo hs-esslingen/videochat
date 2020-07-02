@@ -33,32 +33,33 @@
     }
 
     p {
-        margin-left: 8px;
-        padding-bottom: 8px;
-        font-size: 14px;
-        color: white;
+      margin-left: 8px;
+      padding-bottom: 8px;
+      font-size: 14px;
+      color: white;
+      white-space: pre;
     }
-    
+
     /* width */
     &::-webkit-scrollbar {
-        width: 12px;
-      }
+      width: 12px;
+    }
 
     /* Track */
     &::-webkit-scrollbar-track {
-    background: transparent;
+      background: transparent;
     }
 
     /* Handle */
     &::-webkit-scrollbar-thumb {
-    background: #555;
-    border-radius: 6px;
-    border: 2px solid #080e1a;
+      background: #555;
+      border-radius: 6px;
+      border: 2px solid #080e1a;
     }
 
     /* Handle on hover */
     &::-webkit-scrollbar-thumb:hover {
-    background: #2a5094;
+      background: #2a5094;
     }
   }
 

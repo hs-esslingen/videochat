@@ -1,17 +1,19 @@
 <div id="content">
     <div id="header">
-        <h4 *ngIf="childData.id !== undefined">Your chat with {{childData.getNickname()}}</h4>
+        <h4 *ngIf="childData.id !== undefined">Your chat with {{users[childData.id].nickname}}</h4>
         <h4 *ngIf="childData.id === undefined">Public Chat</h4>
     </div>
 
     <div id="messages">
         <div *ngFor="let message of childData.messages" class="message">
-            <label id="sender" [class.user]="message.sender === user.nickname">{{message.from}}:</label>
+            <label id="sender"
+                [class.user]="message.from === currentUser.id">{{message.from === currentUser.id ? currentUser.nickname : users[message.from].nickname}}:</label>
             <!-- <div id="time">{{message.time}}</div> -->
             <p id="text">{{message.message}}</p>
         </div>
     </div>
 
     <button id="send-message" (click)="sendMessage()"><i class="material-icons">send</i></button>
-    <textarea [(ngModel)]="newMessage" id="chat-input" placeholder="Enter your message here"></textarea>
+    <textarea #input (keyup)="handleKeyUp($event)" [(ngModel)]="newMessage" id="chat-input"
+        placeholder="Enter your message here"></textarea>
 </div>

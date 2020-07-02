@@ -26,7 +26,7 @@ export class RoomService {
     private ws: WsService,
     private api: ApiService,
     private localMedia: LocalMediaService,
-    private signal: SignalService
+    private signal: SignalService,
     private chat: ChatService
   ) {
     this.roomSubject = new Subject();
@@ -54,7 +54,7 @@ export class RoomService {
     signal.subscribe(data => {
       this.currentUser.signal = data;
     });
-    
+
     chat.subscribe(data => {
       this.chats = data;
       this.triggerSubject();

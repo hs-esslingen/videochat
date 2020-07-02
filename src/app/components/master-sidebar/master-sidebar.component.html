@@ -4,7 +4,7 @@
         <div class="object-label chat" [class.messaged]="chats[id].newMessage"
             (click)="setSidebarDetailType(chats[id])">
             <div class="status"></div>
-            <div class="nickname">{{ users[id] || "Public Chat" }}</div>
+            <div class="nickname">{{ chats[id].id ? users[id].nickname : "Public Chat" }}</div>
             <div class="signal">
                 <i *ngIf="!chats[id].newMessage" class="material-icons">chat_bubble_outline</i>
                 <i *ngIf="chats[id].newMessage" class="material-icons">chat</i>

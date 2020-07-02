@@ -25,43 +25,14 @@ export class ChatService {
         this.triggerSubject();
       }
     });
-
-    // const testData = [
-    //   {
-    //     id: 'public_chat',
-    //     messages: [
-    //       {sender: 'Hr. Rößler', text: 'Guten Morgen!'},
-    //       {sender: 'Claus', text: 'Morgen!'},
-    //       {sender: 'Rolf', text: 'Guten Morgen'},
-    //       {sender: 'Emilia', text: 'Guten Morgen :)'},
-    //       {sender: 'Lukas', text: 'Moin'},
-    //       {sender: 'Christina', text: 'Hallo'},
-    //       {sender: 'Ali', text: 'Tach'},
-    //       {sender: 'Kevin', text: 'Verstehe ich nicht'},
-    //       {sender: 'Der King', text: 'Hör halt mal zu...'},
-    //       {sender: 'Emilia', text: 'Ich dachte mit dem Kindergarten sind wir durch im Studium.'},
-    //       {sender: 'Lukas', text: 'Oh boi^^'},
-    //       {sender: 'Rolf', text: 'Ihre Folien verändern sich nichtmehr...'},
-    //       {sender: 'Claus', text: '+'},
-    //       {sender: 'Emilia', text: '+'},
-    //       {sender: 'Lukas', text: '+'},
-    //       {sender: 'Christina', text: '+'},
-    //       {sender: 'Hr. Rößler', text: 'Okay, dann hören wir auf für heute.'},
-    //       {sender: 'Vladimir', text: 'Jo, lass mal chillen nachher.'},
-    //       {sender: 'Ali', text: 'Bruder, nee. Is Corona.'},
-    //       {sender: 'Der King', text: 'Ach komm, nen Bierchen geht immer.'},
-    //     ],
-    //     newMessage: true,
-    //   },
-    // ];
-
-    // this.chats = testData.map(jsonObj => Chat.fromJson(jsonObj));
   }
 
   public async init(roomId: string, userId: string) {
     this.userId = userId;
+    this.roomId = roomId;
     const messages = await this.api.getMessages(roomId);
     this.chats = {};
+    this.chats['public_chat'] = new Chat(undefined);
     for (const message of messages) {
       this.addMessage(message);
     }
@@ -84,22 +55,22 @@ export class ChatService {
 
   public addChat(user: User): Chat {
     const chat = new Chat(user.id);
-    this.chats[chat.id] = chat;
+    this.chats[user.id] = chat;
     this.triggerSubject();
     return chat;
   }
 
   private addMessage(message: Message) {
-    let chatId;
+    let chat: Chat;
     if (message.to) {
-      if (message.to === this.userId) chatId = message.from;
-      else chatId = message.to;
+      let partner = message.to;
+      if (partner === this.userId) partner = message.from;
       // private chat
+      if (this.chats[partner] == null) this.chats[partner] = new Chat(partner);
+      chat = this.chats[partner];
     } else {
-      chatId = 'public_chat';
+      chat = this.chats['public_chat'];
     }
-    if (this.chats[chatId] == null) this.chats[chatId] = new Chat(chatId);
-    const chat = this.chats[chatId];
     chat.messages.push(message);
   }
 

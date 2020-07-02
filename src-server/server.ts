@@ -61,6 +61,8 @@ const jwtStrategy = new jwtPassport.Strategy(
   },
   (jwtPayload, done) => {
     logger.debug('Parsing JWT', jwtPayload);
+
+    if (jwtPayload) jwtPayload.displayName = jwtPayload.email.split('@')[0];
     done(null, jwtPayload);
   }
 );
@@ -288,7 +290,7 @@ app.get('/ws', (req, res) => {
   wss.handleUpgrade(req, res.socket, Buffer.from(''), ws => {
     const myWs = ws as MyWebSocket;
     myWs.sessionID = req.sessionID as string;
-    myWs.user = req.user as {email: string};
+    myWs.user = req.user as {email: string; displayName: string};
     wss.emit('connection', myWs);
   });
 });
@@ -342,7 +344,7 @@ server.listen(PORT, () => {
 export interface MyWebSocket extends WebSocket {
   isAlive: boolean;
   sessionID: string;
-  user: {email: string};
+  user: {email: string; displayName: string};
 }
 
 function initLogger(): void {
