@@ -24,7 +24,7 @@ export class MoodleService {
       const waitForAuthentication = () => {
         setTimeout(async () => {
           try {
-            const token = await window.localStorage.getItem('moodleToken');
+            const token = window.localStorage.getItem('moodleToken');
             if (token) {
               if (!this.moodleWindow?.closed) this.moodleWindow?.close();
               res();
@@ -33,9 +33,10 @@ export class MoodleService {
           } catch (error) {
             rej();
           }
-          if (!this.moodleWindow || this.moodleWindow.closed) {
+          if ((!this.moodleWindow || this.moodleWindow.closed) && window.localStorage.getItem('moodleToken') == null) {
             this.moodleWindow = undefined;
             console.log('Error');
+            rej();
             return;
           }
           waitForAuthentication();
