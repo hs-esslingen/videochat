@@ -30,6 +30,8 @@ import {ChangeNicknameComponent} from './components/change-nickname/change-nickn
 import {PollComponent} from './components/poll/poll.component';
 import {SettingsMasterComponent} from './components/settings-master/settings-master.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {TextFieldModule} from '@angular/cdk/text-field';
+import {MatInputModule} from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -68,6 +70,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     MatButtonToggleModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
+    TextFieldModule,
+    MatInputModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

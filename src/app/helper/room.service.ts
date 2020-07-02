@@ -7,6 +7,8 @@ import {ApiService} from './api.service';
 import {State, Connection} from '../model/connection';
 import {LocalMediaService} from './local-media.service';
 import {SignalService} from './signal.service';
+import {ChatService} from './chat.service';
+import {Chat} from '../model/chat';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +17,8 @@ export class RoomService {
   public roomSubject: RoomSubject;
   private connection: Connection;
   private currentUser: CurrentUser;
-  private users: User[] = [];
+  private users: {[key: string]: User} = {};
+  private chats: {[id: string]: Chat} = {};
   private roomId!: string;
 
   constructor(
@@ -23,7 +26,8 @@ export class RoomService {
     private ws: WsService,
     private api: ApiService,
     private localMedia: LocalMediaService,
-    private signal: SignalService
+    private signal: SignalService,
+    private chat: ChatService
   ) {
     this.roomSubject = new Subject();
     this.currentUser = this.initCurrentUser();
@@ -49,6 +53,10 @@ export class RoomService {
 
     signal.subscribe(data => {
       this.currentUser.signal = data;
+    });
+
+    chat.subscribe(data => {
+      this.chats = data;
       this.triggerSubject();
     });
   }
@@ -77,6 +85,7 @@ export class RoomService {
       currentUser: this.currentUser,
       users: this.users,
       connection: this.connection,
+      chats: this.chats,
     };
   }
 
@@ -85,6 +94,7 @@ export class RoomService {
       currentUser: this.currentUser,
       users: this.users,
       connection: this.connection,
+      chats: this.chats,
     });
   }
 
@@ -100,6 +110,8 @@ export class RoomService {
       this.currentUser.id = await this.ws.init(roomId, this.api.displayName);
       this.signal.init(roomId);
       await this.mediaSevice.init(roomId, isWebcamDisabled, this.currentUser.id);
+      await this.chat.init(this.roomId, this.currentUser.id);
+
       setTimeout(() => {
         this.connection = {
           state: State.CONNECTED,
@@ -136,6 +148,8 @@ export class RoomService {
         this.mediaSevice.addExistingUsers();
       } catch (error) {
         console.log('WS RECONNECT FAILED RESTARTING CONNECTION');
+        this.chats = {};
+        this.users = {};
         const cameraDisabled = this.currentUser?.cameraState !== CameraState.ENABLED;
         this.currentUser = this.initCurrentUser();
         this.triggerSubject();
@@ -158,6 +172,8 @@ export class RoomService {
     this.localMedia.closeAudio();
     this.localMedia.closeVideo();
     this.currentUser = this.initCurrentUser();
+    this.chats = {};
+    this.users = {};
     this.connection = {
       state: State.DISCONNECTED,
     };
@@ -169,5 +185,6 @@ export type RoomSubject = Subject<RoomInfo>;
 export type RoomInfo = {
   connection: Connection;
   currentUser: CurrentUser;
-  users: User[];
+  users: {[key: string]: User};
+  chats: {[id: string]: Chat};
 };

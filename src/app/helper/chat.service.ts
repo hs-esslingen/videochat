@@ -1,90 +1,82 @@
 import {Injectable} from '@angular/core';
-import {Subscriber, Observable} from 'rxjs';
-import {User} from '../model/user';
+import {Subscriber, Observable, Subject, Subscription} from 'rxjs';
+import {User, CurrentUser} from '../model/user';
+import {Chat, Message} from '../model/chat';
+import {ApiService} from './api.service';
+import {WsReadyState, WsService} from './ws.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
-  private chats: Chat[];
-  private chatSubscriber?: Subscriber<{chats: Chat[]}>;
-  private chatObservable?: ChatObservable;
+  private chats: {[id: string]: Chat} = {};
+  private userId: string;
+  private roomId: string;
+  private chatSubject: Subject<{[id: string]: Chat}>;
 
-  constructor() {
-    const testData = [
-      {
-        id: 'public_chat',
-        messages: [
-          {sender: 'Hr. Rößler', text: 'Guten Morgen!'},
-          {sender: 'Claus', text: 'Morgen!'},
-          {sender: 'Rolf', text: 'Guten Morgen'},
-          {sender: 'Emilia', text: 'Guten Morgen :)'},
-          {sender: 'Lukas', text: 'Moin'},
-          {sender: 'Christina', text: 'Hallo'},
-          {sender: 'Ali', text: 'Tach'},
-          {sender: 'Kevin', text: 'Verstehe ich nicht'},
-          {sender: 'Der King', text: 'Hör halt mal zu...'},
-          {sender: 'Emilia', text: 'Ich dachte mit dem Kindergarten sind wir durch im Studium.'},
-          {sender: 'Lukas', text: 'Oh boi^^'},
-          {sender: 'Rolf', text: 'Ihre Folien verändern sich nichtmehr...'},
-          {sender: 'Claus', text: '+'},
-          {sender: 'Emilia', text: '+'},
-          {sender: 'Lukas', text: '+'},
-          {sender: 'Christina', text: '+'},
-          {sender: 'Hr. Rößler', text: 'Okay, dann hören wir auf für heute.'},
-          {sender: 'Vladimir', text: 'Jo, lass mal chillen nachher.'},
-          {sender: 'Ali', text: 'Bruder, nee. Is Corona.'},
-          {sender: 'Der King', text: 'Ach komm, nen Bierchen geht immer.'},
-        ],
-        newMessage: true,
-      },
-    ];
-
-    this.chats = testData.map(jsonObj => Chat.fromJson(jsonObj));
+  constructor(private api: ApiService, private ws: WsService) {
+    this.chatSubject = new Subject();
+    this.userId = '';
+    this.roomId = '';
+    ws.messageSubject.subscribe(e => {
+      if (e.type === 'message') {
+        const message = e.data as Message;
+        this.addMessage(message);
+        this.triggerSubject();
+      }
+    });
   }
 
-  public getChats(): Chat[] {
+  public async init(roomId: string, userId: string) {
+    this.userId = userId;
+    this.roomId = roomId;
+    const messages = await this.api.getMessages(roomId);
+    this.chats = {};
+    this.chats['public_chat'] = new Chat(undefined);
+    for (const message of messages) {
+      this.addMessage(message);
+    }
+    this.triggerSubject();
+  }
+
+  public getChats(): {[id: string]: Chat} {
     return this.chats;
   }
 
-  public getObserver(): ChatObservable {
-    if (this.chatObservable == null) this.chatObservable = new Observable<{chats: Chat[]}>(sub => (this.chatSubscriber = sub));
-    return this.chatObservable;
+  public subscribe(callback: (v: {[id: string]: Chat}) => void): Subscription {
+    return this.chatSubject.subscribe({
+      next: callback,
+    });
+  }
+
+  private triggerSubject() {
+    this.chatSubject.next(this.chats);
   }
 
   public addChat(user: User): Chat {
-    const chat = new Chat(user.id, [], false, user);
-    this.chats.push(chat);
-
-    this.chatSubscriber?.next({chats: this.chats});
+    const chat = new Chat(user.id);
+    this.chats[user.id] = chat;
+    this.triggerSubject();
     return chat;
   }
-}
 
-export class Chat {
-  constructor(public id: string, public messages: Message[], public newMessage: boolean, public partner?: User) {}
-
-  static fromJson(data: ChatJson) {
-    return new Chat(data.id, data.messages, data.newMessage, data.partner);
+  private addMessage(message: Message) {
+    let chat: Chat;
+    if (message.to) {
+      let partner = message.to;
+      if (partner === this.userId) partner = message.from;
+      // private chat
+      if (this.chats[partner] == null) this.chats[partner] = new Chat(partner);
+      chat = this.chats[partner];
+    } else {
+      chat = this.chats['public_chat'];
+    }
+    chat.messages.push(message);
   }
 
-  getNickname(): string {
-    if (!this.partner) return 'Public Chat';
-    else return this.partner.nickname;
+  public async sendMessage(message: string, to?: string) {
+    await this.api.sendMessage(this.roomId, message, to);
   }
 }
-
-export interface Message {
-  sender: string;
-  text: string;
-  // time:   Date;
-}
-
-type ChatJson = {
-  id: string;
-  partner?: User;
-  messages: Message[];
-  newMessage: boolean;
-};
 
 export type ChatObservable = Observable<{chats: Chat[]}>;
