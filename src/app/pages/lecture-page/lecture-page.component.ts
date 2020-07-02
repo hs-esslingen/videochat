@@ -80,7 +80,11 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @HostListener('window:keyup', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
-    if (this.connection.state === State.CONNECTED) {
+    if (
+      this.connection.state === State.CONNECTED &&
+      (event.target as HTMLElement).tagName !== 'TEXTAREA' &&
+      (event.target as HTMLElement).tagName !== 'INPUT'
+    ) {
       this.shortcut.trigger(event);
     }
   }
@@ -218,11 +222,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     requestAnimationFrame(() => {
       this.recalculateMaxVideoWidth();
     });
-  }
-
-  async setSidebarSignal($event: UserSignal) {
-    if ($event === this.currentUser.signal) $event = UserSignal.NONE;
-    await this.api.setUserSignal(this.roomId, this.currentUser.signal);
   }
 
   setNickname($event: string) {

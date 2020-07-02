@@ -52,13 +52,13 @@
         </div>
     </div>
     <div id="user-actions">
-        <button id="raise-hand" class="small round-button" (click)="raiseHand()" [class.active]="currentUser?.signal === 1" matTooltip="raise (h)and">
+        <button id="raise-hand" class="small round-button" (click)="raiseHand()" [class.active]="currentUser?.signal === 1" matTooltip="raise hand (h)">
             <i class="material-icons">pan_tool</i>
         </button>
-        <button id="vote-up" class="small round-button" (click)="thumbsUp()" [class.active]="currentUser?.signal === 2" matTooltip="vote (u)p">
+        <button id="vote-up" class="small round-button" (click)="thumbsUp()" [class.active]="currentUser?.signal === 2" matTooltip="vote up (u)">
             <i class="material-icons">thumb_up</i>
         </button>
-        <button id="vote-down" class="small round-button" (click)="thumbsDown()" [class.active]="currentUser?.signal === 3" matTooltip="vote (d)own">
+        <button id="vote-down" class="small round-button" (click)="thumbsDown()" [class.active]="currentUser?.signal === 3" matTooltip="vote down (d)">
             <i class="material-icons">thumb_down</i>
         </button>
     </div>
