@@ -16,7 +16,7 @@
         <ng-container *ngFor="let poll of polls">
             <div class="object-label chat" (click)="setSidebarDetailType(poll)">
                 <div class="status"></div>
-                <div class="nickname">{{poll.title}}</div>
+                <div class="nickname">{{ poll.title }}</div>
                 <div class="signal">
                     <!-- <i *ngIf="!chat.newMessage" class="material-icons">chat_bubble_outline</i>
                     <i *ngIf="chat.newMessage" class="material-icons">chat</i> -->
@@ -36,39 +36,50 @@
 
     <h4>Current Users</h4>
     <label>You</label>
-    <div id="You" class="object-label" [class.talking]="currentUser?.microphoneState === 2"
-        [class.signaling]="currentUser?.signal === 1" [class.votingUp]="currentUser?.signal === 2"
-        [class.votingDown]="currentUser?.signal === 3" [class.micActive]="currentUser?.microphoneState >= 1">
+    <div
+        id="You"
+        class="object-label"
+        [class.talking]="currentUser?.microphoneState === 2"
+        [class.signaling]="currentUser?.signal === 1"
+        [class.votingUp]="currentUser?.signal === 2"
+        [class.votingDown]="currentUser?.signal === 3"
+        [class.micActive]="currentUser?.microphoneState >= 1"
+    >
         <div class="status"></div>
         <div class="nickname">{{ currentUser?.nickname }}</div>
         <div class="signal" *ngIf="currentUser?.microphoneState >= 1">
-            <i class="material-icons">{{ currentUser?.microphoneState === 1 ? "mic" : "record_voice_over"}}</i>
+            <i class="material-icons">{{ currentUser?.microphoneState === 1 ? 'mic' : 'record_voice_over' }}</i>
         </div>
     </div>
     <div id="user-actions">
-        <button id="raise-hand" class="small round-button" (click)="raiseHand()"
-            [class.active]="currentUser?.signal === 1">
+        <button id="raise-hand" class="small round-button" (click)="raiseHand()" [class.active]="currentUser?.signal === 1" matTooltip="raise (h)and">
             <i class="material-icons">pan_tool</i>
         </button>
-        <button id="vote-up" class="small round-button" (click)="thumbsUp()" [class.active]="currentUser?.signal === 2">
+        <button id="vote-up" class="small round-button" (click)="thumbsUp()" [class.active]="currentUser?.signal === 2" matTooltip="vote (u)p">
             <i class="material-icons">thumb_up</i>
         </button>
-        <button id="vote-down" class="small round-button" (click)="thumbsDown()"
-            [class.active]="currentUser?.signal === 3">
+        <button id="vote-down" class="small round-button" (click)="thumbsDown()" [class.active]="currentUser?.signal === 3" matTooltip="vote (d)own">
             <i class="material-icons">thumb_down</i>
         </button>
     </div>
 
     <label>Others</label>
     <div id="participants">
-        <div *ngFor="let user of users" class="object-label" [matMenuTriggerFor]="userMenu" (click)="userInteraction()"
-            [class.talking]="user.microphoneState === 2" [class.signaling]="user.signal === 1"
-            [class.votingUp]="user.signal === 2" [class.votingDown]="user.signal === 3"
-            [class.micActive]="user.microphoneState >= 1">
+        <div
+            *ngFor="let user of users"
+            class="object-label"
+            [matMenuTriggerFor]="userMenu"
+            (click)="userInteraction()"
+            [class.talking]="user.microphoneState === 2"
+            [class.signaling]="user.signal === 1"
+            [class.votingUp]="user.signal === 2"
+            [class.votingDown]="user.signal === 3"
+            [class.micActive]="user.microphoneState >= 1"
+        >
             <div class="status"></div>
             <div class="nickname">{{ user.nickname }}</div>
             <div class="signal" *ngIf="user.microphoneState >= 1">
-                <i class="material-icons">{{ user.microphoneState === 1 ? "mic" : "record_voice_over"}}</i>
+                <i class="material-icons">{{ user.microphoneState === 1 ? 'mic' : 'record_voice_over' }}</i>
             </div>
 
             <mat-menu #userMenu="matMenu" yPosition="above">
@@ -78,11 +89,10 @@
             </mat-menu>
         </div>
     </div>
-
 </div>
 
 <div id="control">
-    <button id="settings" class="big round-button" (click)="openSettingsDialog()">
+    <button id="settings" class="big round-button" (click)="openSettingsDialog()" matTooltip="open settings">
         <i class="material-icons">settings</i>
     </button>
     <!-- <button id="settings" class="big round-button" [matMenuTriggerFor]="settingsMenu">
@@ -101,6 +111,5 @@
             </mat-checkbox>
         </button>
     </mat-menu> -->
-    <button id="leave-room" class="big round-button" (click)="leaveRoom()"><i
-            class="material-icons">directions_run</i></button>
+    <button id="leave-room" class="big round-button" (click)="leaveRoom()" matTooltip="leave current room"><i class="material-icons">directions_run</i></button>
 </div>

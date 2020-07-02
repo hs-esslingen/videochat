@@ -10,6 +10,8 @@ import {RoomService} from 'src/app/helper/room.service';
 import {ApiService} from 'src/app/helper/api.service';
 import {Subscription} from 'rxjs';
 import {Connection, State} from 'src/app/model/connection';
+import {ShortcutService} from '../../helper/shortcut.service';
+import {SignalService} from '../../helper/signal.service';
 
 @Component({
   selector: 'app-lecture-page',
@@ -54,6 +56,8 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     private localMedia: LocalMediaService,
     private element: ElementRef<HTMLElement>,
     private api: ApiService,
+    private shortcut: ShortcutService,
+    private signal: SignalService,
     readonly chatService: ChatService
   ) {
     const webcamHeight = window.localStorage.getItem('webcamHeight');
@@ -72,6 +76,13 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   @HostListener('window:resize', ['$event'])
   onResize() {
     this.recalculateMaxVideoWidth();
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  handleKeyDown(event: KeyboardEvent) {
+    if (this.connection.state === State.CONNECTED) {
+      this.shortcut.trigger(event);
+    }
   }
 
   ngAfterViewInit(): void {
@@ -210,8 +221,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async setSidebarSignal($event: UserSignal) {
-    if ($event !== this.currentUser.signal) this.currentUser.signal = $event;
-    else this.currentUser.signal = UserSignal.NONE;
+    if ($event === this.currentUser.signal) $event = UserSignal.NONE;
     await this.api.setUserSignal(this.roomId, this.currentUser.signal);
   }
 

@@ -6,6 +6,7 @@ import {Subject, Subscription} from 'rxjs';
 import {ApiService} from './api.service';
 import {State, Connection} from '../model/connection';
 import {LocalMediaService} from './local-media.service';
+import {SignalService} from './signal.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,13 @@ export class RoomService {
   private users: User[] = [];
   private roomId!: string;
 
-  constructor(private mediaSevice: MediaService, private ws: WsService, private api: ApiService, private localMedia: LocalMediaService) {
+  constructor(
+    private mediaSevice: MediaService,
+    private ws: WsService,
+    private api: ApiService,
+    private localMedia: LocalMediaService,
+    private signal: SignalService
+  ) {
     this.roomSubject = new Subject();
     this.currentUser = this.initCurrentUser();
     this.connection = {
@@ -37,6 +44,11 @@ export class RoomService {
       this.currentUser.stream.video = data.localStream;
       this.currentUser.stream.screen = data.localScreenshareStream;
       this.users = data.users;
+      this.triggerSubject();
+    });
+
+    signal.subscribe(data => {
+      this.currentUser.signal = data;
       this.triggerSubject();
     });
   }
@@ -86,6 +98,7 @@ export class RoomService {
       this.roomId = roomId;
       this.currentUser.nickname = this.api.displayName;
       this.currentUser.id = await this.ws.init(roomId, this.api.displayName);
+      this.signal.init(roomId);
       await this.mediaSevice.init(roomId, isWebcamDisabled, this.currentUser.id);
       setTimeout(() => {
         this.connection = {
