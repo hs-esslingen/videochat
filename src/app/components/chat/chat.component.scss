@@ -37,7 +37,9 @@
       padding-bottom: 8px;
       font-size: 14px;
       color: white;
-      white-space: pre;
+      // white-space: pre;
+      margin-right: 8px;
+      word-break: break-all;
     }
 
     /* width */
@@ -63,39 +65,63 @@
     }
   }
 
-  #send-message {
-    position: relative;
-    width: 96px;
-    height: 32px;
-    margin-left: auto;
-    background-color: gray;
-    // border-bottom:  32px solid gray;
-    // border-left:    32px solid transparent;
-
-    i {
-      line-height: 32px;
-    }
-
-    // &::before {
-    //     content: "";
-    //     position: absolute;
-    //     bottom: -32px;
-    //     left: -88px;
-    //     width: 64px;
-    //     height: 16px;
-
-    //     background-color: blue;
-    //     border-bottom-right-radius: 32px 12px;
-    //     box-shadow: 24px 0 0 0 gray;
-    //     border-top: 8px solid blue;
-    //     border-right: 8px solid transparent;
-    // }
-  }
 
   #chat-input {
-    height: 64px;
-    min-height: 64px;
-    border: none;
-    resize: none;
+    background-color: #193058;
+
+    textarea {
+      max-height: 100px;
+      color: white;
+      border: none;
+      width: calc(100% - 32px - 42px);
+      padding: 8px;
+      margin: 8px 8px 2px 8px;
+      min-height: 18px;
+      border-radius: 17px;
+      font-size: 14px;
+      background-color: #080e1a;
+      // resize: none;
+
+      font-family: "Open Sans",
+        sans-serif;
+
+      &:focus {
+        outline: none;
+      }
+
+    }
+
+    #send-message {
+      position: relative;
+      width: 34px;
+      height: 32px;
+      margin-top: 10px;
+      margin-right: 8px;
+      // margin-left: auto;
+      // background-color: gray;
+      float: right;
+      // border-bottom:  32px solid gray;
+      // border-left:    32px solid transparent;
+
+      i {
+        line-height: 32px;
+      }
+
+      // &::before {
+      //     content: "";
+      //     position: absolute;
+      //     bottom: -32px;
+      //     left: -88px;
+      //     width: 64px;
+      //     height: 16px;
+
+      //     background-color: blue;
+      //     border-bottom-right-radius: 32px 12px;
+      //     box-shadow: 24px 0 0 0 gray;
+      //     border-top: 8px solid blue;
+      //     border-right: 8px solid transparent;
+      // }
+    }
+
   }
 }

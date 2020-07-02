@@ -17,7 +17,7 @@ export class ChatComponent implements OnInit {
   @ViewChild('input') input!: ElementRef<HTMLTextAreaElement>;
 
   handleKeyUp(event: KeyboardEvent) {
-    if (event.key === 'Enter' && event.shiftKey) {
+    if (event.key === 'Enter' && (event.shiftKey || event.shiftKey)) {
       this.sendMessage();
       event.preventDefault();
     }
