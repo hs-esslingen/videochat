@@ -7,6 +7,7 @@ import {Poll} from 'src/app/helper/poll.service';
 import {User, UserSignal, CurrentUser} from 'src/app/model/user';
 import {SettingsMasterComponent} from '../settings-master/settings-master.component';
 import {RoomService} from 'src/app/helper/room.service';
+import {SignalService} from '../../helper/signal.service';
 
 @Component({
   selector: 'app-master',
@@ -18,7 +19,6 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   users?: User[];
 
   @Output() sidebarSetDetailEvent = new EventEmitter<{element: Record<string, any>; type: string}>();
-  @Output() sidebarSignalEvent = new EventEmitter<UserSignal>();
   @Output() sidebarNicknameEvent = new EventEmitter<string>();
   @Output() sidebarDisconnectEvent = new EventEmitter<null>();
   @Output() sidebarToggleAutogainEvent = new EventEmitter<null>();
@@ -34,7 +34,13 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   //Variables for polls
   polls: Poll[] = [];
 
-  constructor(readonly chatService: ChatService, private dialog: MatDialog, private room: RoomService, private ref: ChangeDetectorRef) {}
+  constructor(
+    readonly chatService: ChatService,
+    private dialog: MatDialog,
+    private room: RoomService,
+    private ref: ChangeDetectorRef,
+    private signal: SignalService
+  ) {}
 
   ngOnInit(): void {
     // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreshes or rejoins)
@@ -82,15 +88,15 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
 
   raiseHand(): void {
     //console.log("You've raised your Hand");
-    this.sidebarSignalEvent.emit(UserSignal.RAISED_HAND);
+    this.signal.setSignal(UserSignal.RAISED_HAND);
   }
   thumbsUp(): void {
     //console.log("You've voted up!");
-    this.sidebarSignalEvent.emit(UserSignal.VOTED_UP);
+    this.signal.setSignal(UserSignal.VOTED_UP);
   }
   thumbsDown(): void {
     //console.log("You've voted down!");
-    this.sidebarSignalEvent.emit(UserSignal.VOTED_DOWN);
+    this.signal.setSignal(UserSignal.VOTED_DOWN);
   }
 
   //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!
