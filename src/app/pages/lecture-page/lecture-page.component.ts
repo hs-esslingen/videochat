@@ -41,6 +41,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   webcamHeight = 0.2;
 
   users: User[] = [];
+  chatUser?: User;
 
   // Variables for sidebar
   sidebarDetail: undefined | Element;
@@ -132,7 +133,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.roomSubscription = this.room.subscribe(data => {
-      this.users = data.users;
+      this.users = Object.keys(data.users).map(id => data.users[id]);
       this.currentUser = data.currentUser;
       this.connection = data.connection;
 

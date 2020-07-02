@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {TransportOptions, RtpParameters, RtpCapabilities, DtlsParameters, IceParameters} from 'mediasoup-client/lib/types';
 import {User, UserSignal, MicrophoneState} from '../model/user';
+import {Message} from '../model/chat';
 
 @Injectable({
   providedIn: 'root',
@@ -159,6 +160,19 @@ export class ApiService {
 
   public getUsers(roomId: string): Promise<User[]> {
     return this.http.get(`/api/room/${roomId}/users`).toPromise() as Promise<User[]>;
+  }
+
+  public getMessages(roomId: string): Promise<Message[]> {
+    return this.http.get(`/api/room/${roomId}/messages`).toPromise() as Promise<Message[]>;
+  }
+
+  public sendMessage(roomId: string, message: string, to?: string) {
+    return this.http
+      .post(`/api/room/${roomId}/message`, {
+        message,
+        to,
+      })
+      .toPromise() as Promise<object>;
   }
 
   public setUserSignal(roomId: string, signal: UserSignal) {

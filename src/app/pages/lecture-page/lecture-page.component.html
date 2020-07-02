@@ -24,7 +24,7 @@
         <app-toolbar id="toolbar" [class.hidden]="isToolbarHidden"></app-toolbar>
     </div>
 
-    <app-chat *ngIf="detailType === 'chat'" class="detail" [childData]="sidebarDetail" [user]="currentUser"></app-chat>
+    <app-chat *ngIf="detailType === 'chat'" class="detail" [childData]="sidebarDetail" [user]="chatUser"></app-chat>
     <app-poll *ngIf="detailType === 'poll'" class="detail"></app-poll>
 
     <app-master

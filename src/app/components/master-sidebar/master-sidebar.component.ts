@@ -1,5 +1,5 @@
 import {Component, OnInit, Output, EventEmitter, OnDestroy, ChangeDetectorRef} from '@angular/core';
-import {ChatService, Chat} from '../../helper/chat.service';
+import {ChatService} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';
@@ -8,6 +8,7 @@ import {User, UserSignal, CurrentUser} from 'src/app/model/user';
 import {SettingsMasterComponent} from '../settings-master/settings-master.component';
 import {RoomService} from 'src/app/helper/room.service';
 import {SignalService} from '../../helper/signal.service';
+import {Chat} from 'src/app/model/chat';
 
 @Component({
   selector: 'app-master',
@@ -16,7 +17,7 @@ import {SignalService} from '../../helper/signal.service';
 })
 export class MasterSidebarComponent implements OnInit, OnDestroy {
   currentUser?: CurrentUser;
-  users?: User[];
+  users: {[key: string]: User} = {};
 
   @Output() sidebarSetDetailEvent = new EventEmitter<{element: Record<string, any>; type: string}>();
   @Output() sidebarNicknameEvent = new EventEmitter<string>();
@@ -27,7 +28,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   demo = false;
 
   // Variables for chats
-  chats: Chat[] = [];
+  chats: {[id: string]: Chat} = {};
   chatSubscription?: Subscription;
   roomSubscription?: Subscription;
 
@@ -46,14 +47,10 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreshes or rejoins)
     this.chats = this.chatService.getChats();
 
-    // Creates an observer on the chats and subscribes to it
-    this.chatSubscription = this.chatService.getObserver().subscribe(data => {
-      this.chats = data.chats;
-    });
-
     this.room.subscribe(data => {
       this.currentUser = data.currentUser;
       this.users = data.users;
+      this.chats = data.chats;
       this.ref.detectChanges();
     });
 
@@ -61,6 +58,10 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
       this.polls.push(new Poll('0', 'Poll_1'));
       this.polls.push(new Poll('1', 'Poll_2'));
     }
+  }
+
+  getKeys(obj: object) {
+    return Object.keys(obj);
   }
 
   ngOnDestroy(): void {
@@ -81,7 +82,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
 
   // PUSH NEWLY CREATED CHAT TO CHAT SERVICE?
   openChat(user: User): void {
-    let foundElement = this.chats.find(chat => chat.partner === user);
+    let foundElement = this.chats[user.id];
     if (foundElement == null) foundElement = this.chatService.addChat(user);
     this.setSidebarDetailType(foundElement);
   }

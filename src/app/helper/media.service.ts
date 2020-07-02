@@ -33,7 +33,7 @@ export class MediaService {
     screenshareState: ScreenshareState;
     localStream?: MediaStream;
     localScreenshareStream?: MediaStream;
-    users: User[];
+    users: {[key: string]: User};
   }>;
   private recvTransport!: Transport;
   private sendTransport!: Transport;
@@ -46,7 +46,7 @@ export class MediaService {
   private localScreenshareStream: MediaStream | undefined;
   private startingCameraStream = false;
   private roomId: string | undefined;
-  private users: User[] = [];
+  private users: {[key: string]: User} = {};
   private userId: string | undefined;
   private audioIntervalId = 0;
   private audioCtx?: AudioContext;
@@ -285,8 +285,8 @@ export class MediaService {
             if (this.recvTransport == null || this.recvTransport.id == null) return;
 
             const user: User = msg.data;
-            if (!this.users.find(item => item.id === user.id)) {
-              this.users.push(user);
+            if (!this.users[user.id]) {
+              this.users[user.id] = user;
               this.triggerSubject();
             }
           }
@@ -294,7 +294,7 @@ export class MediaService {
         case 'update-user':
           {
             const user: User = msg.data;
-            const foundUser = this.users.find(item => item.id === user.id);
+            const foundUser = this.users[user.id];
             if (foundUser) {
               foundUser.nickname = user.nickname;
               foundUser.producers = user.producers;
@@ -326,7 +326,7 @@ export class MediaService {
         case 'remove-user':
           {
             const user: User = msg.data;
-            this.users = this.users.filter(item => item.id !== user.id);
+            delete this.users[user.id];
             this.triggerSubject();
           }
           break;
@@ -369,7 +369,7 @@ export class MediaService {
           // Don't add yourself
           if (user.id === this.userId) return res();
 
-          const foundUser = this.users.find(item => item.id === user.id);
+          const foundUser = this.users[user.id];
           if (foundUser) {
             console.log('User already exits ... updating');
             for (const _type of ['audio', 'video', 'screen']) {
@@ -386,12 +386,11 @@ export class MediaService {
                 (user.producers[type] != null && user.producers[type] !== foundUser.producers[type])
               )
                 await this.addConsumer(foundUser, type);
+              this.users[user.id] = Object.assign(foundUser, user);
             }
-            const index = this.users.indexOf(foundUser);
-            this.users[index] = Object.assign(foundUser, user);
             return res();
           }
-          this.users.push(user);
+          this.users[user.id] = user;
 
           for (const key in user.producers) {
             if (Object.prototype.hasOwnProperty.call(user.producers, key)) {
@@ -545,7 +544,7 @@ export class MediaService {
       this.sendTransport?.close();
       this.localAudioProducer?.close();
       this.localVideoProducer?.close();
-      this.users = [];
+      this.users = {};
       this.localVideoProducer = undefined;
       this.localScreenshareStream = undefined;
       this.screenshareState = ScreenshareState.DISABLED;
@@ -560,16 +559,6 @@ export type Stream = {
   consumer: Consumer;
   stream: MediaStream;
 };
-
-export type MediaObservable = Observable<{
-  autoGainControl: boolean;
-  cameraState: CameraState;
-  microphoneState: MicrophoneState;
-  screenshareState: ScreenshareState;
-  localStream: MediaStream;
-  localScreenshareStream: MediaStream;
-  users: User[];
-}>;
 
 export interface WebsocketUserInfo {
   nickname?: string;
