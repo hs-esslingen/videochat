@@ -26,7 +26,7 @@ export class MoodleGuard implements CanActivate {
       });
       dialogRef.afterClosed().subscribe(async () => {
         try {
-          await this.moodle.moodleLogin();
+          await this.moodle.automaticMoodleLogin();
           this.moodleIsLoggedIn = true;
           const token = window.localStorage.getItem('moodleToken');
           this.moodleCourses = await this.api.getMoodleCourses(token as string);

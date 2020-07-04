@@ -1,0 +1,27 @@
+.actions {
+  display: flex;
+
+  .space {
+    flex-grow: 1;
+  }
+  .space-right {
+    margin-right: 16px;
+  }
+}
+.no-space-top {
+  margin-top: 0;
+}
+.no-space-bottom {
+  margin-bottom: 0;
+}
+.inline {
+  margin-left: 18px;
+  margin-top: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-bottom: 2px;
+}
+
+.step {
+  margin-bottom: 12px;
+}

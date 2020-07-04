@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {MoodleService} from '../../helper/moodle.service';
 import {MatDialogRef, MatDialog} from '@angular/material/dialog';
 import {ApiService} from '../../helper/api.service';
+import {MoodlePopupComponent} from 'src/app/components/moodle-popup/moodle-popup.component';
 
 @Component({
   selector: 'app-nickname-dialog',
@@ -28,13 +29,10 @@ export class OverviewPageComponent implements OnInit {
   }[];
   displayName!: string;
   email!: string;
-  isAndroid!: boolean;
 
   constructor(readonly router: Router, private moodle: MoodleService, readonly api: ApiService, private dialog: MatDialog) {}
 
   async ngOnInit() {
-    const userAgent = navigator.userAgent.toLowerCase();
-    this.isAndroid = userAgent.indexOf('android') > -1;
     if (window.localStorage.getItem('moodleToken')) {
       this.moodleIsLoggedIn = true;
       const token = window.localStorage.getItem('moodleToken');
@@ -64,14 +62,15 @@ export class OverviewPageComponent implements OnInit {
 
   async moodleLogin() {
     this.moodle.requestURI();
-    const dialogRef = this.dialog.open(AllowUriComponent, {
-      width: '400px',
+    const dialogRef = this.dialog.open(MoodlePopupComponent, {
+      width: '500px',
     });
-    dialogRef.afterClosed().subscribe(async () => {
-      await this.moodle.moodleLogin();
-      this.moodleIsLoggedIn = true;
-      const token = window.localStorage.getItem('moodleToken');
-      this.moodleCourses = await this.api.getMoodleCourses(token as string);
+    dialogRef.afterClosed().subscribe(async res => {
+      if (res) {
+        this.moodleIsLoggedIn = true;
+        const token = window.localStorage.getItem('moodleToken');
+        this.moodleCourses = await this.api.getMoodleCourses(token as string);
+      }
     });
   }
 }
