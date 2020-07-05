@@ -11,7 +11,7 @@ import {Chat} from 'src/app/model/chat';
 export class ChatComponent implements OnInit {
   @Input() childData!: Chat;
   @Input() currentUser?: CurrentUser;
-  @Input() users?: {[id: string]: User};
+  @Input() users: {[id: string]: User} = {};
   newMessage?: string;
 
   @ViewChild('input') input!: ElementRef<HTMLTextAreaElement>;
