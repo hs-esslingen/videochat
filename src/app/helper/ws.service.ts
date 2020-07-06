@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {State, Connection} from '../model/connection';
 import {MicrophoneState} from '../model/user';

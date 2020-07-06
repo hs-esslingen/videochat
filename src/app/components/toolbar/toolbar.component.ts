@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, OnDestroy} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {MediaService} from '../../helper/media.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';

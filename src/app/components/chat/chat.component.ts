@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, HostListener, ViewChild, ElementRef} from '@angular/core';
+import {Component, OnInit, Input, ViewChild, ElementRef} from '@angular/core';
 import {ChatService} from '../../helper/chat.service';
 import {User, CurrentUser} from 'src/app/model/user';
 import {Chat} from 'src/app/model/chat';

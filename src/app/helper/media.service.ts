@@ -2,12 +2,11 @@
 import {Injectable} from '@angular/core';
 import {Consumer, Producer, Device, Transport} from 'mediasoup-client/lib/types';
 import {ApiService} from './api.service';
-import {Observable, Subscriber, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {WsService} from './ws.service';
 import {LocalMediaService} from './local-media.service';
 import {User, MicrophoneState, CameraState, ScreenshareState} from '../model/user';
 import {State} from '../model/connection';
-import {promise} from 'protractor';
 
 @Injectable({
   providedIn: 'root',

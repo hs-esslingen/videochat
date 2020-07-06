@@ -19,7 +19,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   currentUser?: CurrentUser;
   users: {[key: string]: User} = {};
 
-  @Output() sidebarSetDetailEvent = new EventEmitter<{element: Record<string, any>; type: string}>();
+  @Output() sidebarSetDetailEvent = new EventEmitter<{element: Chat; type: 'chat'} | {element: Poll; type: 'poll'}>();
   @Output() sidebarNicknameEvent = new EventEmitter<string>();
   @Output() sidebarDisconnectEvent = new EventEmitter<null>();
   @Output() sidebarToggleAutogainEvent = new EventEmitter<null>();
@@ -69,7 +69,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     this.roomSubscription?.unsubscribe();
   }
 
-  setSidebarDetailType(obj: Record<string, any>): void {
+  setSidebarDetailType(obj: Chat | Poll): void {
     // console.log("A label was clicked!");
     // console.log(obj);
     if (obj instanceof Chat) this.sidebarSetDetailEvent.emit({element: obj, type: 'chat'});
@@ -113,7 +113,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
       data: {},
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(() => {
       console.log('The dialog was closed');
       //console.log(result);
     });

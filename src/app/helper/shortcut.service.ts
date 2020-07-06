@@ -1,4 +1,4 @@
-import {Injectable, HostListener, Component} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {MediaService} from './media.service';
 import {SignalService} from './signal.service';
 import {UserSignal} from '../model/user';

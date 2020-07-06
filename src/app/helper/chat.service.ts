@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-import {Subscriber, Observable, Subject, Subscription} from 'rxjs';
-import {User, CurrentUser} from '../model/user';
+import {Observable, Subject, Subscription} from 'rxjs';
+import {User} from '../model/user';
 import {Chat, Message} from '../model/chat';
 import {ApiService} from './api.service';
-import {WsReadyState, WsService} from './ws.service';
+import {WsService} from './ws.service';
 
 @Injectable({
   providedIn: 'root',
