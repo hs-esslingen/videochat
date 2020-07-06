@@ -450,6 +450,9 @@ export class Room {
       user = this.users[sessionId];
       user.state = UserConnectionState.CONNECTED;
       user.producers = {};
+      user.transports.forEach(transport => {
+        transport?.close();
+      });
       user.transports = [];
       user.ws = ws;
       logger.info(`${this.roomId}: ${user.nickname || 'User'} (${email}) joined (reconnect)`);
