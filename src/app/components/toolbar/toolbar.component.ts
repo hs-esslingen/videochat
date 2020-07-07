@@ -4,7 +4,6 @@ import {MatDialog} from '@angular/material/dialog';
 import {CurrentUser} from 'src/app/model/user';
 import {RoomService} from 'src/app/helper/room.service';
 import {Subscription} from 'rxjs';
-import {DebugDialogComponent} from '../../pages/meeting-page/meeting-page.component';
 import {SettingsMasterComponent, settingMode} from '../settings-master/settings-master.component';
 
 @Component({
@@ -50,18 +49,5 @@ export class ToolbarComponent implements OnInit, OnDestroy {
       console.log(result);
       //if (result != null || '') this.mediaService.setNickname(result);
     });
-  }
-
-  async openDebugDialog() {
-    if (this.mediaService.LocalVideoProducer) {
-      const dialogRef = this.dialog.open(DebugDialogComponent, {
-        width: '1200px',
-        data: await this.mediaService.LocalVideoProducer.getStats(),
-      });
-
-      dialogRef.afterClosed().subscribe(() => {
-        console.log('The dialog was closed');
-      });
-    }
   }
 }
