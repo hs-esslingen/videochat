@@ -12,6 +12,7 @@ import {Subscription} from 'rxjs';
 import {Connection, State} from 'src/app/model/connection';
 import {ShortcutService} from '../../helper/shortcut.service';
 import {SignalService} from '../../helper/signal.service';
+import {SoundService} from 'src/app/helper/sound.service';
 
 @Component({
   selector: 'app-lecture-page',
@@ -58,6 +59,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     private api: ApiService,
     private shortcut: ShortcutService,
     private signal: SignalService,
+    private sound: SoundService,
     readonly chatService: ChatService
   ) {
     const webcamHeight = window.localStorage.getItem('webcamHeight');
@@ -132,6 +134,11 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.roomSubscription = this.room.subscribe(data => {
+      if (this.connection.state !== data.connection.state && data.connection.state === 1) {
+        console.log('user joined room');
+        // user joined room and is conencted
+        this.sound.playSound(400);
+      }
       this.users = data.users;
       this.currentUser = data.currentUser;
       this.connection = data.connection;
