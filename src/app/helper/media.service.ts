@@ -7,6 +7,7 @@ import {WsService} from './ws.service';
 import {LocalMediaService} from './local-media.service';
 import {User, MicrophoneState, CameraState, ScreenshareState} from '../model/user';
 import {State} from '../model/connection';
+import {SoundService, Tone} from './sound.service';
 
 @Injectable({
   providedIn: 'root',
@@ -53,7 +54,7 @@ export class MediaService {
 
   public nickname: string;
 
-  constructor(private api: ApiService, private ws: WsService, private localMedia: LocalMediaService) {
+  constructor(private api: ApiService, private ws: WsService, private localMedia: LocalMediaService, private sound: SoundService) {
     this.autoGainControl = localStorage.getItem('autoGainControl') !== 'false';
     this.nickname = localStorage.getItem('nickname') as string;
     this.mediaSubject = new Subject();
@@ -153,10 +154,14 @@ export class MediaService {
       this.localAudioProducer.resume();
       this.microphoneState = MicrophoneState.ENABLED;
       this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
+      // play higher pitch on unmuting microphone
+      this.sound.playSound(Tone.C, 0.3);
     } else {
       this.localAudioProducer?.pause();
       this.microphoneState = MicrophoneState.DISABLED;
       this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
+      // play lower sound on muting microphone
+      this.sound.playSound(Tone.A, 0.3);
     }
     this.triggerSubject();
   }

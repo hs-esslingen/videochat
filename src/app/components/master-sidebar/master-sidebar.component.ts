@@ -9,6 +9,7 @@ import {SettingsMasterComponent} from '../settings-master/settings-master.compon
 import {RoomService} from 'src/app/helper/room.service';
 import {SignalService} from '../../helper/signal.service';
 import {Chat} from 'src/app/model/chat';
+import {SoundService, Tone} from 'src/app/helper/sound.service';
 
 @Component({
   selector: 'app-master',
@@ -42,7 +43,8 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private room: RoomService,
     private ref: ChangeDetectorRef,
-    private signal: SignalService
+    private signal: SignalService,
+    private sound: SoundService
   ) {}
 
   ngOnInit(): void {
@@ -147,5 +149,6 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   leaveRoom(): void {
     //console.log("You've left the lecture!");
     this.sidebarDisconnectEvent.emit();
+    this.sound.playSound(Tone.A);
   }
 }
