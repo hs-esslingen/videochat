@@ -42,15 +42,31 @@ header {
     border-radius: 8px;
   }
 
-  ul {
-    display: flex;
-    list-style: none;
-    li {
-      padding-left: 2em;
+  a {
+    font-size: smaller;
+    text-decoration: none;
+    color: lightgrey;
+  }
+
+  a:hover {
+    color: white;
+  }
+
+  @media (min-width: 768px) {
+    .extern {
+      margin-left: 20px;
+      position: relative;
+      left: 200px;
     }
   }
-  a {
-    text-decoration: none;
-    color: white;
+
+  @media (max-width: 767px) {
+    .extern {
+      visibility: hidden;
+    }
+  }
+
+  #spacer {
+    flex-grow: 1;
   }
 }
