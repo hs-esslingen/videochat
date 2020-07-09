@@ -290,15 +290,13 @@ export class MediaService {
             }
           }
           break;
+        case 'disconnect-user':
         case 'update-user':
           {
             const user: User = msg.data;
             const foundUser = this.users[user.id];
             if (foundUser) {
-              foundUser.nickname = user.nickname;
-              foundUser.producers = user.producers;
-              foundUser.signal = user.signal;
-              foundUser.microphoneState = user.microphoneState;
+              this.users[user.id] = Object.assign(foundUser, user);
 
               if (foundUser.consumers == null) foundUser.consumers = {};
 
@@ -320,13 +318,6 @@ export class MediaService {
                   this.removeConsumer(foundUser, type as 'audio' | 'video' | 'screen');
               });
             }
-          }
-          break;
-        case 'remove-user':
-          {
-            const user: User = msg.data;
-            delete this.users[user.id];
-            this.triggerSubject();
           }
           break;
         case 'restart-ice':

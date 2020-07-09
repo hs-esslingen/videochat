@@ -4,7 +4,7 @@ import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';
 import {Poll} from 'src/app/helper/poll.service';
-import {User, UserSignal, CurrentUser} from 'src/app/model/user';
+import {User, UserSignal, CurrentUser, UserConnectionState} from 'src/app/model/user';
 import {SettingsMasterComponent} from '../settings-master/settings-master.component';
 import {RoomService} from 'src/app/helper/room.service';
 import {SignalService} from '../../helper/signal.service';
@@ -32,6 +32,8 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   chatSubscription?: Subscription;
   roomSubscription?: Subscription;
 
+  activeUsers: User[] = [];
+
   //Variables for polls
   polls: Poll[] = [];
 
@@ -51,6 +53,9 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
       this.currentUser = data.currentUser;
       this.users = data.users;
       this.chats = data.chats;
+      this.activeUsers = Object.keys(this.users)
+        .map(userId => this.users[userId])
+        .filter(user => user.state === UserConnectionState.CONNECTED);
       this.ref.detectChanges();
     });
 

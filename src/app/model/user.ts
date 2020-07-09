@@ -6,6 +6,7 @@ export class User {
   public signal: UserSignal = UserSignal.NONE;
   public microphoneState: MicrophoneState = MicrophoneState.DISABLED;
   public userRole: UserRole = UserRole.USER;
+  public state: UserConnectionState = UserConnectionState.DISCONNECTED;
   public producers: {
     audio?: string;
     video?: string;
@@ -62,4 +63,10 @@ export enum UserSignal {
   RAISED_HAND = 1,
   VOTED_UP = 2,
   VOTED_DOWN = 3,
+}
+export enum UserConnectionState {
+  CONNECTED = 0,
+  DANGLING = 1, // WS is still connected, but webrtc connection is lost
+  WS_CLOSED = 2, // WS is still connected, but webrtc connection is lost
+  DISCONNECTED = 3,
 }
