@@ -379,10 +379,7 @@ export class Room {
   }
 
   getUsers() {
-    return Object.keys(this.users)
-      .map(sessionId => this.users[sessionId])
-      .filter(user => user.state === UserConnectionState.CONNECTED)
-      .map(user => this.getPublicUser(user));
+    return Object.keys(this.users).map(sessionId => this.getPublicUser(this.users[sessionId]));
   }
 
   setUserSignal(sessionID: string, signal: UserSignal) {
@@ -496,10 +493,11 @@ export class Room {
     for (const transport of user.transports) {
       transport.close();
     }
+    user.transports = [];
 
     this.broadcastMessage(
       {
-        type: 'remove-user',
+        type: 'disconnect-user',
         data: this.getPublicUser(user),
       },
       user.ws
@@ -588,6 +586,7 @@ export class Room {
       producers: user.producers,
       signal: user.signal,
       microphoneState: user.microphoneState,
+      state: user.state,
     };
   }
 

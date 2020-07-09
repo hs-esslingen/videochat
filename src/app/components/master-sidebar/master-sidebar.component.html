@@ -63,18 +63,18 @@
 
     <label>Others</label>
     <div id="participants">
-        <div *ngFor="let id of getKeys(users)" class="object-label" [matMenuTriggerFor]="userMenu"
-            (click)="userInteraction()" [class.talking]="users[id].microphoneState === 2"
-            [class.signaling]="users[id].signal === 1" [class.votingUp]="users[id].signal === 2"
-            [class.votingDown]="users[id].signal === 3" [class.micActive]="users[id].microphoneState >= 1">
+        <div *ngFor="let user of activeUsers" class="object-label" [matMenuTriggerFor]="userMenu"
+            (click)="userInteraction()" [class.talking]="user.microphoneState === 2"
+            [class.signaling]="user.signal === 1" [class.votingUp]="user.signal === 2"
+            [class.votingDown]="user.signal === 3" [class.micActive]="user.microphoneState >= 1">
             <div class="status"></div>
-            <div class="nickname">{{ users[id].nickname }}</div>
-            <div class="signal" *ngIf="users[id].microphoneState >= 1">
-                <i class="material-icons">{{ users[id].microphoneState === 1 ? "mic" : "record_voice_over"}}</i>
+            <div class="nickname">{{ user.nickname }}</div>
+            <div class="signal" *ngIf="user.microphoneState >= 1">
+                <i class="material-icons">{{ user.microphoneState === 1 ? "mic" : "record_voice_over"}}</i>
             </div>
 
             <mat-menu #userMenu="matMenu" yPosition="above">
-                <button mat-menu-item (click)="openChat(users[id])">
+                <button mat-menu-item (click)="openChat(user)">
                     Open chat
                 </button>
             </mat-menu>
