@@ -155,13 +155,13 @@ export class MediaService {
       this.microphoneState = MicrophoneState.ENABLED;
       this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
       // play higher pitch on unmuting microphone
-      this.sound.playSound(Tone.C, 0.3);
+      this.sound.playSound(Tone.C2, 0.3);
     } else {
       this.localAudioProducer?.pause();
       this.microphoneState = MicrophoneState.DISABLED;
       this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
       // play lower sound on muting microphone
-      this.sound.playSound(Tone.A, 0.3);
+      this.sound.playSound(Tone.A1, 0.3);
     }
     this.triggerSubject();
   }

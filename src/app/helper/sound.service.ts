@@ -1,5 +1,11 @@
 import {Injectable} from '@angular/core';
 
+/**
+ * initializes an oscillator for generating sounds
+ *
+ * @export
+ * @class SoundService
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -8,22 +14,15 @@ export class SoundService {
     console.log('SoundService');
   }
 
+  /**
+   * start playing a sound and stop after duration
+   *
+   * @param {(number | Tone)} frequency in hertz
+   * @param {number} [duration] in seconds
+   * @param {(Float32Array | undefined)} [volumeCurve] numbers in intervall [0,1] specifying a smooth volume curve
+   * @memberof SoundService
+   */
   public playSound(frequency: number | Tone, duration?: number, volumeCurve?: Float32Array | undefined) {
-    // let audio = new Audio();
-    // audio.src = '../../../assets/audio/alarm.wav';
-    // audio.load();
-    // audio.play();
-
-    // const context = new AudioContext();
-    // const osc = context.createOscillator();
-    // osc.type = 'sine';
-    // osc.frequency.value = frequency;
-    // osc.connect(context.destination);
-
-    // osc.start();
-    // stop 0.3 seconds after the current time
-    // osc.stop(context.currentTime + 0.2);
-
     const audioContext = new AudioContext();
 
     const osc = audioContext.createOscillator();
@@ -59,10 +58,21 @@ export class SoundService {
   }
 }
 
+/**
+ * german tone frequencies, source: https://de.wikipedia.org/wiki/Frequenzen_der_gleichstufigen_Stimmung
+ *
+ * @export
+ * @enum {number}
+ */
 export enum Tone {
-  A = 440,
-  B = 493,
-  C = 523,
-  D = 587,
-  E = 659,
+  A1 = 440,
+  H1 = 493,
+  C2 = 523,
+  D2 = 587,
+  E2 = 659,
+  F2 = 698,
+  G2 = 783,
+  A2 = 880,
+  H2 = 987,
+  C3 = 1046,
 }

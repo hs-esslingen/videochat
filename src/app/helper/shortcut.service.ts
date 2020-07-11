@@ -3,11 +3,23 @@ import {MediaService} from './media.service';
 import {SignalService} from './signal.service';
 import {UserSignal} from '../model/user';
 
+/**
+ * provide functionality for user interaction via keyboard shortcuts
+ *
+ * @export
+ * @class ShortcutService
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class ShortcutService {
   constructor(private mediaService: MediaService, private signalService: SignalService) {}
+  /**
+   * trigger different commands on pressing keys
+   *
+   * @param {KeyboardEvent} event occurs if an key is pressed
+   * @memberof ShortcutService
+   */
   trigger(event: KeyboardEvent) {
     switch (event.key) {
       case 'm':
