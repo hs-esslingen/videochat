@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {VoiceActivityService} from './voice-activity.service';
 
 @Injectable({
   providedIn: 'root',
@@ -8,10 +9,11 @@ export class LocalMediaService {
   private video: MediaStream | undefined;
   private videoLabel: string;
   private audio: MediaStream | undefined;
+  private processedAudio: MediaStream | undefined;
   private audioLabel: string;
   private capabilities: MediaDeviceInfo[] | undefined;
 
-  constructor() {
+  constructor(private voiceActivity: VoiceActivityService) {
     this.videoLabel = window.localStorage.getItem('videoLabel') as string;
     this.audioLabel = window.localStorage.getItem('audioLabel') as string;
     this.autoGainControl = localStorage.getItem('autoGainControl') !== 'false';
@@ -85,18 +87,20 @@ export class LocalMediaService {
         this.audio = await navigator.mediaDevices.getUserMedia({
           audio: options,
         });
+        this.processedAudio = await this.voiceActivity.init(this.audio);
       } catch (err) {
         const mediaErr = err as MediaStreamError;
         if (mediaErr.message === 'Concurrent mic process limit.') window.location.reload();
         else throw err;
       }
     }
-    return this.audio;
+    return this.processedAudio;
   }
 
   closeAudio() {
     this.audio?.getVideoTracks().forEach(track => track.stop());
     this.audio = undefined;
+    this.voiceActivity.close();
   }
   closeVideo() {
     this.video?.getVideoTracks().forEach(track => track.stop());
