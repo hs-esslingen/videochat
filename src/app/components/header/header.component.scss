@@ -9,8 +9,8 @@ header {
   align-items: center;
   padding: 0 0px 0 0px;
   color: white;
-  font-size: 18px;  
-  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  font-size: 18px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 
   .right {
     position: absolute;
@@ -40,7 +40,33 @@ header {
     color: inherit;
     font-size: inherit;
     border-radius: 8px;
+  }
 
-    
+  a {
+    font-size: smaller;
+    text-decoration: none;
+    color: lightgrey;
+  }
+
+  a:hover {
+    color: white;
+  }
+
+  @media (min-width: 768px) {
+    .extern {
+      margin-left: 20px;
+      position: relative;
+      left: 200px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .extern {
+      visibility: hidden;
+    }
+  }
+
+  #spacer {
+    flex-grow: 1;
   }
 }
