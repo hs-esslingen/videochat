@@ -1,6 +1,6 @@
 /* eslint-disable no-async-promise-executor */
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, RouterStateSnapshot, Router, Resolve} from '@angular/router';
+import {ActivatedRouteSnapshot, Router, Resolve} from '@angular/router';
 import {MoodleService} from './moodle.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ApiService} from './api.service';
