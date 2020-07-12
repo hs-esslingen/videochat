@@ -8,6 +8,7 @@ import {LoginPageComponent} from './pages/login-page/login-page.component';
 import {ContactsPageComponent} from './pages/contacts-page/contacts-page.component';
 import {ImprintPageComponent} from './pages/imprint-page/imprint-page.component';
 import {LecturePageComponent} from './pages/lecture-page/lecture-page.component';
+import {MoodleGuard} from './helper/moodle.guard';
 
 const routes: Routes = [
   {path: 'datenschutz', component: PrivacyPolicyComponent},
@@ -18,7 +19,7 @@ const routes: Routes = [
   // { path: "lecture", component: LecturePageComponent, canActivate: [AuthGuard]  },
   {path: ':roomId', component: LecturePageComponent, canActivate: [AuthGuard]},
   {path: ':roomId/thank-you', component: ThankYouPageComponent, canActivate: [AuthGuard]},
-  {path: 'lecture/:roomId', component: LecturePageComponent, canActivate: [AuthGuard]},
+  {path: 'moodle/:roomId', component: LecturePageComponent, canActivate: [AuthGuard], resolve: {moodle: MoodleGuard}},
   {path: '**', component: OverviewPageComponent, canActivate: [AuthGuard]},
 ];
 

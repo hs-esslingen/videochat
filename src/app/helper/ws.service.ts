@@ -22,7 +22,7 @@ export class WsService {
     this.connectionSubject = new Subject();
   }
 
-  public init(roomId: string, nickname: string): Promise<string> {
+  public init(roomId: string, nickname: string, moodleToken?: string): Promise<string> {
     return new Promise((res, rej) => {
       this.connect()
         .then(() => {
@@ -36,6 +36,15 @@ export class WsService {
                 });
                 this.state = State.CONNECTED;
                 res(msg.data.id);
+                sub.unsubscribe();
+                break;
+              case 'error-failed':
+                this.state = State.FAILED;
+                this.connectionSubject.next({
+                  state: this.state,
+                });
+                this.close();
+                rej('MOODLE ERROR');
                 sub.unsubscribe();
                 break;
               case 'error-duplicate-session':
@@ -53,6 +62,7 @@ export class WsService {
           this.send('init', {
             roomId: roomId,
             nickname: nickname,
+            moodleToken: moodleToken,
             microphoneState: MicrophoneState.ENABLED,
           });
         })

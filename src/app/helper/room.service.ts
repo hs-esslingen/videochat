@@ -98,7 +98,7 @@ export class RoomService {
     });
   }
 
-  async connectToRoom(roomId: string, isWebcamDisabled: boolean) {
+  async connectToRoom(roomId: string, isWebcamDisabled: boolean, moodleToken?: string) {
     if (this.connection.state !== State.RECONNECTING)
       this.connection = {
         state: State.CONNECTING,
@@ -107,7 +107,7 @@ export class RoomService {
     try {
       this.roomId = roomId;
       this.currentUser.nickname = this.api.displayName;
-      this.currentUser.id = await this.ws.init(roomId, this.api.displayName);
+      this.currentUser.id = await this.ws.init(roomId, this.api.displayName, moodleToken);
       this.signal.init(roomId);
       await this.mediaSevice.init(roomId, isWebcamDisabled, this.currentUser.id);
       await this.chat.init(this.roomId, this.currentUser.id);
@@ -122,6 +122,10 @@ export class RoomService {
       if (error === 'DUPLICATE SESSION') {
         this.connection.state = State.FAILED;
         this.connection.duplicateSession = true;
+        this.triggerSubject();
+      } else if (error === 'MOODLE ERROR') {
+        this.connection.state = State.FAILED;
+        this.connection.moodleError = true;
         this.triggerSubject();
       } else {
         console.log('Connection Failed trying again...');

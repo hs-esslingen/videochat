@@ -3,6 +3,7 @@ import * as mediasoup from 'mediasoup';
 import * as WebSocket from 'ws';
 import {MyWebSocket} from 'src-server/server';
 import {getLogger} from 'log4js';
+import * as jwt from 'jsonwebtoken';
 
 const logger = getLogger('room');
 
@@ -19,6 +20,8 @@ export class Room {
   private currentScreenshare?: mediasoup.types.Producer;
   private audioLevelObserver: AudioLevelObserver | undefined;
   private checkConnectionInterval: NodeJS.Timeout;
+  private moodleUsers: MoodleUser[] = [];
+  private moodleRoomName = '';
 
   private messages: Message[] = [];
 
@@ -109,6 +112,11 @@ export class Room {
       logger.info('Creating Room ' + roomId);
       this.rooms[roomId] = new Room(roomId);
     }
+    return this.rooms[roomId];
+  }
+
+  static getRoomIfExists(roomId: string): Room | undefined {
+    roomId = unescape(roomId);
     return this.rooms[roomId];
   }
 
@@ -378,7 +386,8 @@ export class Room {
     await consumer?.resume();
   }
 
-  getUsers() {
+  getUsers(sessionID: string) {
+    if (this.users[sessionID] == null) throw new Error('User is not inizialized');
     return Object.keys(this.users).map(sessionId => this.getPublicUser(this.users[sessionId]));
   }
 
@@ -427,6 +436,37 @@ export class Room {
 
   initWebsocket(ws: WebSocket, initData: WebsocketUserInfo, sessionId: string, {email, displayName}: {email: string; displayName: string}) {
     const transports: WebRtcTransport[] = [];
+    let role: UserRole = UserRole.USER;
+    if (this.roomId.includes('moodle⛳')) {
+      try {
+        const decodedMoodleToken = jwt.decode(initData.moodleToken as string) as {users: MoodleUser[]; courseId: string; roomName: string};
+        this.moodleUsers = decodedMoodleToken.users;
+        this.moodleRoomName = decodedMoodleToken.roomName;
+
+        const moodleUser = this.moodleUsers.find(user => user.email === email);
+        if (moodleUser == null || parseInt(decodedMoodleToken.courseId) !== parseInt(this.roomId.split('moodle⛳')[1])) {
+          logger.info(`${this.roomId}: ${email} - Moodle connection failed - no access`);
+          ws.send(
+            JSON.stringify({
+              type: 'error-failed',
+            })
+          );
+          ws.close();
+          return;
+        }
+        role = moodleUser.role;
+      } catch (e) {
+        logger.warn(`${this.roomId}: ${email} - Parsing moodleToken failed`, e);
+        ws.send(
+          JSON.stringify({
+            type: 'error-failed',
+          })
+        );
+        ws.close();
+        return;
+      }
+    }
+
     let user: User;
     if (this.users[sessionId] == null) {
       user = {
@@ -435,6 +475,7 @@ export class Room {
         nickname: displayName,
         email,
         transports,
+        role: role,
         producers: {},
         microphoneState: initData.microphoneState,
         signal: UserSignal.NONE,
@@ -540,6 +581,14 @@ export class Room {
     this.wsOnClose(ws, sessionId, this.users[sessionId]);
   }
 
+  getMoodleUsers() {
+    return this.moodleUsers;
+  }
+
+  getMoodleRoomName() {
+    return this.moodleRoomName;
+  }
+
   private wsOnClose(ws: WebSocket, sessionId: string, user: User) {
     ws.on('close', () => {
       this.websockets = this.websockets.filter(item => item !== user.ws);
@@ -587,6 +636,7 @@ export class Room {
       signal: user.signal,
       microphoneState: user.microphoneState,
       state: user.state,
+      role: user.role,
     };
   }
 
@@ -660,15 +710,15 @@ export interface User {
   transports: WebRtcTransport[];
   signal: UserSignal;
   microphoneState: MicrophoneState;
-  role?: UserRole;
+  role: UserRole;
   danglingTimeout?: NodeJS.Timeout;
   closeTimeout?: NodeJS.Timeout;
   state: UserConnectionState;
 }
 
 export interface WebsocketUserInfo {
-  nickname: string;
   microphoneState: MicrophoneState;
+  moodleToken?: string;
   producers: {
     audio?: string;
     video?: string;
@@ -681,6 +731,11 @@ export interface Message {
   to?: string;
   time: number;
   message: string;
+}
+
+export interface MoodleUser {
+  email: string;
+  role: UserRole;
 }
 
 export enum UserSignal {

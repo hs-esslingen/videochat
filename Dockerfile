@@ -1,7 +1,6 @@
 FROM node:12
 WORKDIR /app
 COPY . .
-ENV SESSION_STORE_URL=redis
 RUN npm install -g @angular/cli
 RUN npm i
 RUN npm run build 

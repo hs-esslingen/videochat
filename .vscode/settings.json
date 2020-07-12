@@ -1,4 +1,4 @@
 {
-  "debug.node.autoAttach": "on",
+  "debug.node.autoAttach": "off",
   "editor.formatOnSave": true
 }

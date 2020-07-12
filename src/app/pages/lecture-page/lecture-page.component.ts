@@ -156,11 +156,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     });
 
-    if (this.demo) {
-      this.test();
-      this.screenShareUser = this.users[0];
-    }
-
     const url = new URL(location.href);
     this.roomUrl = url.origin + url.pathname;
 
@@ -168,32 +163,51 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isToolbarHidden = true;
     }, 1500);
 
+    if (this.demo) {
+      this.test();
+      this.screenShareUser = this.users[0];
+      return;
+    }
+
     this.route.paramMap.subscribe(async params => {
-      // don't actually connect if demo is enabled
-      if (this.demo) return;
+      this.route.data.subscribe(data => {
+        this.roomId = params.get('roomId') as string;
 
-      this.roomId = params.get('roomId') as string;
-      const dialogRef = this.dialog.open(JoinMeetingPopupComponent, {
-        width: '400px',
-        data: {nickname: this.mediaService.nickname, roomId: this.roomId},
-      });
-      dialogRef.afterClosed().subscribe(async result => {
-        // if popup is canceled
-        if (result == null || result === '') {
-          this.localMedia.closeAudio();
-          this.localMedia.closeVideo();
-          return;
+        let displayedRoomName = this.roomId;
+        let moodleToken: string;
+
+        console.log(data);
+        if (data.moodle != null) {
+          moodleToken = data.moodle.token;
+          displayedRoomName = data.moodle.roomName;
         }
-        // Proceed when all informations are given
 
-        this.room.connectToRoom(this.roomId, result.isWebcamDisabled);
+        const dialogRef = this.dialog.open(JoinMeetingPopupComponent, {
+          width: '400px',
+          data: {nickname: this.mediaService.nickname, roomId: displayedRoomName},
+        });
+        dialogRef.afterClosed().subscribe(async (result: {isWebcamDisabled: boolean}) => {
+          // if popup is canceled
+          if (result == null || result.isWebcamDisabled == null) {
+            this.localMedia.closeAudio();
+            this.localMedia.closeVideo();
+            return;
+          }
+          // Proceed when all informations are given
+          if (data.moodle != null) this.room.connectToRoom('moodle⛳' + this.roomId, result.isWebcamDisabled, moodleToken);
+          else this.room.connectToRoom(this.roomId, result.isWebcamDisabled);
+        });
       });
     });
   }
 
   ngOnDestroy() {
     this.roomSubscription?.unsubscribe();
-    this.room.disconnect();
+    try {
+      this.room.disconnect();
+    } catch (error) {
+      // ignore
+    }
   }
 
   reload() {

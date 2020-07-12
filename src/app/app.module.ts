@@ -32,6 +32,9 @@ import {SettingsMasterComponent} from './components/settings-master/settings-mas
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {TextFieldModule} from '@angular/cdk/text-field';
 import {MatInputModule} from '@angular/material/input';
+import {MoodlePopupComponent} from './components/moodle-popup/moodle-popup.component';
+import {MoodleErrorPopupComponent} from './components/moodle-error-popup/moodle-error-popup.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -55,6 +58,8 @@ import {MatInputModule} from '@angular/material/input';
     ChangeNicknameComponent,
     PollComponent,
     SettingsMasterComponent,
+    MoodlePopupComponent,
+    MoodleErrorPopupComponent,
   ],
   imports: [
     BrowserModule,
@@ -72,6 +77,7 @@ import {MatInputModule} from '@angular/material/input';
     MatTooltipModule,
     TextFieldModule,
     MatInputModule,
+    MatSnackBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -2,13 +2,17 @@ import * as express from 'express';
 import * as mediasoup from 'mediasoup';
 import * as WebSocket from 'ws';
 import {MyWebSocket} from './server';
-import {Room} from './videochat/room';
+import {getLogger} from 'log4js';
+import {Room, UserRole, MoodleUser} from './videochat/room';
 import fetch from 'node-fetch';
 import * as bodyParser from 'body-parser';
 import {Email} from './email';
+import * as jwt from 'jsonwebtoken';
+export const logger = getLogger();
 
 export class Api {
   readonly api = express.Router();
+  secretkey = process.env.SIGN_SECRETKEY || 'mysecretkey';
   worker: mediasoup.types.Worker | undefined;
   router: mediasoup.types.Router | undefined;
   transports: {[id: string]: mediasoup.types.WebRtcTransport} = {};
@@ -78,7 +82,11 @@ export class Api {
     });
 
     this.api.get('/room/:roomId/users', async (req, res) => {
-      res.json(Room.getRoom(req.params.roomId).getUsers());
+      try {
+        res.json(Room.getRoom(req.params.roomId).getUsers(req.sessionID as string));
+      } catch (e) {
+        res.status(400).send(e);
+      }
     });
 
     this.api.post('/room/:roomId/restart-ice', async (req, res) => {
@@ -162,6 +170,106 @@ export class Api {
         res.json(await data.json());
       } catch (error) {
         res.status(400).send(error);
+      }
+    });
+
+    this.api.post('/moodle/check-enrolment', async (req, res) => {
+      if (!req.body.courseId) {
+        res.status(400).send('courseId is missing');
+        return;
+      }
+
+      // check if room already exists and get user list from there
+      const room = Room.getRoomIfExists('moodle⛳' + req.body.courseId);
+      if (room != null) {
+        const moodleUsers = room.getMoodleUsers();
+        //@ts-ignore
+        if (moodleUsers.find(user => user.email === req.user?.email)) {
+          const encUsers = jwt.sign(
+            {
+              courseId: req.body.courseId,
+              users: moodleUsers,
+              roomName: room.getMoodleRoomName(),
+            },
+            this.secretkey
+          );
+          res.json({
+            roomName: room.getMoodleRoomName(),
+            token: encUsers,
+          });
+          return;
+        }
+      }
+
+      // check moodle api
+      if (req.body.token == null) {
+        res.status(400).send('missingToken');
+        return;
+      }
+
+      try {
+        const params = new URLSearchParams();
+        params.append('wstoken', req.body.token as string);
+        params.append('courseid', req.body.courseId as string);
+        params.append('moodlewssettingfilter', 'true');
+        params.append('moodlewssettingfileurl', 'true');
+        params.append('wsfunction', 'core_enrol_get_enrolled_users');
+        const data = await fetch('https://moodle.hs-esslingen.de/moodle/webservice/rest/server.php?moodlewsrestformat=json', {
+          method: 'POST',
+          // @ts-ignore
+          body: params,
+        });
+        const userList: {email: string; roles: {roleid: number}[]}[] = await data.json();
+        if (Object.prototype.hasOwnProperty.call(userList, 'exception')) {
+          logger.debug('Getting moodle course users failed', userList);
+          res.status(403).send('User is not in this course');
+          return;
+        }
+        const newUserList: MoodleUser[] = userList.map(user => {
+          let role = UserRole.USER;
+          if (Array.isArray(user.roles) && user.roles.find(role => role.roleid === 3)) role = UserRole.MODERATOR;
+          // moodle⛳1123123 -> unescape() -> moodle/45654654
+          return {
+            email: user.email,
+            role,
+          };
+        });
+
+        //@ts-ignore
+        if (!newUserList.find(user => user.email === req.user?.email)) {
+          res.status(403).send('User is not in this course');
+          return;
+        }
+
+        params.delete('wsfunction');
+        params.delete('courseid');
+        params.append('wsfunction', 'core_course_get_courses_by_field');
+        params.append('field', 'id');
+        params.append('value', req.body.courseId);
+        const roomInfoRequest = await fetch('https://moodle.hs-esslingen.de/moodle/webservice/rest/server.php?moodlewsrestformat=json', {
+          method: 'POST',
+          // @ts-ignore
+          body: params,
+        });
+
+        const roomName = (await roomInfoRequest.json()).courses[0].displayname;
+
+        const encUsers = jwt.sign(
+          {
+            roomName: roomName,
+            courseId: req.body.courseId,
+            users: newUserList,
+          },
+          this.secretkey
+        );
+
+        res.json({
+          roomName: roomName,
+          token: encUsers,
+        });
+      } catch (error) {
+        logger.trace('Moodle User Check error', error);
+        res.status(500).send(error);
       }
     });
 

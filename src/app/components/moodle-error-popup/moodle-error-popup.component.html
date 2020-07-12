@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>Missing Enrollment</h1>
+<div mat-dialog-content>
+    Please ensure that you are enrolled into following course.<br />
+    <br />
+</div>
+<div mat-dialog-actions class="actions">
+    <a target="_blank" class="button" [href]="'https://moodle.hs-esslingen.de/moodle/enrol/index.php?id=' + data.courseId" style="margin-bottom: 16px;"
+        >Moodle Course Page</a
+    >
+    <button mat-button class="button" [mat-dialog-close] style="margin-bottom: 16px;">Ok</button>
+</div>

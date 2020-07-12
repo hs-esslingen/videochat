@@ -92,6 +92,18 @@ export class ApiService {
     return this.moodleCourses;
   }
 
+  checkMoodleEnrolment(courseId: string, token: string | null | undefined) {
+    return this.http
+      .post('/api/moodle/check-enrolment', {
+        token,
+        courseId,
+      })
+      .toPromise() as Promise<{
+      token: string;
+      roomName: string;
+    }>;
+  }
+
   public getCapabilities(roomId: string): Promise<RtpCapabilities> {
     return this.http.get(`/api/room/${roomId}/capabilities`).toPromise() as Promise<RtpCapabilities>;
   }

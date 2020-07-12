@@ -14,28 +14,31 @@ export class MoodleService {
     navigator.registerProtocolHandler('wtai', url.origin + '/auth/moodle?token=%s', 'HSE-Chat Moodle login');
   }
 
-  async moodleLogin() {
-    return new Promise((res, rej) => {
-      if (this.moodleWindow != null && !this.moodleWindow.closed) {
-        this.openMoodleLoginWindow();
-        return;
-      }
-      this.openMoodleLoginWindow();
+  getCourses(token: string) {
+    return this.api.getMoodleCourses(token);
+  }
+
+  async automaticMoodleLogin() {
+    return new Promise((resolve, reject) => {
+      this.moodleWindow = this.openMoodleLoginWindow('wtai');
+      if (this.moodleWindow != null && !this.moodleWindow.closed) return;
+
       const waitForAuthentication = () => {
         setTimeout(async () => {
           try {
-            const token = await window.localStorage.getItem('moodleToken');
+            const token = window.localStorage.getItem('moodleToken');
             if (token) {
               if (!this.moodleWindow?.closed) this.moodleWindow?.close();
-              res();
+              resolve();
               return;
             }
           } catch (error) {
-            rej();
+            reject();
           }
-          if (!this.moodleWindow || this.moodleWindow.closed) {
+          if ((!this.moodleWindow || this.moodleWindow.closed) && window.localStorage.getItem('moodleToken') == null) {
             this.moodleWindow = undefined;
             console.log('Error');
+            reject();
             return;
           }
           waitForAuthentication();
@@ -45,14 +48,14 @@ export class MoodleService {
     });
   }
 
-  private openMoodleLoginWindow() {
+  public openMoodleLoginWindow(urlscheme: string) {
     const popupWidth = 950;
     const popupHeight = 1150;
     const xPosition = (window.innerWidth - popupWidth) / 2;
     const yPosition = (window.innerHeight - popupHeight) / 2;
-    const loginUrl = 'https://moodle.hs-esslingen.de/moodle/admin/tool/mobile/launch.php?service=local_mobile&urlscheme=wtai&passport=603.5561786350319';
+    const loginUrl = `https://moodle.hs-esslingen.de/moodle/admin/tool/mobile/launch.php?service=local_mobile&urlscheme=${urlscheme}&passport=603.5561786350319`;
     localStorage.removeItem('moodleToken');
-    this.moodleWindow = window.open(
+    return window.open(
       loginUrl,
       'LoginWindow',
       'location=1,scrollbars=0,' + 'width=' + popupWidth + ',height=' + popupHeight + ',' + 'left=' + xPosition + ',top=' + yPosition

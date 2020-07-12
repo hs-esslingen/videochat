@@ -1,0 +1,45 @@
+<h1 mat-dialog-title>Moodle Login</h1>
+<div mat-dialog-content *ngIf="moodleState === 0">
+    <p class="no-space-top"><strong>Automatic Method</strong>: Simpler, may require adminstrative rights.</p>
+    <p><strong>Manual Method</strong>: More reliable, but also more tedious.</p>
+</div>
+<div mat-dialog-actions class="actions" *ngIf="moodleState === 0">
+    <button mat-button class="button" [mat-dialog-close] style="margin-bottom: 16px;">Cancel</button>
+    <div class="space"></div>
+    <button mat-button (click)="moodleState = 2" class="button space-right" style="margin-bottom: 16px;">Manual</button>
+    <button mat-button (click)="moodleState = 1; this.moodle.requestURI()" class="button" style="margin-bottom: 16px;">Automatic</button>
+</div>
+
+<div mat-dialog-content *ngIf="moodleState === 1">
+    <p class="no-space-top">1. Please allow Wtai links</p>
+    <p class="no-space-bottom">
+        2. Connect to Moodle <br />
+        <button mat-button id="moodle-auto" class="button inline" (click)="openAutomatic()">
+            <span *ngIf="!waiting">Connect</span>
+            <span *ngIf="waiting">
+                <mat-spinner diameter="20"></mat-spinner>
+            </span>
+        </button>
+    </p>
+</div>
+<div mat-dialog-actions class="actions" *ngIf="moodleState === 1">
+    <button mat-button class="button" (click)="backOrCancel()" style="margin-bottom: 16px;">Cancel</button>
+    <div class="space"></div>
+</div>
+
+<div mat-dialog-content *ngIf="moodleState === 2">
+    <div class="step">
+        1. Open Moodle <br />
+        <button id="moodle-manual" class="button inline" (click)="openManual()">Connect</button>
+    </div>
+    <div class="step">2. Login with your credentials</div>
+    <div class="step">3. Your E-Mail App will open</div>
+    <div class="step">4. Copy mail recipient into the box below</div>
+    <div>
+        <input type="text" placeholder="token=YXNpb2RuYnVmYm5iM985aDM5ZHVoamRmOXVpcWhu3zkyaDk4MzI3dWJmMzgwOWhm..." (input)="onInput($event.target.value)" />
+    </div>
+</div>
+<div mat-dialog-actions class="actions" *ngIf="moodleState === 2">
+    <button mat-button class="button" (click)="backOrCancel()" style="margin-bottom: 16px;">Cancel</button>
+    <div class="space"></div>
+</div>
