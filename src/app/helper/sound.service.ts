@@ -10,9 +10,10 @@ import {Injectable} from '@angular/core';
   providedIn: 'root',
 })
 export class SoundService {
-  constructor() {
-    console.log('SoundService');
-  }
+  private audioContext?: AudioContext;
+  private osc?: OscillatorNode;
+  private gainNode?: GainNode;
+  constructor() {}
 
   /**
    * start playing a sound and stop after duration
@@ -22,39 +23,48 @@ export class SoundService {
    * @param {(Float32Array | undefined)} [volumeCurve] numbers in intervall [0,1] specifying a smooth volume curve
    * @memberof SoundService
    */
-  public playSound(frequency: number | Tone, duration?: number, volumeCurve?: Float32Array | undefined) {
-    const audioContext = new AudioContext();
+  public async playSound(frequency: number | Tone, duration?: number, volumeCurve?: Float32Array | undefined) {
+    try {
+      this.audioContext = new AudioContext();
+      await this.audioContext.resume();
+      this.osc = this.audioContext.createOscillator();
+      this.gainNode = this.audioContext.createGain();
 
-    const osc = audioContext.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.value = frequency;
+      // connect the AudioBufferSourceNode to the gainNode
+      // and the gainNode to the destination
+      this.osc.connect(this.gainNode);
+      this.gainNode.connect(this.audioContext.destination);
 
-    // Create a gain node and set it's gain value to 1
-    const gainNode = audioContext.createGain();
-    gainNode.gain.value = 1;
+      console.log('Playback resumed successfully');
+      this.osc.type = 'sine';
+      this.osc.frequency.value = frequency;
 
-    // connect the AudioBufferSourceNode to the gainNode
-    // and the gainNode to the destination
-    osc.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+      // Create a gain node and set it's gain value to 1
+      this.gainNode.gain.value = 1;
 
-    osc.start();
+      this.osc.start();
 
-    // provide smooth default volume curve
-    if (volumeCurve === undefined) {
-      volumeCurve = new Float32Array(7);
-      volumeCurve[0] = 0.8;
-      volumeCurve[1] = 1;
-      volumeCurve[2] = 0.8;
-      volumeCurve[3] = 0.7;
-      volumeCurve[4] = 0.3;
-      volumeCurve[5] = 0.1;
-      volumeCurve[6] = 0;
+      if (volumeCurve === undefined) {
+        volumeCurve = new Float32Array(7);
+        volumeCurve[0] = 0.8;
+        volumeCurve[1] = 1;
+        volumeCurve[2] = 0.8;
+        volumeCurve[3] = 0.7;
+        volumeCurve[4] = 0.3;
+        volumeCurve[5] = 0.1;
+        volumeCurve[6] = 0;
+      }
+
+      if (duration === undefined) duration = 0.5;
+      this.gainNode.gain.setValueCurveAtTime(volumeCurve, this.audioContext.currentTime, duration);
+      this.osc.stop(duration);
+
+      setTimeout(() => {
+        this.audioContext?.close();
+      }, 500);
+    } catch (e) {
+      console.error(e);
     }
-
-    if (duration === undefined) duration = 1;
-    gainNode.gain.setValueCurveAtTime(volumeCurve, audioContext.currentTime, duration);
-    osc.stop(duration);
   }
 }
 
