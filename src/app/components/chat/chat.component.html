@@ -9,7 +9,7 @@
             <label id="sender"
                 [class.user]="message.from === currentUser?.id">{{message.from === currentUser?.id ? currentUser?.nickname : users[message.from].nickname}}:</label>
             <!-- <div id="time">{{message.time}}</div> -->
-            <p id="text">{{message.message}}</p>
+            <p class="chat-message" [innerHTML]="message.message | linkify | sanitizeHtml"></p>
         </div>
     </div>
 

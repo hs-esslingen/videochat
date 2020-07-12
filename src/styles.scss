@@ -7,11 +7,10 @@ body {
   color: white;
   font-family: 'Open Sans', sans-serif;
   height: 100%;
-  
+
   // background-color: #0a1629;
   background-color: #0c1729;
-  --app-primary: #b3e5fc
-  ;
+  --app-primary: #b3e5fc;
 }
 
 html {
@@ -49,7 +48,10 @@ button {
   /* Corrects inability to style clickable `input` types in iOS */
   -webkit-appearance: none;
 }
-.mat-form-field-appearance-legacy .mat-form-field-label, .mat-select-arrow,.mat-form-field-appearance-legacy .mat-form-field-underline {
+
+.mat-form-field-appearance-legacy .mat-form-field-label,
+.mat-select-arrow,
+.mat-form-field-appearance-legacy .mat-form-field-underline {
   color: white;
 }
 
@@ -80,18 +82,42 @@ input {
   outline: none;
   cursor: pointer;
   padding: 13px 12px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-        
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+
   &:hover {
-      background: rgb(209, 24, 0);
+    background: rgb(209, 24, 0);
   }
 
   &:active {
-      background: #B61601;
+    background: #B61601;
   }
 
   &.blue {
     background: mat-color($app-primary);
     color: black;
+  }
+}
+
+.chat-message {
+  a:link {
+    color: #B4D3ED;
+  }
+
+  a:visited {
+    color: #B4D3ED;
+    background-color: transparent;
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: #B4D3ED;
+    background-color: transparent;
+    text-decoration: underline;
+  }
+
+  a:active {
+    color: #B4D3ED;
+    background-color: transparent;
+    text-decoration: underline;
   }
 }
