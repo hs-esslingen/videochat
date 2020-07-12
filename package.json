@@ -1,6 +1,7 @@
 {
   "name": "videochat",
   "version": "0.0.0",
+  "license": "GPL-3.0",
   "scripts": {
     "ng": "ng",
     "watch-debug": "concurrently npm:watch-frontend npm:watch-server npm:watch-build-server",
@@ -32,7 +33,6 @@
   "engines": {
     "node": ">=10.0.0"
   },
-  "private": true,
   "dependencies": {
     "body-parser": "^1.19.0",
     "connect-redis": "^4.0.4",
