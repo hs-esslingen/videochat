@@ -1,13 +1,12 @@
 /* eslint-disable no-async-promise-executor */
 import {Injectable} from '@angular/core';
-import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router, Resolve} from '@angular/router';
-import {Observable} from 'rxjs';
+import {ActivatedRouteSnapshot, RouterStateSnapshot, Router, Resolve} from '@angular/router';
 import {MoodleService} from './moodle.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ApiService} from './api.service';
 import {MoodlePopupComponent} from '../components/moodle-popup/moodle-popup.component';
-import {RoomService} from './room.service';
 import {MoodleErrorPopupComponent} from '../components/moodle-error-popup/moodle-error-popup.component';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 export interface MoodleInfo {
   roomName: string;
@@ -25,10 +24,12 @@ export class MoodleGuard implements Resolve<MoodleInfo> {
     shortname: string;
   }[];
   moodleIsLoggedIn = false;
-  constructor(private moodle: MoodleService, private dialog: MatDialog, readonly api: ApiService, readonly router: Router) {}
-  resolve(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<MoodleInfo> {
+  constructor(private moodle: MoodleService, private dialog: MatDialog, readonly api: ApiService, readonly router: Router, private _snackBar: MatSnackBar) {}
+  resolve(next: ActivatedRouteSnapshot): Promise<MoodleInfo> {
     return new Promise(async (res, rej) => {
       // get moodle room id
+      const snackBarRef = this._snackBar.open('Connecting to moodle', undefined, {});
+
       const moodleRoomId = next.paramMap.get('roomId');
       const token = window.localStorage.getItem('moodleToken');
       if (moodleRoomId == null || Number.isNaN(parseInt(moodleRoomId))) {
@@ -42,6 +43,7 @@ export class MoodleGuard implements Resolve<MoodleInfo> {
 
           if (data.token != null) {
             // if yes return jwt token and continue
+            snackBarRef.dismiss();
             res(data);
             return;
           }
@@ -51,6 +53,7 @@ export class MoodleGuard implements Resolve<MoodleInfo> {
 
           if (e.status === 403) {
             await this.openMoodleErrorDialog(moodleRoomId);
+            snackBarRef.dismiss();
             rej();
           }
 
@@ -65,21 +68,23 @@ export class MoodleGuard implements Resolve<MoodleInfo> {
                 if (result) {
                   const token = window.localStorage.getItem('moodleToken');
                   const data = await this.api.checkMoodleEnrolment(moodleRoomId, token);
-
+                  snackBarRef.dismiss();
                   res(data);
                 } else {
                   // return to overview page
                   this.router.navigate(['/']);
-
+                  snackBarRef.dismiss();
                   rej();
                   return;
                 }
               } catch (e) {
                 if (e.status === 403) {
                   await this.openMoodleErrorDialog(moodleRoomId);
+                  snackBarRef.dismiss();
                   rej();
                 } else {
                   this.router.navigate(['/']);
+                  snackBarRef.dismiss();
                   rej();
                 }
               }
@@ -97,6 +102,7 @@ export class MoodleGuard implements Resolve<MoodleInfo> {
         data: {courseId: moodleRoomId},
       });
       dialogRef.afterClosed().subscribe(async () => {
+        res();
         this.router.navigate(['/']);
       });
     });

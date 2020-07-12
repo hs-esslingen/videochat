@@ -14,6 +14,10 @@ export class MoodleService {
     navigator.registerProtocolHandler('wtai', url.origin + '/auth/moodle?token=%s', 'HSE-Chat Moodle login');
   }
 
+  getCourses(token: string) {
+    return this.api.getMoodleCourses(token);
+  }
+
   async automaticMoodleLogin() {
     return new Promise((resolve, reject) => {
       this.moodleWindow = this.openMoodleLoginWindow('wtai');

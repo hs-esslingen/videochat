@@ -34,6 +34,7 @@ import {TextFieldModule} from '@angular/cdk/text-field';
 import {MatInputModule} from '@angular/material/input';
 import {MoodlePopupComponent} from './components/moodle-popup/moodle-popup.component';
 import {MoodleErrorPopupComponent} from './components/moodle-error-popup/moodle-error-popup.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -76,6 +77,7 @@ import {MoodleErrorPopupComponent} from './components/moodle-error-popup/moodle-
     MatTooltipModule,
     TextFieldModule,
     MatInputModule,
+    MatSnackBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

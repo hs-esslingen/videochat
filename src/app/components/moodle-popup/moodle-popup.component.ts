@@ -38,7 +38,7 @@ export class MoodlePopupComponent implements OnInit {
       this.waiting = true;
       await this.moodle.automaticMoodleLogin();
       this.waiting = false;
-      this.checkToken(window.localStorage.getItem('moodleToken') as string);
+      await this.checkToken(window.localStorage.getItem('moodleToken') as string);
     } catch (e) {
       alert('Moodle login failed');
       this.waiting = false;
@@ -46,9 +46,11 @@ export class MoodlePopupComponent implements OnInit {
     }
   }
 
-  checkToken(token: string) {}
+  async checkToken(token: string) {
+    await this.moodle.getCourses(token);
+  }
 
-  onInput(value: string) {
+  async onInput(value: string) {
     const string = unescape(value);
     const found = string.match(/=[\w\d]+=+/);
     if (found != null && found.length > 0) {
@@ -58,7 +60,12 @@ export class MoodlePopupComponent implements OnInit {
       const b64Split = data.split(':::');
       if (b64Split.length > 1) {
         localStorage.setItem('moodleToken', b64Split[1]);
-        this.dialogRef.close(true);
+        try {
+          await this.checkToken(b64Split[1] as string);
+          this.dialogRef.close(true);
+        } catch (error) {
+          // ignore
+        }
       }
     }
   }
