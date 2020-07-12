@@ -203,6 +203,32 @@ export class MediaService {
     this.triggerSubject();
   }
 
+  // public async setCamera(isWebcamDisabled: boolean): Promise<void> {
+  //   if (!isWebcamDisabled) {
+  //     const videoTracks = await this.localMedia.getVideoTrack();
+  //     this.localStream = new MediaStream(videoTracks.getVideoTracks());
+  //     if (videoTracks.getVideoTracks().length > 0) {
+  //       this.cameraState = CameraState.ENABLED;
+  //       await this.sendVideo(videoTracks);
+  //     } else {
+  //       this.cameraState = CameraState.DISABLED;
+  //     }
+  //   } else {
+  //     if (this.localVideoProducer != null && !this.localVideoProducer?.closed) {
+  //       this.localMedia.closeVideo();
+  //       this.localVideoProducer.close();
+  //       await this.api.producerClose(this.roomId as string, this.localVideoProducer.id);
+  //       this.cameraState = CameraState.DISABLED;
+  //       this.localStream = undefined;
+  //     }
+  //   }
+
+  //   // Push an inital update
+  //   setTimeout(() => {
+  //     this.triggerSubject();
+  //   }, 500);
+  // }
+
   toggleAutoGainControl() {
     console.log('toggle: autoGainControl');
     localStorage.setItem('autoGainControl', (!this.autoGainControl).toString());

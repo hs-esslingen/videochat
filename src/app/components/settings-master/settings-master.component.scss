@@ -1,38 +1,47 @@
 @import '../../../styles/settings-style.scss';
 
 :host {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width: auto;
+
+  #settings {
     display: flex;
-    flex-direction: column;
-    height: auto;
-    width: auto;
+    flex-direction: row;
+    justify-content: space-between;
 
-    #settings {
-        display: flex;
-        flex-direction: row;
+    &.large {
+      width: 750px;
+      height: 400px;
+    }
 
-        #tabs {
-            display: flex;
-            flex-direction: column;
-            height: auto;
-            width: 300px;
-            padding-right: 24px;
-    
-            .setting-tab {
-                border-style: solid;
-                border-width: 2px;
-                height: 46px;
-                width: calc(100%-4px);
-            }
-        }
+    #tabs {
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      width: 300px;
+      min-width: 300px;
+      padding-right: 24px;
 
-        #setting-page {
-            display: flex;
-            flex-direction: column;
-            min-width: 400px;
+      .setting-tab {
+        border-style: solid;
+        border-width: 2px;
+        height: 46px;
+        width: calc(100%-4px);
+      }
+    }
 
-            #content {
-                flex-grow: 1;
-            }
-        }
-    }      
+    #setting-page {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 400px;
+      min-width: 400px;
+
+      #content {
+        flex-grow: 1;
+      }
+    }
+  }
 }

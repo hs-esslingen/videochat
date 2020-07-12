@@ -72,6 +72,7 @@ export class ChatService {
       chat = this.chats['public_chat'];
     }
     chat.messages.push(message);
+    chat.newMessage = true;
   }
 
   public async sendMessage(message: string, to?: string) {

@@ -1,6 +1,6 @@
-<h1 mat-dialog-title *ngIf="roomID !== undefined && modules.room === true">Raum: {{roomID}}</h1>
+<h1 mat-dialog-title *ngIf="roomID !== undefined && modules.room === true">Raum: {{ roomID }}</h1>
 
-<div id="settings">
+<div id="settings" [class.large]="modules.tabs === true">
     <div *ngIf="modules.tabs === true" id="tabs">
         <button class="setting-tab" *ngIf="modules.userSettings === true" (click)="settingPage = 0">
             User settings
@@ -8,33 +8,29 @@
         <button class="setting-tab" *ngIf="modules.videoSettings === true" (click)="settingPage = 1">
             Video settings
         </button>
-        <button class="setting-tab" *ngIf="modules.audioSettings === true" (click)="settingPage = 2">
+        <button class="setting-tab" *ngIf="modules.audioSettings.display === true" (click)="settingPage = 2">
             Audio settings
         </button>
     </div>
 
-    <div id=setting-page>
+    <div id="setting-page">
         <div id="content">
-            <app-settings-user
-                *ngIf="settingPage == 0 || (modules.tabs === false && modules.userSettings === true)"
-                [nickname]="nickname"
-                (userEvent)="nickname = $event"
-            ></app-settings-user>
+            <app-settings-user *ngIf="settingPage == 0 || (modules.tabs === false && modules.userSettings === true)"></app-settings-user>
             <app-settings-video
                 *ngIf="settingPage == 1 || (modules.tabs === false && modules.videoSettings === true)"
                 (selectedVideoStreamEvent)="selectedVideoStream = $event"
             ></app-settings-video>
             <app-settings-audio
-                *ngIf="settingPage == 2 || (modules.tabs === false && modules.audioSettings === true)"
-                [autoGainControl]="data.autoGainControl"
-                [mediaService]="data.mediaService"
+                *ngIf="settingPage == 2 || (modules.tabs === false && modules.audioSettings.display === true)"
+                [displayAGC]="modules.audioSettings.displayAGC"
                 (audioDevicesEvent)="audioDevices = $event"
             ></app-settings-audio>
         </div>
-        
+
         <div id="dialog-actions" align="end">
             <button id="close" class="button" mat-dialog-close>Schließen</button>
             <button id="save" class="button" (click)="saveChanges()" mat-dialog>Speichern</button>
+            <button *ngIf="mode !== 1" id="save-close" class="button" (click)="saveChanges()" mat-dialog-close>Speichern & Schließen</button>
         </div>
     </div>
 </div>

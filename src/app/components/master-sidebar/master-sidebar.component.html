@@ -1,12 +1,12 @@
 <div id="scroll">
     <h4>Chats</h4>
     <ng-container *ngFor="let id of getKeys(chats)">
-        <div class="object-label chat" [class.messaged]="chats[id].newMessage" (click)="setSidebarDetailType(chats[id])">
+        <div class="object-label chat" [class.messaged]="chats[id].newMessage && detailOpen === false" (click)="setSidebarDetailType(chats[id])">
             <div class="status"></div>
             <div class="nickname">{{ chats[id].id ? users[id].nickname : 'Public Chat' }}</div>
             <div class="signal">
-                <i *ngIf="!chats[id].newMessage" class="material-icons">chat_bubble_outline</i>
-                <i *ngIf="chats[id].newMessage" class="material-icons">chat</i>
+                <i *ngIf="!chats[id].newMessage || detailOpen === true" class="material-icons">chat_bubble_outline</i>
+                <i *ngIf="chats[id].newMessage && detailOpen === false" class="material-icons">chat</i>
             </div>
         </div>
     </ng-container>

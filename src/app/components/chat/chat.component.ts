@@ -38,6 +38,6 @@ export class ChatComponent implements OnInit {
       this.chatService.sendMessage(this.newMessage, this.childData.id !== 'public_chat' ? this.childData.id : undefined);
       this.newMessage = '';
     }
-    console.log('Message sent!');
+    // console.log('Message sent!');
   }
 }

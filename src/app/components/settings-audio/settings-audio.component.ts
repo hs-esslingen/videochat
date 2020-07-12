@@ -1,6 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {LocalMediaService} from 'src/app/helper/local-media.service';
-import {MediaService} from 'src/app/helper/media.service';
 
 @Component({
   selector: 'app-settings-audio',
@@ -8,12 +7,12 @@ import {MediaService} from 'src/app/helper/media.service';
   styleUrls: ['./settings-audio.component.scss'],
 })
 export class SettingsAudioComponent implements OnInit {
-  @Input() autoGainControl!: boolean;
-  @Input() mediaService!: MediaService;
+  @Input() displayAGC!: boolean;
 
   audioDevices: MediaDeviceInfo[] | undefined;
   audioStream: MediaStreamAudioSourceNode | undefined;
   selectedAudioStream: string | undefined;
+  autoGainControl!: boolean;
 
   analyser: AnalyserNode | undefined;
   audioCtx: AudioContext | undefined;
@@ -25,6 +24,7 @@ export class SettingsAudioComponent implements OnInit {
   constructor(private localMedia: LocalMediaService) {}
 
   async ngOnInit() {
+    localStorage.getItem('autoGainControl') === 'true' ? (this.autoGainControl = true) : (this.autoGainControl = false);
     this.audioCtx = new AudioContext();
 
     try {
@@ -74,6 +74,8 @@ export class SettingsAudioComponent implements OnInit {
   }
 
   toggleAutoGain(): void {
-    this.mediaService.toggleAutoGainControl();
+    this.autoGainControl = !this.autoGainControl;
+    if (this.autoGainControl === true) localStorage.setItem('autoGainControl', 'true');
+    else localStorage.setItem('autoGainControl', 'false');
   }
 }

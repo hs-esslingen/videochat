@@ -21,7 +21,6 @@ import {SettingsMasterComponent, settingMode} from 'src/app/components/settings-
 export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('webcams') webcams: ElementRef<HTMLDivElement> | undefined;
   // Variables for video
-  autoGainControl: boolean | undefined;
   currentUser: CurrentUser;
   roomId!: string;
   moveTimout: number | undefined;
@@ -184,8 +183,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
           height: 'auto',
           data: {
             mode: settingMode.JOIN_MEETING_MODE,
-            autoGainControl: this.autoGainControl,
-            mediaService: this.mediaService,
             roomID: displayedRoomName,
           },
         });

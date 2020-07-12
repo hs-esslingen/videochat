@@ -9,6 +9,7 @@ import {RoomService} from 'src/app/helper/room.service';
 import {SignalService} from '../../helper/signal.service';
 import {Chat} from 'src/app/model/chat';
 import {SoundService} from 'src/app/helper/sound.service';
+import {MediaService} from 'src/app/helper/media.service';
 
 @Component({
   selector: 'app-master',
@@ -16,6 +17,7 @@ import {SoundService} from 'src/app/helper/sound.service';
   styleUrls: ['./master-sidebar.component.scss'],
 })
 export class MasterSidebarComponent implements OnInit, OnDestroy {
+  detailOpen?: boolean;
   currentUser?: CurrentUser;
   users: {[key: string]: User} = {};
   // Inputs for options
@@ -40,6 +42,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   polls: Poll[] = [];
 
   constructor(
+    readonly mediaService: MediaService,
     readonly chatService: ChatService,
     private dialog: MatDialog,
     private room: RoomService,
@@ -51,6 +54,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreshes or rejoins)
     this.chats = this.chatService.getChats();
+    this.detailOpen = false;
 
     this.room.subscribe(data => {
       this.currentUser = data.currentUser;
@@ -79,7 +83,8 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
 
   setSidebarDetailType(obj: Chat | Poll): void {
     // console.log("A label was clicked!");
-    // console.log(obj);
+    this.detailOpen = !this.detailOpen;
+    if (obj instanceof Chat) obj.newMessage = false;
     if (obj instanceof Chat) this.sidebarSetDetailEvent.emit({element: obj, type: 'chat'});
     if (obj instanceof Poll) this.sidebarSetDetailEvent.emit({element: obj, type: 'poll'});
   }
@@ -120,14 +125,14 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
       width: 'auto',
       data: {
         mode: settingMode.STANDARD_MODE,
-        autoGainControl: this.autoGainControl,
         roomID: this.roomID,
       },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(async result => {
       console.log('The dialog was closed');
       console.log(result);
+      // this.mediaService.setCamera(result.isWebcamDisabled);
     });
   }
 

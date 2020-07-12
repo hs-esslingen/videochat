@@ -12,7 +12,6 @@ export class SettingsMasterComponent implements OnInit {
   roomID: string | undefined;
   mode!: settingMode;
   modules!: SettingModularity;
-  nickname!: string;
 
   //Variables for audio management
   audioDevices: MediaDeviceInfo[] | undefined;
@@ -21,6 +20,7 @@ export class SettingsMasterComponent implements OnInit {
   selectedVideoStream: string | undefined;
 
   constructor(
+    readonly mediaService: MediaService,
     public dialogRef: MatDialogRef<SettingsMasterComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: SettingsMasterComponentData
@@ -30,17 +30,16 @@ export class SettingsMasterComponent implements OnInit {
 
   ngOnInit(): void {
     this.mode = this.data.mode;
-    this.nickname = this.data.mediaService.nickname;
     if (this.data.roomID !== undefined) this.roomID = this.data.roomID;
 
     switch (this.mode) {
       case settingMode.STANDARD_MODE:
-        this.modules = {room: true, tabs: true, userSettings: true, videoSettings: true, audioSettings: true};
+        this.modules = {room: true, tabs: true, userSettings: true, videoSettings: true, audioSettings: {display: true, displayAGC: true}};
         this.settingPage = settingPages.USER_SETTINGS;
         break;
 
       case settingMode.JOIN_MEETING_MODE:
-        this.modules = {room: true, tabs: false, userSettings: true, videoSettings: true, audioSettings: true};
+        this.modules = {room: true, tabs: false, userSettings: false, videoSettings: true, audioSettings: {display: true, displayAGC: false}};
         this.settingPage = undefined;
         break;
 
@@ -62,21 +61,25 @@ export class SettingsMasterComponent implements OnInit {
   }
 
   saveChanges(): void {
-    this.data.mediaService.setNickname(this.nickname);
     this.close();
   }
 
   close(): void {
     if (this.mode === settingMode.JOIN_MEETING_MODE) {
       if (this.audioDevices != null) {
-        // clearInterval(this.intervalId); //Neccessary since in "ngOnDestry"?
         this.dialogRef.close({
-          nickname: this.nickname,
           isWebcamDisabled: this.selectedVideoStream === 'none',
         });
       }
     }
-    // OTHER MODES
+    if (this.mode === settingMode.JOIN_MEETING_MODE) {
+      if (this.audioDevices != null) {
+        this.dialogRef.close({
+          isWebcamDisabled: this.selectedVideoStream === 'none',
+        });
+      }
+    }
+    // INDIVIDUAL MODE
   }
 }
 
@@ -88,10 +91,8 @@ export enum settingPages {
 
 export interface SettingsMasterComponentData {
   mode: settingMode;
-  mediaService: MediaService;
   modules?: SettingModularity;
   initialTab?: settingPages;
-  autoGainControl?: boolean;
   roomID?: string;
 }
 
@@ -106,5 +107,10 @@ export interface SettingModularity {
   tabs?: boolean;
   userSettings?: boolean;
   videoSettings?: boolean;
-  audioSettings?: boolean;
+  audioSettings?: AudioSettings;
+}
+
+export interface AudioSettings {
+  display?: boolean;
+  displayAGC?: boolean;
 }
