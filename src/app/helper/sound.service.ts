@@ -66,6 +66,19 @@ export class SoundService {
       console.error(e);
     }
   }
+
+  /**
+   * play sound from audio file
+   *
+   * @param {string} path e.g. '/assets/audio/join.wav'
+   * @memberof SoundService
+   */
+  public async playAudioFile(path: string) {
+    const audio = new Audio();
+    audio.src = path;
+    audio.load();
+    audio.play();
+  }
 }
 
 /**
