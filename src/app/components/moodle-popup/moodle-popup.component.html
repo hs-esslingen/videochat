@@ -7,7 +7,7 @@
     <button mat-button class="button" [mat-dialog-close] style="margin-bottom: 16px;">Cancel</button>
     <div class="space"></div>
     <button mat-button (click)="moodleState = 2" class="button space-right" style="margin-bottom: 16px;">Manual</button>
-    <button mat-button (click)="moodleState = 1" class="button" style="margin-bottom: 16px;">Automatic</button>
+    <button mat-button (click)="moodleState = 1; this.moodle.requestURI()" class="button" style="margin-bottom: 16px;">Automatic</button>
 </div>
 
 <div mat-dialog-content *ngIf="moodleState === 1">

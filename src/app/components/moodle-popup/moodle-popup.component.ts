@@ -50,7 +50,7 @@ export class MoodlePopupComponent implements OnInit {
 
   onInput(value: string) {
     const string = unescape(value);
-    const found = string.match(/=[\w\d]+==/);
+    const found = string.match(/=[\w\d]+=+/);
     if (found != null && found.length > 0) {
       const b64 = found[0].substr(1);
       console.log(b64);

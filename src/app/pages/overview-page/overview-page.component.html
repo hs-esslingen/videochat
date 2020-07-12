@@ -11,7 +11,7 @@
 
     <h3 class="center">Moodle:</h3>
     <div class="center rooms" *ngIf="moodleIsLoggedIn">
-        <a class="room" *ngFor="let course of moodleCourses" [routerLink]="'/' + esc(course.shortname)">
+        <a class="room" *ngFor="let course of moodleCourses" [routerLink]="'/moodle/' + course.id">
             <div class="name">{{ course.fullname }}</div>
             <div class="grow"></div>
             <i class="material-icons">navigate_next</i>

@@ -61,11 +61,10 @@ export class OverviewPageComponent implements OnInit {
   }
 
   async moodleLogin() {
-    this.moodle.requestURI();
     const dialogRef = this.dialog.open(MoodlePopupComponent, {
       width: '500px',
     });
-    dialogRef.afterClosed().subscribe(async res => {
+    dialogRef.afterClosed().subscribe(async (res: boolean) => {
       if (res) {
         this.moodleIsLoggedIn = true;
         const token = window.localStorage.getItem('moodleToken');

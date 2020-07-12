@@ -21,6 +21,7 @@ export class Room {
   private audioLevelObserver: AudioLevelObserver | undefined;
   private checkConnectionInterval: NodeJS.Timeout;
   private moodleUsers: MoodleUser[] = [];
+  private moodleRoomName = '';
 
   private messages: Message[] = [];
 
@@ -433,22 +434,18 @@ export class Room {
     return transport.restartIce();
   }
 
-  initWebsocket(
-    ws: WebSocket,
-    initData: WebsocketUserInfo,
-    sessionId: string,
-    {email, displayName}: {email: string; displayName: string},
-    moodleToken: string
-  ) {
+  initWebsocket(ws: WebSocket, initData: WebsocketUserInfo, sessionId: string, {email, displayName}: {email: string; displayName: string}) {
     const transports: WebRtcTransport[] = [];
     let role: UserRole = UserRole.USER;
     if (this.roomId.includes('moodle⛳')) {
       try {
-        const decodedMoodleToken = jwt.decode(moodleToken) as {users: MoodleUser[]; courseId: number};
+        const decodedMoodleToken = jwt.decode(initData.moodleToken as string) as {users: MoodleUser[]; courseId: string; roomName: string};
         this.moodleUsers = decodedMoodleToken.users;
+        this.moodleRoomName = decodedMoodleToken.roomName;
 
         const moodleUser = this.moodleUsers.find(user => user.email === email);
-        if (moodleUser == null || decodedMoodleToken.courseId !== parseInt(this.roomId.split('moodle⛳')[1])) {
+        if (moodleUser == null || parseInt(decodedMoodleToken.courseId) !== parseInt(this.roomId.split('moodle⛳')[1])) {
+          logger.info(`${this.roomId}: ${email} - Moodle connection failed - no access`);
           ws.send(
             JSON.stringify({
               type: 'error-failed',
@@ -459,7 +456,7 @@ export class Room {
         }
         role = moodleUser.role;
       } catch (e) {
-        logger.warn('Parsing moodleToken failed');
+        logger.warn(`${this.roomId}: ${email} - Parsing moodleToken failed`, e);
         ws.send(
           JSON.stringify({
             type: 'error-failed',
@@ -586,6 +583,10 @@ export class Room {
 
   getMoodleUsers() {
     return this.moodleUsers;
+  }
+
+  getMoodleRoomName() {
+    return this.moodleRoomName;
   }
 
   private wsOnClose(ws: WebSocket, sessionId: string, user: User) {
@@ -717,6 +718,7 @@ export interface User {
 
 export interface WebsocketUserInfo {
   microphoneState: MicrophoneState;
+  moodleToken?: string;
   producers: {
     audio?: string;
     video?: string;

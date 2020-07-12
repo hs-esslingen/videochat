@@ -2,11 +2,13 @@ import * as express from 'express';
 import * as mediasoup from 'mediasoup';
 import * as WebSocket from 'ws';
 import {MyWebSocket} from './server';
+import {getLogger} from 'log4js';
 import {Room, UserRole, MoodleUser} from './videochat/room';
 import fetch from 'node-fetch';
 import * as bodyParser from 'body-parser';
 import {Email} from './email';
 import * as jwt from 'jsonwebtoken';
+export const logger = getLogger();
 
 export class Api {
   readonly api = express.Router();
@@ -171,7 +173,7 @@ export class Api {
       }
     });
 
-    this.api.get('/moodle/enrolments', async (req, res) => {
+    this.api.post('/moodle/check-enrolment', async (req, res) => {
       if (!req.body.courseId) {
         res.status(400).send('courseId is missing');
         return;
@@ -183,8 +185,16 @@ export class Api {
         const moodleUsers = room.getMoodleUsers();
         //@ts-ignore
         if (moodleUsers.find(user => user.email === req.user?.email)) {
-          const encUsers = jwt.sign(moodleUsers, this.secretkey);
+          const encUsers = jwt.sign(
+            {
+              courseId: req.body.courseId,
+              users: moodleUsers,
+              roomName: room.getMoodleRoomName(),
+            },
+            this.secretkey
+          );
           res.json({
+            roomName: room.getMoodleRoomName(),
             token: encUsers,
           });
           return;
@@ -192,14 +202,15 @@ export class Api {
       }
 
       // check moodle api
-      if (!req.body.token) {
-        res.status(400).send('token is missing');
+      if (req.body.token == null) {
+        res.status(400).send('missingToken');
         return;
       }
 
       try {
         const params = new URLSearchParams();
-        params.append('wstoken', req.query.token as string);
+        params.append('wstoken', req.body.token as string);
+        params.append('courseid', req.body.courseId as string);
         params.append('moodlewssettingfilter', 'true');
         params.append('moodlewssettingfileurl', 'true');
         params.append('wsfunction', 'core_enrol_get_enrolled_users');
@@ -210,6 +221,7 @@ export class Api {
         });
         const userList: {email: string; roles: {roleid: number}[]}[] = await data.json();
         if (Object.prototype.hasOwnProperty.call(userList, 'exception')) {
+          logger.debug('Getting moodle course users failed', userList);
           res.status(403).send('User is not in this course');
           return;
         }
@@ -229,12 +241,34 @@ export class Api {
           return;
         }
 
-        const encUsers = jwt.sign(newUserList, this.secretkey);
+        params.delete('wsfunction');
+        params.delete('courseid');
+        params.append('wsfunction', 'core_course_get_courses_by_field');
+        params.append('field', 'id');
+        params.append('value', req.body.courseId);
+        const roomInfoRequest = await fetch('https://moodle.hs-esslingen.de/moodle/webservice/rest/server.php?moodlewsrestformat=json', {
+          method: 'POST',
+          // @ts-ignore
+          body: params,
+        });
+
+        const roomName = (await roomInfoRequest.json()).courses[0].displayname;
+
+        const encUsers = jwt.sign(
+          {
+            roomName: roomName,
+            courseId: req.body.courseId,
+            users: newUserList,
+          },
+          this.secretkey
+        );
 
         res.json({
+          roomName: roomName,
           token: encUsers,
         });
       } catch (error) {
+        logger.trace('Moodle User Check error', error);
         res.status(500).send(error);
       }
     });
@@ -244,7 +278,7 @@ export class Api {
         const msg = JSON.parse(e.data as string);
         if (msg.type === 'init') {
           if (ws.user?.email == null) return;
-          Room.getRoom(msg.data.roomId).initWebsocket(ws, msg.data, ws.sessionID, ws.user, msg.data.moodleToken);
+          Room.getRoom(msg.data.roomId).initWebsocket(ws, msg.data, ws.sessionID, ws.user);
           ws.removeEventListener('message', onMessage);
         } else if (msg.type === 'reconnect') {
           if (ws.user?.email == null) return;

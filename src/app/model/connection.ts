@@ -9,4 +9,5 @@ export enum State {
 export interface Connection {
   state: State;
   duplicateSession?: boolean;
+  moodleError?: boolean;
 }

@@ -19,7 +19,7 @@ const routes: Routes = [
   // { path: "lecture", component: LecturePageComponent, canActivate: [AuthGuard]  },
   {path: ':roomId', component: LecturePageComponent, canActivate: [AuthGuard]},
   {path: ':roomId/thank-you', component: ThankYouPageComponent, canActivate: [AuthGuard]},
-  {path: 'moodle/:roomId', component: LecturePageComponent, canActivate: [AuthGuard, MoodleGuard]},
+  {path: 'moodle/:roomId', component: LecturePageComponent, canActivate: [AuthGuard], resolve: {moodle: MoodleGuard}},
   {path: '**', component: OverviewPageComponent, canActivate: [AuthGuard]},
 ];
 

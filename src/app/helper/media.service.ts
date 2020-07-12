@@ -532,14 +532,15 @@ export class MediaService {
     if (this.state !== State.CONNECTING) {
       this.recvTransport?.close();
       this.sendTransport?.close();
-      this.localAudioProducer?.close();
-      this.localVideoProducer?.close();
+      if (this.localAudioProducer?.closed === false) this.localAudioProducer?.close();
+      if (this.localVideoProducer?.closed === false) this.localVideoProducer?.close();
       this.users = {};
       this.localVideoProducer = undefined;
       this.localScreenshareStream = undefined;
       this.screenshareState = ScreenshareState.DISABLED;
       clearInterval(this.audioIntervalId);
       this.audioCtx?.close();
+      this.audioCtx = undefined;
     }
     this.state = State.DISCONNECTED;
   }
