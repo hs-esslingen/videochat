@@ -12,6 +12,7 @@ import {Connection, State} from 'src/app/model/connection';
 import {ShortcutService} from '../../helper/shortcut.service';
 import {SoundService} from 'src/app/helper/sound.service';
 import {SettingsMasterComponent, settingMode} from 'src/app/components/settings-master/settings-master.component';
+import {Chat} from 'src/app/model/chat';
 
 @Component({
   selector: 'app-lecture-page',
@@ -227,14 +228,29 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   setSidebarDetail($event: {element: Element; type: string}) {
     //console.log("Event occured")
+    if (this.sidebarDetail instanceof Chat && this.sidebarDetail != null) {
+      this.chatService.removeNewMessageInfo(this.sidebarDetail);
+      console.log('Messages reset!');
+    }
+
     if (this.detailType === $event.type) {
       if (this.sidebarDetail?.id === $event.element.id) {
+        // If the old sidebarDetail was the same Chat, close it
+        if ($event.element instanceof Chat) this.chatService.chatToggleOpen($event.element);
         this.sidebarDetail = undefined;
         this.detailType = undefined;
       } else {
+        // If another sidebarDetail of type chat was opened, close it
+        if (this.sidebarDetail instanceof Chat && this.sidebarDetail != null) this.chatService.chatToggleOpen(this.sidebarDetail);
+        // If the new sidebarDetail is a chat, set it as opened
+        if ($event.element instanceof Chat) this.chatService.chatToggleOpen($event.element);
         this.sidebarDetail = $event.element;
       }
     } else {
+      // If another sidebarDetail of type chat was opened, close it
+      if (this.sidebarDetail instanceof Chat && this.sidebarDetail != null) this.chatService.chatToggleOpen(this.sidebarDetail);
+      // If the new sidebarDetail is a chat, set it as opened
+      if ($event.element instanceof Chat) this.chatService.chatToggleOpen($event.element);
       this.sidebarDetail = $event.element;
       this.detailType = $event.type;
     }

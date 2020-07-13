@@ -65,7 +65,7 @@ export class SettingsAudioComponent implements OnInit {
         this.selectedAudioStream = audio.label;
       }
     } catch (error) {
-      // ingore error
+      // ignore error
     }
 
     //console.log(this.localMedia);

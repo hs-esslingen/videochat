@@ -72,6 +72,15 @@ export class ChatService {
   public hideChat(chat: Chat): void {
     if (chat.id != null) this.chats[chat.id].hidden = true;
   }
+  public removeNewMessageInfo(chat: Chat): void {
+    if (chat.id == null) this.chats['public_chat'].newMessage = false;
+    else this.chats[chat.id].newMessage = false;
+  }
+  public chatToggleOpen(chat: Chat): void {
+    if (chat.id == null) this.chats['public_chat'].opened = !this.chats['public_chat'].opened;
+    else this.chats[chat.id].opened = !this.chats['public_chat'].opened;
+    console.log('Opened / Closed Chat with ' + chat.id);
+  }
 
   private addMessage(message: Message) {
     let chat: Chat;
@@ -85,7 +94,8 @@ export class ChatService {
       chat = this.chats['public_chat'];
     }
     chat.messages.push(message);
-    chat.newMessage = true;
+    if (!chat.opened) chat.newMessage = true;
+    chat.hidden = false;
   }
 
   public async sendMessage(message: string, to?: string) {

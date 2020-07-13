@@ -42,9 +42,9 @@
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none; /* Override default look */
   appearance: none;
-  width: 16px; /* Set a specific slider handle width */
-  height: 16px; /* Slider handle height */
-  background: orange; /* Green background */
+  width: 17px; /* Set a specific slider handle width */
+  height: 17px; /* Slider handle height */
+  background: cyan; /* Green background */
   border-radius: 12px;
   cursor: pointer; /* Cursor on hover */
 }
