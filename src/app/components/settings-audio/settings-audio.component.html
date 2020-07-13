@@ -1,4 +1,4 @@
-<label>Mikrofon:</label>
+<label>Microphone:</label>
 
 <mat-select [value]="selectedAudioStream" [disabled]="disableSelection" (selectionChange)="changeAudioStream($event.value)">
     <mat-option [value]="item.label" *ngFor="let item of audioDevices">{{ item.label }}</mat-option>

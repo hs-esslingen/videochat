@@ -33,6 +33,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MoodlePopupComponent} from './components/moodle-popup/moodle-popup.component';
 import {MoodleErrorPopupComponent} from './components/moodle-error-popup/moodle-error-popup.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatRadioModule} from '@angular/material/radio';
 import {SanitizeHtmlPipe} from './helper/sanitize-html.pipe';
 import {LinkifyPipe} from './helper/linkify.pipe';
 import {SettingsVideoComponent} from './components/settings-video/settings-video.component';
@@ -84,6 +85,7 @@ import {SettingsUserComponent} from './components/settings-user/settings-user.co
     TextFieldModule,
     MatInputModule,
     MatSnackBarModule,
+    MatRadioModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

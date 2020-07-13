@@ -117,6 +117,10 @@
       }
     }
 
+    &.user {
+      cursor: default;
+    }
+
     &.chat {
       border-color: #2b2b2b;
 

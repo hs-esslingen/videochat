@@ -1,18 +1,28 @@
 @import '../../../styles/settings-style.scss';
 
-p {
-  margin: 0;
-  font-size: 16px;
-  line-height: 18px;
+label {
+  margin-top: 0;
+  margin-bottom: 12px;
 }
 
 mat-checkbox {
-  width: 12px;
-  height: 12px;
   margin-right: 16px;
+}
+
+mat-radio-button {
+  display: block;
+  margin-top: 4px;
+  // margin-left: 34px;
+  margin-left: 12px;
+  font-size: 14px;
 }
 
 .check {
   display: flex;
+  direction: row;
   justify-content: space-between;
+
+  p {
+    font-size: 14px;
+  }
 }

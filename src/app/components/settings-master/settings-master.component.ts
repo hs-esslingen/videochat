@@ -74,7 +74,7 @@ export class SettingsMasterComponent implements OnInit {
     if (this.sendOnEnterOld === true) localStorage.setItem('sendOnEnter', 'true');
     else localStorage.setItem('sendOnEnter', 'false');
 
-    this.close();
+    this.dialogRef.close();
   }
 
   saveChanges(): void {

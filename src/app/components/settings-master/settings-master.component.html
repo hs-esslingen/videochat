@@ -1,38 +1,31 @@
-<h1 id="room" [class.tabs]="modules.tabs" mat-dialog-title *ngIf="roomID !== undefined && modules.room === true">Raum: {{ roomID }}</h1>
+<h1 *ngIf="mode === 1" id="room" [class.tabs]="modules.tabs" mat-dialog-title>Raum: {{ roomID }}</h1>
+<h1 *ngIf="modules.tabs" class="tabs">Settings</h1>
 
 <div id="settings" [class.large]="modules.tabs === true">
-    <div *ngIf="modules.tabs === true" id="tabs">
-        <div class="object-label" (click)="settingPage = 0">
-            <div class="status"></div>
-            <div class="nickname">User settings</div>
-            <div class="signal">
-                <i class="material-icons">perm_identity</i>
-            </div>
+    <div *ngIf="modules.tabs === true" id="menu">
+        <div class="item" (click)="settingPage = 0" [class.active]="settingPage === 0">
+            <i class="material-icons">perm_identity</i>
+            <div>User</div>
         </div>
-        <div class="object-label" (click)="settingPage = 1">
-            <div class="status"></div>
-            <div class="nickname">Video settings</div>
-            <div class="signal">
-                <i class="material-icons">videocam</i>
-            </div>
+        <div class="item" (click)="settingPage = 1" [class.active]="settingPage === 1">
+            <i class="material-icons">videocam</i>
+            <div class="nickname">Video</div>
         </div>
-        <div class="object-label" (click)="settingPage = 2">
-            <div class="status"></div>
-            <div class="nickname">Audio settings</div>
-            <div class="signal">
-                <i class="material-icons">headset_mic</i>
-            </div>
+        <div class="item" (click)="settingPage = 2" [class.active]="settingPage === 2">
+            <i class="material-icons">headset_mic</i>
+            <div class="nickname">Audio</div>
         </div>
     </div>
 
-    <div id="setting-page">
+    <div id="setting-page" [class.tabs]="modules.tabs">
         <div id="content">
-            <app-settings-user *ngIf="settingPage == 0 || (modules.tabs === false && modules.userSettings === true)"></app-settings-user>
+            <app-settings-user *ngIf="settingPage == 0 || (modules.tabs === false && modules.userSettings === true)"> </app-settings-user>
             <app-settings-video
                 *ngIf="settingPage == 1 || (modules.tabs === false && modules.videoSettings === true)"
                 [disableSelection]="modules.tabs"
                 (selectedVideoStreamEvent)="selectedVideoStream = $event"
-            ></app-settings-video>
+            >
+            </app-settings-video>
             <app-settings-audio
                 *ngIf="settingPage == 2 || (modules.tabs === false && modules.audioSettings.display === true)"
                 [displayAGC]="modules.audioSettings.displayAGC"
@@ -42,7 +35,7 @@
         </div>
 
         <div id="dialog-actions" align="end">
-            <button id="close" class="button" (click)="discardChanges()" mat-dialog-close>Schließen</button>
+            <button id="close" class="button" (click)="discardChanges()" [mat-dialog-close]="undefined">Abbrechen</button>
             <button id="save" class="button" (click)="saveChanges()" mat-dialog-close>Übernehmen</button>
         </div>
     </div>

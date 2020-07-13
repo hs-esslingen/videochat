@@ -6,18 +6,18 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: ['./settings-user.component.scss'],
 })
 export class SettingsUserComponent implements OnInit {
-  sendOnEnter!: boolean;
+  sendOnEnter: boolean;
 
-  constructor() {}
-
-  ngOnInit(): void {
+  constructor() {
     localStorage.getItem('sendOnEnter') === 'true' ? (this.sendOnEnter = true) : (this.sendOnEnter = false);
-    console.log(this.sendOnEnter);
   }
 
-  toggleSendOnEnter(): void {
-    this.sendOnEnter = !this.sendOnEnter;
-    if (this.sendOnEnter === true) localStorage.setItem('sendOnEnter', 'true');
-    else localStorage.setItem('sendOnEnter', 'false');
+  ngOnInit(): void {
+    // console.log(this.sendOnEnter);
+  }
+
+  toggleSendOnEnter(value: boolean): void {
+    this.sendOnEnter = value;
+    localStorage.setItem('sendOnEnter', value.toString());
   }
 }
