@@ -12,6 +12,7 @@ import {Subscription} from 'rxjs';
 import {Connection, State} from 'src/app/model/connection';
 import {ShortcutService} from '../../helper/shortcut.service';
 import {SignalService} from '../../helper/signal.service';
+import {SoundService} from 'src/app/helper/sound.service';
 
 @Component({
   selector: 'app-lecture-page',
@@ -58,6 +59,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     private api: ApiService,
     private shortcut: ShortcutService,
     private signal: SignalService,
+    private sound: SoundService,
     readonly chatService: ChatService
   ) {
     const webcamHeight = window.localStorage.getItem('webcamHeight');
@@ -85,6 +87,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       (event.target as HTMLElement).tagName !== 'TEXTAREA' &&
       (event.target as HTMLElement).tagName !== 'INPUT'
     ) {
+      // trigger shortcut if the user isn't writing a chat message
       this.shortcut.trigger(event);
     }
   }
@@ -132,6 +135,12 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.roomSubscription = this.room.subscribe(data => {
+      if (this.connection.state !== data.connection.state && data.connection.state === 1) {
+        console.log('user joined room');
+        // user joined room and is conencted
+        // Todo: add sound in settings menu
+        // this.sound.playSound(Tone.C2);
+      }
       this.users = data.users;
       this.currentUser = data.currentUser;
       this.connection = data.connection;

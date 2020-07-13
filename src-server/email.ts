@@ -4,6 +4,12 @@ import * as SMTPTransport from 'nodemailer/lib/smtp-transport';
 import * as Mail from 'nodemailer/lib/mailer';
 export const logger = getLogger();
 
+/**
+ * email service for sending emails
+ *
+ * @export
+ * @class Email
+ */
 export class Email {
   private transporter?: Mail;
 
@@ -18,6 +24,12 @@ export class Email {
   //   }
   // }
 
+  /**
+   * initialize a mail account configured with environment variables
+   *
+   * @private
+   * @memberof Email
+   */
   private setupAccount() {
     if (!process.env.MAIL_PORT) process.env.MAIL_PORT = '465';
     const mailConfig: SMTPTransport.Options = {
@@ -32,6 +44,12 @@ export class Email {
     this.verifyConnection();
   }
 
+  /**
+   * initialize a test mail account from nodemailer
+   *
+   * @private
+   * @memberof Email
+   */
   private setupTestAccount() {
     nodemailer.createTestAccount((err: Error | null, account: nodemailer.TestAccount) => {
       if (err) {
@@ -51,6 +69,12 @@ export class Email {
     });
   }
 
+  /**
+   * verifies the configured connection to the mail provider
+   *
+   * @private
+   * @memberof Email
+   */
   private verifyConnection() {
     // verify connection configuration
     this.transporter?.verify((error: Error | null, success: true) => {
@@ -65,6 +89,16 @@ export class Email {
     });
   }
 
+  /**
+   * send a mail from mail account to recipient
+   *
+   * @param {string} recipientName name of recipient
+   * @param {string} recipientMail mail address of recipient
+   * @param {string} subject of the mail
+   * @param {string} text message in text format
+   * @param {string} html message in html format
+   * @memberof Email
+   */
   async sendMail(recipientName: string, recipientMail: string, subject: string, text: string, html: string) {
     // Message object
     const message = {
