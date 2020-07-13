@@ -78,7 +78,7 @@ export class ChatService {
   }
   public chatToggleOpen(chat: Chat): void {
     if (chat.id == null) this.chats['public_chat'].opened = !this.chats['public_chat'].opened;
-    else this.chats[chat.id].opened = !this.chats['public_chat'].opened;
+    else this.chats[chat.id].opened = !this.chats[chat.id].opened;
     console.log('Opened / Closed Chat with ' + chat.id);
   }
 
