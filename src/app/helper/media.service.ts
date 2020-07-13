@@ -7,7 +7,7 @@ import {WsService} from './ws.service';
 import {LocalMediaService} from './local-media.service';
 import {User, MicrophoneState, CameraState, ScreenshareState} from '../model/user';
 import {State} from '../model/connection';
-import {SoundService, Tone} from './sound.service';
+import {SoundService} from './sound.service';
 
 @Injectable({
   providedIn: 'root',

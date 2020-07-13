@@ -9,7 +9,7 @@ import {SettingsMasterComponent} from '../settings-master/settings-master.compon
 import {RoomService} from 'src/app/helper/room.service';
 import {SignalService} from '../../helper/signal.service';
 import {Chat} from 'src/app/model/chat';
-import {SoundService, Tone} from 'src/app/helper/sound.service';
+import {SoundService} from 'src/app/helper/sound.service';
 
 @Component({
   selector: 'app-master',
