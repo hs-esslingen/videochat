@@ -12,7 +12,7 @@ import {Subscription} from 'rxjs';
 import {Connection, State} from 'src/app/model/connection';
 import {ShortcutService} from '../../helper/shortcut.service';
 import {SignalService} from '../../helper/signal.service';
-import {SoundService, Tone} from 'src/app/helper/sound.service';
+import {SoundService} from 'src/app/helper/sound.service';
 
 @Component({
   selector: 'app-lecture-page',
