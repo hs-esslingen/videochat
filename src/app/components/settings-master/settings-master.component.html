@@ -19,23 +19,20 @@
 
     <div id="setting-page" [class.tabs]="modules.tabs">
         <div id="content">
-            <app-settings-user *ngIf="settingPage == 0 || (modules.tabs === false && modules.userSettings === true)"> </app-settings-user>
-            <app-settings-video
-                *ngIf="settingPage == 1 || (modules.tabs === false && modules.videoSettings === true)"
-                [disableSelection]="modules.tabs"
-                (selectedVideoStreamEvent)="selectedVideoStream = $event"
-            >
+            <app-settings-user *ngIf="settingPage == 0 || (modules.tabs === false && modules.userSettings === true)">
+            </app-settings-user>
+            <app-settings-video *ngIf="settingPage == 1 || (modules.tabs === false && modules.videoSettings === true)"
+                [disableSelection]="modules.tabs" (selectedVideoStreamEvent)="selectedVideoStream = $event">
             </app-settings-video>
             <app-settings-audio
-                *ngIf="settingPage == 2 || (modules.tabs === false && modules.audioSettings.display === true)"
-                [displayAGC]="modules.audioSettings.displayAGC"
-                [disableSelection]="modules.tabs"
-                (audioDevicesEvent)="audioDevices = $event"
-            ></app-settings-audio>
+                *ngIf="settingPage == 2 || (modules.tabs === false && modules.audioSettings?.display === true)"
+                [displayAGC]="modules.audioSettings?.displayAGC" [disableSelection]="modules.tabs"
+                (audioDevicesEvent)="audioDevices = $event"></app-settings-audio>
         </div>
 
         <div id="dialog-actions" align="end">
-            <button id="close" class="button" (click)="discardChanges()" [mat-dialog-close]="undefined">Abbrechen</button>
+            <button id="close" class="button" (click)="discardChanges()"
+                [mat-dialog-close]="undefined">Abbrechen</button>
             <button id="save" class="button" (click)="saveChanges()" mat-dialog-close>Übernehmen</button>
         </div>
     </div>
