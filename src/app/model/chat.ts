@@ -1,7 +1,12 @@
-import {User} from './user';
-
 export class Chat {
-  constructor(public id?: string, public messages: Message[] = [], public newMessage: boolean = false, public partnerId?: string) {}
+  constructor(
+    public id?: string,
+    public messages: Message[] = [],
+    public newMessage: boolean = false,
+    public partnerId?: string,
+    public opened: boolean = false,
+    public hidden: boolean = false
+  ) {}
 }
 
 export interface Message {
@@ -9,12 +14,4 @@ export interface Message {
   to?: string;
   time: number;
   message: string;
-  // time:   Date;
 }
-
-type ChatJson = {
-  id: string;
-  partner?: User;
-  messages: Message[];
-  newMessage: boolean;
-};

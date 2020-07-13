@@ -35,7 +35,6 @@
       flex-grow: 1;
     }
 
-
     h4 {
       margin: 8px auto 8px 8px;
     }
@@ -72,7 +71,6 @@
     }
   }
 
-
   #control {
     display: flex;
     flex-direction: row;
@@ -97,7 +95,6 @@
       height: 30px;
     }
 
-
     .nickname {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -109,9 +106,7 @@
       font-size: 15px;
     }
 
-
     .signal {
-      background-color: #2b2b2b;
       padding-right: 8px;
       padding-left: 6px;
       color: white;
@@ -122,23 +117,33 @@
       }
     }
 
+    &.user {
+      cursor: default;
+    }
+
     &.chat {
-      border-color: transparent;
+      border-color: #2b2b2b;
 
       .status {
         background-color: #2b2b2b;
       }
-    }
 
-    &.chat .nickname {
-      background-color: #212121;
-    }
+      .nickname {
+        background-color: #212121;
+      }
 
-    &.messaged .status {
-      background-color: orangered;
+      .signal {
+        background-color: #2b2b2b;
+      }
+
+      &.messaged .status {
+        background-color: orangered;
+      }
     }
 
     &.micActive {
+      border-color: #1a2e56;
+
       .status {
         background-color: #243e74;
       }
@@ -152,28 +157,11 @@
       }
     }
 
-
-    &.talking {
-      .status {
-        // background-color: #43a047;
-      }
-
-      .nickname {
-        // background-color: #1b5e20;
-      }
-
-      .signal {
-        color: white;
-      }
-    }
-
-
     &.votingUp {
-      border-color: transparent;
+      border-color: #1b5e20;
 
       .status {
         background-color: #43a047;
-        border-color: #43a047;
       }
 
       .nickname {
@@ -187,11 +175,10 @@
     }
 
     &.votingDown {
-      border-color: transparent;
+      border-color: #b71c1c;
 
       .status {
         background-color: #e53935;
-        border-color: #e53935;
       }
 
       .nickname {
@@ -205,11 +192,10 @@
     }
 
     &.signaling {
-      border-color: transparent;
+      border-color: #9e9824;
 
       .status {
-        background-color: #FDD835;
-        border-color: #e53935;
+        background-color: #fdd835;
       }
 
       .nickname {
@@ -218,12 +204,9 @@
 
       .signal {
         background-color: #9e9824;
-        background-color: #9e9824;
       }
     }
   }
-
-
 
   //////////////////////////////////
   // Styling for individual buttons
@@ -234,7 +217,7 @@
       background-color: #6d6919;
 
       &.active {
-        background-color: #FDD835;
+        background-color: #fdd835;
       }
     }
 

@@ -1,0 +1,22 @@
+@import '../../../styles/settings-style.scss';
+
+#volumebar {
+  background-color: #0c1729;
+  width: calc(100% - 8px);
+  border-radius: 8px;
+  height: 8px;
+  padding: 4px;
+
+  div {
+    transition: width 0.15s ease-out;
+
+    width: 0%;
+    border-radius: 8px;
+    height: 100%;
+    background-color: #b4d3ed;
+  }
+}
+
+label {
+  margin-top: 0;
+}

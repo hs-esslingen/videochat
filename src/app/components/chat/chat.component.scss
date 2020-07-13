@@ -11,24 +11,69 @@
 
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 
-  h4 {
-    margin: 8px auto 8px 8px;
+  #header {
+    display: flex;
+    justify-content: space-between;
+    height: 38px;
+
+    h4 {
+      margin: 8px auto 8px 8px;
+    }
+
+    #close {
+      display: flex;
+      direction: row;
+
+      button {
+        margin: 7px;
+        height: 28px;
+        width: 28px;
+        border-radius: 2px;
+
+        i {
+          font-size: 20px;
+          padding: 4px;
+        }
+
+        &#delete {
+          background-color: #193058;
+        }
+        &#hide {
+          background-color: #6f0e0e;
+        }
+      }
+    }
   }
 
   #messages {
     flex-grow: 1;
     overflow-y: auto;
+    padding-top: 8px;
 
-    label {
-      margin-left: 8px;
-      padding-bottom: 8px;
-      font-weight: bold;
-      font-size: 12px;
-      line-height: 1.5;
-      color: white;
+    .messageInfo {
+      display: flex;
+      justify-content: left;
 
-      &.user {
-        color: green;
+      label {
+        margin-left: 8px;
+        margin-right: 2px;
+        padding-bottom: 2px;
+        font-weight: bold;
+        font-size: 12px;
+        line-height: 1.5;
+        color: white;
+
+        &.user {
+          color: green;
+        }
+      }
+
+      p {
+        margin-right: 8px;
+        padding-bottom: 2px;
+        font-size: 10px;
+        line-height: 18px;
+        color: rgb(118, 118, 118);
       }
     }
 
@@ -65,7 +110,6 @@
     }
   }
 
-
   #chat-input {
     background-color: #193058;
 
@@ -80,15 +124,12 @@
       border-radius: 17px;
       font-size: 14px;
       background-color: #080e1a;
-      // resize: none;
 
-      font-family: "Open Sans",
-        sans-serif;
+      font-family: 'Open Sans', sans-serif;
 
       &:focus {
         outline: none;
       }
-
     }
 
     #send-message {
@@ -100,28 +141,10 @@
       // margin-left: auto;
       // background-color: gray;
       float: right;
-      // border-bottom:  32px solid gray;
-      // border-left:    32px solid transparent;
 
       i {
         line-height: 32px;
       }
-
-      // &::before {
-      //     content: "";
-      //     position: absolute;
-      //     bottom: -32px;
-      //     left: -88px;
-      //     width: 64px;
-      //     height: 16px;
-
-      //     background-color: blue;
-      //     border-bottom-right-radius: 32px 12px;
-      //     box-shadow: 24px 0 0 0 gray;
-      //     border-top: 8px solid blue;
-      //     border-right: 8px solid transparent;
-      // }
     }
-
   }
 }

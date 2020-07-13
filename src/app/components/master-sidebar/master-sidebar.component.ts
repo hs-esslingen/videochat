@@ -1,15 +1,15 @@
-import {Component, OnInit, Output, EventEmitter, OnDestroy, ChangeDetectorRef} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, OnDestroy, ChangeDetectorRef, Input} from '@angular/core';
 import {ChatService} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
-import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';
 import {Poll} from 'src/app/helper/poll.service';
 import {User, UserSignal, CurrentUser, UserConnectionState} from 'src/app/model/user';
-import {SettingsMasterComponent} from '../settings-master/settings-master.component';
+import {SettingsMasterComponent, settingMode} from '../settings-master/settings-master.component';
 import {RoomService} from 'src/app/helper/room.service';
 import {SignalService} from '../../helper/signal.service';
 import {Chat} from 'src/app/model/chat';
 import {SoundService} from 'src/app/helper/sound.service';
+import {MediaService} from 'src/app/helper/media.service';
 
 @Component({
   selector: 'app-master',
@@ -17,16 +17,16 @@ import {SoundService} from 'src/app/helper/sound.service';
   styleUrls: ['./master-sidebar.component.scss'],
 })
 export class MasterSidebarComponent implements OnInit, OnDestroy {
+  detailOpen?: boolean;
   currentUser?: CurrentUser;
   users: {[key: string]: User} = {};
+  // Inputs for options
+  @Input() autoGainControl!: boolean;
+  @Input() roomID!: string;
 
   @Output() sidebarSetDetailEvent = new EventEmitter<{element: Chat; type: 'chat'} | {element: Poll; type: 'poll'}>();
   @Output() sidebarNicknameEvent = new EventEmitter<string>();
   @Output() sidebarDisconnectEvent = new EventEmitter<null>();
-  @Output() sidebarToggleAutogainEvent = new EventEmitter<null>();
-
-  // Enables / Disables debug mode, that creates some polls
-  demo = false;
 
   // Variables for chats
   chats: {[id: string]: Chat} = {};
@@ -39,6 +39,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   polls: Poll[] = [];
 
   constructor(
+    readonly mediaService: MediaService,
     readonly chatService: ChatService,
     private dialog: MatDialog,
     private room: RoomService,
@@ -50,6 +51,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreshes or rejoins)
     this.chats = this.chatService.getChats();
+    this.detailOpen = false;
 
     this.room.subscribe(data => {
       this.currentUser = data.currentUser;
@@ -60,11 +62,6 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
         .filter(user => user.state === UserConnectionState.CONNECTED);
       this.ref.detectChanges();
     });
-
-    if (this.demo) {
-      this.polls.push(new Poll('0', 'Poll_1'));
-      this.polls.push(new Poll('1', 'Poll_2'));
-    }
   }
 
   getKeys(obj: object) {
@@ -77,10 +74,11 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   }
 
   setSidebarDetailType(obj: Chat | Poll): void {
-    // console.log("A label was clicked!");
-    // console.log(obj);
+    // console.log('setSidebarDetailType reached');
+    this.detailOpen = !this.detailOpen;
+    if (obj instanceof Chat) obj.newMessage = false;
     if (obj instanceof Chat) this.sidebarSetDetailEvent.emit({element: obj, type: 'chat'});
-    if (obj instanceof Poll) this.sidebarSetDetailEvent.emit({element: obj, type: 'poll'});
+    // if (obj instanceof Poll) this.sidebarSetDetailEvent.emit({element: obj, type: 'poll'});
   }
 
   createPoll(): void {
@@ -90,7 +88,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   // PUSH NEWLY CREATED CHAT TO CHAT SERVICE?
   openChat(user: User): void {
     let foundElement = this.chats[user.id];
-    if (foundElement == null) foundElement = this.chatService.addChat(user);
+    if (foundElement == null || foundElement.hidden) foundElement = this.chatService.addChat(user);
     this.setSidebarDetailType(foundElement);
   }
 
@@ -107,43 +105,22 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     this.signal.setSignal(UserSignal.VOTED_DOWN);
   }
 
-  //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!
-  userInteraction(): void {
-    // console.log('Opened menu for user interaction!');
-  }
-
-  //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!
   openSettingsDialog(): void {
-    // console.log("You've opened the settings menu!");
+    //console.log(this.roomID);
     const dialogRef = this.dialog.open(SettingsMasterComponent, {
-      width: '300px',
-      data: {},
+      height: 'auto',
+      width: 'auto',
+      data: {
+        mode: settingMode.STANDARD_MODE,
+        roomID: this.roomID,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(() => {
+    dialogRef.afterClosed().subscribe(async result => {
       console.log('The dialog was closed');
-      //console.log(result);
+      console.log(result);
+      // this.mediaService.setCamera(result.isWebcamDisabled);
     });
-  }
-
-  //MIGHT BE MOVED
-  openNicknameDialog(): void {
-    const dialogRef = this.dialog.open(ChangeNicknameComponent, {
-      width: '300px',
-      data: {nickname: this.currentUser?.nickname},
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      //console.log('The dialog was closed');
-      //console.log(result);
-      if (result != null || '') this.sidebarNicknameEvent.emit(result);
-    });
-  }
-
-  //WILL BE MOVED
-  toggleAutoGain(): void {
-    //console.log("Toggled auto gain control!");
-    this.sidebarToggleAutogainEvent.emit();
   }
 
   leaveRoom(): void {

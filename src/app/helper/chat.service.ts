@@ -54,10 +54,32 @@ export class ChatService {
   }
 
   public addChat(user: User): Chat {
-    const chat = new Chat(user.id);
-    this.chats[user.id] = chat;
+    let chat: Chat;
+    if (this.chats[user.id] === undefined) {
+      chat = new Chat(user.id);
+      this.chats[user.id] = chat;
+    } else {
+      this.chats[user.id].hidden = false;
+      chat = this.chats[user.id];
+    }
+    console.log(user);
+    console.log(chat);
+
     this.triggerSubject();
     return chat;
+  }
+
+  public hideChat(chat: Chat): void {
+    if (chat.id != null) this.chats[chat.id].hidden = true;
+  }
+  public removeNewMessageInfo(chat: Chat): void {
+    if (chat.id == null) this.chats['public_chat'].newMessage = false;
+    else this.chats[chat.id].newMessage = false;
+  }
+  public chatToggleOpen(chat: Chat): void {
+    if (chat.id == null) this.chats['public_chat'].opened = !this.chats['public_chat'].opened;
+    else this.chats[chat.id].opened = !this.chats[chat.id].opened;
+    console.log('Opened / Closed Chat with ' + chat.id);
   }
 
   private addMessage(message: Message) {
@@ -72,6 +94,8 @@ export class ChatService {
       chat = this.chats['public_chat'];
     }
     chat.messages.push(message);
+    if (!chat.opened) chat.newMessage = true;
+    chat.hidden = false;
   }
 
   public async sendMessage(message: string, to?: string) {

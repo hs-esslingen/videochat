@@ -17,7 +17,6 @@ import {PrivacyPolicyComponent} from './pages/privacy-policy/privacy-policy.comp
 import {FooterComponent} from './components/footer/footer.component';
 import {ContactsPageComponent} from './pages/contacts-page/contacts-page.component';
 import {ImprintPageComponent} from './pages/imprint-page/imprint-page.component';
-import {JoinMeetingPopupComponent} from './components/join-meeting-popup/join-meeting-popup.component';
 import {LecturePageComponent} from './pages/lecture-page/lecture-page.component';
 import {MatSelectModule} from '@angular/material/select';
 import {ChatComponent} from './components/chat/chat.component';
@@ -26,7 +25,6 @@ import {VideoComponent} from './components/video/video.component';
 import {AudioComponent} from './components/audio/audio.component';
 import {MasterSidebarComponent} from './components/master-sidebar/master-sidebar.component';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
-import {ChangeNicknameComponent} from './components/change-nickname/change-nickname.component';
 import {PollComponent} from './components/poll/poll.component';
 import {SettingsMasterComponent} from './components/settings-master/settings-master.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
@@ -35,8 +33,12 @@ import {MatInputModule} from '@angular/material/input';
 import {MoodlePopupComponent} from './components/moodle-popup/moodle-popup.component';
 import {MoodleErrorPopupComponent} from './components/moodle-error-popup/moodle-error-popup.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatRadioModule} from '@angular/material/radio';
 import {SanitizeHtmlPipe} from './helper/sanitize-html.pipe';
 import {LinkifyPipe} from './helper/linkify.pipe';
+import {SettingsVideoComponent} from './components/settings-video/settings-video.component';
+import {SettingsAudioComponent} from './components/settings-audio/settings-audio.component';
+import {SettingsUserComponent} from './components/settings-user/settings-user.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +51,6 @@ import {LinkifyPipe} from './helper/linkify.pipe';
     FooterComponent,
     ContactsPageComponent,
     ImprintPageComponent,
-    JoinMeetingPopupComponent,
     AllowUriComponent,
     LecturePageComponent,
     ChatComponent,
@@ -57,13 +58,15 @@ import {LinkifyPipe} from './helper/linkify.pipe';
     VideoComponent,
     AudioComponent,
     MasterSidebarComponent,
-    ChangeNicknameComponent,
     PollComponent,
     SettingsMasterComponent,
     MoodlePopupComponent,
     MoodleErrorPopupComponent,
     SanitizeHtmlPipe,
     LinkifyPipe,
+    SettingsVideoComponent,
+    SettingsAudioComponent,
+    SettingsUserComponent,
   ],
   imports: [
     BrowserModule,
@@ -82,6 +85,7 @@ import {LinkifyPipe} from './helper/linkify.pipe';
     TextFieldModule,
     MatInputModule,
     MatSnackBarModule,
+    MatRadioModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

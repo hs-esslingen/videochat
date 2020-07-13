@@ -1,0 +1,14 @@
+<!-- <label>Nutzer Präferenzen:</label> -->
+
+<!-- <div>Hier können die Präferenzen und Einstellungen für moderierte Räume festgelegt werden!</div> -->
+
+<label>Chat:</label>
+<mat-radio-group [(ngModel)]="sendOnEnter" aria-label="Select an option" (change)="toggleSendOnEnter($event.value)">
+    <mat-radio-button [value]="true">Send Message on 'Enter'</mat-radio-button>
+    <mat-radio-button [value]="false">Send Message on 'Sift + Enter'</mat-radio-button>
+</mat-radio-group>
+<!-- <mat-checkbox [checked]="sendOnEnter" (change)="toggleSendOnEnter()"></mat-checkbox> -->
+
+<!-- <div>Standardgemäs gemuted <mat-checkbox></mat-checkbox></div> -->
+
+<!-- <div>Im moderierten Raum: Andere Teilnehmer können sich entmuten <mat-checkbox></mat-checkbox></div> -->

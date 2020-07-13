@@ -1,10 +1,10 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {MediaService} from '../../helper/media.service';
 import {MatDialog} from '@angular/material/dialog';
-import {ChangeNicknameComponent} from '../change-nickname/change-nickname.component';
 import {CurrentUser} from 'src/app/model/user';
 import {RoomService} from 'src/app/helper/room.service';
 import {Subscription} from 'rxjs';
+import {SettingsMasterComponent, settingMode} from '../settings-master/settings-master.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -30,15 +30,24 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   }
 
   openNicknameDialog(): void {
-    const dialogRef = this.dialog.open(ChangeNicknameComponent, {
-      width: '300px',
-      data: {nickname: this.mediaService.nickname},
+    const dialogRef = this.dialog.open(SettingsMasterComponent, {
+      width: 'auto',
+      data: {
+        mode: settingMode.INDIVIDUAL_MODE,
+        modules: {
+          tabs: false,
+          userSettings: true,
+          videoSettings: false,
+          audioSettings: false,
+        },
+        mediaService: this.mediaService,
+      },
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
       console.log(result);
-      if (result != null || '') this.mediaService.setNickname(result);
+      //if (result != null || '') this.mediaService.setNickname(result);
     });
   }
 }

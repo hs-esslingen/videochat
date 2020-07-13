@@ -1,0 +1,84 @@
+@import '../../../styles/settings-style.scss';
+@import '../../../styles/object-label.scss';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width: auto;
+
+  h1 {
+    display: flex;
+    margin-top: 0;
+    font-size: 20px;
+    margin-bottom: 12px;
+
+    &.tabs {
+      justify-content: center;
+      border-style: solid;
+      border-color: #0c1729;
+      background-color: #0c1729;
+      border-radius: 8px;
+    }
+  }
+
+  #settings {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    &.large {
+      width: 580px;
+      height: 375px;
+    }
+
+    #menu {
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      width: 150px;
+      min-width: 150px;
+      padding: 8px;
+      background-color: #0c1729;
+      border-radius: 8px;
+      overflow-y: auto;
+
+      .item {
+        cursor: pointer;
+        border-radius: 8px;
+        width: calc(100% - 16px);
+        height: 40px;
+        padding-right: 8px;
+        padding-left: 8px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        i {
+          margin-right: 8px;
+        }
+
+        &.active {
+          background-color: #193058;
+        }
+      }
+    }
+
+    #setting-page {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 400px;
+      max-width: 100%;
+
+      #content {
+        flex-grow: 1;
+      }
+
+      &.tabs {
+        border-bottom-right-radius: 8px;
+        padding-left: 12px;
+      }
+    }
+  }
+}
