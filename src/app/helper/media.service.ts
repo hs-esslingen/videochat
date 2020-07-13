@@ -154,14 +154,16 @@ export class MediaService {
       this.localAudioProducer.resume();
       this.microphoneState = MicrophoneState.ENABLED;
       this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
+      // Todo: add sound in settings menu
       // play higher pitch on unmuting microphone
-      this.sound.playSound(Tone.C2, 0.3);
+      // this.sound.playSound(Tone.C2, 0.3);
     } else {
       this.localAudioProducer?.pause();
       this.microphoneState = MicrophoneState.DISABLED;
       this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
+      // Todo: add sound in settings menu
       // play lower sound on muting microphone
-      this.sound.playSound(Tone.A1, 0.3);
+      // this.sound.playSound(Tone.A1, 0.3);
     }
     this.triggerSubject();
   }

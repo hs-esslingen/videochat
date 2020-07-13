@@ -149,6 +149,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   leaveRoom(): void {
     //console.log("You've left the lecture!");
     this.sidebarDisconnectEvent.emit();
-    this.sound.playSound(Tone.A1);
+    // Todo: add sound in settings menu
+    // this.sound.playSound(Tone.A1);
   }
 }

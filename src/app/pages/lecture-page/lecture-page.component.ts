@@ -138,7 +138,8 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.connection.state !== data.connection.state && data.connection.state === 1) {
         console.log('user joined room');
         // user joined room and is conencted
-        this.sound.playSound(Tone.C2);
+        // Todo: add sound in settings menu
+        // this.sound.playSound(Tone.C2);
       }
       this.users = data.users;
       this.currentUser = data.currentUser;
