@@ -12,9 +12,7 @@ export class SettingsUserComponent implements OnInit {
     localStorage.getItem('sendOnEnter') === 'true' ? (this.sendOnEnter = true) : (this.sendOnEnter = false);
   }
 
-  ngOnInit(): void {
-    // console.log(this.sendOnEnter);
-  }
+  ngOnInit(): void {}
 
   toggleSendOnEnter(value: boolean): void {
     this.sendOnEnter = value;

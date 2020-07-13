@@ -11,15 +11,15 @@
         </div>
     </ng-container>
 
-    <ng-container *ngIf="polls.length != 0 || currentUser?.userRole == 1">
+    <!-- <ng-container *ngIf="polls.length != 0 || currentUser?.userRole == 1">
         <h4>Polls</h4>
         <ng-container *ngFor="let poll of polls">
             <div class="object-label chat" (click)="setSidebarDetailType(poll)">
                 <div class="status"></div>
                 <div class="nickname">{{ poll.title }}</div>
                 <div class="signal">
-                    <!-- <i *ngIf="!chat.newMessage" class="material-icons">chat_bubble_outline</i>
-                    <i *ngIf="chat.newMessage" class="material-icons">chat</i> -->
+                    <i *ngIf="!chat.newMessage" class="material-icons">chat_bubble_outline</i>
+                    <i *ngIf="chat.newMessage" class="material-icons">chat</i>
                 </div>
             </div>
         </ng-container>
@@ -32,7 +32,7 @@
                 </div>
             </div>
         </ng-container>
-    </ng-container>
+    </ng-container> -->
 
     <h4>Current Users</h4>
     <label>You</label>

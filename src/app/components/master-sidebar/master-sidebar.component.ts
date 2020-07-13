@@ -28,9 +28,6 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   @Output() sidebarNicknameEvent = new EventEmitter<string>();
   @Output() sidebarDisconnectEvent = new EventEmitter<null>();
 
-  // Enables / Disables debug mode, that creates some polls
-  demo = false;
-
   // Variables for chats
   chats: {[id: string]: Chat} = {};
   chatSubscription?: Subscription;
@@ -65,11 +62,6 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
         .filter(user => user.state === UserConnectionState.CONNECTED);
       this.ref.detectChanges();
     });
-
-    if (this.demo) {
-      this.polls.push(new Poll('0', 'Poll_1'));
-      this.polls.push(new Poll('1', 'Poll_2'));
-    }
   }
 
   getKeys(obj: object) {
@@ -86,7 +78,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     this.detailOpen = !this.detailOpen;
     if (obj instanceof Chat) obj.newMessage = false;
     if (obj instanceof Chat) this.sidebarSetDetailEvent.emit({element: obj, type: 'chat'});
-    if (obj instanceof Poll) this.sidebarSetDetailEvent.emit({element: obj, type: 'poll'});
+    // if (obj instanceof Poll) this.sidebarSetDetailEvent.emit({element: obj, type: 'poll'});
   }
 
   createPoll(): void {
