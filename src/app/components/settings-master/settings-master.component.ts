@@ -13,10 +13,14 @@ export class SettingsMasterComponent implements OnInit {
   mode!: settingMode;
   modules!: SettingModularity;
 
-  //Variables for audio management
-  audioDevices: MediaDeviceInfo[] | undefined;
+  // Variables for user-settings
+  sendOnEnterOld!: boolean;
 
-  //Variables for video management
+  // Variables for audio-settings
+  audioDevices: MediaDeviceInfo[] | undefined;
+  autoGainControlOld!: boolean;
+
+  // Variables for video-settings
   selectedVideoStream: string | undefined;
 
   constructor(
@@ -31,6 +35,9 @@ export class SettingsMasterComponent implements OnInit {
   ngOnInit(): void {
     this.mode = this.data.mode;
     if (this.data.roomID !== undefined) this.roomID = this.data.roomID;
+
+    localStorage.getItem('autoGainControl') === 'true' ? (this.autoGainControlOld = true) : (this.autoGainControlOld = false);
+    localStorage.getItem('sendOnEnter') === 'true' ? (this.sendOnEnterOld = true) : (this.sendOnEnterOld = false);
 
     switch (this.mode) {
       case settingMode.STANDARD_MODE:
@@ -60,6 +67,16 @@ export class SettingsMasterComponent implements OnInit {
     }
   }
 
+  discardChanges(): void {
+    if (this.autoGainControlOld === true) localStorage.setItem('autoGainControl', 'true');
+    else localStorage.setItem('autoGainControl', 'false');
+
+    if (this.sendOnEnterOld === true) localStorage.setItem('sendOnEnter', 'true');
+    else localStorage.setItem('sendOnEnter', 'false');
+
+    this.close();
+  }
+
   saveChanges(): void {
     this.close();
   }
@@ -72,14 +89,7 @@ export class SettingsMasterComponent implements OnInit {
         });
       }
     }
-    if (this.mode === settingMode.JOIN_MEETING_MODE) {
-      if (this.audioDevices != null) {
-        this.dialogRef.close({
-          isWebcamDisabled: this.selectedVideoStream === 'none',
-        });
-      }
-    }
-    // INDIVIDUAL MODE
+    // OTHER MODES
   }
 }
 

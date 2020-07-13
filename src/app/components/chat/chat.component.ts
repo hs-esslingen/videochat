@@ -12,22 +12,36 @@ export class ChatComponent implements OnInit {
   @Input() childData!: Chat;
   @Input() currentUser?: CurrentUser;
   @Input() users: {[id: string]: User} = {};
+
   newMessage?: string;
+  sendOnEnter!: boolean;
+  sendButtonTooltip!: string;
 
   @Output() closeChatEvent = new EventEmitter<{element: Chat; type: 'chat'}>();
 
   @ViewChild('input') input!: ElementRef<HTMLTextAreaElement>;
 
   handleKeyUp(event: KeyboardEvent) {
-    if (event.key === 'Enter' && (event.shiftKey || event.shiftKey)) {
-      this.sendMessage();
-      event.preventDefault();
+    if (this.sendOnEnter) {
+      if (event.key === 'Enter') {
+        this.sendMessage();
+        event.preventDefault();
+      }
+    } else {
+      if (event.key === 'Enter' && event.shiftKey) {
+        this.sendMessage();
+        event.preventDefault();
+      }
     }
   }
 
   constructor(private chatService: ChatService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    localStorage.getItem('sendOnEnter') === 'true' ? (this.sendOnEnter = true) : (this.sendOnEnter = false);
+    if (this.sendOnEnter) this.sendButtonTooltip = 'Send (Enter)';
+    else this.sendButtonTooltip = 'Send (Shift + Enter)';
+  }
 
   ngAfterViewInit(): void {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.

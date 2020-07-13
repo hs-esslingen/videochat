@@ -1,4 +1,4 @@
-import {Component, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, Input} from '@angular/core';
 import {LocalMediaService} from 'src/app/helper/local-media.service';
 
 @Component({
@@ -7,6 +7,8 @@ import {LocalMediaService} from 'src/app/helper/local-media.service';
   styleUrls: ['./settings-video.component.scss'],
 })
 export class SettingsVideoComponent implements OnInit {
+  @Input() disableSelection!: boolean;
+
   videoDevices: MediaDeviceInfo[] | undefined;
   videoTrack: MediaStream | undefined;
   selectedVideoStream: string | undefined;

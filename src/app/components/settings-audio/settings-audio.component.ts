@@ -8,6 +8,7 @@ import {LocalMediaService} from 'src/app/helper/local-media.service';
 })
 export class SettingsAudioComponent implements OnInit {
   @Input() displayAGC!: boolean;
+  @Input() disableSelection!: boolean;
 
   audioDevices: MediaDeviceInfo[] | undefined;
   audioStream: MediaStreamAudioSourceNode | undefined;
@@ -19,18 +20,9 @@ export class SettingsAudioComponent implements OnInit {
   volume: string | undefined;
   intervalId: number | undefined;
 
-  volumeLevel: number;
-
   @Output() audioDevicesEvent = new EventEmitter<MediaDeviceInfo[]>();
 
-  constructor(private localMedia: LocalMediaService) {
-    this.volumeLevel = 50;
-  }
-
-  test(num: number) {
-    this.volumeLevel = num;
-    console.log(num);
-  }
+  constructor(private localMedia: LocalMediaService) {}
 
   async ngOnInit() {
     localStorage.getItem('autoGainControl') === 'true' ? (this.autoGainControl = true) : (this.autoGainControl = false);
@@ -47,14 +39,6 @@ export class SettingsAudioComponent implements OnInit {
 
         const array = new Uint8Array(this.analyser.fftSize);
 
-        /*
-        const currentVolumeSubject = voiceActivity.subscribe();
-        currentVolumeSubject.subscribe({
-          next: (v) => volume = v * 100 + '%'
-        })
-        */
-        // const slider = document.getElementById('myRange');
-        //if (slider) slider.oninput = this.setVolumeLevel;
         // @ts-ignore
         this.intervalId = setInterval(() => {
           this.analyser?.getByteTimeDomainData(array);
@@ -68,7 +52,6 @@ export class SettingsAudioComponent implements OnInit {
       // ignore error
     }
 
-    //console.log(this.localMedia);
     this.audioDevices = await this.localMedia.getAudioCapabilites();
     this.audioDevicesEvent.emit(this.audioDevices);
   }

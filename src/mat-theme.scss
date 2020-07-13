@@ -10,23 +10,23 @@
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 $app-primary: mat-palette($mat-light-blue, A100);
-$app-accent:  mat-palette($mat-pink, A200, A100, A400);
+$app-accent: mat-palette($mat-pink, A200, A100, A400);
 $custom-background-color: #0c1729;
 
 // The warn palette is optional (defaults to red).
-$app-warn:    mat-palette($mat-red);
+$app-warn: mat-palette($mat-red);
 
 // Create the theme object (a Sass map containing all of the palettes).
 $app-theme: mat-dark-theme($app-primary, $app-accent, $app-warn);
 
-
 $mat-dark-theme-background: (
   status-bar: black,
-  app-bar:    map_get($mat-grey, 900),
+  app-bar: map_get($mat-grey, 900),
   background: #193058,
-  hover:      rgba(white, 0.04), // TODO(kara): check style with Material Design UX
-  card:       #264986,
-  dialog:     #193058,
+  hover: rgba(white, 0.04),
+  // TODO(kara): check style with Material Design UX
+    card: #264986,
+  dialog: #193058,
   disabled-button: rgba(white, 0.12),
   raised-button: map-get($mat-grey, 800),
   focused-button: $light-focused,
@@ -38,10 +38,12 @@ $mat-dark-theme-background: (
   tooltip: map_get($mat-grey, 700),
 );
 
-$app-theme: map-merge($app-theme, (background: $mat-dark-theme-background));
-
-
-
+$app-theme: map-merge(
+  $app-theme,
+  (
+    background: $mat-dark-theme-background,
+  )
+);
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component

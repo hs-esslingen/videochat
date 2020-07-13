@@ -1,1 +1,18 @@
 @import '../../../styles/settings-style.scss';
+
+p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 18px;
+}
+
+mat-checkbox {
+  width: 12px;
+  height: 12px;
+  margin-right: 16px;
+}
+
+.check {
+  display: flex;
+  justify-content: space-between;
+}

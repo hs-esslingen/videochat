@@ -25,7 +25,7 @@
 
     <div id="chat-input">
         <textarea cdkTextareaAutosize #input (keyup)="handleKeyUp($event)" [(ngModel)]="newMessage" placeholder="Write a message..."></textarea>
-        <button matTooltip="Send (Shift + Enter)" id="send-message" (click)="sendMessage()">
+        <button matTooltip="{{ sendButtonTooltip }}" id="send-message" (click)="sendMessage()">
             <i class="material-icons">send</i>
         </button>
     </div>

@@ -1,4 +1,5 @@
 @import '../../../styles/settings-style.scss';
+@import '../../../styles/object-label.scss';
 
 :host {
   display: flex;
@@ -6,13 +7,21 @@
   height: auto;
   width: auto;
 
+  #room {
+    display: flex;
+
+    &.tabs {
+      justify-content: center;
+    }
+  }
+
   #settings {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 
     &.large {
-      width: 750px;
+      width: 700px;
       height: 400px;
     }
 
@@ -20,15 +29,13 @@
       display: flex;
       flex-direction: column;
       height: auto;
-      width: 300px;
-      min-width: 300px;
+      width: 250px;
+      min-width: 250px;
       padding-right: 24px;
 
-      .setting-tab {
-        border-style: solid;
-        border-width: 2px;
-        height: 46px;
-        width: calc(100%-4px);
+      .object-label {
+        transform: scale(1, 1.2);
+        margin-bottom: 12px;
       }
     }
 
