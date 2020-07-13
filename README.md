@@ -1,7 +1,5 @@
 # Videochat
 
-
-
 ## Install dependencies
 
 check requirements: [mediasoup installation requirements](https://mediasoup.org/documentation/v3/mediasoup/installation/)<br/>
@@ -18,6 +16,7 @@ Run `npm i` to install all requied dependencies.
 Copy `.env.example` to `.env`
 
 Run `npm run watch-debug` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Linux: Please ensure that `mediasoup-worker` inside `dist/worker/mediasoup-worker` is marked as an executable
 
 ## Code scaffolding
 
@@ -28,14 +27,50 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
+## Docker Build
+`docker build . -t <tagname>`
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Docker Installation
+1. create docker-compose.yml from the example below
+2. rename and configure `.env.example` to `.env`
+3. create a cert folter
+4. Create a certificate for Shibboleth and let the DFN verify it.  
+   [See DFM](https://doku.tid.dfn.de/en:certificates) for more information  
+   Save the certificate Files as `key.pem` and `cert.pem` to the cert folder.
+5. Get the Certificate from the HSE IDP and save it as `idp_cert.pem` to the cert folder. [HSE IDP](https://idp.hs-esslingen.de/idp/shibboleth)
+6. The stack can now be started with `docker-compose up -d`
 
-## Running end-to-end tests
+This project requires a reverse proxy like `nginx` which provides the ssl encryption.
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+### docker-compose.yml
+```
+version: "2"
 
-## Further help
+networks:
+  videochat:
+    external: false
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+services:
+  videochat:
+    container_name: videochat
+    image: codinglion/videochat
+    restart: always
+    environment:
+      - SESSION_STORE_URL=redis
+    volumes:
+      - ./cert:/app/dist/cert
+      - .env:/app/.env
+    network_mode: "host"
+    depends_on:
+      - redis
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "127.0.0.1:6379:6379"
+    networks:
+      - videochat
+```
+## Administration
+After the installation is successful the project reqires no further administration.
