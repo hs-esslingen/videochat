@@ -30,7 +30,15 @@
         />
     </div>
 
-    <app-chat *ngIf="detailType === 'chat'" class="detail" [childData]="sidebarDetail" [currentUser]="currentUser" [users]="users"> </app-chat>
+    <app-chat
+        *ngIf="detailType === 'chat'"
+        class="detail"
+        [childData]="sidebarDetail"
+        [currentUser]="currentUser"
+        [users]="users"
+        (closeChatEvent)="setSidebarDetail($event)"
+    >
+    </app-chat>
     <app-poll *ngIf="detailType === 'poll'" class="detail"></app-poll>
 
     <app-master

@@ -82,7 +82,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   }
 
   setSidebarDetailType(obj: Chat | Poll): void {
-    // console.log("A label was clicked!");
+    // console.log('setSidebarDetailType reached');
     this.detailOpen = !this.detailOpen;
     if (obj instanceof Chat) obj.newMessage = false;
     if (obj instanceof Chat) this.sidebarSetDetailEvent.emit({element: obj, type: 'chat'});
@@ -96,7 +96,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   // PUSH NEWLY CREATED CHAT TO CHAT SERVICE?
   openChat(user: User): void {
     let foundElement = this.chats[user.id];
-    if (foundElement == null) foundElement = this.chatService.addChat(user);
+    if (foundElement == null || foundElement.hidden) foundElement = this.chatService.addChat(user);
     this.setSidebarDetailType(foundElement);
   }
 
@@ -111,11 +111,6 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   thumbsDown(): void {
     //console.log("You've voted down!");
     this.signal.setSignal(UserSignal.VOTED_DOWN);
-  }
-
-  //ONLY FOR DEBUG REASONS! CAN BE REMOVED IN PRODUCTION VERSION!
-  userInteraction(): void {
-    // console.log('Opened menu for user interaction!');
   }
 
   openSettingsDialog(): void {

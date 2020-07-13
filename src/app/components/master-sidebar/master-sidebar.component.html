@@ -1,7 +1,12 @@
 <div id="scroll">
     <h4>Chats</h4>
     <ng-container *ngFor="let id of getKeys(chats)">
-        <div class="object-label chat" [class.messaged]="chats[id].newMessage && detailOpen === false" (click)="setSidebarDetailType(chats[id])">
+        <div
+            *ngIf="!chats[id].hidden"
+            class="object-label chat"
+            [class.messaged]="chats[id].newMessage && detailOpen === false"
+            (click)="setSidebarDetailType(chats[id])"
+        >
             <div class="status"></div>
             <div class="nickname">{{ chats[id].id ? users[id].nickname : 'Public Chat' }}</div>
             <div class="signal">
@@ -69,7 +74,6 @@
             *ngFor="let user of activeUsers"
             class="object-label"
             [matMenuTriggerFor]="userMenu"
-            (click)="userInteraction()"
             [class.talking]="user.microphoneState === 2"
             [class.signaling]="user.signal === 1"
             [class.votingUp]="user.signal === 2"

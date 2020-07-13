@@ -54,10 +54,23 @@ export class ChatService {
   }
 
   public addChat(user: User): Chat {
-    const chat = new Chat(user.id);
-    this.chats[user.id] = chat;
+    let chat: Chat;
+    if (this.chats[user.id] === undefined) {
+      chat = new Chat(user.id);
+      this.chats[user.id] = chat;
+    } else {
+      this.chats[user.id].hidden = false;
+      chat = this.chats[user.id];
+    }
+    console.log(user);
+    console.log(chat);
+
     this.triggerSubject();
     return chat;
+  }
+
+  public hideChat(chat: Chat): void {
+    if (chat.id != null) this.chats[chat.id].hidden = true;
   }
 
   private addMessage(message: Message) {

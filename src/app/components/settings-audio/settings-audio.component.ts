@@ -19,9 +19,18 @@ export class SettingsAudioComponent implements OnInit {
   volume: string | undefined;
   intervalId: number | undefined;
 
+  volumeLevel: number;
+
   @Output() audioDevicesEvent = new EventEmitter<MediaDeviceInfo[]>();
 
-  constructor(private localMedia: LocalMediaService) {}
+  constructor(private localMedia: LocalMediaService) {
+    this.volumeLevel = 50;
+  }
+
+  test(num: number) {
+    this.volumeLevel = num;
+    console.log(num);
+  }
 
   async ngOnInit() {
     localStorage.getItem('autoGainControl') === 'true' ? (this.autoGainControl = true) : (this.autoGainControl = false);
@@ -38,6 +47,14 @@ export class SettingsAudioComponent implements OnInit {
 
         const array = new Uint8Array(this.analyser.fftSize);
 
+        /*
+        const currentVolumeSubject = voiceActivity.subscribe();
+        currentVolumeSubject.subscribe({
+          next: (v) => volume = v * 100 + '%'
+        })
+        */
+        // const slider = document.getElementById('myRange');
+        //if (slider) slider.oninput = this.setVolumeLevel;
         // @ts-ignore
         this.intervalId = setInterval(() => {
           this.analyser?.getByteTimeDomainData(array);

@@ -4,8 +4,13 @@
     <mat-option [value]="item.label" *ngFor="let item of audioDevices">{{ item.label }}</mat-option>
 </mat-select>
 
-<div id="volumebar">
-    <div [style.width]="volume"></div>
+<div id="audio-level">
+    <div id="volumebar">
+        <div [style.width]="volume"></div>
+    </div>
+    <div class="slidecontainer">
+        <input type="range" min="0" max="100" value="{{ volumeLevel }}" class="slider" id="myRange" (input)="test(volumeLevel)" />
+    </div>
 </div>
 
 <div *ngIf="displayAGC === true" id="auto-gain">

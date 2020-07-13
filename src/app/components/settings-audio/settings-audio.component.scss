@@ -1,4 +1,7 @@
 @import '../../../styles/settings-style.scss';
+#audio-level {
+  position: relative;
+}
 
 #volumebar {
   background-color: #0c1729;
@@ -6,16 +9,69 @@
   border-radius: 8px;
   height: 8px;
   padding: 4px;
+  position: relative;
+  top: 0;
 
   div {
     transition: width 0.15s ease-out;
-
     width: 0%;
     border-radius: 8px;
     height: 100%;
     background-color: #b4d3ed;
   }
 }
+
+.slidecontainer {
+  width: 100%; /* Width of the outside container */
+  position: absolute;
+  top: -5px;
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none; /* Override default CSS styles */
+  background-color: transparent; /* Dark blue */
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 8px;
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 16px; /* Set a specific slider handle width */
+  height: 16px; /* Slider handle height */
+  background: orange; /* Green background */
+  border-radius: 12px;
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 30px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #4caf50; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+// #volumebar {
+//   background-color: #0c1729;
+//   width: calc(100% - 8px);
+//   border-radius: 8px;
+//   height: 8px;
+//   padding: 4px;
+
+//   div {
+//     transition: width 0.15s ease-out;
+
+//     width: 0%;
+//     border-radius: 8px;
+//     height: 100%;
+//     background-color: #b4d3ed;
+//   }
+// }
 
 label {
   margin-top: 0;
