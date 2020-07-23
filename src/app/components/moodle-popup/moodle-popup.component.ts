@@ -4,8 +4,8 @@ import {MoodleService} from 'src/app/helper/moodle.service';
 
 enum MoodleState {
   ChooseMethod = 0,
-  ManualMethod = 1,
-  AutomaticMethod = 2,
+  AutomaticMethod = 1,
+  ManualMethod = 2,
 }
 
 @Component({
