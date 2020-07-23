@@ -38,6 +38,7 @@ Run `npm run build` to build the project. The build artifacts will be stored in 
    [See DFM](https://doku.tid.dfn.de/en:certificates) for more information  
    Save the certificate Files as `key.pem` and `cert.pem` to the cert folder.
 5. Get the Certificate from the HSE IDP and save it as `idp_cert.pem` to the cert folder. [HSE IDP](https://idp.hs-esslingen.de/idp/shibboleth)
+[Siehe HSE IDP Metadata](https://idp.hs-esslingen.de/idp/shibboleth)
 6. The stack can now be started with `docker-compose up -d`
 
 This project requires a reverse proxy like `nginx` which provides the ssl encryption.
