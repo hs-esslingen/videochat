@@ -1,6 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {LocalMediaService} from 'src/app/helper/local-media.service';
-import {copyFileSync} from 'fs';
 
 @Component({
   selector: 'app-settings-audio',
