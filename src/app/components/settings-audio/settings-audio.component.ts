@@ -1,5 +1,6 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {LocalMediaService} from 'src/app/helper/local-media.service';
+import {copyFileSync} from 'fs';
 
 @Component({
   selector: 'app-settings-audio',
@@ -26,27 +27,14 @@ export class SettingsAudioComponent implements OnInit {
 
   async ngOnInit() {
     localStorage.getItem('autoGainControl') === 'true' ? (this.autoGainControl = true) : (this.autoGainControl = false);
-    this.audioCtx = new AudioContext();
 
     try {
-      this.analyser = this.audioCtx.createAnalyser();
       const audioStream = await this.localMedia.getAudioTrack();
       if (audioStream) {
         const audio = audioStream.getAudioTracks()[0];
-        this.audioStream = this.audioCtx.createMediaStreamSource(audioStream);
-
-        this.audioStream.connect(this.analyser);
-
-        const array = new Uint8Array(this.analyser.fftSize);
-
-        // @ts-ignore
-        this.intervalId = setInterval(() => {
-          this.analyser?.getByteTimeDomainData(array);
-          const volume = Math.max(0, Math.max(...array) - 128) / 128;
-          this.volume = volume * 100 + '%';
-        }, 100);
-
         this.selectedAudioStream = audio.label;
+
+        this.initAudioLevelDisplay(audioStream);
       }
     } catch (error) {
       // ignore error
@@ -58,6 +46,7 @@ export class SettingsAudioComponent implements OnInit {
 
   ngOnDestroy(): void {
     clearInterval(this.intervalId);
+    this.audioCtx?.close();
   }
 
   async changeAudioStream(label: string) {
@@ -68,14 +57,36 @@ export class SettingsAudioComponent implements OnInit {
     }
 
     const audio = await this.localMedia.getAudioTrack(label);
-
-    this.audioStream = this.audioCtx?.createMediaStreamSource(audio as MediaStream);
-    this.audioStream?.connect(this.analyser as AnalyserNode);
+    try {
+      if (audio && this.audioCtx == null) this.initAudioLevelDisplay(audio);
+      this.audioStream = this.audioCtx?.createMediaStreamSource(audio as MediaStream);
+      this.audioStream?.connect(this.analyser as AnalyserNode);
+    } catch (error) {
+      // error
+      console.log('could not init audio level display');
+    }
   }
 
   toggleAutoGain(): void {
     this.autoGainControl = !this.autoGainControl;
     if (this.autoGainControl === true) localStorage.setItem('autoGainControl', 'true');
     else localStorage.setItem('autoGainControl', 'false');
+  }
+
+  initAudioLevelDisplay(audioStream: MediaStream) {
+    this.audioCtx = new AudioContext();
+    this.analyser = this.audioCtx.createAnalyser();
+    this.audioStream = this.audioCtx.createMediaStreamSource(audioStream);
+
+    this.audioStream.connect(this.analyser);
+
+    const array = new Uint8Array(this.analyser.fftSize);
+
+    // @ts-ignore
+    this.intervalId = setInterval(() => {
+      this.analyser?.getByteTimeDomainData(array);
+      const volume = Math.max(0, Math.max(...array) - 128) / 128;
+      this.volume = volume * 100 + '%';
+    }, 100);
   }
 }

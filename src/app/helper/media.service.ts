@@ -103,30 +103,34 @@ export class MediaService {
         this.microphoneState = MicrophoneState.ENABLED;
         await this.sendAudio(audioTracks);
 
-        this.audioCtx = new AudioContext();
-        const analyser = this.audioCtx.createAnalyser();
-        analyser.fftSize = 2048;
-        const audioStream = this.audioCtx.createMediaStreamSource(audioTracks);
-        audioStream.connect(analyser);
-        const array = new Uint8Array(analyser.fftSize);
+        try {
+          this.audioCtx = new AudioContext();
+          const analyser = this.audioCtx.createAnalyser();
+          analyser.fftSize = 2048;
+          const audioStream = this.audioCtx.createMediaStreamSource(audioTracks);
+          audioStream.connect(analyser);
+          const array = new Uint8Array(analyser.fftSize);
 
-        if (this.audioIntervalId) clearInterval(this.audioIntervalId);
-        this.audioIntervalId = (setInterval(() => {
-          analyser?.getByteTimeDomainData(array);
-          const volume = Math.max(0, Math.max(...array) - 128) / 128;
-          // convert to logarythmic, this will this will represent actual volume better
-          const perceivedVolume = Math.sqrt(volume);
-          if (perceivedVolume > 0.1 && this.microphoneState === MicrophoneState.ENABLED) {
-            this.microphoneState = MicrophoneState.TALKING;
-            this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
-            this.triggerSubject();
-          } else if (perceivedVolume < 0.1 && this.microphoneState === MicrophoneState.TALKING) {
-            this.microphoneState = MicrophoneState.ENABLED;
-            this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
-            this.triggerSubject();
-          }
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        }, 500) as any) as number;
+          if (this.audioIntervalId) clearInterval(this.audioIntervalId);
+          this.audioIntervalId = (setInterval(() => {
+            analyser?.getByteTimeDomainData(array);
+            const volume = Math.max(0, Math.max(...array) - 128) / 128;
+            // convert to logarythmic, this will this will represent actual volume better
+            const perceivedVolume = Math.sqrt(volume);
+            if (perceivedVolume > 0.1 && this.microphoneState === MicrophoneState.ENABLED) {
+              this.microphoneState = MicrophoneState.TALKING;
+              this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
+              this.triggerSubject();
+            } else if (perceivedVolume < 0.1 && this.microphoneState === MicrophoneState.TALKING) {
+              this.microphoneState = MicrophoneState.ENABLED;
+              this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
+              this.triggerSubject();
+            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          }, 500) as any) as number;
+        } catch (error) {
+          console.log('error creating audio context');
+        }
         this.api.setMicrophoneState(this.roomId as string, this.microphoneState);
       } else {
         this.microphoneState = MicrophoneState.DISABLED;
