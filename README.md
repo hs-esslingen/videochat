@@ -2,11 +2,13 @@
 
 ## Install dependencies
 
-check requirements: [mediasoup installation requirements](https://mediasoup.org/documentation/v3/mediasoup/installation/)<br/>
+check requirements: [mediasoup installation requirements](https://mediasoup.org/documentation/v3/mediasoup/installation/)<br/> 
 
 Windows:
  - Add python.exe to `$PYTHON`
- - Add msbuild.exe to `$PATH`  
+ - Add msbuild.exe to `$PATH` 
+ - Add the version of installed build tools (Example: `2019`) to `$GYP_MSVS_VERSION` 
+SION` 
 
 
 Run `npm i` to install all requied dependencies.
