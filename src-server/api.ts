@@ -1,9 +1,9 @@
 import * as express from 'express';
 import * as mediasoup from 'mediasoup';
 import * as WebSocket from 'ws';
-import { MyWebSocket } from './server';
-import { getLogger } from 'log4js';
-import { Room, UserRole, MoodleUser } from './videochat/room';
+import {MyWebSocket} from './server';
+import {getLogger} from 'log4js';
+import {Room, UserRole, MoodleUser} from './videochat/room';
 import fetch from 'node-fetch';
 import * as bodyParser from 'body-parser';
 import * as jwt from 'jsonwebtoken';
@@ -14,10 +14,9 @@ export class Api {
   secretkey = process.env.SIGN_SECRETKEY || 'mysecretkey';
   worker: mediasoup.types.Worker | undefined;
   router: mediasoup.types.Router | undefined;
-  transports: { [id: string]: mediasoup.types.WebRtcTransport } = {};
-  consumers: { [id: string]: mediasoup.types.Consumer } = {};
+  transports: {[id: string]: mediasoup.types.WebRtcTransport} = {};
+  consumers: {[id: string]: mediasoup.types.Consumer} = {};
   producers: mediasoup.types.Producer[] = [];
-
 
   constructor(wss: WebSocket.Server) {
     this.api.use(bodyParser.json());
@@ -217,7 +216,7 @@ export class Api {
           // @ts-ignore
           body: params,
         });
-        const userList: { email: string; roles: { roleid: number }[] }[] = await data.json();
+        const userList: {email: string; roles: {roleid: number}[]}[] = await data.json();
         if (Object.prototype.hasOwnProperty.call(userList, 'exception')) {
           logger.debug('Getting moodle course users failed', userList);
           res.status(403).send('User is not in this course');
