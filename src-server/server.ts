@@ -6,26 +6,19 @@ import {join} from 'path';
 import * as WebSocket from 'ws';
 import * as http from 'http';
 import * as passport from 'passport';
-import * as saml from 'passport-saml';
 import * as jwtPassport from 'passport-jwt';
 import * as jwt from 'jsonwebtoken';
 import * as session from 'express-session';
 import * as redis from 'redis';
 import * as connectRedis from 'connect-redis';
-import {readFileSync} from 'fs';
 import * as bodyParser from 'body-parser';
 import {getLogger, configure, Configuration} from 'log4js';
-import {Email} from './email';
+import {setupShibboleth} from './shibboleth';
+import {setupAdLogin} from './azure-ad';
 import * as helmet from 'helmet';
 
 export const logger = getLogger('server');
 initLogger();
-
-const email = new Email();
-// track emails which try to receive a email
-const loginRequest: Map<string, number> = new Map<string, number>();
-// minimum time difference in milliseconds between last email request and current time
-const minTimeDifference = 600000;
 
 // Express server
 const app = express();
@@ -84,36 +77,6 @@ if (process.env.SESSION_STORE === 'redis') {
   store = new session.MemoryStore();
 }
 
-let samlStrategy: saml.Strategy;
-if (process.env.NODE_ENV === 'production') {
-  samlStrategy = new saml.Strategy(
-    {
-      callbackUrl: process.env.CALLBACK_URL,
-      entryPoint: process.env.ENTRY_POINT,
-      issuer: process.env.ISSUER,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      identifierFormat: (null as any) as undefined,
-      decryptionPvk: readFileSync(__dirname + '/cert/key.pem', 'utf8'),
-      privateCert: readFileSync(__dirname + '/cert/key.pem', 'utf8'),
-      // IDP Public key
-      cert: readFileSync(__dirname + '/cert/idp_cert.pem', 'utf8'),
-      validateInResponseTo: false,
-      disableRequestedAuthnContext: true,
-    },
-    (profile: saml.Profile, done: saml.VerifiedCallback) => {
-      logger.debug('Parsing SAML', profile);
-      const user = {
-        email: profile['urn:oid:0.9.2342.19200300.100.1.3'],
-        scope: profile['urn:oid:1.3.6.1.4.1.5923.1.1.1.9'],
-        displayName: profile['urn:oid:2.5.4.42'] + ' ' + profile['urn:oid:2.5.4.4'],
-      };
-      return done(null, user);
-    }
-  );
-  passport.use(samlStrategy);
-}
-passport.use(jwtStrategy);
-
 const api = new Api(wss);
 const expressSession = session({
   store: store,
@@ -129,54 +92,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 if (process.env.NODE_ENV === 'production') {
-  app.get('/auth/sso', passport.authenticate('saml', {failureRedirect: '/auth/fail'}), (req, res) => {
-    res.redirect('/auth/check-sso');
-  });
-
-  app.post('/auth/callback', passport.authenticate('saml', {failureRedirect: '/auth/fail'}), (req, res) => {
-    logger.info('SSO Login', req.user);
-
-    res.send(`<html>
-      <head>
-        <title>SSO Login Callback</title>
-      </head>
-      <body>
-        <p>Please close this Window!</p>
-        <script type="text/javascript">
-          window.close();
-        </script>
-      </body>
-      </html>`);
-  });
-
-  // Backwards compatibility to old metadata configuration
-  app.post('/login/callback', passport.authenticate('saml', {failureRedirect: '/auth/fail'}), (req, res) => {
-    logger.info('SSO Login', req.user);
-
-    res.send(`<html>
-      <head>
-        <title>SSO Login Callback</title>
-      </head>
-      <body>
-        <p>Please close this Window!</p>
-        <script type="text/javascript">
-          window.close();
-        </script>
-      </body>
-      </html>`);
-  });
-
-  app.get('/auth/fail', (req, res) => {
-    res.status(401).send('Login failed');
-  });
-
-  app.get('/Shibboleth.sso/Metadata', (req, res) => {
-    const cert = readFileSync(__dirname + '/cert/cert.pem', 'utf8');
-    const metadata = samlStrategy.generateServiceProviderMetadata(cert, cert);
-    res.type('application/xml');
-    res.status(200).send(metadata);
-  });
-
+  if (process.env.UNIVERSITY === 'gannon') {
+    setupAdLogin(app);
+  } else {
+    setupShibboleth(app);
+  }
   app.get('/auth/check-sso', (req, res) => {
     if (req.isAuthenticated()) res.json({token: 'asdasd'});
     else res.redirect('/auth/sso');
@@ -185,71 +105,23 @@ if (process.env.NODE_ENV === 'production') {
   app.get('/auth/check-sso', (req, res) => {
     res.send('SSO login is disabled in DEBUG mode');
   });
+}
 
+// debug email login
+if (process.env.NODE_ENV === 'development') {
+  passport.use(jwtStrategy);
+  app.post('/auth/email', (req, res) => {
+    logger.trace('/auth/email');
+    const token = jwt.sign({email: req.body.email}, secretkey);
+    // send encoded token
+    res.json({
+      token,
+    });
+  });
   app.get('/auth/jwt', passport.authenticate('jwt'), (req, res) => {
     logger.info('JWT Login', req.user);
     logger.trace(req.headers.cookie);
     res.status(204).send();
-  });
-
-  app.post('/auth/email', (req, res) => {
-    logger.trace('/auth/email');
-
-    if (loginRequest.has(req.body.email)) {
-      const previousTime = loginRequest.get(req.body.email);
-      if (previousTime && Date.now() - previousTime < minTimeDifference) {
-        // requested email was too frequently
-        const error: Error = new Error('email already requested!');
-        logger.trace(error);
-        res.status(429).send(error);
-        return;
-      }
-    }
-
-    loginRequest.set(req.body.email, Date.now());
-
-    const EmailRegExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (req.body.email !== undefined && EmailRegExp.test(req.body.email) && req.body.email.endsWith('hs-esslingen.de')) {
-      const token = jwt.sign({email: req.body.email}, secretkey);
-      logger.info('email is valid: ', req.body.email);
-      if (process.env.NODE_ENV === 'development') {
-        // send encoded token
-        res.json({
-          token,
-        });
-      }
-
-      const callbackUrl = 'https://hse-chat.app/login/email?token=' + escape(token);
-
-      // build Email content in plain text and html
-      const subject = 'Hochschule Esslingen Chat Login';
-      const htmlStyle = `<style>
-      a {
-        padding: 8px;
-        text-aling: center;
-        color: white;
-        background-color: #193058;
-        display: inline-block;
-        text-decoration: none;
-      }
-      </style>`;
-      const bodyWelcome = 'Willkommen zum Online Videochat der Hochschule Esslingen';
-      const bodyp1 = 'Klicken Sie auf den Login Link um ein Videochat Room zu betreten:';
-      const bodyp2 = 'Wenn Sie sich nicht beim Online Videochat der Hochschule Esslingen angemeldet haben, ignorieren Sie diese Email.';
-      const html = `${htmlStyle}
-      <h1>${bodyWelcome}</h1>
-	  <p>${bodyp1}</p>
-      <a href="${callbackUrl}">Login</a>
-	  <p>${bodyp2}</p>
-      `;
-      const text = bodyWelcome + '\n\n' + bodyp1 + '\n\n' + callbackUrl + '\n\n' + bodyp2;
-
-      email.sendMail(req.body.email, req.body.email, subject, text, html);
-    } else {
-      const error = 'email is invalid';
-      logger.warn(error, req.body.email);
-      res.status(400).send(error);
-    }
   });
 }
 
