@@ -1,0 +1,20 @@
+@import '~@angular/material/theming';
+// Plus imports for other components in your app.
+@import 'src/styles/themes/hse-theme.scss';
+@import 'src/styles/themes/gu-theme.scss';
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+//THIS VARIABLE WILL DECIDE WHICH UNIVERSITIES THEME WILL BE USED!
+$THEME: 'HSE'; // Can be "HSE" or "GU"
+
+@if $THEME == 'HSE' {
+  @include angular-material-theme($hse-theme);
+  // $primary: map-get($hse-theme, hse-primary);
+} @else if $THEME == 'GU' {
+  // $primary: map-get($hse-theme, gu-primary);
+  @include angular-material-theme($gu-theme);
+}

@@ -1,5 +1,11 @@
 @import '~@angular/cdk/overlay-prebuilt.css';
-@import 'mat-theme.scss';
+
+// Custom imports
+@import 'src/styles/elements/buttons.scss';
+@import 'src/styles/elements/round-buttons.scss';
+@import 'src/styles/elements/chat-message.scss';
+
+@import 'src/styles/theme-provider.scss';
 
 /* You can add global styles to this file, and also import other style files */
 body {
@@ -23,7 +29,6 @@ main {
 }
 
 button {
-
   cursor: pointer;
   border: none;
   margin: 0;
@@ -59,9 +64,6 @@ button {
   background-color: unset;
 }
 
-
-
-
 input {
   border-radius: 4px;
   font-size: 14px;
@@ -72,52 +74,4 @@ input {
   width: calc(100% - 26px);
   border: 1px solid #172c50;
   outline: none;
-}
-
-.button {
-  border-radius: 4px;
-  font-size: 14px;
-  background: #B61601;
-  color: #ffffff;
-  outline: none;
-  cursor: pointer;
-  padding: 13px 12px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-
-  &:hover {
-    background: rgb(209, 24, 0);
-  }
-
-  &:active {
-    background: #B61601;
-  }
-
-  &.blue {
-    background: mat-color($app-primary);
-    color: black;
-  }
-}
-
-.chat-message {
-  a:link {
-    color: #B4D3ED;
-  }
-
-  a:visited {
-    color: #B4D3ED;
-    background-color: transparent;
-    text-decoration: none;
-  }
-
-  a:hover {
-    color: #B4D3ED;
-    background-color: transparent;
-    text-decoration: underline;
-  }
-
-  a:active {
-    color: #B4D3ED;
-    background-color: transparent;
-    text-decoration: underline;
-  }
 }
