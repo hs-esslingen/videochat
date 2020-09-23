@@ -1,0 +1,85 @@
+@import '~@angular/material/theming';
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+// NOT NECESSARILY
+$hse-primary: mat-palette($mat-light-blue, A100);
+$hse-accent: mat-palette($mat-amber, A200, A100, A400);
+// The warn palette is optional (defaults to red).
+$hse-warn: mat-palette($mat-red);
+
+// Combine the palettes to a theme
+$hse-theme: mat-dark-theme($hse-primary, $hse-accent, $hse-warn);
+
+$mat-dark-theme-background: (
+  status-bar: black,
+  app-bar: map_get($mat-grey, 900),
+  background: #193058,
+  hover: rgba(white, 0.04),
+  // TODO(kara): check style with Material Design UX
+    card: #264986,
+  dialog: #193058,
+  disabled-button: rgba(white, 0.12),
+  raised-button: map-get($mat-grey, 800),
+  focused-button: $light-focused,
+  selected-button: map_get($mat-grey, 900),
+  selected-disabled-button: map_get($mat-grey, 800),
+  disabled-button-toggle: black,
+  unselected-chip: map_get($mat-grey, 700),
+  disabled-list-option: black,
+  tooltip: map_get($mat-grey, 700),
+);
+
+$hse-theme: map-merge(
+  $hse-theme,
+  (
+    background: $mat-dark-theme-background,
+  )
+);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+// @include angular-material-theme($hse-theme);
+
+// Color variables
+// $primary: mat-color($hse-primary);
+// $accent: mat-color($hse-accent);
+
+// $custom-background-color: #0c1729;
+
+// Create the theme object (a Sass map containing all of the palettes).
+// $app-theme: mat-dark-theme($app-primary, $app-accent, $app-warn);
+
+// // .hse-default {
+// //   @import 'src/styles/themes/hse-theme.scss';
+// // }
+
+// @mixin theming($theme, $typography: null) {
+//   @include angular-material-theme($theme);
+//   @if $typography {
+//     @include angular-material-typography($typography);
+//   }
+//   /* include mixin from component, if desired*/
+// }
+
+// @mixin candy-carousel-color($config-or-theme) {
+//   // Extract the color configuration in case a theme has been passed.
+//   // This allows consumers to either pass a theme object or a color configuration.
+//   $config: mat-get-color-config($config-or-theme);
+//   // Extract the palettes you need from the theme definition.
+//   $primary: map-get($config, primary);
+//   $accent: map-get($config, accent);
+
+//   // Define any styles affected by the theme.
+//   .candy-carousel {
+//     // Use mat-color to extract individual colors from a palette.
+//     background-color: mat-color($config);
+//     border-color: mat-color($config, A400);
+//   }
+// }
+
+//LIST OF HSE COLORS:
+// $hse_blue_1: #264986;
+// $hse_blue_2: #193058,

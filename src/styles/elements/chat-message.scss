@@ -1,0 +1,23 @@
+.chat-message {
+  a:link {
+    color: #b4d3ed;
+  }
+
+  a:visited {
+    color: #b4d3ed;
+    background-color: transparent;
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: #b4d3ed;
+    background-color: transparent;
+    text-decoration: underline;
+  }
+
+  a:active {
+    color: #b4d3ed;
+    background-color: transparent;
+    text-decoration: underline;
+  }
+}

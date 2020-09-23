@@ -1,0 +1,25 @@
+// @import 'src/styles.scss';
+
+.button {
+  border-radius: 4px;
+  font-size: 14px;
+  background: #b61601;
+  color: #ffffff;
+  outline: none;
+  cursor: pointer;
+  padding: 13px 12px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+
+  &:hover {
+    background: rgb(209, 24, 0);
+  }
+
+  &:active {
+    background: #b61601;
+  }
+
+  &.blue {
+    // background: mat-color($primary);
+    color: black;
+  }
+}
