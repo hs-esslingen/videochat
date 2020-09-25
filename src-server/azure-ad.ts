@@ -7,17 +7,14 @@ export function setupAdLogin(app: express.Application) {
   passport.use(
     new OIDCStrategy(
       {
-        // identityMetadata: 'https://login.microsoftonline.com/c9515ae6-7419-4ae5-a700-4bb5f4afa7dc/v2.0/.well-known/openid-configuration',
-        identityMetadata: 'https://login.microsoftonline.com/46f80e04-bb49-4a3a-8e2a-6d4538c0df36/v2.0/.well-known/openid-configuration',
+        identityMetadata: process.env.AD_METHADATA as string,
         clientID: 'f3f76609-46b8-4877-8289-da0895762da5',
         responseType: 'code',
         responseMode: 'form_post',
-        redirectUrl: process.env.CALLBACK_URL!,
+        redirectUrl: process.env.CALLBACK_URL as string,
         allowHttpForRedirectUrl: true,
-        clientSecret: 'VhS_skO~8_gt1d~..faNe6di7Ws09tBffn',
+        clientSecret: process.env.AD_CLIENT_SECRET,
         validateIssuer: false,
-        // isB2C: config.creds.isB2C,
-        // issuer: config.creds.issuer,
         passReqToCallback: false,
         scope: ['profile'],
         loggingLevel: 'info',
@@ -45,7 +42,7 @@ export function setupAdLogin(app: express.Application) {
           //     }
 
           const user = {
-            email: profile.emails[0],
+            email: profile.emails,
             scope: profile.oid,
             displayName: profile.displayName,
           };
