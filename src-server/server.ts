@@ -16,6 +16,7 @@ import {getLogger, configure, Configuration} from 'log4js';
 import {setupShibboleth} from './shibboleth';
 import {setupAdLogin} from './azure-ad';
 import * as helmet from 'helmet';
+import {setupBlackboard} from './blackboard-oauth';
 
 export const logger = getLogger('server');
 initLogger();
@@ -94,6 +95,7 @@ app.use(passport.session());
 if (process.env.NODE_ENV === 'production') {
   if (process.env.UNIVERSITY === 'gannon') {
     setupAdLogin(app);
+    // setupBlackboard(app);
   } else {
     setupShibboleth(app);
   }
