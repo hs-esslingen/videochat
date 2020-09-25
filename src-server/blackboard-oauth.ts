@@ -1,5 +1,3 @@
-import * as saml from 'passport-saml';
-import {readFileSync} from 'fs';
 import {getLogger} from 'log4js';
 import * as passport from 'passport';
 import * as express from 'express';
@@ -18,14 +16,14 @@ export function setupBlackboard(app: express.Application) {
       callbackURL: process.env.CALLBACK_URL,
       scope: 'read',
     },
-    (accessToken: string, refreshToken: string, profile: any, done: VerifyCallback) => {
+    (accessToken: string, refreshToken: string, profile: OAuth2Strategy.Metadata, done: VerifyCallback) => {
       logger.debug('Parsing', profile);
       const user = {
         accessToken,
         refreshToken,
-        email: profile['urn:oid:0.9.2342.19200300.100.1.3'],
-        scope: profile['urn:oid:1.3.6.1.4.1.5923.1.1.1.9'],
-        displayName: profile['urn:oid:2.5.4.42'] + ' ' + profile['urn:oid:2.5.4.4'],
+        // email: profile.,
+        // scope: profile['urn:oid:1.3.6.1.4.1.5923.1.1.1.9'],
+        // displayName: profile['urn:oid:2.5.4.42'] + ' ' + profile['urn:oid:2.5.4.4'],
       };
       return done(null, user);
     }
