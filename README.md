@@ -35,7 +35,7 @@ Run `npm run build` to build the project. The build artifacts will be stored in 
 2. rename and configure `.env.example` to `.env`
 3. create a cert folter
 4. Create a certificate for Shibboleth and let the DFN verify it.  
-   [See DFM](https://doku.tid.dfn.de/en:certificates) for more information  
+   [See DFN](https://doku.tid.dfn.de/en:certificates) for more information  
    Save the certificate Files as `key.pem` and `cert.pem` to the cert folder.
 5. Get the Certificate from the HSE IDP and save it as `idp_cert.pem` to the cert folder. [HSE IDP](https://idp.hs-esslingen.de/idp/shibboleth)
 [Siehe HSE IDP Metadata](https://idp.hs-esslingen.de/idp/shibboleth)
