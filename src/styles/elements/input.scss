@@ -1,0 +1,12 @@
+input {
+  border-radius: 4px;
+  font-size: 14px;
+  color: white;
+  background-color: mat-color($app-primary);
+  border: none;
+  padding: 13px 12px;
+  width: calc(100% - 26px);
+  border: 1px solid;
+  border-color: mat-color($app-primary, lighter_3);
+  outline: none;
+}

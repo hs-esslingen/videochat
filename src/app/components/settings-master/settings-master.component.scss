@@ -1,3 +1,5 @@
+@import 'src/styles/theme-provider.scss';
+
 @import '../../../styles/components/settings-style.scss';
 @import '../../../styles/elements/object-label.scss';
 
@@ -16,8 +18,8 @@
     &.tabs {
       justify-content: center;
       border-style: solid;
-      border-color: #0c1729;
-      background-color: #0c1729;
+      border-color: mat-color($app-primary);
+      background-color: mat-color($app-primary);
       border-radius: 8px;
     }
   }
@@ -39,7 +41,7 @@
       width: 150px;
       min-width: 150px;
       padding: 8px;
-      background-color: #0c1729;
+      background-color: mat-color($app-primary);
       border-radius: 8px;
       overflow-y: auto;
 
@@ -59,7 +61,7 @@
         }
 
         &.active {
-          background-color: #193058;
+          background-color: mat-color($app-primary, lighter_5);
         }
       }
     }

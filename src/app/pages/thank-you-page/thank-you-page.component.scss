@@ -1,3 +1,4 @@
+@import 'src/styles/theme-provider.scss';
 
 #spacer {
   height: 128px;
@@ -23,20 +24,16 @@
     height: 288px;
   }
 
-  
   @media (max-width: 425px) {
     width: 95%;
     height: 30%;
   }
-
 }
-
 
 #thankyou {
   text-align: center;
   font-size: xx-large;
 }
-
 
 #functions {
   display: flex;
@@ -47,10 +44,7 @@
 
   button {
     margin: 8px;
-    background-color: #193058;
-    transition: background-color 100ms linear, border-color 100ms linear,
-      color 100ms linear, box-shadow 100ms linear;
+    background-color: mat-color($app-primary, lighter_5);
+    transition: background-color 100ms linear, border-color 100ms linear, color 100ms linear, box-shadow 100ms linear;
   }
 }
-
-

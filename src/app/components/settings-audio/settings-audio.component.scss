@@ -1,7 +1,9 @@
+@import 'src/styles/theme-provider.scss';
+
 @import '../../../styles/components/settings-style.scss';
 
 #volumebar {
-  background-color: #0c1729;
+  background-color: mat-color($app-primary);
   width: calc(100% - 8px);
   border-radius: 8px;
   height: 8px;
