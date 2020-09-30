@@ -64,29 +64,7 @@ $gu-other-colors: (
 )
 */
 
-// TO-DO: CHECK EVERY ITEM IN THIS LIST!
-// These maps overwrite the colors for the corresponding material elements in the map "background"
-$gu-dark-theme-background: (
-  status-bar: black,
-  app-bar: map_get($mat-grey, 900),
-  background: #b20d35,
-  hover: rgba(white, 0.04),
-  // TODO(kara): check style with Material Design UX
-    //Wrong color!
-    card: #b20d35,
-  //Wrong color!
-    dialog: #b20d35,
-  disabled-button: rgba(white, 0.12),
-  raised-button: map-get($mat-grey, 800),
-  focused-button: $light-focused,
-  selected-button: map_get($mat-grey, 900),
-  selected-disabled-button: map_get($mat-grey, 800),
-  disabled-button-toggle: black,
-  unselected-chip: map_get($mat-grey, 700),
-  disabled-list-option: black,
-  tooltip: map_get($mat-grey, 700),
-);
-
+/*
 $u-root-colors: (
   theme-primary: #687787,
   black-pearl: #181d22,
@@ -110,3 +88,4 @@ $u-root-colors: (
   primary-colour: #2672bd,
   violet-colour: #d5d1ff,
 );
+*/
