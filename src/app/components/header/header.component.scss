@@ -1,9 +1,11 @@
+@import 'src/styles/theme-provider.scss';
+
 header {
   position: relative;
   z-index: 10000;
   width: calc(100%);
   height: 52px;
-  // background-color: $accent;
+  background-color: mat-color($app-primary, lighter_5);
   display: flex;
   justify-content: space-around;
   align-items: center;

@@ -1,25 +1,99 @@
 @import '~@angular/material/theming';
 
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darker
-// hue. Available color palettes: https://material.io/design/color/
-// NOT NECESSARILY
-$hse-primary: mat-palette($mat-light-blue, A100);
-$hse-accent: mat-palette($mat-amber, A200, A100, A400);
-// The warn palette is optional (defaults to red).
-$hse-warn: mat-palette($mat-red);
+$hse-blue-colors: (
+  // Scrollbar-Handle on hover
+    lighter_blue_8: #2a5094,
+  // Moodle-Login-Preview-Hover, Setting-Button(s) (REPLACABLE?)
+    lighter_blue_7: #264986,
+  // User-Label-Status
+    lighter_blue_6: #243e74,
+  // Header, Button(s)
+    lighter_blue_5: #193058,
+  // User-Label-Mic-Active
+    lighter_blue_4: #1a2e56,
+  // Login-Page-Textbox, Moodle-Login (REPLACABLE?)
+    lighter_blue_3: #172c50,
+  // Moodle-Login-Preview (REPLACABLE?)
+    lighter_blue_2: #152849,
+  // Moodle-Login-Preview-Name-Field
+    lighter_blue_1: #11203a,
+  // Background
+    default_blue: #0c1729,
+  // User-Label-Nickname
+    darker_blue_1: #0d1629,
+  // Sidebar, Chat, Detail-Bar, Input-Fields
+    darker_blue_2: #080e1a
+);
 
-// Combine the palettes to a theme
-$hse-theme: mat-dark-theme($hse-primary, $hse-accent, $hse-warn);
+$hse-red-colors: (
+  // Close-Chat-Button
+    red_1: #6f0e0e,
+  // User-Label-Voting-Down
+    red_2: #b71c1c,
+  // User-Label-Voting-Down-Status
+    red_3: #e53935,
+  // User-Label-Voting-Down-Nickname
+    red_4: #620f0f,
+  // Vote-Down-Button
+    red_5: #591d1d,
+  // End-Call-Button
+    red_6: #db4437,
+  // General-Button-Background, General-Button-Active
+    red_7: #b61601,
+  // General-Button-Hover
+    red_8: #d11800,
+  // Moodle-Orange
+    red_9: #ff6300
+);
 
-$mat-dark-theme-background: (
+$hse-yellow-colors: (
+  // User-Label-Signaling
+    yellow_1: #9e9824,
+  // User-Label-Signaling-Status
+    yellow_2: #fdd835,
+  // User-Label-Signaling-Nickname
+    yellow_3: #6d6919
+);
+
+$hse-green-colors: (
+  // User-abel-Voting-Up
+    green_1: #1b5e20,
+  // User-Label-Voting-Up-Status
+    green_2: #43a047,
+  // User-Label-Voting-Up-Nickname
+    green_3: #124016,
+  // Vote-Up-Button
+    green_4: #25591d
+);
+
+$hse-grey-colors: (
+  // Chat-Label
+    grey_1: #2b2b2b,
+  // Chat-Label-Nickname
+    grey_2: #212121
+);
+
+/*
+$hse-other-colors: (
+  grey: #555,
+  chat-messaged: orangered,
+  audio-settings-div-background: #b4d3ed,
+  lecture-page-selection: #bed7ff
+  // white
+  // black
+)
+*/
+
+// TO-DO: CHECK EVERY ITEM IN THIS LIST!
+$hse-dark-theme-background: (
   status-bar: black,
   app-bar: map_get($mat-grey, 900),
-  background: #193058,
+  background: map-get($hse-blue-colors, blue_2),
   hover: rgba(white, 0.04),
   // TODO(kara): check style with Material Design UX
     card: #264986,
-  dialog: #193058,
+  //dialog: #193058,
+    dialog: grey,
   disabled-button: rgba(white, 0.12),
   raised-button: map-get($mat-grey, 800),
   focused-button: $light-focused,
@@ -30,56 +104,3 @@ $mat-dark-theme-background: (
   disabled-list-option: black,
   tooltip: map_get($mat-grey, 700),
 );
-
-$hse-theme: map-merge(
-  $hse-theme,
-  (
-    background: $mat-dark-theme-background,
-  )
-);
-
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-// @include angular-material-theme($hse-theme);
-
-// Color variables
-// $primary: mat-color($hse-primary);
-// $accent: mat-color($hse-accent);
-
-// $custom-background-color: #0c1729;
-
-// Create the theme object (a Sass map containing all of the palettes).
-// $app-theme: mat-dark-theme($app-primary, $app-accent, $app-warn);
-
-// // .hse-default {
-// //   @import 'src/styles/themes/hse-theme.scss';
-// // }
-
-// @mixin theming($theme, $typography: null) {
-//   @include angular-material-theme($theme);
-//   @if $typography {
-//     @include angular-material-typography($typography);
-//   }
-//   /* include mixin from component, if desired*/
-// }
-
-// @mixin candy-carousel-color($config-or-theme) {
-//   // Extract the color configuration in case a theme has been passed.
-//   // This allows consumers to either pass a theme object or a color configuration.
-//   $config: mat-get-color-config($config-or-theme);
-//   // Extract the palettes you need from the theme definition.
-//   $primary: map-get($config, primary);
-//   $accent: map-get($config, accent);
-
-//   // Define any styles affected by the theme.
-//   .candy-carousel {
-//     // Use mat-color to extract individual colors from a palette.
-//     background-color: mat-color($config);
-//     border-color: mat-color($config, A400);
-//   }
-// }
-
-//LIST OF HSE COLORS:
-// $hse_blue_1: #264986;
-// $hse_blue_2: #193058,

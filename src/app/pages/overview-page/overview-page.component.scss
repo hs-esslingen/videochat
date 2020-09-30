@@ -1,6 +1,8 @@
+@import 'src/styles/theme-provider.scss';
+
 #chatroom {
   max-width: 400px;
-  background-color: #172c50;
+  background-color: mat-color($app-primary, lighter_3);
   margin-right: 8px;
 }
 
@@ -20,7 +22,7 @@ h2 {
   border-radius: 4px;
   display: flex;
   align-items: center;
-  background-color: rgba(255,99,0);
+  background-color: #ff6300;
   line-height: 18px;
   img {
     height: 18px;
@@ -40,15 +42,15 @@ h2 {
 .rooms {
   overflow: hidden;
   border-radius: 8px;
-  user-select: none; 
+  user-select: none;
 
   &.preview {
     .room {
-      background-color: #152849;
+      background-color: mat-color($app-primary, lighter_2);
       .name {
         flex-grow: 0;
         border-radius: 8px;
-        background-color: #11203a;
+        background-color: mat-color($app-primary, lighter_1);
         color: transparent;
       }
 
@@ -62,9 +64,9 @@ h2 {
       }
     }
   }
-  
+
   &:not(.preview) .room:hover {
-    background-color: #264986;
+    background-color: mat-color($app-primary, lighter_7);
   }
 
   &:not(.preview) .room {
@@ -82,7 +84,7 @@ h2 {
     padding-bottom: 6px;
     padding-left: 8px;
     padding-right: 8px;
-    background-color: #193058;
+    background-color: mat-color($app-primary, lighter_5);
 
     &.preview {
       filter: blur(4px);
@@ -120,7 +122,6 @@ h2 {
     margin-left: 8px;
   }
 }
-
 
 p {
   margin-top: 64px;

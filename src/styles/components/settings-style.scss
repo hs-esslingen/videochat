@@ -1,3 +1,5 @@
+@import 'src/styles/theme-provider.scss';
+
 label {
   display: block;
   margin-top: 12px;
@@ -9,7 +11,7 @@ button {
   margin-top: 8px;
 
   &#close {
-    background-color: #264986;
+    background-color: mat-color($app-primary, lighter_7);
   }
 
   &#save {
@@ -19,7 +21,7 @@ button {
 
 mat-select {
   width: 100%;
-  background-color: #0c1729;
+  background-color: mat-color($app-primary);
   border-radius: 4px;
   margin-bottom: 8px;
   ::ng-deep .mat-select-trigger {

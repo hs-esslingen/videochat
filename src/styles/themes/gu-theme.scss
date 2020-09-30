@@ -1,21 +1,81 @@
 @import '~@angular/material/theming';
 
-$gu-primary: mat-palette($mat-light-blue, A100);
-$gu-accent: mat-palette($mat-amber, A200, A100, A400);
-// The warn palette is optional (defaults to red).
-$gu-warn: mat-palette($mat-red);
+$gu-maroon-colors: (
+  // Scrollbar-Handle on hover [Victor E. Knight] THIS IS A STUB
+    lighter_maroon_8: #b20d35,
+  // Moodle-Login-Preview-Hover, Setting-Button(s) [Primary Color Palette—Print (PMS 202)] (REPLACABLE?) THIS IS A STUB
+    lighter_maroon_7: #862633,
+  // User-Label-Status THIS IS A STUB
+    lighter_maroon_6: #b20d35,
+  // Header, Button(s) [Main-page primary color]
+    lighter_maroon_5: #97002e,
+  // User-Label-Mic-Active THIS IS A STUB
+    lighter_maroon_4: #b20d35,
+  // Login-Page-Textbox, Moodle-Login (REPLACABLE?) THIS IS A STUB
+    lighter_maroon_3: #b20d35,
+  // Moodle-Login-Preview (REPLACABLE?) THIS IS A STUB
+    lighter_maroon_2: #b20d35,
+  // Moodle-Login-Preview-Name-Field THIS IS A STUB
+    lighter_maroon_1: #b20d35,
+  // Background [Main-page darker button (websave)]
+    default_maroon: #990000,
+  // User-Label-Nickname [Main-page-Darker-Chat-Button]
+    darker_maroon_1: #800000,
+  // Sidebar, Chat, Detail-Bar, Input-Fields [Primar Color Palette — Web from Style-Guide]
+    darker_maroon_2: #660000
+);
 
-// Combine the palettes to a theme
-$gu-theme: mat-dark-theme($gu-primary, $gu-accent, $gu-warn);
+$gu-gold-colors: (
+  // Primary Color Palette—Print (PMS 143)
+    gold_1: #f6a04d,
+  // Primary Color Palette—Web
+    gold_2: #f2af32,
+  // Apparel Color Palette—Gold (GOLD 137C)
+    gold_3: #ffa400,
+  // Apparel Color Palette—Gold (GOLD 1235)
+    gold_4: #ffb81c,
+  // Main page secondary color
+    gold_5: #fbaf3f,
+  // Victor E. Knight
+    gold_6: #f9a72b
+);
 
-$mat-dark-theme-background: (
+$gu-grey-colors: (
+  // Main page background color
+    grey_1: #333333,
+  // College of Engineering and Business
+    grey_2: #808080,
+  // College of Humanities, Education and Social Sciences
+    grey_3: #818b86,
+  // Morosky College of Health Professions and Sciences
+    grey_4: #899ba0
+);
+
+/*
+$gu-other-colors: (
+  // Apparel Color Palette—Maroon (MAROON 5115)
+    maroon_6: #512a44,
+  // Apparel Color Palette—Maroon (MAROON 7421C)
+    maroon_3: #651c32,
+  // Apparel Color Palette—Maroon (MAROON 229C)
+    maroon_4: #672146,
+  // Apparel Color Palette—Maroon (MAROON 505)
+    maroon_5: #6f2c3f,
+)
+*/
+
+// TO-DO: CHECK EVERY ITEM IN THIS LIST!
+// These maps overwrite the colors for the corresponding material elements in the map "background"
+$gu-dark-theme-background: (
   status-bar: black,
   app-bar: map_get($mat-grey, 900),
   background: #b20d35,
   hover: rgba(white, 0.04),
   // TODO(kara): check style with Material Design UX
+    //Wrong color!
     card: #b20d35,
-  dialog: #b20d35,
+  //Wrong color!
+    dialog: #b20d35,
   disabled-button: rgba(white, 0.12),
   raised-button: map-get($mat-grey, 800),
   focused-button: $light-focused,
@@ -27,11 +87,26 @@ $mat-dark-theme-background: (
   tooltip: map_get($mat-grey, 700),
 );
 
-$gu-theme: map-merge(
-  $gu-theme,
-  (
-    background: $mat-dark-theme-background,
-  )
+$u-root-colors: (
+  theme-primary: #687787,
+  black-pearl: #181d22,
+  stone-grey: #313b45,
+  smart-grey: #536374,
+  soft-grey: #a9b4c0,
+  ink-water: #d0d6dc,
+  solitude: #e4e8eb,
+  deep-solitude: #f7f8f9,
+  endeavour: #26588b,
+  astral-blue: #306fae,
+  deep-sky: #3d8bda,
+  dodger-blue: #3091f2,
+  red-cloud: #d23e38,
+  pikachu: #ffc92d,
+  fresh-leaves: #1ca56e,
+  pure-hit: #23cf8a,
+  body-colour: #292929,
+  light-body-colour: #757474,
+  error-colour: #d2413b,
+  primary-colour: #2672bd,
+  violet-colour: #d5d1ff,
 );
-
-//@include angular-material-theme($gu-theme);

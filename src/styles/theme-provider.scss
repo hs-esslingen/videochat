@@ -8,13 +8,81 @@
 // Be sure that you only ever include this mixin once!
 @include mat-core();
 
+// $app-primary: null;
+$app-background: null;
+$app-primary: null;
+
 //THIS VARIABLE WILL DECIDE WHICH UNIVERSITIES THEME WILL BE USED!
 $THEME: 'HSE'; // Can be "HSE" or "GU"
 
 @if $THEME == 'HSE' {
-  @include angular-material-theme($hse-theme);
-  // $primary: map-get($hse-theme, hse-primary);
+  $primary: (
+    lighter_8: map-get($hse-blue-colors, lighter_blue_8),
+    lighter_7: map-get($hse-blue-colors, lighter_blue_7),
+    lighter_6: map-get($hse-blue-colors, lighter_blue_6),
+    lighter_5: map-get($hse-blue-colors, lighter_blue_5),
+    lighter_4: map-get($hse-blue-colors, lighter_blue_4),
+    lighter_3: map-get($hse-blue-colors, lighter_blue_3),
+    lighter_2: map-get($hse-blue-colors, lighter_blue_2),
+    lighter_1: map-get($hse-blue-colors, lighter_blue_1),
+    default: map-get($hse-blue-colors, default_blue),
+    darker_1: map-get($hse-blue-colors, darker_blue_1),
+    darker_2: map-get($hse-blue-colors, darker_blue_2),
+    contrast: (
+      lighter_8: black,
+      lighter_7: black,
+      lighter_6: black,
+      lighter_5: black,
+      lighter_4: black,
+      lighter_3: black,
+      lighter_2: black,
+      lighter_1: black,
+      default: black,
+      darker_1: black,
+      darker_2: black,
+    ),
+  );
+  $app-primary: mat-palette($primary, default);
+
+  $app-theme: (
+    background: $hse-dark-theme-background,
+  );
+
+  $app-style: mat-dark-theme($app-primary, $app-theme);
+  @include angular-material-theme($app-style);
 } @else if $THEME == 'GU' {
-  // $primary: map-get($hse-theme, gu-primary);
-  @include angular-material-theme($gu-theme);
+  $primary: (
+    lighter_8: map-get($gu-maroon-colors, lighter_maroon_8),
+    lighter_7: map-get($gu-maroon-colors, lighter_maroon_7),
+    lighter_6: map-get($gu-maroon-colors, lighter_maroon_6),
+    lighter_5: map-get($gu-maroon-colors, lighter_maroon_5),
+    lighter_4: map-get($gu-maroon-colors, lighter_maroon_4),
+    lighter_3: map-get($gu-maroon-colors, lighter_maroon_3),
+    lighter_2: map-get($gu-maroon-colors, lighter_maroon_2),
+    lighter_1: map-get($gu-maroon-colors, lighter_maroon_1),
+    default: map-get($gu-grey-colors, grey_1),
+    darker_1: map-get($gu-maroon-colors, darker_maroon_1),
+    darker_2: map-get($gu-maroon-colors, darker_maroon_2),
+    contrast: (
+      lighter_8: black,
+      lighter_7: black,
+      lighter_6: black,
+      lighter_5: black,
+      lighter_4: black,
+      lighter_3: black,
+      lighter_2: black,
+      lighter_1: black,
+      default: black,
+      darker_1: black,
+      darker_2: black,
+    ),
+  );
+  $app-primary: mat-palette($primary, default);
+
+  $app-theme: (
+    background: $gu-dark-theme-background,
+  );
+
+  $app-style: mat-dark-theme($app-primary, $app-theme);
+  @include angular-material-theme($app-style);
 }
