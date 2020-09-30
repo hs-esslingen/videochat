@@ -19,7 +19,7 @@ body {
   font-family: 'Open Sans', sans-serif;
   height: 100%;
 
-  background-color: mat-color($app-primary);
+  background-color: $app-background;
   --app-primary: #b3e5fc;
 }
 

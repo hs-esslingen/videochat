@@ -1,4 +1,4 @@
-@import '../../../styles/components/settings-style.scss';
+@import 'src/styles/theme-provider.scss';
 
 #video-rect {
   position: relative;
@@ -22,5 +22,24 @@
 }
 
 label {
+  display: block;
   margin-top: 0;
+  margin-bottom: 4px;
+  padding-left: 2px;
+}
+
+mat-select {
+  width: 100%;
+  background-color: mat-color($app-primary);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  ::ng-deep .mat-select-trigger {
+    padding: 13px 12px;
+  }
+}
+
+.mat-dialog-title {
+  margin-bottom: 8px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
