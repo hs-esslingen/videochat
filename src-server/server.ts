@@ -111,7 +111,14 @@ if (process.env.NODE_ENV === 'production') {
 passport.use(jwtStrategy);
 
 const api = new Api(wss);
-const expressSession = session({store: store, secret: process.env.SESSION_SECRET as string});
+const expressSession = session({
+  store: store,
+  secret: process.env.SESSION_SECRET as string,
+  cookie: {
+    sameSite: 'strict',
+    secure: process.env.NODE_ENV === 'production',
+  },
+});
 app.use(expressSession);
 app.use(passport.initialize());
 app.use(passport.session());
