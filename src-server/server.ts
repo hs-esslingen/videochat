@@ -40,7 +40,11 @@ wss.on('error', err => {
   console.error(err);
 });
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 
 // bodyParser is definitely not deprecated
 // tslint:disable-next-line
@@ -114,6 +118,7 @@ const api = new Api(wss);
 const expressSession = session({
   store: store,
   secret: process.env.SESSION_SECRET as string,
+  proxy: process.env.NODE_ENV === 'production',
   cookie: {
     sameSite: 'strict',
     secure: process.env.NODE_ENV === 'production',
