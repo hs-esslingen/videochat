@@ -16,6 +16,7 @@ import {readFileSync} from 'fs';
 import * as bodyParser from 'body-parser';
 import {getLogger, configure, Configuration} from 'log4js';
 import {Email} from './email';
+import * as helmet from 'helmet';
 
 export const logger = getLogger('server');
 initLogger();
@@ -38,6 +39,8 @@ const wss = new WebSocket.Server({noServer: true});
 wss.on('error', err => {
   console.error(err);
 });
+
+app.use(helmet());
 
 // bodyParser is definitely not deprecated
 // tslint:disable-next-line
