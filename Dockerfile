@@ -1,7 +1,6 @@
 FROM node:12
 WORKDIR /app
 COPY . .
-RUN npm install -g @angular/cli
 RUN npm i
 RUN npm run build 
 USER root
