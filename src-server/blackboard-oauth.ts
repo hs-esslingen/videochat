@@ -21,10 +21,9 @@ export function setupBlackboard(app: express.Application) {
       const user = {
         accessToken,
         refreshToken,
-        // email: profile.,
-        // scope: profile['urn:oid:1.3.6.1.4.1.5923.1.1.1.9'],
-        // displayName: profile['urn:oid:2.5.4.42'] + ' ' + profile['urn:oid:2.5.4.4'],
       };
+
+      //TODO: Get User Email and DisplayName
       return done(null, user);
     }
   );
