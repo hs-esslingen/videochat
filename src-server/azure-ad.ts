@@ -1,14 +1,18 @@
 import * as express from 'express';
+import {getLogger} from 'log4js';
+import fetch from 'node-fetch';
 import * as passport from 'passport';
 import {IProfile, OIDCStrategy} from 'passport-azure-ad';
 import {VerifiedCallback} from 'passport-saml';
+
+const logger = getLogger('azure-ad');
 
 export function setupAdLogin(app: express.Application) {
   passport.use(
     new OIDCStrategy(
       {
         identityMetadata: process.env.AD_METHADATA as string,
-        clientID: 'f3f76609-46b8-4877-8289-da0895762da5',
+        clientID: process.env.AD_CLIENT_ID as string,
         responseType: 'code',
         responseMode: 'form_post',
         redirectUrl: process.env.CALLBACK_URL as string,
@@ -16,39 +20,22 @@ export function setupAdLogin(app: express.Application) {
         clientSecret: process.env.AD_CLIENT_SECRET,
         validateIssuer: false,
         passReqToCallback: false,
-        scope: ['profile'],
-        loggingLevel: 'info',
-        // nonceLifetime: config.creds.nonceLifetime,
-        // nonceMaxAmount: config.creds.nonceMaxAmount,
-        // useCookieInsteadOfSession: config.creds.useCookieInsteadOfSession,
-        // cookieEncryptionKeys: config.creds.cookieEncryptionKeys,
-        // clockSkew: config.creds.clockSkew,
+        scope: ['profile', 'email'],
+        loggingLevel: 'error',
       },
-      (iss: string, sub: string, profile: IProfile, accessToken: string, refreshToken: string, done: VerifiedCallback) => {
+      async (iss: string, sub: string, profile: IProfile, accessToken: string, refreshToken: string, done: VerifiedCallback) => {
         if (!profile.oid) {
           return done(new Error('No oid found'), undefined);
         }
-        console.log(profile);
-        // asynchronous verification, for effect...
-        process.nextTick(() => {
-          // findByOid(profile.oid, function (err, user) {
-          //     if (err) {
-          //         return done(err);
-          //     }
-          //     if (!user) {
-          //         // "Auto-registration"
-          //         users.push(profile);
-          //         return done(null, profile);
-          //     }
+        logger.trace('Parsing User', profile);
+        const user = {
+          //@ts-ignore
+          email: profile._json.email as string,
+          scope: profile.oid,
+          displayName: profile.displayName,
+        };
 
-          const user = {
-            email: profile.emails,
-            scope: profile.oid,
-            displayName: profile.displayName,
-          };
-          return done(null, user);
-          // });
-        });
+        return done(null, user);
       }
     )
   );
@@ -57,9 +44,6 @@ export function setupAdLogin(app: express.Application) {
     '/auth/sso',
     (req, res, next) => {
       passport.authenticate('azuread-openidconnect', {
-        // response: res,                      // required
-        // resourceURL: config.resourceURL,    // optional. Provide a value if you want to specify the resource.
-        // customState: 'my_state',            // optional. Provide a value if you want to provide custom state value.
         failureRedirect: '/',
       })(req, res, next);
     },
@@ -73,11 +57,21 @@ export function setupAdLogin(app: express.Application) {
     (req, res, next) => {
       passport.authenticate('azuread-openidconnect', {
         // response: res,                      // required
-        failureRedirect: '/',
       })(req, res, next);
     },
     (req, res) => {
-      res.redirect('/auth/check-sso');
+      logger.info('SSO Login', req.user);
+      res.send(`<html>
+    <head>
+      <title>SSO Login Callback</title>
+    </head>
+    <body>
+      <p>Please close this Window!</p>
+      <script type="text/javascript">
+        window.close();
+      </script>
+    </body>
+    </html>`);
     }
   );
 
@@ -86,11 +80,21 @@ export function setupAdLogin(app: express.Application) {
     (req, res, next) => {
       passport.authenticate('azuread-openidconnect', {
         // response: res,                      // required
-        failureRedirect: '/',
       })(req, res, next);
     },
     (req, res) => {
-      res.redirect('/auth/check-sso');
+      logger.info('SSO Login', req.user);
+      res.send(`<html>
+    <head>
+      <title>SSO Login Callback</title>
+    </head>
+    <body>
+      <p>Please close this Window!</p>
+      <script type="text/javascript">
+        window.close();
+      </script>
+    </body>
+    </html>`);
     }
   );
 }
