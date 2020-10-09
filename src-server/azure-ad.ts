@@ -1,6 +1,5 @@
 import * as express from 'express';
 import {getLogger} from 'log4js';
-import fetch from 'node-fetch';
 import * as passport from 'passport';
 import {IProfile, OIDCStrategy} from 'passport-azure-ad';
 import {VerifiedCallback} from 'passport-saml';

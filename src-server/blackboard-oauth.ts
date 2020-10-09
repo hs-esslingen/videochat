@@ -21,6 +21,8 @@ export function setupBlackboard(app: express.Application) {
       const user = {
         accessToken,
         refreshToken,
+        displayName: 'User',
+        email: 'user@test.de',
       };
 
       //TODO: Get User Email and DisplayName
