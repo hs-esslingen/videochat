@@ -1,5 +1,7 @@
 @import 'src/styles/theme-provider.scss';
 
+$app-individual: map-get($app-theme, individual);
+
 * {
   margin: 0;
   padding: 0;
@@ -38,10 +40,12 @@
         }
 
         &#delete {
-          background-color: mat-color($app-primary, lighter_5);
+          color: mat-color($app-primary, lighter_2-contrast);
+          background-color: mat-color($app-primary, lighter_2);
         }
         &#hide {
-          background-color: #6f0e0e; //red_1
+          color: mat-color($app-secondary, darker_1-contrast);
+          background-color: mat-color($app-secondary, darker_1);
         }
       }
     }
@@ -66,16 +70,17 @@
         color: white;
 
         &.user {
-          color: green;
+          color: mat-color($app-individual, chat-user);
         }
       }
 
+      // Message time stamp
       p {
         margin-right: 8px;
         padding-bottom: 2px;
         font-size: 10px;
         line-height: 18px;
-        color: rgb(118, 118, 118);
+        color: mat-color($app-individual, chat-timestamp);
       }
     }
 
@@ -84,7 +89,6 @@
       padding-bottom: 8px;
       font-size: 14px;
       color: white;
-      // white-space: pre;
       margin-right: 8px;
       word-break: break-all;
     }
@@ -101,24 +105,23 @@
 
     /* Handle */
     &::-webkit-scrollbar-thumb {
-      background: #555;
+      background: map-get($app-individual, app-sidebar);
       border-radius: 6px;
       border: 2px solid;
-      border-color: #080e1a;
+      border-color: mat-color($app-primary, darker_2);
     }
 
     /* Handle on hover */
     &::-webkit-scrollbar-thumb:hover {
-      background: mat-color($app-primary, lighter_8);
+      background: mat-color($app-primary, lighter_4);
     }
   }
 
   #chat-input {
-    background-color: mat-color($app-primary, lighter_5);
+    background-color: mat-color($app-primary, lighter_2);
 
     textarea {
       max-height: 100px;
-      color: white;
       border: none;
       width: calc(100% - 32px - 42px);
       padding: 8px;
@@ -126,8 +129,8 @@
       min-height: 18px;
       border-radius: 17px;
       font-size: 14px;
+      color: mat-color($app-primary, darker_2-contrast);
       background-color: mat-color($app-primary, darker_2);
-
       font-family: 'Open Sans', sans-serif;
 
       &:focus {

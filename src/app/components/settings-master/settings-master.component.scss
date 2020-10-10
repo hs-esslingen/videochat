@@ -1,6 +1,8 @@
 @import 'src/styles/theme-provider.scss';
 @import '../../../styles/elements/object-label.scss';
 
+$app-individual: map-get($app-theme, individual);
+
 :host {
   display: flex;
   flex-direction: column;
@@ -66,7 +68,7 @@
         }
 
         &.active {
-          background-color: mat-color($app-primary, lighter_5);
+          background-color: mat-color($app-primary, lighter_2);
         }
       }
     }
@@ -93,7 +95,8 @@
     margin-top: 8px;
 
     &#close {
-      background-color: mat-color($app-primary, lighter_7);
+      color: mat-color($app-individual, secondary-button-contrast);
+      background-color: mat-color($app-individual, secondary-button);
     }
 
     &#save {

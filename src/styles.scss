@@ -7,6 +7,9 @@
 @import 'src/styles/elements/round-buttons.scss';
 @import 'src/styles/elements/chat-message.scss';
 
+// Used theming-objects
+$app-individual: map-get($app-theme, individual);
+
 /* You can add global styles to this file, and also import other style files */
 html {
   margin: 0;
@@ -19,8 +22,7 @@ body {
   font-family: 'Open Sans', sans-serif;
   height: 100%;
 
-  background-color: $app-background;
-  --app-primary: #b3e5fc;
+  background-color: mat-color($app-individual, app-background);
 }
 
 main {

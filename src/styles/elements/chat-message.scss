@@ -1,22 +1,24 @@
+$app-individual: map-get($app-theme, individual);
+
 .chat-message {
   a:link {
-    color: #b4d3ed;
+    color: mat-color($app-individual, chat-link);
   }
 
   a:visited {
-    color: #b4d3ed;
+    color: mat-color($app-individual, chat-link);
     background-color: transparent;
     text-decoration: none;
   }
 
   a:hover {
-    color: #b4d3ed;
+    color: mat-color($app-individual, chat-link);
     background-color: transparent;
     text-decoration: underline;
   }
 
   a:active {
-    color: #b4d3ed;
+    color: mat-color($app-individual, chat-link);
     background-color: transparent;
     text-decoration: underline;
   }

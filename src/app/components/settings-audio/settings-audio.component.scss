@@ -1,5 +1,7 @@
 @import 'src/styles/theme-provider.scss';
 
+$app-individual: map-get($app-theme, individual);
+
 #volumebar {
   background-color: mat-color($app-primary);
   width: calc(100% - 8px);
@@ -13,7 +15,7 @@
     width: 0%;
     border-radius: 8px;
     height: 100%;
-    background-color: #b4d3ed;
+    background-color: mat-color($app-individual, volume-level);
   }
 }
 
