@@ -5,12 +5,13 @@ header {
   z-index: 10000;
   width: calc(100%);
   height: 52px;
-  background-color: mat-color($app-primary, lighter_5);
+  color: mat-color($app-primary, lighter_2-contrast);
+  background-color: mat-color($app-primary, lighter_2);
+
   display: flex;
   justify-content: space-around;
   align-items: center;
   padding: 0 0px 0 0px;
-  color: white;
   font-size: 18px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 

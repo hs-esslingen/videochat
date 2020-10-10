@@ -1,12 +1,11 @@
 @import '~@angular/material/theming';
 
+// PLEASE SORT
 $gu-maroon-colors: (
-  // Scrollbar-Handle on hover [Victor E. Knight] THIS IS A STUB
-    lighter_maroon_8: #b20d35,
-  // Moodle-Login-Preview-Hover, Setting-Button(s) [Primary Color Palette—Print (PMS 202)] (REPLACABLE?) THIS IS A STUB
-    lighter_maroon_7: #862633,
-  // User-Label-Status THIS IS A STUB
-    lighter_maroon_6: #b20d35,
+  // Moodle-Login-Preview-Hover, Setting-Button(s) [Victor E. Knight] (REPLACABLE?) THIS IS A STUB
+    lighter_maroon_7: #b20d35,
+  // User-Label-Status [Primary Color Palette—Print (PMS 202)]
+    lighter_maroon_6: #862633,
   // Header, Button(s) [Main-page primary color]
     lighter_maroon_5: #97002e,
   // User-Label-Mic-Active THIS IS A STUB
@@ -25,67 +24,17 @@ $gu-maroon-colors: (
     darker_maroon_2: #660000
 );
 
+// PLEASE SORT
 $gu-gold-colors: (
-  // Primary Color Palette—Print (PMS 143)
-    gold_1: #f6a04d,
-  // Primary Color Palette—Web
-    gold_2: #f2af32,
-  // Apparel Color Palette—Gold (GOLD 137C)
-    gold_3: #ffa400,
-  // Apparel Color Palette—Gold (GOLD 1235)
-    gold_4: #ffb81c,
   // Main page secondary color
-    gold_5: #fbaf3f,
+    lighter_gold_1: #fbaf3f,
+  // Primary Color Palette—Web  (#ffbc40 wäre kontraastreicher)
+    default_gold: #f2af32,
   // Victor E. Knight
-    gold_6: #f9a72b
+    darker_gold_1: #f9a72b
 );
 
 $gu-grey-colors: (
   // Main page background color
-    grey_1: #333333,
-  // College of Engineering and Business
-    grey_2: #808080,
-  // College of Humanities, Education and Social Sciences
-    grey_3: #818b86,
-  // Morosky College of Health Professions and Sciences
-    grey_4: #899ba0
+    default_grey: #333333
 );
-
-/*
-$gu-other-colors: (
-  // Apparel Color Palette—Maroon (MAROON 5115)
-    maroon_6: #512a44,
-  // Apparel Color Palette—Maroon (MAROON 7421C)
-    maroon_3: #651c32,
-  // Apparel Color Palette—Maroon (MAROON 229C)
-    maroon_4: #672146,
-  // Apparel Color Palette—Maroon (MAROON 505)
-    maroon_5: #6f2c3f,
-)
-*/
-
-/*
-$u-root-colors: (
-  theme-primary: #687787,
-  black-pearl: #181d22,
-  stone-grey: #313b45,
-  smart-grey: #536374,
-  soft-grey: #a9b4c0,
-  ink-water: #d0d6dc,
-  solitude: #e4e8eb,
-  deep-solitude: #f7f8f9,
-  endeavour: #26588b,
-  astral-blue: #306fae,
-  deep-sky: #3d8bda,
-  dodger-blue: #3091f2,
-  red-cloud: #d23e38,
-  pikachu: #ffc92d,
-  fresh-leaves: #1ca56e,
-  pure-hit: #23cf8a,
-  body-colour: #292929,
-  light-body-colour: #757474,
-  error-colour: #d2413b,
-  primary-colour: #2672bd,
-  violet-colour: #d5d1ff,
-);
-*/

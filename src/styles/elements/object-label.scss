@@ -1,5 +1,5 @@
 .object-label {
-  border: 1px solid #2b2b2b;
+  border: 1px solid;
   min-height: 30px;
   white-space: nowrap;
   overflow: hidden;
@@ -14,7 +14,6 @@
   .status {
     width: 8px;
     height: 30px;
-    background-color: #2b2b2b;
   }
 
   .nickname {
@@ -26,14 +25,12 @@
     width: 70%;
     line-height: 30px;
     font-size: 15px;
-    background-color: #212121;
   }
 
   .signal {
     padding-right: 8px;
     padding-left: 6px;
     color: white;
-    background-color: #2b2b2b;
 
     i {
       line-height: 30px;

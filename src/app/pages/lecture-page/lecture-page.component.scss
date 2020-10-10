@@ -1,5 +1,8 @@
 @import 'src/styles/theme-provider.scss';
 
+// Used style-objects
+$app-individual: map-get($app-theme, individual);
+
 // Division that holds all content
 #content {
   display: flex;
@@ -43,7 +46,7 @@
     #divider {
       height: 8px;
       width: 100%;
-      background-color: mat-color($app-primary, lighter_5);
+      background-color: mat-color($app-primary, lighter_2);
       cursor: n-resize;
       margin-bottom: 4px;
     }
@@ -71,7 +74,7 @@
   .detail {
     height: 100%;
     width: 350px;
-    background-color: mat-color($app-primary, darker_2);
+    background-color: map-get($app-individual, app-sidebar);
     margin: 0 auto 0 auto;
   }
 }
@@ -88,7 +91,7 @@
     pointer-events: all;
     z-index: 100;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-    background-color: mat-color($app-primary, lighter_5);
+    background-color: mat-color($app-primary, lighter_2);
     padding: 16px;
     position: absolute;
     top: 33%;
@@ -119,7 +122,7 @@
     }
 
     input {
-      color: white;
+      color: mat-color($app-primary, darker_2-contrast);
       background-color: mat-color($app-primary, darker_2);
       width: calc(100% - 12px);
       border-radius: 4px;
@@ -134,8 +137,7 @@
 
       &::selection {
         color: black;
-        background: #bed7ff;
-        // text-shadow: #1c3762;
+        background: mat-color($app-individual, text-selection);
       }
     }
   }

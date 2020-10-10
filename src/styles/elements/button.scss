@@ -27,18 +27,18 @@ button {
 .button {
   border-radius: 4px;
   font-size: 14px;
-  background: #b61601;
-  color: white;
+  background: mat-color($app-secondary);
+  color: mat-color($app-secondary, default-contrast);
   outline: none;
   cursor: pointer;
   padding: 13px 12px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 
   &:hover {
-    background: #d11800;
+    background: mat-color($app-secondary, lighter_1);
   }
 
   &:active {
-    background: #b61601;
+    background: mat-color($app-secondary);
   }
 }

@@ -1,11 +1,8 @@
 @import '~@angular/material/theming';
 @import './hse-colors.scss';
+@import '../general-theme/general-colors.scss';
 
 $hse-primary: (
-  lighter_8: map-get($hse-blue-colors, lighter_blue_8),
-  lighter_7: map-get($hse-blue-colors, lighter_blue_7),
-  lighter_6: map-get($hse-blue-colors, lighter_blue_6),
-  lighter_5: map-get($hse-blue-colors, lighter_blue_5),
   lighter_4: map-get($hse-blue-colors, lighter_blue_4),
   lighter_3: map-get($hse-blue-colors, lighter_blue_3),
   lighter_2: map-get($hse-blue-colors, lighter_blue_2),
@@ -14,39 +11,59 @@ $hse-primary: (
   darker_1: map-get($hse-blue-colors, darker_blue_1),
   darker_2: map-get($hse-blue-colors, darker_blue_2),
   contrast: (
-    lighter_8: black,
-    lighter_7: black,
-    lighter_6: black,
-    lighter_5: black,
-    lighter_4: black,
-    lighter_3: black,
-    lighter_2: black,
-    lighter_1: black,
-    default: black,
-    darker_1: black,
-    darker_2: black,
+    lighter_4: white,
+    lighter_3: white,
+    lighter_2: white,
+    lighter_1: white,
+    default: white,
+    darker_1: white,
+    darker_2: white,
   ),
 );
 
-// TO-DO: CHECK EVERY ITEM IN THIS LIST!
-// TO_DO: CHECK EVERY ITEM FOR USAGE
+$hse-secondary: (
+  lighter_1: map-get($hse-red-colors, lighter_red_1),
+  default: map-get($hse-red-colors, default_red),
+  darker_1: map-get($hse-red-colors, darker_red_1),
+  contrast: (
+    lighter_1: white,
+    default: white,
+    darker_1: white,
+  ),
+);
+
+// See _theming.scss under "Background palette for dark themes."
 $hse-dark-theme-background: (
-  status-bar: black,
-  app-bar: map_get($mat-grey, 900),
-  // CHECKED
-    background: map-get($hse-blue-colors, lighter_blue_5),
-  hover: rgba(white, 0.04),
-  // TODO(kara): check style with Material Design UX
-    card: #264986,
-  //CHECKED
-    dialog: map-get($hse-blue-colors, lighter_blue_5),
-  disabled-button: rgba(white, 0.12),
-  raised-button: map-get($mat-grey, 800),
-  focused-button: $light-focused,
-  selected-button: map_get($mat-grey, 900),
-  selected-disabled-button: map_get($mat-grey, 800),
-  disabled-button-toggle: black,
-  unselected-chip: map_get($mat-grey, 700),
-  disabled-list-option: black,
-  tooltip: map_get($mat-grey, 700),
+  background: map-get($hse-blue-colors, lighter_blue_2),
+  card: map-get($hse-blue-colors, lighter_blue_4),
+  dialog: map-get($hse-blue-colors, lighter_blue_2),
+);
+
+$hse-dark-theme-individual: (
+  app-background: map-get($hse-blue-colors, default_blue),
+  app-sidebar: map-get($hse-blue-colors, darker_blue_2),
+  // Styles for less important buttons (e.g. "Cancel")
+    secondary-button: map-get($hse-blue-colors, lighter_blue_4),
+  secondary-button-contrast: white,
+  // Style for the scrollbars throughout the app
+    scrollbar-handle: map-get($grey-colors, lighter_grey_2),
+  // Styles for the chat
+    chat-link: map-get($blue-colors, default_blue),
+  chat-user: map-get($green-colors, lighter_green_1),
+  chat-timestamp: map-get($grey-colors, lighter_grey_3),
+  // Style for the volumebar in the settings-component
+    volume-level: map-get($blue-colors, default_blue),
+  // Style for selected text snippets
+    text-selection: map-get($blue-colors, default_blue),
+);
+
+$hse-dark-theme-labels: (
+  user-label-border: mat-color($hse-blue-colors, lighter_blue_2),
+  user-label-status: mat-color($hse-blue-colors, lighter_blue_3),
+  user-label-nickname: mat-color($hse-blue-colors, darker_blue_1),
+  user-label-signal: mat-color($hse-blue-colors, lighter_blue_2),
+  chat-label-border: mat-color($general-grey),
+  chat-label-status: mat-color($general-grey),
+  chat-label-nickname: mat-color($general-grey, darker_1),
+  chat-label-signal: mat-color($general-grey),
 );

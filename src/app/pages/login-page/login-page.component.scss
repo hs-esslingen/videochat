@@ -58,12 +58,13 @@
       margin-bottom: 12px;
     }
 
+    // Legacy style for development --> E-Mail-Bypass
     input::placeholder {
-      color: #9e9e9e;
+      color: lightgrey;
     }
 
     .textbox {
-      background-color: mat-color($app-primary, lighter_3);
+      background-color: mat-color($app-primary, lighter_1);
     }
 
     #btn_login {

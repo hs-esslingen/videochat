@@ -44,7 +44,8 @@
 
   button {
     margin: 8px;
-    background-color: mat-color($app-primary, lighter_5);
+    color: mat-color($app-primary, lighter_2-contrast);
+    background-color: mat-color($app-primary, lighter_2);
     transition: background-color 100ms linear, border-color 100ms linear, color 100ms linear, box-shadow 100ms linear;
   }
 }
