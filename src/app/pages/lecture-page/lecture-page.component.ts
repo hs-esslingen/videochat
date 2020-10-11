@@ -70,7 +70,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.connection.state !== State.FAILED && this.connection.state !== State.DISCONNECTED) this.api.disconnect(this.roomId);
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize() {
     this.recalculateMaxVideoWidth();
   }

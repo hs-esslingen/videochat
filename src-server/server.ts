@@ -16,7 +16,9 @@ import {getLogger, configure, Configuration} from 'log4js';
 import {setupShibboleth} from './shibboleth';
 import {setupAdLogin} from './azure-ad';
 import * as helmet from 'helmet';
+import * as Negotiator from 'negotiator';
 import {setupBlackboard} from './blackboard-oauth';
+import {existsSync} from 'fs';
 
 export const logger = getLogger('server');
 initLogger();
@@ -27,6 +29,8 @@ const server = http.createServer(app);
 
 const PORT = process.env.PORT || 4000;
 const secretkey = process.env.SIGN_SECRETKEY || 'mysecretkey';
+const availableLanguages = ['en', 'de'];
+const fallbackLanguage = 'en';
 
 const wss = new WebSocket.Server({noServer: true});
 
@@ -82,11 +86,11 @@ const api = new Api(wss);
 const expressSession = session({
   store: store,
   secret: process.env.SESSION_SECRET as string,
-  proxy: process.env.NODE_ENV === 'production',
-  cookie: {
-    sameSite: 'strict',
-    secure: process.env.NODE_ENV === 'production',
-  },
+  // proxy: process.env.NODE_ENV === 'production',
+  // cookie: {
+  // sameSite: 'strict',
+  // secure: process.env.NODE_ENV === 'production',
+  // },
 });
 app.use(expressSession);
 app.use(passport.initialize());
@@ -191,10 +195,18 @@ app.use('/api', (req, res, next) => {
 
 app.use('/api', api.getApi());
 
+app.use('/assets', express.static(join(__dirname, './browser/en/assets')));
+
 app.use('/', express.static(join(__dirname, './browser')));
 
+app.use('/:lang(' + availableLanguages.join('|') + ')/*', (req, res) => {
+  res.sendFile(join(__dirname, './browser/', req.params.lang, 'index.html'));
+});
+
 app.use('*', (req, res) => {
-  res.sendFile(join(__dirname, './browser/index.html'));
+  const negotiator = new Negotiator(req);
+  const lang = negotiator.language(availableLanguages) || fallbackLanguage;
+  res.sendFile(join(__dirname, './browser/', lang, 'index.html'));
 });
 
 wss.on('connection', (ws: MyWebSocket) => {
