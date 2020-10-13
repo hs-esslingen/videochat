@@ -42,12 +42,10 @@ export function setupAdLogin(app: express.Application) {
   app.get(
     '/auth/sso',
     (req, res, next) => {
-      passport.authenticate('azuread-openidconnect', {
-        failureRedirect: '/',
-      })(req, res, next);
+      passport.authenticate('azuread-openidconnect', {failureRedirect: '/auth/fail'})(req, res, next);
     },
     (req, res) => {
-      res.redirect('/');
+      res.redirect('/auth/check-sso');
     }
   );
 
@@ -96,4 +94,7 @@ export function setupAdLogin(app: express.Application) {
     </html>`);
     }
   );
+  app.get('/auth/fail', (req, res) => {
+    res.status(401).send('Login failed');
+  });
 }
