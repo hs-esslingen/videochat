@@ -29,6 +29,8 @@ main {
   min-height: calc(100% - 118px);
 }
 
+@include angular-material-theme($app-theme);
+
 .mat-form-field-appearance-legacy .mat-form-field-label,
 .mat-select-arrow,
 .mat-form-field-appearance-legacy .mat-form-field-underline {

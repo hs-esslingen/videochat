@@ -113,7 +113,7 @@ $app-individual: map-get($app-theme, individual);
 
     /* Handle on hover */
     &::-webkit-scrollbar-thumb:hover {
-      background: mat-color($app-primary, lighter_4);
+      background: mat-color($app-primary, lighter_3);
     }
   }
 

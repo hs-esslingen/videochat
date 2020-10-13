@@ -1,8 +1,7 @@
-@import '~@angular/material/theming';
+// @import '~@angular/material/theming';
 @import './gu-colors.scss';
 
 $gu-primary: (
-  lighter_4: map-get($gu-maroon-colors, lighter_maroon_4),
   lighter_3: map-get($gu-maroon-colors, lighter_maroon_3),
   lighter_2: map-get($gu-maroon-colors, lighter_maroon_2),
   lighter_1: map-get($gu-maroon-colors, lighter_maroon_1),
@@ -10,7 +9,6 @@ $gu-primary: (
   darker_1: map-get($gu-maroon-colors, darker_maroon_1),
   darker_2: map-get($gu-maroon-colors, darker_maroon_2),
   contrast: (
-    lighter_4: white,
     lighter_3: white,
     lighter_2: white,
     lighter_1: white,
@@ -25,23 +23,25 @@ $gu-secondary: (
   default: map-get($gu-gold-colors, default_gold),
   darker_1: map-get($gu-gold-colors, darker_gold_1),
   contrast: (
-    lighter_1: map-get($gu-maroon-colors, lighter_maroon_5),
-    default: map-get($gu-maroon-colors, lighter_maroon_5),
-    darker_1: map-get($gu-maroon-colors, lighter_maroon_5),
+    lighter_1: map-get($gu-maroon-colors, lighter_maroon_2),
+    default: map-get($gu-maroon-colors, lighter_maroon_2),
+    darker_1: map-get($gu-maroon-colors, lighter_maroon_2),
   ),
 );
 
 // See _theming.scss under "Background palette for dark themes."
 $gu-dark-theme-background: (
-  background: map-get($gu-maroon-colors, lighter_maroon_5),
-  card: map-get($gu-maroon-colors, lighter_maroon_7),
-  dialog: map-get($gu-maroon-colors, lighter_maroon_5),
+  background: map-get($gu-maroon-colors, lighter_maroon_2),
+  card: map-get($gu-maroon-colors, lighter_maroon_4),
+  dialog: map-get($gu-maroon-colors, lighter_maroon_3),
 );
 
 $gu-dark-theme-individual: (
   app-background: map-get($gu-grey-colors, default_grey),
   app-sidebar: map-get($general-grey, lighter_1),
-  secondary-button: map-get($gu-maroon-colors, darker_maroon_2),
+  app-header: map-get($gu-maroon-colors, lighter_maroon_2),
+  // Styles for less important buttons (e.g. "Cancel")
+    secondary-button: map-get($gu-maroon-colors, darker_maroon_2),
   secondary-button-contrast: white,
   scrollbar-handle: map-get($grey-colors, lighter_grey_2),
   // Styles for the chat
@@ -50,8 +50,10 @@ $gu-dark-theme-individual: (
   chat-timestamp: map-get($grey-colors, lighter_grey_3),
   // Style for the volumebar in the settings-component
     volume-level: map-get($gu-gold-colors, default_gold),
-  // Style for selected text snippets
+  // Styles for the infobox that contains the room-url, if the user is alone
     text-selection: map-get($blue-colors, default_blue),
+  room-url-background: map-get($gu-maroon-colors, darker_maroon_2),
+  room-url-background-contrast: map-get($gu-maroon-colors, darker_maroon_2-contrast),
 );
 
 $gu-dark-theme-labels: (

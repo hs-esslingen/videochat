@@ -73,7 +73,7 @@ $app-labels: map-get($app-theme, labels);
 
     /* Handle on hover */
     &::-webkit-scrollbar-thumb:hover {
-      background: mat-color($app-primary, lighter_4);
+      background: mat-color($app-primary, lighter_3);
     }
   }
 

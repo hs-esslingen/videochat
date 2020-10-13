@@ -1,21 +1,12 @@
-@import '~@angular/material/theming';
+// @import '~@angular/material/theming';
 
-// PLEASE SORT
 $gu-maroon-colors: (
-  // Moodle-Login-Preview-Hover, Setting-Button(s) [Victor E. Knight] (REPLACABLE?) THIS IS A STUB
-    lighter_maroon_7: #b20d35,
-  // User-Label-Status [Primary Color Palette—Print (PMS 202)]
-    lighter_maroon_6: #862633,
-  // Header, Button(s) [Main-page primary color]
-    lighter_maroon_5: #97002e,
-  // User-Label-Mic-Active THIS IS A STUB
-    lighter_maroon_4: #b20d35,
-  // Login-Page-Textbox, Moodle-Login (REPLACABLE?) THIS IS A STUB
+  // Login-Page-Textbox, Moodle-Login [Victor E. Knight]
     lighter_maroon_3: #b20d35,
-  // Moodle-Login-Preview (REPLACABLE?) THIS IS A STUB
-    lighter_maroon_2: #b20d35,
-  // Moodle-Login-Preview-Name-Field THIS IS A STUB
-    lighter_maroon_1: #b20d35,
+  // User-Label-Status [Primary Color Palette—Print (PMS 202)]
+    lighter_maroon_2: #862633,
+  // Header, Button(s) [Main-page primary color]
+    lighter_maroon_1: #97002e,
   // Background [Main-page darker button (websave)]
     default_maroon: #990000,
   // User-Label-Nickname [Main-page-Darker-Chat-Button]
@@ -24,7 +15,6 @@ $gu-maroon-colors: (
     darker_maroon_2: #660000
 );
 
-// PLEASE SORT
 $gu-gold-colors: (
   // Main page secondary color
     lighter_gold_1: #fbaf3f,

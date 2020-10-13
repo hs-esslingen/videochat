@@ -17,7 +17,7 @@ $app-vote-up: mat-palette($general-green, default);
 $app-vote-down: mat-palette($general-red, default);
 
 //THIS VARIABLE WILL DECIDE WHICH UNIVERSITIES THEME WILL BE USED!
-$THEME: 'HSE'; // Can be "HSE" or "GU"
+$THEME: 'GU'; // Can be "HSE" or "GU"
 
 @if $THEME == 'HSE' {
   // Individual sytyles
@@ -35,8 +35,6 @@ $THEME: 'HSE'; // Can be "HSE" or "GU"
       labels: $hse-dark-theme-labels,
     )
   );
-
-  @include angular-material-theme($app-theme);
 }
 //
 @else if $THEME == 'GU' {
@@ -56,6 +54,4 @@ $THEME: 'HSE'; // Can be "HSE" or "GU"
       labels: $gu-dark-theme-labels,
     )
   );
-
-  @include angular-material-theme($app-theme);
 }
