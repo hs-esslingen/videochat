@@ -1,5 +1,5 @@
 FROM node:12
-ARG university=hse
+ARG UNIVERSITY=hse
 
 WORKDIR /app
 COPY . .
