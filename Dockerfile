@@ -1,8 +1,10 @@
 FROM node:12
+ARG university=hse
+
 WORKDIR /app
 COPY . .
 RUN npm i
-RUN npm run build 
+RUN npm run build-${UNIVERSITY}
 USER root
 RUN chmod +x dist/worker/mediasoup-worker
 USER node

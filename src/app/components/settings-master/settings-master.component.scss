@@ -1,4 +1,4 @@
-@import 'src/styles/theme-provider.scss';
+@import 'theme';
 @import '../../../styles/elements/object-label.scss';
 
 $app-individual: map-get($app-theme, individual);

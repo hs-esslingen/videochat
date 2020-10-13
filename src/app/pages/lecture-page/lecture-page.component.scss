@@ -1,7 +1,8 @@
-@import 'src/styles/theme-provider.scss';
+@import 'theme';
 
 // Used style-objects
 $app-individual: map-get($app-theme, individual);
+$app-pictures: map-get($app-theme, pictures);
 
 // Division that holds all content
 #content {
@@ -144,6 +145,7 @@ $app-individual: map-get($app-theme, individual);
 }
 
 #no_video_img {
+  content: map-get($app-pictures, empty-room);
   margin: 0;
   position: absolute;
   top: 50%;

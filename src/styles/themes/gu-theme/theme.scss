@@ -1,5 +1,9 @@
-// @import '~@angular/material/theming';
-@import './gu-colors.scss';
+@import '~@angular/material/theming';
+@import 'src/styles/themes/gu-theme/gu-colors.scss';
+@import 'src/styles/themes/general-theme/general-theme.scss';
+
+// This is the theme for Gannon University!
+//THE THEME, THAT WILL BE USED MUST BE DECIDED THROUGH THE CONFIGURATION IN "angular.json"
 
 $gu-primary: (
   lighter_3: map-get($gu-maroon-colors, lighter_maroon_3),
@@ -34,7 +38,9 @@ $gu-dark-theme-background: (
   background: map-get($gu-maroon-colors, lighter_maroon_2),
   card: map-get($gu-maroon-colors, lighter_maroon_4),
   dialog: map-get($gu-maroon-colors, lighter_maroon_3),
+  tooltip: map_get($mat-grey, 700),
 );
+$gu-dark-theme-background: map-merge($mat-dark-theme-background, $gu-dark-theme-background);
 
 $gu-dark-theme-individual: (
   app-background: map-get($gu-grey-colors, default_grey),
@@ -65,4 +71,42 @@ $gu-dark-theme-labels: (
   chat-label-status: mat-color($general-grey),
   chat-label-nickname: mat-color($general-grey, darker_1),
   chat-label-signal: mat-color($general-grey),
+  vote-up-label-border: mat-color($general-green),
+  vote-up-label-status: mat-color($general-green, lighter_1),
+  vote-up-label-nickname: mat-color($general-green, darker_1),
+  vote-up-label-signal: mat-color($general-green),
+  vote-down-label-border: mat-color($general-red),
+  vote-down-label-status: mat-color($general-red, lighter_1),
+  vote-down-label-nickname: mat-color($general-red, darker_1),
+  vote-down-label-signal: mat-color($general-red),
+  signaling-label-border: mat-color($general-yellow),
+  signaling-label-status: mat-color($general-yellow, lighter_1),
+  signaling-label-nickname: mat-color($general-yellow, darker_1),
+  signaling-label-signal: mat-color($general-yellow),
+);
+
+$gu-pictures: (
+  app-logo: url('/assets/img/GU/gannonuniversity.png'),
+  thankyou: url('/assets/img/GU/undraw_road_sign_gold.svg'),
+  empty-room: url('/assets/img/GU/undraw_video_call_gold.svg'),
+);
+
+//////////////////////////////////////
+//Makes the Sytles available globally
+/////////////////////////////////////
+
+// Primary and secondary colors
+$app-primary: mat-palette($gu-primary, default);
+$app-secondary: mat-palette($gu-secondary, default);
+
+$app-theme: mat-dark-theme($app-primary, $app-secondary);
+
+$app-theme: map-merge(
+  $app-theme,
+  (
+    background: $gu-dark-theme-background,
+    individual: $gu-dark-theme-individual,
+    labels: $gu-dark-theme-labels,
+    pictures: $gu-pictures,
+  )
 );
