@@ -45,15 +45,20 @@ $hse-dark-theme-individual: (
   app-background: map-get($hse-blue-colors, default_blue),
   app-sidebar: map-get($hse-blue-colors, darker_blue_2),
   app-header: map-get($hse-blue-colors, lighter_blue_2),
+  // Styles for important buttons
+    primary-button: map-get($hse-red-colors, default_red),
+  primary-button-contrast: white,
+  primary-button-hover: map-get($hse-red-colors, lighter_red_1),
   // Styles for less important buttons (e.g. "Cancel")
     secondary-button: map-get($hse-blue-colors, lighter_blue_3),
   secondary-button-contrast: white,
+  secondary-button-hover: lighten(map-get($hse-blue-colors, lighter_blue_3), 5%),
   // Style for the scrollbars throughout the app
-    scrollbar-handle: map-get($grey-colors, lighter_grey_2),
+    scrollbar-handle: map-get($grey-colors, lighter_grey_1),
   // Styles for the chat
     chat-link: map-get($blue-colors, default_blue),
   chat-user: map-get($green-colors, lighter_green_1),
-  chat-timestamp: map-get($grey-colors, lighter_grey_3),
+  chat-timestamp: map-get($grey-colors, lighter_grey_2),
   // Style for the volumebar in the settings-component
     volume-level: map-get($blue-colors, default_blue),
   // Styles for the infobox that contains the room-url, if the user is alone

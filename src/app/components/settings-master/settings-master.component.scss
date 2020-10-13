@@ -94,11 +94,6 @@ $app-individual: map-get($app-theme, individual);
   button {
     margin-top: 8px;
 
-    &#close {
-      color: mat-color($app-individual, secondary-button-contrast);
-      background-color: mat-color($app-individual, secondary-button);
-    }
-
     &#save {
       margin-left: 16px;
     }

@@ -1,3 +1,7 @@
+@import 'theme';
+
+$app-individual: map-get($app-theme, individual);
+
 button {
   cursor: pointer;
   border: none;
@@ -27,18 +31,34 @@ button {
 .button {
   border-radius: 4px;
   font-size: 14px;
-  background: mat-color($app-secondary);
-  color: mat-color($app-secondary, default-contrast);
   outline: none;
   cursor: pointer;
   padding: 13px 12px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.primary-button {
+  color: mat-color($app-individual, primary-button-contrast);
+  background-color: mat-color($app-individual, primary-button);
 
   &:hover {
-    background: mat-color($app-secondary, lighter_1);
+    background: mat-color($app-individual, primary-button-hover);
   }
 
   &:active {
-    background: mat-color($app-secondary);
+    background-color: mat-color($app-individual, primary-button);
+  }
+}
+
+.secondary-button {
+  color: mat-color($app-individual, secondary-button-contrast);
+  background-color: mat-color($app-individual, secondary-button);
+
+  &:hover {
+    background: mat-color($app-individual, secondary-button-hover);
+  }
+
+  &:active {
+    background-color: mat-color($app-individual, secondary-button);
   }
 }

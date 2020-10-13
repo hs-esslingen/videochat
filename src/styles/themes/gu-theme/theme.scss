@@ -36,30 +36,36 @@ $gu-secondary: (
 // See _theming.scss under "Background palette for dark themes."
 $gu-dark-theme-background: (
   background: map-get($gu-maroon-colors, lighter_maroon_2),
-  card: map-get($gu-maroon-colors, lighter_maroon_4),
+  card: map-get($gu-grey-colors, lighter_grey_1),
   dialog: map-get($gu-maroon-colors, lighter_maroon_3),
-  tooltip: map_get($mat-grey, 700),
 );
 $gu-dark-theme-background: map-merge($mat-dark-theme-background, $gu-dark-theme-background);
 
 $gu-dark-theme-individual: (
-  app-background: map-get($gu-grey-colors, default_grey),
-  app-sidebar: map-get($general-grey, lighter_1),
+  // Styles for the main elements of the website
+    app-background: map-get($gu-grey-colors, default_grey),
+  app-sidebar: map-get($gu-grey-colors, lighter_grey_1),
   app-header: map-get($gu-maroon-colors, lighter_maroon_2),
+  // Styles for important buttons
+    primary-button: map-get($gu-gold-colors, lighter_gold_1),
+  primary-button-contrast: map-get($gu-maroon-colors, lighter_maroon_2),
+  primary-button-hover: map-get($gu-gold-colors, darker_gold_1),
   // Styles for less important buttons (e.g. "Cancel")
     secondary-button: map-get($gu-maroon-colors, darker_maroon_2),
   secondary-button-contrast: white,
-  scrollbar-handle: map-get($grey-colors, lighter_grey_2),
+  secondary-button-hover: map-get($gu-maroon-colors, darker_maroon_1),
+  // Style for the scrollbars throughout the app
+    scrollbar-handle: map-get($grey-colors, lighter_grey_1),
   // Styles for the chat
     chat-link: map-get($blue-colors, default_blue),
   chat-user: map-get($gu-gold-colors, lighter_gold_1),
-  chat-timestamp: map-get($grey-colors, lighter_grey_3),
+  chat-timestamp: map-get($grey-colors, lighter_grey_2),
   // Style for the volumebar in the settings-component
     volume-level: map-get($gu-gold-colors, default_gold),
   // Styles for the infobox that contains the room-url, if the user is alone
     text-selection: map-get($blue-colors, default_blue),
   room-url-background: map-get($gu-maroon-colors, darker_maroon_2),
-  room-url-background-contrast: map-get($gu-maroon-colors, darker_maroon_2-contrast),
+  room-url-background-contrast: map-get($gu-maroon-colors, darker_maroon_2-contrast)
 );
 
 $gu-dark-theme-labels: (
