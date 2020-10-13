@@ -86,7 +86,7 @@ $hse-dark-theme-labels: (
   vote-down-label-signal: mat-color($general-red),
   signaling-label-border: mat-color($general-yellow),
   signaling-label-status: mat-color($general-yellow, lighter_1),
-  signaling-label-nickname: mat-color($general-yellow, lighter_2),
+  signaling-label-nickname: mat-color($general-yellow, darker_1),
   signaling-label-signal: mat-color($general-yellow),
 );
 
