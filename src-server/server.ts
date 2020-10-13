@@ -86,11 +86,11 @@ const api = new Api(wss);
 const expressSession = session({
   store: store,
   secret: process.env.SESSION_SECRET as string,
-  // proxy: process.env.NODE_ENV === 'production',
-  // cookie: {
-  // sameSite: 'strict',
-  // secure: process.env.NODE_ENV === 'production',
-  // },
+  proxy: process.env.NODE_ENV === 'production',
+  cookie: {
+    sameSite: 'strict',
+    secure: process.env.NODE_ENV === 'production',
+  },
 });
 app.use(expressSession);
 app.use(passport.initialize());
