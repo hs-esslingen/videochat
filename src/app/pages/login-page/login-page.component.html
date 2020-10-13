@@ -4,7 +4,7 @@
         <h1 i18n>Welcome to the Videochat of HSE</h1>
         <p id="description">Der Login funktioniert für alle Mitglieder der Hochschule Esslingen über ihre Hochschuladresse.</p>
         <div id="login">
-            <button type="submit" id="btn_login" class="form-element button" name="btn_login" (click)="onSSOLogin()">SSO Login</button>
+            <button type="submit" id="btn_login" class="form-element button primary-button" name="btn_login" (click)="onSSOLogin()">SSO Login</button>
             <div *ngIf="!prodction" class="oder">oder</div>
             <label *ngIf="!prodction" for="email">E-Mail</label>
             <input *ngIf="!prodction" type="email" id="email" class="textbox form-element" placeholder="mamuit00@hs-esslingen.de" [formControl]="email" [email]="true" (keydown.enter)="onLogin()"/>
@@ -13,7 +13,7 @@
                 <div *ngIf="!email.errors.email">Keine Adresse der Hochschule Esslingen!</div>
             </div>
             
-            <button *ngIf="!prodction" type="submit" id="btn_login" class="form-element button" name="btn_login" (click)="onLogin()">Login</button>
+            <button *ngIf="!prodction" type="submit" id="btn_login" class="form-element button primary-button" name="btn_login" (click)="onLogin()">Login</button>
         </div>
     </div>
     <div *ngIf="isEmailSent">

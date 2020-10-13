@@ -38,15 +38,6 @@ $app-individual: map-get($app-theme, individual);
           font-size: 20px;
           padding: 4px;
         }
-
-        &#delete {
-          color: mat-color($app-primary, lighter_2-contrast);
-          background-color: mat-color($app-primary, lighter_2);
-        }
-        &#hide {
-          color: mat-color($app-secondary, darker_1-contrast);
-          background-color: mat-color($app-secondary, darker_1);
-        }
       }
     }
   }
