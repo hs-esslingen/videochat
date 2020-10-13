@@ -1,6 +1,7 @@
-@import 'src/styles/theme-provider.scss';
+@import 'theme';
 
 $app-individual: map-get($app-theme, individual);
+$app-pictures: map-get($app-theme, pictures);
 
 header {
   position: relative;
@@ -22,16 +23,13 @@ header {
     right: 0px;
   }
 
-  .left {
-    position: absolute;
-    left: 8px;
-  }
-
   #logo {
     height: 42px;
+    padding-left: 8px;
 
-    img {
-      height: 42px;
+    #app-logo {
+      max-height: 42px;
+      content: map-get($app-pictures, app-logo);
     }
   }
 
@@ -60,8 +58,8 @@ header {
   @media (min-width: 768px) {
     .extern {
       margin-left: 20px;
-      position: relative;
-      left: 200px;
+      // position: relative;
+      // left: 200px;
     }
   }
 

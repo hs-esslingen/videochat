@@ -1,4 +1,4 @@
-@import 'src/styles/theme-provider.scss';
+@import 'theme';
 @import 'src/styles/elements/object-label.scss';
 
 $app-individual: map-get($app-theme, individual);
@@ -130,52 +130,52 @@ $app-labels: map-get($app-theme, labels);
     }
 
     &.votingUp {
-      border-color: mat-color($app-vote-up);
+      border-color: mat-color($app-labels, vote-up-label-border);
 
       .status {
-        background-color: mat-color($app-vote-up, lighter_1);
+        background-color: mat-color($app-labels, vote-up-label-status);
       }
 
       .nickname {
-        background-color: mat-color($app-vote-up, darker_1);
+        background-color: mat-color($app-labels, vote-up-label-nickname);
       }
 
       .signal {
         color: black;
-        background-color: mat-color($app-vote-up);
+        background-color: mat-color($app-labels, vote-up-label-signal);
       }
     }
 
     &.votingDown {
-      border-color: mat-color($app-vote-down);
+      border-color: mat-color($app-labels, vote-down-label-border);
 
       .status {
-        background-color: mat-color($app-vote-down, lighter_1);
+        background-color: mat-color($app-labels, vote-down-label-status);
       }
 
       .nickname {
-        background-color: mat-color($app-vote-down, darker_1);
+        background-color: mat-color($app-labels, vote-down-label-nickname);
       }
 
       .signal {
         color: black;
-        background-color: mat-color($app-vote-down);
+        background-color: mat-color($app-labels, vote-down-label-signal);
       }
     }
 
     &.signaling {
-      border-color: mat-color($app-signaling);
+      border-color: mat-color($app-labels, signaling-label-border);
 
       .status {
-        background-color: mat-color($app-signaling, lighter_1);
+        background-color: mat-color($app-labels, signaling-label-status);
       }
 
       .nickname {
-        background-color: mat-color($app-signaling, darker_1);
+        background-color: mat-color($app-labels, signaling-label-nickname);
       }
 
       .signal {
-        background-color: mat-color($app-signaling);
+        background-color: mat-color($app-labels, signaling-label-signal);
       }
     }
   }
@@ -185,26 +185,26 @@ $app-labels: map-get($app-theme, labels);
   ///////////////////////////////////
   .round-button {
     &#raise-hand {
-      background-color: mat-color($app-signaling, darker_1);
+      background-color: mat-color($app-labels, signaling-label-nickname);
 
       &.active {
-        background-color: mat-color($app-signaling, lighter_1);
+        background-color: mat-color($app-labels, signaling-label-status);
       }
     }
 
     &#vote-up {
-      background-color: mat-color($app-vote-up, darker_1);
+      background-color: mat-color($app-labels, vote-up-label-nickname);
 
       &.active {
-        background-color: mat-color($app-vote-up, lighter_1);
+        background-color: mat-color($app-labels, vote-up-label-status);
       }
     }
 
     &#vote-down {
-      background-color: mat-color($app-vote-down, darker_1);
+      background-color: mat-color($app-labels, vote-down-label-nickname);
 
       &.active {
-        background-color: mat-color($app-vote-down, lighter_1);
+        background-color: mat-color($app-labels, vote-down-label-status);
       }
     }
 

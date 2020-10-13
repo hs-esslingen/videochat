@@ -1,6 +1,9 @@
-// @import '~@angular/material/theming';
-@import './hse-colors.scss';
-@import '../general-theme/general-colors.scss';
+@import '~@angular/material/theming';
+@import 'src/styles/themes/hse-theme/hse-colors.scss';
+@import 'src/styles/themes/general-theme/general-theme.scss';
+
+// This is the theme for Hochschule Esslingen - University of Applied Sciences!
+//THE THEME, THAT WILL BE USED MUST BE DECIDED THROUGH THE CONFIGURATION IN "angular.json"
 
 $hse-primary: (
   lighter_3: map-get($hse-blue-colors, lighter_blue_3),
@@ -36,6 +39,7 @@ $hse-dark-theme-background: (
   card: map-get($hse-blue-colors, lighter_blue_3),
   dialog: map-get($hse-blue-colors, lighter_blue_2),
 );
+$hse-dark-theme-background: map-merge($mat-dark-theme-background, $hse-dark-theme-background);
 
 $hse-dark-theme-individual: (
   app-background: map-get($hse-blue-colors, default_blue),
@@ -67,4 +71,41 @@ $hse-dark-theme-labels: (
   chat-label-status: mat-color($general-grey),
   chat-label-nickname: mat-color($general-grey, darker_1),
   chat-label-signal: mat-color($general-grey),
+  vote-up-label-border: mat-color($general-green),
+  vote-up-label-status: mat-color($general-green, lighter_1),
+  vote-up-label-nickname: mat-color($general-green, darker_1),
+  vote-up-label-signal: mat-color($general-green),
+  vote-down-label-border: mat-color($general-red),
+  vote-down-label-status: mat-color($general-red, lighter_1),
+  vote-down-label-nickname: mat-color($general-red, darker_1),
+  vote-down-label-signal: mat-color($general-red),
+  signaling-label-border: mat-color($general-yellow),
+  signaling-label-status: mat-color($general-yellow, lighter_1),
+  signaling-label-nickname: mat-color($general-yellow, lighter_2),
+  signaling-label-signal: mat-color($general-yellow),
+);
+
+$hse-pictures: (
+  app-logo: url('/assets/img/HSE/logo_negative.png'),
+  thankyou: url('/assets/img/HSE/undraw_road_sign_blue.svg'),
+  empty-room: url('/assets/img/HSE/undraw_video_call_blue.svg'),
+);
+
+//////////////////////////////////////
+//Makes the Sytles available globally
+/////////////////////////////////////
+
+// Primary and secondary colors
+$app-primary: mat-palette($hse-primary, default);
+$app-secondary: mat-palette($hse-secondary, default);
+// Other stylings
+$app-theme: mat-dark-theme($app-primary, $app-secondary);
+$app-theme: map-merge(
+  $app-theme,
+  (
+    background: $hse-dark-theme-background,
+    individual: $hse-dark-theme-individual,
+    labels: $hse-dark-theme-labels,
+    pictures: $hse-pictures,
+  )
 );

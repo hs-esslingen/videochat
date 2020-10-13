@@ -4,54 +4,8 @@
 @import 'src/styles/themes/hse-theme/hse-theme.scss';
 @import 'src/styles/themes/gu-theme/gu-theme.scss';
 
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
-@include mat-core();
 $app-primary: null;
 $app-secondary: null;
 $app-theme: null;
-// (Common) Styles for signals
-$app-signaling: mat-palette($general-yellow, default);
-$app-vote-up: mat-palette($general-green, default);
-$app-vote-down: mat-palette($general-red, default);
 
-//THIS VARIABLE WILL DECIDE WHICH UNIVERSITIES THEME WILL BE USED!
-$THEME: 'GU'; // Can be "HSE" or "GU"
-
-@if $THEME == 'HSE' {
-  // Individual sytyles
-  $app-user: mat-palette($hse-primary, default);
-  // Primary and secondary colors
-  $app-primary: mat-palette($hse-primary, default);
-  $app-secondary: mat-palette($hse-secondary, default);
-
-  $app-theme: mat-dark-theme($app-primary, $app-secondary);
-  $app-theme: map-merge(
-    $app-theme,
-    (
-      background: $hse-dark-theme-background,
-      individual: $hse-dark-theme-individual,
-      labels: $hse-dark-theme-labels,
-    )
-  );
-}
-//
-@else if $THEME == 'GU' {
-  // Individual sytyles
-  $app-user: mat-palette($general-grey, default);
-  // Primary and secondary colors
-  $app-primary: mat-palette($gu-primary, default);
-  $app-secondary: mat-palette($gu-secondary, default);
-
-  $app-theme: mat-dark-theme($app-primary, $app-secondary);
-
-  $app-theme: map-merge(
-    $app-theme,
-    (
-      background: $gu-dark-theme-background,
-      individual: $gu-dark-theme-individual,
-      labels: $gu-dark-theme-labels,
-    )
-  );
-}
+//THE THEME, THAT WILL BE USED MUST BE DECIDED THROUGH THE CONFIGURATION IN "angular.json"

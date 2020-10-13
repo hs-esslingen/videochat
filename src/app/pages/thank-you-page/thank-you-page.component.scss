@@ -1,4 +1,6 @@
-@import 'src/styles/theme-provider.scss';
+@import 'theme';
+
+$app-pictures: map-get($app-theme, pictures);
 
 #spacer {
   height: 128px;
@@ -9,6 +11,8 @@
 }
 
 #thankyou_img {
+  content: map-get($app-pictures, thankyou);
+
   max-width: 640px;
   max-height: 480px;
   display: block;
