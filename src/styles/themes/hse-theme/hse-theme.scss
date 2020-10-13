@@ -1,9 +1,8 @@
-@import '~@angular/material/theming';
+// @import '~@angular/material/theming';
 @import './hse-colors.scss';
 @import '../general-theme/general-colors.scss';
 
 $hse-primary: (
-  lighter_4: map-get($hse-blue-colors, lighter_blue_4),
   lighter_3: map-get($hse-blue-colors, lighter_blue_3),
   lighter_2: map-get($hse-blue-colors, lighter_blue_2),
   lighter_1: map-get($hse-blue-colors, lighter_blue_1),
@@ -11,7 +10,6 @@ $hse-primary: (
   darker_1: map-get($hse-blue-colors, darker_blue_1),
   darker_2: map-get($hse-blue-colors, darker_blue_2),
   contrast: (
-    lighter_4: white,
     lighter_3: white,
     lighter_2: white,
     lighter_1: white,
@@ -35,15 +33,16 @@ $hse-secondary: (
 // See _theming.scss under "Background palette for dark themes."
 $hse-dark-theme-background: (
   background: map-get($hse-blue-colors, lighter_blue_2),
-  card: map-get($hse-blue-colors, lighter_blue_4),
+  card: map-get($hse-blue-colors, lighter_blue_3),
   dialog: map-get($hse-blue-colors, lighter_blue_2),
 );
 
 $hse-dark-theme-individual: (
   app-background: map-get($hse-blue-colors, default_blue),
   app-sidebar: map-get($hse-blue-colors, darker_blue_2),
+  app-header: map-get($hse-blue-colors, lighter_blue_2),
   // Styles for less important buttons (e.g. "Cancel")
-    secondary-button: map-get($hse-blue-colors, lighter_blue_4),
+    secondary-button: map-get($hse-blue-colors, lighter_blue_3),
   secondary-button-contrast: white,
   // Style for the scrollbars throughout the app
     scrollbar-handle: map-get($grey-colors, lighter_grey_2),
@@ -53,8 +52,10 @@ $hse-dark-theme-individual: (
   chat-timestamp: map-get($grey-colors, lighter_grey_3),
   // Style for the volumebar in the settings-component
     volume-level: map-get($blue-colors, default_blue),
-  // Style for selected text snippets
+  // Styles for the infobox that contains the room-url, if the user is alone
     text-selection: map-get($blue-colors, default_blue),
+  room-url-background: map-get($hse-blue-colors, darker_blue_1),
+  room-url-background-contrast: map-get($hse-blue-colors, darker_blue_1-contrast),
 );
 
 $hse-dark-theme-labels: (

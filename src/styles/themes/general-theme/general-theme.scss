@@ -8,6 +8,7 @@ $general-grey: (
   default: map-get($grey-colors, default_grey),
   darker_1: map-get($grey-colors, darker_grey_1),
   contrast: (
+    lighter_4: black,
     lighter_3: black,
     lighter_2: black,
     lighter_1: black,

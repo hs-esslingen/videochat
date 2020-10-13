@@ -47,11 +47,12 @@ h2 {
 
   &.preview {
     .room {
-      background-color: mat-color($app-primary, lighter_1);
+      background-color: mat-color($app-primary, lighter_2);
+      // background-color: mat-color($app-primary, lighter_1);
       .name {
         flex-grow: 0;
         border-radius: 8px;
-        background-color: mat-color($app-primary, darker_2);
+        background-color: mat-color($app-primary, darker_1);
         color: transparent;
       }
 
@@ -67,7 +68,7 @@ h2 {
   }
 
   &:not(.preview) .room:hover {
-    background-color: mat-color($app-primary, lighter_4);
+    background-color: mat-color($app-primary, lighter_3);
   }
 
   &:not(.preview) .room {
@@ -76,7 +77,6 @@ h2 {
 
   .room {
     text-decoration: none;
-    color: white;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
     transition: background-color 0.15s ease-out;
     border-bottom: 1px solid;
@@ -86,6 +86,7 @@ h2 {
     padding-bottom: 6px;
     padding-left: 8px;
     padding-right: 8px;
+    color: mat-color($app-primary, lighter_2-contrast);
     background-color: mat-color($app-primary, lighter_2);
 
     &.preview {
