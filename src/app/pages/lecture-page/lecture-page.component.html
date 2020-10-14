@@ -2,9 +2,9 @@
     <div id="main">
         <div #webcams id="webcams" *ngIf="numWebcams > 0" [style.height]="screenShareUser ? webcamHeight * 100 + '%' : '99%'">
             <ng-container *ngFor="let id of getKeys(users)">
-                <div *ngIf="users[id].consumers?.video != undefined" class="video-element">
+                <!-- <div *ngIf="users[id].consumers?.video != undefined" class="video-element">
                     <app-video [video]="users[id].consumers?.video?.track"></app-video>
-                </div>
+                </div> -->
             </ng-container>
             <div *ngIf="currentUser.stream.video" class="video-element">
                 <app-video [video]="currentUser.stream.video.getVideoTracks()[0]"></app-video>
@@ -19,7 +19,7 @@
             <video autoplay playsinline [srcObject]="screenShareStream"></video>
         </div>
 
-        <app-audio *ngFor="let id of getKeys(users)" [audio]="users[id].consumers?.audio?.track"></app-audio>
+        <!-- <app-audio *ngFor="let id of getKeys(users)" [audio]="users[id].consumers?.audio?.track"></app-audio> -->
 
         <app-toolbar id="toolbar" [class.hidden]="isToolbarHidden"></app-toolbar>
         <img id="no_video_img" *ngIf="connection.state === 1 && numWebcams === 0 && screenShareUser == null" alt="No ones there" />
@@ -48,29 +48,29 @@
 
 <div id="status">
     <div id="no-user" class="infobox" *ngIf="connection.state === 1 && users != undefined && getKeys(users).length === 0">
-        <h2>Zur Zeit befindet sich niemand in diesem Raum</h2>
+        <h2 i18n>Currently you are the only one in this room!</h2>
         <input type="text" readonly [value]="roomUrl" (click)="$event.target.focus(); $event.target.select()" />
     </div>
     <div id="duplicate-session" class="infobox" *ngIf="connection.duplicateSession">
-        <h2>There is already a connection to this room</h2>
-        <button class="button" (click)="reload()">Try again</button>
+        <h2 i18n>There is already a connection to this room</h2>
+        <button i18n class="button" (click)="reload()">Try again</button>
     </div>
     <div class="infobox" *ngIf="connection.moodleError">
-        <h2>Connection to room failed</h2>
-        <button class="button" (click)="reload()">Try again</button>
+        <h2 i18n>Connection to room failed</h2>
+        <button i18n class="button" (click)="reload()">Try again</button>
     </div>
     <div class="infobox" *ngIf="connection.state === 3">
-        <h2>Lost connection</h2>
+        <h2 i18n>Lost connection</h2>
         <div class="spinner">
             <mat-spinner diameter="30"></mat-spinner>
-            <span>Reconnecting...</span>
+            <span i18n>Reconnecting...</span>
         </div>
     </div>
     <div class="infobox" *ngIf="connection.state === 0">
-        <h2>Connecting to the room</h2>
+        <h2 i18n>Connecting to the room</h2>
         <div class="spinner">
             <mat-spinner diameter="30"></mat-spinner>
-            <span>Please wait...</span>
+            <span i18n>Please wait...</span>
         </div>
     </div>
 </div>

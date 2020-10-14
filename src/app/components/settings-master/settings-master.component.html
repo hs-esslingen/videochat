@@ -1,19 +1,19 @@
-<h1 *ngIf="mode === 1" id="room" [class.tabs]="modules.tabs" mat-dialog-title>Raum: {{ roomID }}</h1>
-<h1 *ngIf="modules.tabs" class="tabs">Settings</h1>
+<h1 *ngIf="mode === 1" i18n id="room" [class.tabs]="modules.tabs" mat-dialog-title>Room: {{ roomID }}</h1>
+<h1 *ngIf="modules.tabs" i18n class="tabs">Settings</h1>
 
 <div id="settings" [class.large]="modules.tabs === true">
     <div *ngIf="modules.tabs === true" id="menu">
         <div class="item" (click)="settingPage = 0" [class.active]="settingPage === 0">
             <i class="material-icons">perm_identity</i>
-            <div>User</div>
+            <div i18n>User</div>
         </div>
         <div class="item" (click)="settingPage = 1" [class.active]="settingPage === 1">
             <i class="material-icons">videocam</i>
-            <div class="nickname">Video</div>
+            <div i18n class="nickname">Video</div>
         </div>
         <div class="item" (click)="settingPage = 2" [class.active]="settingPage === 2">
             <i class="material-icons">headset_mic</i>
-            <div class="nickname">Audio</div>
+            <div i18n class="nickname">Audio</div>
         </div>
     </div>
 
@@ -31,9 +31,9 @@
         </div>
 
         <div id="dialog-actions" align="end">
-            <button id="close" class="button secondary-button" (click)="discardChanges()"
-                [mat-dialog-close]="undefined">Abbrechen</button>
-            <button id="save" class="button primary-button" (click)="saveChanges()" mat-dialog-close>Übernehmen</button>
+            <button i18n id="close" class="button secondary-button" (click)="discardChanges()"
+                [mat-dialog-close]="undefined">Cancel</button>
+            <button i18n id="save" class="button primary-button" (click)="saveChanges()" mat-dialog-close>Save</button>
         </div>
     </div>
 </div>

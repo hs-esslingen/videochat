@@ -1,7 +1,7 @@
-<label>Webcam:</label>
+<label i18n>Webcam:</label>
 
 <mat-select [value]="selectedVideoStream" [disabled]="disableSelection" (selectionChange)="changeVideoStream($event.value)">
-    <mat-option value="none">Deaktiviert</mat-option>
+    <mat-option i18n value="none">Deactivated</mat-option>
     <mat-option [value]="item.label" *ngFor="let item of videoDevices">{{ item.label }}</mat-option>
 </mat-select>
 

@@ -1,4 +1,4 @@
-<label>Microphone:</label>
+<label i18n>Microphone:</label>
 
 <mat-select [value]="selectedAudioStream" [disabled]="disableSelection" (selectionChange)="changeAudioStream($event.value)">
     <mat-option [value]="item.label" *ngFor="let item of audioDevices">{{ item.label }}</mat-option>
@@ -10,7 +10,7 @@
 
 <div *ngIf="displayAGC === true" id="auto-gain">
     <button mat-menu-item (click)="$event.stopPropagation()">
-        <mat-checkbox [checked]="autoGainControl" (change)="toggleAutoGain()">
+        <mat-checkbox i18n [checked]="autoGainControl" (change)="toggleAutoGain()">
             Automatic gain control
         </mat-checkbox>
     </button>

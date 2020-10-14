@@ -1,21 +1,21 @@
-<h1 mat-dialog-title>Moodle Login</h1>
+<h1 i18n mat-dialog-title>Moodle Login</h1>
 <div mat-dialog-content *ngIf="moodleState === 0">
-    <p class="no-space-top"><strong>Automatic Method</strong>: Simpler, may require adminstrative rights.</p>
-    <p><strong>Manual Method</strong>: More reliable, but also more tedious.</p>
+    <p i18n class="no-space-top"><strong>Automatic Method</strong>: Simpler, may require adminstrative rights.</p>
+    <p i18n><strong>Manual Method</strong>: More reliable, but also more tedious.</p>
 </div>
 <div mat-dialog-actions class="actions" *ngIf="moodleState === 0">
-    <button mat-button class="button secondary-button" [mat-dialog-close] style="margin-bottom: 16px;">Cancel</button>
+    <button i18n mat-button class="button secondary-button" [mat-dialog-close] style="margin-bottom: 16px;">Cancel</button>
     <div class="space"></div>
-    <button mat-button (click)="moodleState = 2" class="button primary-button space-right" style="margin-bottom: 16px;">Manual</button>
-    <button mat-button (click)="moodleState = 1; this.moodle.requestURI()" class="button primary-button" style="margin-bottom: 16px;">Automatic</button>
+    <button i18n mat-button (click)="moodleState = 2" class="button primary-button space-right" style="margin-bottom: 16px;">Manual</button>
+    <button i18n mat-button (click)="moodleState = 1; this.moodle.requestURI()" class="button primary-button" style="margin-bottom: 16px;">Automatic</button>
 </div>
 
 <div mat-dialog-content *ngIf="moodleState === 1">
-    <p class="no-space-top">1. Please allow Wtai links</p>
+    <p i18n class="no-space-top">1. Please allow Wtai links</p>
     <p class="no-space-bottom">
-        2. Connect to Moodle <br />
+        <span i18n> 2. Connect to Moodle</span> <br />
         <button mat-button id="moodle-auto" class="button primary-button inline" (click)="openAutomatic()">
-            <span *ngIf="!waiting">Connect</span>
+            <span *ngIf="!waiting" i18n>Connect</span>
             <span *ngIf="waiting">
                 <mat-spinner diameter="20"></mat-spinner>
             </span>
@@ -23,23 +23,23 @@
     </p>
 </div>
 <div mat-dialog-actions class="actions" *ngIf="moodleState === 1">
-    <button mat-button class="button secondary-button" (click)="backOrCancel()" style="margin-bottom: 16px;">Cancel</button>
+    <button i18n mat-button class="button secondary-button" (click)="backOrCancel()" style="margin-bottom: 16px;">Cancel</button>
     <div class="space"></div>
 </div>
 
 <div mat-dialog-content *ngIf="moodleState === 2">
-    <div class="step">
-        1. Open Moodle <br />
-        <button id="moodle-manual" class="button primary-button inline" (click)="openManual()">Connect</button>
+    <div  class="step">
+        <span i18n>1. Open Moodle</span> <br />
+        <button i18n id="moodle-manual" class="button primary-button inline" (click)="openManual()">Connect</button>
     </div>
-    <div class="step">2. Login with your credentials</div>
-    <div class="step">3. Your E-Mail App will open</div>
-    <div class="step">4. Copy mail recipient into the box below</div>
+    <div i18n class="step">2. Login with your credentials</div>
+    <div i18n class="step">3. Your E-Mail App will open</div>
+    <div i18n class="step">4. Copy mail recipient into the box below</div>
     <div>
         <input type="text" placeholder="token=YXNpb2RuYnVmYm5iM985aDM5ZHVoamRmOXVpcWhu3zkyaDk4MzI3dWJmMzgwOWhm..." (input)="onInput($event.target.value)" />
     </div>
 </div>
 <div mat-dialog-actions class="actions" *ngIf="moodleState === 2">
-    <button mat-button class="button secondary-button" (click)="backOrCancel()" style="margin-bottom: 16px;">Cancel</button>
+    <button i18n mat-button class="button secondary-button" (click)="backOrCancel()" style="margin-bottom: 16px;">Cancel</button>
     <div class="space"></div>
 </div>
