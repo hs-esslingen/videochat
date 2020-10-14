@@ -4,7 +4,6 @@
     <body>
       <trans-unit id="7c7bb75cff1c98146f320bd9db16e9d7ec9a372c" datatype="html">
         <source>Welcome to the online videochat of Gannon University</source>
-        <target>Willkommen zum Online Videochat der Gannon University</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
           <context context-type="linenumber">4</context>
@@ -18,131 +17,107 @@
           <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="cc49ac1fa4f37a03a1edf4295861e347321c8924" datatype="html">
         <source>Login is possible for all members of Hochschule Esslingen via their university credentials.</source>
-        <target>Der Login funktioniert für alle Mitglieder der Gannon University über ihre Universitätsadresse.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
           <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="ba37edc770ecc0c6cbbe7521ce1ce7047c66db3c" datatype="html">
         <source>SSO Login</source>
-        <target>SSO Login</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="053e81597467a642e04109eebe934c84e6a1f467" datatype="html">
         <source>or</source>
-        <target>oder</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="ee0c2e9d884c597f9a82fe7c9e770d75c54d2f45" datatype="html">
         <source>e-mail</source>
-        <target>E-Mail</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="7f4b7fd070e35b32a9a622be3d27acd5eeccd58d" datatype="html">
         <source>mamuit00@hs-esslingen.de</source>
-        <target>mamuit00@hs-esslingen.de</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="212a93dd0c9ddc32a37b21d2e817837473d1c8a0" datatype="html">
         <source>Invalid e-mail address!</source>
-        <target>Keine gültige Email-Adresse!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="b4a9805f87784380a7bb61667c420cfe79ea1cf2" datatype="html">
         <source>No address of the Hochschule Esslingen!</source>
-        <target>Keine Adresse der Hochschule Esslingen!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="6765b4c916060f6bc42d9bb69e80377dbcb5e4e9" datatype="html">
         <source>Login</source>
-        <target>Login</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="8aec0b407872c6ee41f16f21994cd0cd1112621d" datatype="html">
         <source>
-          An e-mail has been sent to the given address.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br/&gt;"/>Please verify the contained linkt to get access to the website.
+            An e-mail has been sent to the given address.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br/&gt;"/>Please verify the contained linkt to get access to the website.
         </source>
-        <target>
-          Eine Mail wurde an die angegebene Adresse versandt.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br/&gt;"/>Bitte bestätigen sie den enthaltenen Link, um Zugriff auf die Website zu erhalten.
-        </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824d" datatype="html">
         <source>Logout</source>
-        <target>Logout</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/header/header.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="b5577f2ea8b8fe4ffb46a1977bb7a18187bbe6ea" datatype="html">
-        <source>Thank you for using the videochat of Hochschule Esslingen!</source>
-        <target>Danke fürs Benutzen des HSE Video-Chats!</target>
+        <source>
+        Thank you for using the videochat of Hochschule Esslingen!
+    </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/thank-you-page/thank-you-page.component.html</context>
           <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="77e3d7841e0c1ddb5db2ad52d3bd3c8de06139f7" datatype="html">
-        <source>Back to meeting</source>
-        <target>Zurück zum Meeting</target>
+        <source>
+            Back to meeting
+        </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/thank-you-page/thank-you-page.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="cf5aade393b799b9e414e97a70f455dd29516b4d" datatype="html">
-        <source>Back to home page</source>
-        <target>Zur Startseite</target>
+        <source>
+            Back to home page
+        </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/thank-you-page/thank-you-page.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="09d02561d773ed5768992bc6ff085ef7abbf5130" datatype="html">
         <source>Moodle Login</source>
-        <target>Moodle Login</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-popup/moodle-popup.component.html</context>
           <context context-type="linenumber">1</context>
@@ -152,28 +127,22 @@
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="ee4ba6a78e8512be008f28f20a48102ab7d12f7f" datatype="html">
         <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Automatic Method<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: Simpler, may require adminstrative rights.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Automatische Methode<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: Einfacher, kann aber administrative Rechte Erfordern.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-popup/moodle-popup.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="3a38870f3749d8c0c3f8826349e73a462d03c826" datatype="html">
         <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Manual Method<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: More reliable, but also more tedious.</source>
-        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Manuelle Methode<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/>: Zuverlässiger, aber auch aufwendiger.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-popup/moodle-popup.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
         <source>Cancel</source>
-        <target>Abbrechen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-popup/moodle-popup.component.html</context>
           <context context-type="linenumber">7</context>
@@ -191,46 +160,36 @@
           <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="9d0ac9c23563b10fafabeedbf739e933b054d1c8" datatype="html">
         <source>Manual</source>
-        <target>Manuell</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-popup/moodle-popup.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="61fe3182398294e32542590867e87cb4432f1537" datatype="html">
         <source>Automatic</source>
-        <target>Automatisch</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-popup/moodle-popup.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="0a4643c45389a285d91e7a18cd21fe4483728e8c" datatype="html">
         <source>1. Please allow Wtai links</source>
-        <target>1. Bitte erlaube Wtai-Links</target>
-                <context-group purpose="location">
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-popup/moodle-popup.component.html</context>
           <context context-type="linenumber">14</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="cfb0bd872515334f5b26aec2ed51cfc2f5005594" datatype="html">
         <source> 2. Connect to Moodle</source>
-        <target> 2. Mit Moodle verbinden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-popup/moodle-popup.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="da6aa9950c74cadd85a3bf26272f34f28d8338c8" datatype="html">
         <source>Connect</source>
-        <target>Verbinden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-popup/moodle-popup.component.html</context>
           <context context-type="linenumber">18</context>
@@ -240,127 +199,99 @@
           <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="a33e856975636c4cd0e150d36898dab77680931f" datatype="html">
         <source>1. Open Moodle</source>
-        <target>1. Moodle öffnen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-popup/moodle-popup.component.html</context>
           <context context-type="linenumber">32</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="ec2368a4b8e5b9c5af61d607f856508eea5b5137" datatype="html">
         <source>2. Login with your credentials</source>
-        <target>2. Mit deinen Zugangsdaten anmelden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-popup/moodle-popup.component.html</context>
           <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="bebf04e3d7000f59de16271a55c99d87b37cce50" datatype="html">
         <source>3. Your E-Mail App will open</source>
-        <target>3. Deine E-Mail Anwendung wird sich öffnen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-popup/moodle-popup.component.html</context>
           <context context-type="linenumber">36</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="518e0ce289f7928828fd02b8afdf25940fc21b41" datatype="html">
         <source>4. Copy mail recipient into the box below</source>
-        <target>4. Kopiere den E-Mail-Empfänger in die untenstehende Box</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-popup/moodle-popup.component.html</context>
           <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="c181512082cbbec6a5169efb10db13cbbcf35ccb" datatype="html">
         <source>Please allow this application to open wtai-links!</source>
-        <target>Bitte erlaube dieser App wtai-Links zu öffnen!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/overview-page/allow-uri.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="8dd413cee2228118c536f503709329a4d1a395e2" datatype="html">
         <source>Done</source>
-        <target>Fertig</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/overview-page/allow-uri.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="27d44c0abc9d60663cf2d9dd34a5698ded070d40" datatype="html">
         <source>Personal Room:</source>
-        <target>Persönlicher Raum:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/overview-page/overview-page.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="9d95dd85a62572b1f16347a0f628237ea00ad009" datatype="html">
         <source>Personal Room of <x id="INTERPOLATION" equiv-text="{{ displayName }}"/></source>
-        <source>Persönlicher Raum von <x id="INTERPOLATION" equiv-text="{{ displayName }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/overview-page/overview-page.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="19e42054d0da7c38a98d1cb122c713b10d1cc298" datatype="html">
         <source>Information Technology</source>
-        <target>Inforamtionstechnik</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/overview-page/overview-page.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="063fcef65bc09163bf1240faa069ac5228b0da8e" datatype="html">
         <source>Human–Computer Interaction</source>
-        <target>Mensch-Computer-Interaktion</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/overview-page/overview-page.component.html</context>
           <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="cefbdfc6625b59f2b9cb389fede3f442882afbd4" datatype="html">
         <source>Model Design and Simulation</source>
-        <target>Modellbildung und Simulation</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/overview-page/overview-page.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="e503d4bf54b678e736ea18bc0f4f66b661322d8c" datatype="html">
         <source>Object-oriented Systems II</source>
-        <target>Objektorientierte Systeme 2</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/overview-page/overview-page.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="a13b23a28f6b0d08583a9ad50f03c85b2404a232" datatype="html">
         <source>Connect with </source>
-        <target>Verbinden mit </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/overview-page/overview-page.component.html</context>
           <context context-type="linenumber">45</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="34746fb1c7f3d2194d99652bdff89e6e14c9c4f4" datatype="html">
         <source>Contact</source>
-        <target>Kontakt</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/footer/footer.component.html</context>
           <context context-type="linenumber">4</context>
@@ -370,19 +301,15 @@
           <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="a38280c17925389000725a6feb4e00f9677093fc" datatype="html">
         <source>Terms of service</source>
-        <target>Datenschutz</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/footer/footer.component.html</context>
           <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="a11f960160a0c351c2fd9efedc42b9dcec439714" datatype="html">
         <source>Imprint Page</source>
-        <target>Impressum</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/footer/footer.component.html</context>
           <context context-type="linenumber">6</context>
@@ -392,100 +319,78 @@
           <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="9cceaf5d62502ae1e10d655d8c0d03b45e1994b2" datatype="html">
         <source>Our contact page will be here soon!</source>
-        <target>Hier ensteht in Kürze unsere Kontaktseite!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/contacts-page/contacts-page.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="bf401c8c8d9d714131e0b6233c16a49a43803a9f" datatype="html">
         <source>Our imprint will be here soon!</source>
-        <target>Hier ensteht in Kürze unser Impressum!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/imprint-page/imprint-page.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="ea005537877b096b598699187658280f0b991e4e" datatype="html">
         <source>Room: <x id="INTERPOLATION" equiv-text="{{ roomID }}"/></source>
-        <target>Raum: <x id="INTERPOLATION" equiv-text="{{ roomID }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/settings-master/settings-master.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="121cc5391cd2a5115bc2b3160379ee5b36cd7716" datatype="html">
         <source>Settings</source>
-        <target>Einstellungen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/settings-master/settings-master.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="e08a77594f3d89311cdf6da5090044270909c194" datatype="html">
         <source>User</source>
-        <target>Benutzer</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/settings-master/settings-master.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="2d1ea268a6a9f483dbc2cbfe19bf4256a57a6af4" datatype="html">
         <source>Video</source>
-        <target>Video</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/settings-master/settings-master.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="f0baeb8b69d120073b6d60d34785889b0c3232c8" datatype="html">
         <source>Audio</source>
-        <target>Audio</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/settings-master/settings-master.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
         <source>Save</source>
-        <target>Übernehmen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/settings-master/settings-master.component.html</context>
           <context context-type="linenumber">36</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="98635a5cdeebd40ad89de393686bc305bf1eacb1" datatype="html">
         <source>Currently you are the only one in this room!</source>
-        <target>Zur Zeit befindet sich niemand in diesem Raum</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/lecture-page/lecture-page.component.html</context>
           <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="2a0bbb8408ed8d05c4125113f7c561b8f2ea741d" datatype="html">
         <source>There is already a connection to this room</source>
-        <target>Es existiert bereits eine Verbindung zu diesem Raum</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/lecture-page/lecture-page.component.html</context>
           <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="bc22a9b838eed800a62c38fcb16425d8e255c7d1" datatype="html">
         <source>Try again</source>
-        <target>Wiederholen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/lecture-page/lecture-page.component.html</context>
           <context context-type="linenumber">56</context>
@@ -495,260 +400,200 @@
           <context context-type="linenumber">60</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="28966dcbe57dcf0ab7a6980d15de0e8070c412cf" datatype="html">
         <source>Connection to room failed</source>
-        <target>Verbindung zum Raum fehlgeschlagen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/lecture-page/lecture-page.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="8c81358ec0df1f417bdc8a6d6a6f0a9522a5ff1e" datatype="html">
         <source>Lost connection</source>
-        <target>Verbindung verloren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/lecture-page/lecture-page.component.html</context>
           <context context-type="linenumber">63</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="c5d46228bea3555d65c705bad40be80f8798a113" datatype="html">
         <source>Reconnecting...</source>
-        <target>Wieder verbinden...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/lecture-page/lecture-page.component.html</context>
           <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="141579e8234508480d51c2960e744d8aaacf2127" datatype="html">
         <source>Connecting to the room</source>
-        <target>Verbindet mit dem Raum</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/lecture-page/lecture-page.component.html</context>
           <context context-type="linenumber">70</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="5d87314cda42c0b803a31b9f4893c6b6a08bcae1" datatype="html">
         <source>Please wait...</source>
-        <target>Bitte warten...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/lecture-page/lecture-page.component.html</context>
           <context context-type="linenumber">73</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="c6cdf2ca5d557631252ac3aea4f0f3be81155e1b" datatype="html">
         <source>Your chat with <x id="INTERPOLATION" equiv-text="{{ users[childData.id]?.nickname }}"/></source>
-        <target>Dein Chatverlauf mit <x id="INTERPOLATION" equiv-text="{{ users[childData.id]?.nickname }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/chat/chat.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="fefe472870a34b324796c83bb49a0200bba0ac87" datatype="html">
         <source>Public Chat</source>
-        <target>Öffentlicher Chat</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/chat/chat.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="c552bbb4e2c0d466132b6aeb8d076f139d8b7a28" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ timestampToHMS(message.time) }}"/></source>
-        <target><x id="INTERPOLATION" equiv-text="{{ timestampToHMS(message.time) }}" Uhr/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/chat/chat.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="b5d7a9fd9d0a341decdc8b1a89d4f551d09cf2f6" datatype="html">
         <source>Write a message...</source>
-        <target>Schreibe eine Nachricht...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/chat/chat.component.html</context>
           <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="c17948a696cda3a132637291a2f66e2bd822de22" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ sendButtonTooltip }}"/></source>
-        <target><x id="INTERPOLATION" equiv-text="{{ sendButtonTooltip }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/chat/chat.component.html</context>
           <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="239eeff828264c70b0bdfe5b6c89974ec7dd4922" datatype="html">
         <source>Chats</source>
-        <target>Chats</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/master-sidebar/master-sidebar.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="4365c5a74819d55e8f355d8cb3cc21c9e924307d" datatype="html">
         <source>Current Users</source>
-        <target>Derzeitige Benutzer</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/master-sidebar/master-sidebar.component.html</context>
           <context context-type="linenumber">38</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="84fe2e59a6853e31a24c3ecc7e218bd95135f062" datatype="html">
         <source>You</source>
-        <target>Du selbst</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/master-sidebar/master-sidebar.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="8b328c534bba76227f1c39572727198a6ebbbe6c" datatype="html">
         <source>raise hand (h)</source>
-        <target>Hand heben (h)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/master-sidebar/master-sidebar.component.html</context>
           <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="fe79e0c4ad6c063287fdcd2ea9686b3035821fdc" datatype="html">
         <source>vote down (d)</source>
-        <target>Daumen runter (d)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/master-sidebar/master-sidebar.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="523b23efa83faa417f99621301e4fbd128c86e19" datatype="html">
         <source>Open chat</source>
-        <target>Chat öffnen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/master-sidebar/master-sidebar.component.html</context>
           <context context-type="linenumber">77</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="404d2ab76b1bcf61d11c5eedba0bd55fcc8eee73" datatype="html">
         <source>open settings</source>
-        <target>Einstellungen öffnen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/master-sidebar/master-sidebar.component.html</context>
           <context context-type="linenumber">84</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="a3bd0c62c419b2e501b9045cf752c6d548cc8b17" datatype="html">
         <source>leave current room</source>
-        <target>Verlasse den aktuellen Raum</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/master-sidebar/master-sidebar.component.html</context>
           <context context-type="linenumber">87</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="a1632d723ba8515e3681a901dc4ee9772af8b385" datatype="html">
         <source>
-          Please ensure that you are enrolled into the following course.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br/&gt;"/>
-          <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br/&gt;"/>
-        </source>
-        <target>
-          Bitte stelle sicher, dass du in diesem Kurs eingeschreiben bist.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br/&gt;"/>
-          <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br/&gt;"/>
-        </target>
+    Please ensure that you are enrolled into the following course.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br/&gt;"/>
+    <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br/&gt;"/>
+</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-error-popup/moodle-error-popup.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="3757a379f19a22d1267603304bc95fe8007e62d9" datatype="html">
         <source>Moodle Course Page</source>
-        <target>Moodel Kurs Seite</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-error-popup/moodle-error-popup.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="890da7570721d8b03b837be16aae18d72e777ef1" datatype="html">
         <source>Webcam:</source>
-        <target>Webcam:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/settings-video/settings-video.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="474dacda6aa159d1d66cf5b41313f6099aee68a4" datatype="html">
         <source>Deactivated</source>
-        <target>Deaktiviert</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/settings-video/settings-video.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="87173f19c69984f8029c2d39ee99c10b1fd27028" datatype="html">
         <source>Microphone:</source>
-        <target>Mikroophon:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/settings-audio/settings-audio.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="bd64d7dbc18a8294038211c20d059b3922454e1d" datatype="html">
         <source>
             Automatic gain control
         </source>
-        <target>
-          Automatische Verstärkungsregelung
-        </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/settings-audio/settings-audio.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="c4bf8fbdc359cad5d75d3b221d673a8899f5f191" datatype="html">
         <source>Chat:</source>
-        <target>Chat:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/settings-user/settings-user.component.html</context>
           <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="b76a47de253ca5b39675fcdf9b300e844edefa9b" datatype="html">
         <source>Send Message on &apos;Enter&apos;</source>
-        <target>Nachrichten auf &apos;Enter&apos; versenden </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/settings-user/settings-user.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
       <trans-unit id="ea4cdfda09a56de593d47e3524a30dcbc379ef40" datatype="html">
         <source>Send Message on &apos;Sift + Enter&apos;</source>
-        <target>Nachrichten auf &apos;Sift + Enter&apos; versenden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/settings-user/settings-user.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
       </trans-unit>
-      <!-- DONE THIS FAR -->
     </body>
   </file>
 </xliff>
