@@ -45,18 +45,6 @@ export function setupAdLogin(app: express.Application) {
       passport.authenticate('azuread-openidconnect', {failureRedirect: '/auth/fail'})(req, res, next);
     },
     (req, res) => {
-      res.redirect('/auth/check-sso');
-    }
-  );
-
-  app.get(
-    '/auth/callback',
-    (req, res, next) => {
-      passport.authenticate('azuread-openidconnect', {
-        // response: res,                      // required
-      })(req, res, next);
-    },
-    (req, res) => {
       logger.info('SSO Login', req.user);
       res.send(`<html>
     <head>
@@ -74,11 +62,9 @@ export function setupAdLogin(app: express.Application) {
 
   app.post(
     '/auth/callback',
-    (req, res, next) => {
-      passport.authenticate('azuread-openidconnect', {
-        // response: res,                      // required
-      })(req, res, next);
-    },
+    passport.authenticate('azuread-openidconnect', {
+      // response: res,                      // required
+    }),
     (req, res) => {
       logger.info('SSO Login', req.user);
       res.send(`<html>
