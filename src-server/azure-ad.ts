@@ -20,7 +20,7 @@ export function setupAdLogin(app: express.Application) {
         validateIssuer: false,
         passReqToCallback: false,
         scope: ['profile', 'email'],
-        loggingLevel: 'error',
+        loggingLevel: process.env.AD_LOG_LEVEL as 'info' | 'warn' | 'error',
       },
       async (iss: string, sub: string, profile: IProfile, accessToken: string, refreshToken: string, done: VerifiedCallback) => {
         if (!profile.oid) {
