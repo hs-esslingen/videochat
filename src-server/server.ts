@@ -86,10 +86,10 @@ const api = new Api(wss);
 const expressSession = session({
   store: store,
   secret: process.env.SESSION_SECRET as string,
-  proxy: process.env.NODE_ENV === 'production',
+  proxy: process.env.SESSION_PROXY === 'true',
   cookie: {
-    sameSite: 'strict',
-    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.SESSION_SAME_SITE as 'lax' | 'strict' | 'none',
+    secure: process.env.SESSION_SECURE === 'true',
   },
 });
 app.use(expressSession);
