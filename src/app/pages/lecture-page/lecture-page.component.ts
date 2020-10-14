@@ -161,7 +161,6 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     const url = new URL(location.href);
-    this.roomUrl = url.origin + url.pathname;
 
     this.moveTimout = window.setTimeout(() => {
       this.isToolbarHidden = true;
@@ -170,6 +169,7 @@ export class LecturePageComponent implements OnInit, OnDestroy, AfterViewInit {
     this.route.paramMap.subscribe(async params => {
       this.route.data.subscribe(data => {
         this.roomId = params.get('roomId') as string;
+        this.roomUrl = url.origin + '/' + this.roomId;
 
         let displayedRoomName = this.roomId;
         let moodleToken: string;
