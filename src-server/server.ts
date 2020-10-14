@@ -238,7 +238,7 @@ wss.on('close', () => {
 });
 
 // Start up the Node server
-server.listen(PORT, () => {
+server.listen(PORT as number, process.env.BINDING_ADDRESS || '0.0.0.0', () => {
   logger.info(`Node Express server listening on http://0.0.0.0:${PORT}`);
 });
 
