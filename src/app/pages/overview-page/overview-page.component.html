@@ -1,10 +1,10 @@
 <main>
     <div id="spacer"></div>
-    <h1 i18n>Welcome to the Videochat of HSE</h1>
-    <h2 class="center">Persönlicher Raum:</h2>
+    <h1 i18n>Welcome to the online videochat of Gannon University</h1>
+    <h2 i18n class="center">Personal Room:</h2>
     <div class="center rooms">
         <a class="room" [routerLink]="'/' + email">
-            <div class="name">Persönlicher Raum von {{ displayName }}</div>
+            <div i18n class="name">Personal Room of {{ displayName }}</div>
             <i class="material-icons">navigate_next</i>
         </a>
     </div>
@@ -21,30 +21,30 @@
     <div class="center" id="moodle-login-outer" *ngIf="!moodleIsLoggedIn">
         <div class="preview rooms">
             <a class="room">
-                <div class="name">Inforamtionstechnik</div>
+                <div i18n class="name">Information Technology</div>
                 <div class="grow"></div>
                 <i class="material-icons">navigate_next</i>
             </a>
             <a class="room">
-                <div class="name">Mensch-Computer-Interaktion</div>
+                <div i18n class="name">Human–Computer Interaction</div>
                 <div class="grow"></div>
                 <i class="material-icons">navigate_next</i>
             </a>
             <a class="room">
-                <div class="name">Modellbildung und Simulation</div>
+                <div i18n class="name">Model Design and Simulation</div>
                 <div class="grow"></div>
                 <i class="material-icons">navigate_next</i>
             </a>
             <a class="room">
-                <div class="name">Objektorientierte Systeme 2</div>
+                <div i18n class="name">Object-oriented Systems II</div>
                 <div class="grow"></div>
                 <i class="material-icons">navigate_next</i>
             </a>
         </div>
         <button class="button" id="moodle-login" (click)="moodleLogin()">
-            <span>Mit</span>
+            <span i18n>Connect with </span>
             <img src="/assets/img/Moodle-Logo.png" alt="" />
-            <span>verbinden</span>
+            <span i18n></span>
         </button>
     </div>
 </main>

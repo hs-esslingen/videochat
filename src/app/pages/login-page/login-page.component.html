@@ -1,25 +1,25 @@
 <main id="content">
     <div id="spacer"></div>
     <div *ngIf="!isEmailSent">
-        <h1 i18n>Welcome to the Videochat of HSE</h1>
-        <p id="description">Der Login funktioniert für alle Mitglieder der Hochschule Esslingen über ihre Hochschuladresse.</p>
+        <h1 i18n>Welcome to the online videochat of Gannon University</h1>
+        <p i18n id="description">Login is possible for all members of Hochschule Esslingen via their university credentials.</p>
         <div id="login">
-            <button type="submit" id="btn_login" class="form-element button primary-button" name="btn_login" (click)="onSSOLogin()">SSO Login</button>
-            <div *ngIf="!prodction" class="oder">oder</div>
-            <label *ngIf="!prodction" for="email">E-Mail</label>
-            <input *ngIf="!prodction" type="email" id="email" class="textbox form-element" placeholder="mamuit00@hs-esslingen.de" [formControl]="email" [email]="true" (keydown.enter)="onLogin()"/>
+            <button i18n type="submit" id="btn_login" class="form-element button primary-button" name="btn_login" (click)="onSSOLogin()">SSO Login</button>
+            <div *ngIf="!prodction" i18n class="oder">or</div>
+            <label *ngIf="!prodction" i18n for="email">e-mail</label>
+            <input *ngIf="!prodction" type="email" id="email" class="textbox form-element" placeholder="mamuit00@hs-esslingen.de" i18n-placeholder [formControl]="email" [email]="true" (keydown.enter)="onLogin()"/>
             <div *ngIf="email.invalid && (email.touched) && email.errors && !email.errors.required">
-                <div *ngIf="email.errors.email">Keine gültige Email-Adresse!</div>
-                <div *ngIf="!email.errors.email">Keine Adresse der Hochschule Esslingen!</div>
+                <div *ngIf="email.errors.email" i18n>Invalid e-mail address!</div>
+                <div *ngIf="!email.errors.email" i18n>No address of the Hochschule Esslingen!</div>
             </div>
             
-            <button *ngIf="!prodction" type="submit" id="btn_login" class="form-element button primary-button" name="btn_login" (click)="onLogin()">Login</button>
+            <button *ngIf="!prodction" i18n type="submit" id="btn_login" class="form-element button primary-button" name="btn_login" (click)="onLogin()">Login</button>
         </div>
     </div>
     <div *ngIf="isEmailSent">
-        <h1 i18n>Welcome to the Videochat of HSE</h1>
-        <p class="email-sent">
-            Eine Mail wurde an die angegebene Adresse versandt.<br />Bitte bestätige den enthaltenen Link, um Zugriff auf die Website zu erhalten.
+        <h1 i18n>Welcome to the online videochat of Gannon University</h1>
+        <p i18n class="email-sent">
+            An e-mail has been sent to the given address.<br />Please verify the contained linkt to get access to the website.
         </p>
     </div>
 </main>
