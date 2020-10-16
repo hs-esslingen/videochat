@@ -83,7 +83,7 @@
                   "replace": "src/environments/university.ts",
                   "with": "src/environments/university.hse.ts"
                 }
-              ],
+              ]
             }
           }
         },
