@@ -4,6 +4,7 @@ import {MoodleService} from '../../helper/moodle.service';
 import {MatDialogRef, MatDialog} from '@angular/material/dialog';
 import {ApiService} from '../../helper/api.service';
 import {MoodlePopupComponent} from 'src/app/components/moodle-popup/moodle-popup.component';
+import {university} from '../../../environments/university';
 
 @Component({
   selector: 'app-nickname-dialog',
@@ -29,6 +30,7 @@ export class OverviewPageComponent implements OnInit {
   }[];
   displayName!: string;
   email!: string;
+  universityFull = university.full;
 
   constructor(readonly router: Router, private moodle: MoodleService, readonly api: ApiService, private dialog: MatDialog) {}
 

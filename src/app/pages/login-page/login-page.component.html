@@ -1,23 +1,23 @@
 <main id="content">
     <div id="spacer"></div>
     <div *ngIf="!isEmailSent">
-        <h1 i18n>Welcome to the online videochat of Gannon University</h1>
-        <p i18n id="description">Login is possible for all members of Hochschule Esslingen via their university credentials.</p>
+        <h1 i18n>Welcome to the online videochat of {{universityFull}}</h1>
+        <p i18n id="description">Login is possible for all members of {{universityFull}} via their university credentials.</p>
         <div id="login">
             <button i18n type="submit" id="btn_login" class="form-element button primary-button" name="btn_login" (click)="onSSOLogin()">SSO Login</button>
             <div *ngIf="!prodction" i18n class="oder">or</div>
             <label *ngIf="!prodction" i18n for="email">e-mail</label>
-            <input *ngIf="!prodction" type="email" id="email" class="textbox form-element" placeholder="mamuit00@hs-esslingen.de" i18n-placeholder [formControl]="email" [email]="true" (keydown.enter)="onLogin()"/>
+            <input *ngIf="!prodction" type="email" id="email" class="textbox form-element" placeholder="{{universityEmail}}" i18n-placeholder [formControl]="email" [email]="true" (keydown.enter)="onLogin()"/>
             <div *ngIf="email.invalid && (email.touched) && email.errors && !email.errors.required">
                 <div *ngIf="email.errors.email" i18n>Invalid e-mail address!</div>
-                <div *ngIf="!email.errors.email" i18n>No address of the Hochschule Esslingen!</div>
+                <div *ngIf="!email.errors.email" i18n>No address of the {{universityFull}}!</div>
             </div>
             
             <button *ngIf="!prodction" i18n type="submit" id="btn_login" class="form-element button primary-button" name="btn_login" (click)="onLogin()">Login</button>
         </div>
     </div>
     <div *ngIf="isEmailSent">
-        <h1 i18n>Welcome to the online videochat of Gannon University</h1>
+        <h1 i18n>Welcome to the online videochat of {{universityFull}}</h1>
         <p i18n class="email-sent">
             An e-mail has been sent to the given address.<br />Please verify the contained linkt to get access to the website.
         </p>
