@@ -2,9 +2,9 @@
     <div id="main">
         <div #webcams id="webcams" *ngIf="numWebcams > 0" [style.height]="screenShareUser ? webcamHeight * 100 + '%' : '99%'">
             <ng-container *ngFor="let id of getKeys(users)">
-                <!-- <div *ngIf="users[id].consumers?.video != undefined" class="video-element">
+                <div *ngIf="users[id].consumers?.video != undefined" class="video-element">
                     <app-video [video]="users[id].consumers?.video?.track"></app-video>
-                </div> -->
+                </div>
             </ng-container>
             <div *ngIf="currentUser.stream.video" class="video-element">
                 <app-video [video]="currentUser.stream.video.getVideoTracks()[0]"></app-video>
@@ -19,7 +19,7 @@
             <video autoplay playsinline [srcObject]="screenShareStream"></video>
         </div>
 
-        <!-- <app-audio *ngFor="let id of getKeys(users)" [audio]="users[id].consumers?.audio?.track"></app-audio> -->
+        <app-audio *ngFor="let id of getKeys(users)" [audio]="users[id].consumers?.audio?.track"></app-audio>
 
         <app-toolbar id="toolbar" [class.hidden]="isToolbarHidden"></app-toolbar>
         <img id="no_video_img" *ngIf="connection.state === 1 && numWebcams === 0 && screenShareUser == null" alt="No ones there" />
