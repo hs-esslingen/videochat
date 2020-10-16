@@ -66,12 +66,24 @@
             "gu": {
               "stylePreprocessorOptions": {
                 "includePaths": ["src/styles/themes/gu-theme/"]
-              }
+              },
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/university.ts",
+                  "with": "src/environments/university.gu.ts"
+                }
+              ]
             },
             "hse": {
               "stylePreprocessorOptions": {
                 "includePaths": ["src/styles/themes/hse-theme/"]
-              }
+              },
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/university.ts",
+                  "with": "src/environments/university.hse.ts"
+                }
+              ],
             }
           }
         },

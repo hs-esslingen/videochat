@@ -3,6 +3,7 @@ import {FormControl, Validators} from '@angular/forms';
 import {ApiService} from '../../helper/api.service';
 import {Router} from '@angular/router';
 import {environment} from '../../../environments/environment';
+import {university} from '../../../environments/university';
 
 @Component({
   selector: 'app-login-page',
@@ -13,6 +14,8 @@ export class LoginPageComponent implements OnInit {
   isEmailSent = false;
   loginWindow: undefined | Window;
   prodction!: boolean;
+  universityFull = university.full;
+  universityEmail = university.email;
 
   email: FormControl = new FormControl('', [Validators.required, Validators.pattern(/hs-esslingen.de$/)]);
 

@@ -2,9 +2,9 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template">
     <body>
-      <trans-unit id="7c7bb75cff1c98146f320bd9db16e9d7ec9a372c" datatype="html">
-        <source>Welcome to the online videochat of Gannon University</source>
-        <target>Willkommen zum Online Videochat der Gannon University</target>
+      <trans-unit id="4083077f7746cdf255db904f6717aaa1a24933d5" datatype="html">
+        <source>Welcome to the online videochat of <x id="INTERPOLATION" equiv-text="{{universityFull}}"/></source>
+        <target>Willkommen zum Online Videochat der <x id="INTERPOLATION" equiv-text="{{universityFull}}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
           <context context-type="linenumber">4</context>
@@ -19,9 +19,9 @@
         </context-group>
       </trans-unit>
       <!-- DONE THIS FAR -->
-      <trans-unit id="cc49ac1fa4f37a03a1edf4295861e347321c8924" datatype="html">
-        <source>Login is possible for all members of Hochschule Esslingen via their university credentials.</source>
-        <target>Der Login funktioniert für alle Mitglieder der Gannon University über ihre Universitätsadresse.</target>
+      <trans-unit id="7b6c5db70853ee14132c493528ca57b9ff38a4a1" datatype="html">
+        <source>Login is possible for all members of <x id="INTERPOLATION" equiv-text="{{universityFull}}"/> via their university credentials.</source>
+        <target>Der Login funktioniert für alle Mitglieder der <x id="INTERPOLATION" equiv-text="{{universityFull}}"/> über ihre Universitätsadresse.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
           <context context-type="linenumber">5</context>
@@ -55,9 +55,9 @@
         </context-group>
       </trans-unit>
       <!-- DONE THIS FAR -->
-      <trans-unit id="7f4b7fd070e35b32a9a622be3d27acd5eeccd58d" datatype="html">
-        <source>mamuit00@hs-esslingen.de</source>
-        <target>mamuit00@hs-esslingen.de</target>
+      <trans-unit id="3ce91bb8518bb4965764d310368be73b02726329" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{universityEmail}}"/></source>
+        <target><x id="INTERPOLATION" equiv-text="{{universityEmail}}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
           <context context-type="linenumber">10</context>
@@ -73,9 +73,9 @@
         </context-group>
       </trans-unit>
       <!-- DONE THIS FAR -->
-      <trans-unit id="b4a9805f87784380a7bb61667c420cfe79ea1cf2" datatype="html">
-        <source>No address of the Hochschule Esslingen!</source>
-        <target>Keine Adresse der Hochschule Esslingen!</target>
+      <trans-unit id="bf19e09e12eb3898d6632af4b201a596ef298d85" datatype="html">
+        <source>No address of the <x id="INTERPOLATION" equiv-text="{{universityFull}}"/>!</source>
+        <target>Keine Adresse der <x id="INTERPOLATION" equiv-text="{{universityFull}}"/>!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
           <context context-type="linenumber">13</context>
@@ -114,8 +114,11 @@
       </trans-unit>
       <!-- DONE THIS FAR -->
       <trans-unit id="b5577f2ea8b8fe4ffb46a1977bb7a18187bbe6ea" datatype="html">
-        <source>Thank you for using the videochat of Hochschule Esslingen!</source>
-        <target>Danke fürs Benutzen des HSE Video-Chats!</target>
+        <trans-unit id="215419fe5e4ec0868f93dabcbae3d6818634cee3" datatype="html">
+        <source>
+        Thank you for using the videochat of <x id="INTERPOLATION" equiv-text="{{universityFull}}"/>!
+        </source>
+        <target>Danke fürs Benutzen des Videochats der <x id="INTERPOLATION" equiv-text="{{universityFull}}"/>!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/thank-you-page/thank-you-page.component.html</context>
           <context context-type="linenumber">5</context>
@@ -123,8 +126,12 @@
       </trans-unit>
       <!-- DONE THIS FAR -->
       <trans-unit id="77e3d7841e0c1ddb5db2ad52d3bd3c8de06139f7" datatype="html">
-        <source>Back to meeting</source>
-        <target>Zurück zum Meeting</target>
+        <source>
+            Back to meeting
+        </source>
+        <target>
+          Zurück zum Meeting
+        </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/thank-you-page/thank-you-page.component.html</context>
           <context context-type="linenumber">10</context>
@@ -132,7 +139,9 @@
       </trans-unit>
       <!-- DONE THIS FAR -->
       <trans-unit id="cf5aade393b799b9e414e97a70f455dd29516b4d" datatype="html">
-        <source>Back to home page</source>
+        <source>
+          Back to home page
+        </source>
         <target>Zur Startseite</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/thank-you-page/thank-you-page.component.html</context>
