@@ -24,12 +24,12 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "dist/browser",
-            "index": "src/index.html",
+            "index": "src/index/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": false,
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": ["src/favicon.ico", "src/favicon.gu.ico", "src/assets"],
             "styles": ["src/styles.scss"],
             "scripts": []
           },
@@ -67,6 +67,7 @@
               "stylePreprocessorOptions": {
                 "includePaths": ["src/styles/themes/gu-theme/"]
               },
+              "index": "src/index/gu/index.html",
               "fileReplacements": [
                 {
                   "replace": "src/environments/university.ts",
@@ -78,6 +79,7 @@
               "stylePreprocessorOptions": {
                 "includePaths": ["src/styles/themes/hse-theme/"]
               },
+              "index": "src/index/hse/index.html",
               "fileReplacements": [
                 {
                   "replace": "src/environments/university.ts",
@@ -89,6 +91,7 @@
               "stylePreprocessorOptions": {
                 "includePaths": ["src/styles/themes/gu-theme/"]
               },
+              "index": "src/index/gu/index.html",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -104,6 +107,7 @@
               "stylePreprocessorOptions": {
                 "includePaths": ["src/styles/themes/hse-theme/"]
               },
+              "index": "src/index/hse/index.html",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
