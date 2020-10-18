@@ -38,6 +38,8 @@ wss.on('error', err => {
   console.error(err);
 });
 
+app.set('trust proxy', process.env.TRUST_PROXY === 'true');
+
 app.use(
   helmet({
     contentSecurityPolicy: false,
@@ -91,6 +93,8 @@ const expressSession = session({
     sameSite: process.env.SESSION_SAME_SITE as 'lax' | 'strict' | 'none',
     secure: process.env.SESSION_SECURE === 'true',
   },
+  saveUninitialized: process.env.SESSION_SAVE_UNINITIALIZED !== 'false',
+  resave: process.env.SESSION_RESAVE === 'true',
 });
 app.use(expressSession);
 app.use(passport.initialize());
@@ -176,7 +180,11 @@ app.get('/auth/check', (req, res) => {
 
 app.get('/auth/logout', (req, res) => {
   req.logout();
-  res.status(204).send();
+  req.session?.destroy(err => {
+    if (err) logger.trace(err);
+    res.status(204).send();
+  });
+  if (req.session == null) res.status(204).clearCookie('connect.sid', {path: '/'}).send();
 });
 
 app.get('/ws', (req, res) => {
