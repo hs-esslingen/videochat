@@ -13,5 +13,4 @@ steps:
       password:
         from_secret: docker_password
       repo: codinglion/videochat-gannon
-      tags:
-        - latest
+      auto_tag: true
