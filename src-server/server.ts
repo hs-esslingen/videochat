@@ -18,7 +18,6 @@ import {setupAdLogin} from './azure-ad';
 import * as helmet from 'helmet';
 import * as Negotiator from 'negotiator';
 import {setupBlackboard} from './blackboard-oauth';
-import {existsSync} from 'fs';
 
 export const logger = getLogger('server');
 initLogger();
