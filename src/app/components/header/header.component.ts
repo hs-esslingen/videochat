@@ -10,7 +10,7 @@ import {university} from 'src/environments/university';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  protected university = university.abbreviated;
+  university = university.abbreviated;
   constructor(readonly api: ApiService, readonly room: RoomService, readonly router: Router) {}
 
   async ngOnInit(): Promise<void> {}
