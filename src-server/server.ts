@@ -103,8 +103,11 @@ app.use(passport.session());
 
 if (process.env.NODE_ENV === 'production') {
   if (process.env.UNIVERSITY === 'gannon') {
-    setupAdLogin(app);
-    // setupBlackboard(app);
+    if (process.env.UNIVERSITY_GU_PROVIDER === 'BLACKBOARD') {
+      setupBlackboard(app);
+    } else {
+      setupAdLogin(app);
+    }
   } else {
     setupShibboleth(app);
   }
