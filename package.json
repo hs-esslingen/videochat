@@ -14,7 +14,7 @@
     "build-hse": "npm run build-frontend-hse && npm run build-server",
     "build-gu": "npm run build-frontend-gu && npm run build-server",
     "build-frontend-gu": "ng build --prod --localize --configuration=\"production,production-gu\"",
-    "build-frontend-hse": "ng build --prod --localize --configuration\"production,production-hse\"",
+    "build-frontend-hse": "ng build --prod --localize --configuration=\"production,production-hse\"",
     "build-server": "webpack --config webpack.server.config.js",
     "start": "cross-env MEDIASOUP_WORKER_BIN=dist/worker/mediasoup-worker node dist/server.js",
     "check": "gts check",
