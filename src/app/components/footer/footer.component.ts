@@ -7,7 +7,7 @@ import {university} from 'src/environments/university';
   styleUrls: ['./footer.component.scss'],
 })
 export class FooterComponent implements OnInit {
-  protected university = university.abbreviated;
+  university = university.abbreviated;
   constructor() {}
 
   ngOnInit(): void {}
