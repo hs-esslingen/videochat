@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../../helper/api.service';
 import {Router} from '@angular/router';
 import {RoomService} from 'src/app/helper/room.service';
+import {university} from 'src/environments/university';
 
 @Component({
   selector: 'app-header',
@@ -9,6 +10,7 @@ import {RoomService} from 'src/app/helper/room.service';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
+  protected university = university.abbreviated;
   constructor(readonly api: ApiService, readonly room: RoomService, readonly router: Router) {}
 
   async ngOnInit(): Promise<void> {}

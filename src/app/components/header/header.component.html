@@ -1,10 +1,18 @@
 <header>
     <a routerLink="/" id="logo"><img id="app-logo" alt="Logo der Universität" /></a>
-    <a class="extern" target="_blank" href="https://www.hs-esslingen.de/">WWW</a>
-    <a class="extern" target="_blank" href="https://moodle.hs-esslingen.de/moodle/">MOODLE</a>
-    <a class="extern" target="_blank" href="https://www.hs-esslingen.de/lsf">LSF</a>
-    <a class="extern" target="_blank" href="https://intranetportal.hs-esslingen.de/de/he-portal/quicklinks.html">QUICKLINKS</a>
-    <a class="extern" target="_blank" href="https://intranetportal.hs-esslingen.de/de/he-portal/einfuehrung-intranet.html">?</a>
+    <ng-template [ngIf]="university == 'GU'">
+        <a class="extern" target="_blank" href="https://my.gannon.edu/">MY.GANNON</a>
+        <a class="extern" target="_blank" href="https://gannon.blackboard.com/">BLACKBOARD</a>
+        <a class="extern" target="_blank" href="https://selfservice.gannon.edu/">SELFSERVICE</a>
+    </ng-template>
+    <ng-template [ngIf]="university == 'HSE'">
+        <a class="extern" target="_blank" href="https://www.hs-esslingen.de/">WWW</a>
+        <a class="extern" target="_blank" href="https://moodle.hs-esslingen.de/moodle/">MOODLE</a>
+        <a class="extern" target="_blank" href="https://www.hs-esslingen.de/lsf">LSF</a>
+        <a class="extern" target="_blank" href="https://intranetportal.hs-esslingen.de/de/he-portal/quicklinks.html">QUICKLINKS</a>
+        <a class="extern" target="_blank" href="https://intranetportal.hs-esslingen.de/de/he-portal/einfuehrung-intranet.html">?</a>
+    </ng-template>
+    
     <div id="spacer"></div>
     <button i18n class="right" id="logout" *ngIf="api.isLoggedIn" (click)="logout()">Logout</button>
 </header>

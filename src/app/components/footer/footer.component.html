@@ -1,8 +1,11 @@
 <footer>
   <nav>
     <div class="space"></div>
-    <a i18n routerLink="/kontakt">Contact</a>
-    <a i18n routerLink="/datenschutz">Terms of service</a>
-    <a i18n routerLink="/impressum">Imprint Page</a>
+    
+    <ng-template [ngIf]="university == 'HSE'">
+      <a i18n routerLink="/kontakt">Contact</a>
+      <a i18n routerLink="/datenschutz">Terms of service</a>
+      <a i18n routerLink="/impressum">Imprint Page</a>
+    </ng-template>
   </nav>
 </footer>
