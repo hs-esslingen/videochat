@@ -181,15 +181,7 @@ app.get('/auth/check', (req, res) => {
 
 app.get('/auth/logout', (req, res) => {
   req.logout();
-  req.session?.destroy(err => {
-    if (err) logger.trace(err);
-    res.status(204).send();
-  });
-  if (req.session == null)
-    res
-      .status(204)
-      .clearCookie(process.env.SESSION_NAME as string, {path: '/'})
-      .send();
+  res.status(204).send();
 });
 
 app.get('/ws', (req, res) => {
