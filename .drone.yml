@@ -17,8 +17,9 @@ steps:
       #   auto_tag: true
       tags:
         - ${DRONE_BRANCH}
+        - latest
 ---
 kind: signature
-hmac: 786b7264299a477db411e125e2897b6abec09c17b7d9e4b114ac8e12b13f0dd7
+hmac: 1221b4280b2154d4f7d3ba62be1e76db7571e9b79b3458d4a103c796803cc01c
 
 ...
