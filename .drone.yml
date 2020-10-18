@@ -1,3 +1,4 @@
+---
 kind: pipeline
 name: default
 
@@ -16,3 +17,8 @@ steps:
       #   auto_tag: true
       tags:
         - ${DRONE_BRANCH}
+---
+kind: signature
+hmac: 786b7264299a477db411e125e2897b6abec09c17b7d9e4b114ac8e12b13f0dd7
+
+...
