@@ -89,6 +89,7 @@ const expressSession = session({
   store: store,
   secret: process.env.SESSION_SECRET as string,
   proxy: process.env.SESSION_PROXY === 'true',
+  name: process.env.SESSION_NAME,
   cookie: {
     sameSite: process.env.SESSION_SAME_SITE as 'lax' | 'strict' | 'none',
     secure: process.env.SESSION_SECURE === 'true',
@@ -184,7 +185,11 @@ app.get('/auth/logout', (req, res) => {
     if (err) logger.trace(err);
     res.status(204).send();
   });
-  if (req.session == null) res.status(204).clearCookie('connect.sid', {path: '/'}).send();
+  if (req.session == null)
+    res
+      .status(204)
+      .clearCookie(process.env.SESSION_NAME as string, {path: '/'})
+      .send();
 });
 
 app.get('/ws', (req, res) => {
