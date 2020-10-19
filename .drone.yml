@@ -5,10 +5,10 @@ name: default
 steps:
   - name: docker
     image: plugins/docker
-    environment:
-      UNIVERSITY:
-        from_secret: university
     settings:
+      build_args:
+        UNIVERSITY:
+          from_secret: university
       username:
         from_secret: docker_username
       password:
@@ -20,6 +20,6 @@ steps:
         - latest
 ---
 kind: signature
-hmac: 1221b4280b2154d4f7d3ba62be1e76db7571e9b79b3458d4a103c796803cc01c
+hmac: 304a613403a3bdc7c2a48d59f9a213bcc96b7b46395fa12596b4fd0d173b9d47
 
 ...
