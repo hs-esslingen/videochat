@@ -7,8 +7,7 @@ steps:
     image: plugins/docker
     settings:
       build_args:
-        UNIVERSITY:
-          from_secret: university
+        - UNIVERSITY=${university}
       username:
         from_secret: docker_username
       password:
@@ -20,6 +19,6 @@ steps:
         - latest
 ---
 kind: signature
-hmac: 304a613403a3bdc7c2a48d59f9a213bcc96b7b46395fa12596b4fd0d173b9d47
+hmac: be5f397cd17f616d308c3536f874a95d061d209093a6a31662627a9d0e8a7178
 
 ...
