@@ -15,7 +15,7 @@ export class ChatComponent implements OnInit {
 
   newMessage?: string;
   sendOnEnter!: boolean;
-  sendButtonTooltip!: string;
+  sendButton!: string;
 
   @Output() closeChatEvent = new EventEmitter<{element: Chat; type: 'chat'}>();
 
@@ -39,8 +39,8 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     localStorage.getItem('sendOnEnter') === 'true' ? (this.sendOnEnter = true) : (this.sendOnEnter = false);
-    if (this.sendOnEnter) this.sendButtonTooltip = 'Send (Enter)';
-    else this.sendButtonTooltip = 'Send (Shift + Enter)';
+    if (this.sendOnEnter) this.sendButton = '(Enter)';
+    else this.sendButton = '(Shift + Enter)';
   }
 
   ngAfterViewInit(): void {

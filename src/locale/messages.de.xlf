@@ -589,9 +589,9 @@
         </context-group>
       </trans-unit>
       <!-- DONE THIS FAR -->
-      <trans-unit id="c17948a696cda3a132637291a2f66e2bd822de22" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ sendButtonTooltip }}"/></source>
-        <target><x id="INTERPOLATION" equiv-text="{{ sendButtonTooltip }}"/></target>
+      <trans-unit id="576afa51a60cd0756acc2c40b48e2318cb886258" datatype="html">
+        <source>Send <x id="INTERPOLATION" equiv-text="{{ sendButton }}"/></source>
+        <target>Senden <x id="INTERPOLATION" equiv-text="{{ sendButton }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/chat/chat.component.html</context>
           <context context-type="linenumber">30</context>
@@ -631,6 +631,15 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/master-sidebar/master-sidebar.component.html</context>
           <context context-type="linenumber">51</context>
+        </context-group>
+      </trans-unit>
+      <!-- DONE THIS FAR -->
+      <trans-unit id="d0e510f1f6d15385f79448c0e0a665fb5b9d58cb" datatype="html">
+        <source>vote up (u)</source>
+        <target>Daumen hoch (u)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/master-sidebar/master-sidebar.component.html</context>
+          <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
       <!-- DONE THIS FAR -->
