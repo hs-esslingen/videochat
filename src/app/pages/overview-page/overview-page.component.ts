@@ -64,7 +64,7 @@ export class OverviewPageComponent implements OnInit {
 
   async moodleLogin() {
     const dialogRef = this.dialog.open(MoodlePopupComponent, {
-      width: '500px',
+      width: '650px',
     });
     dialogRef.afterClosed().subscribe(async (res: boolean) => {
       if (res) {

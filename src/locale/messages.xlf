@@ -534,6 +534,13 @@
           <context context-type="linenumber">87</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="ac888ac08bf7a924a9cd73324b075dcc787f611f" datatype="html">
+        <source>Missing Enrollment</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/moodle-error-popup/moodle-error-popup.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="a1632d723ba8515e3681a901dc4ee9772af8b385" datatype="html">
         <source>
     Please ensure that you are enrolled into the following course.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br/&gt;"/>
