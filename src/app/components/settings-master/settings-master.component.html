@@ -33,7 +33,10 @@
         <div id="dialog-actions" align="end">
             <button i18n id="close" class="button secondary-button" (click)="discardChanges()"
                 [mat-dialog-close]="undefined">Cancel</button>
-            <button i18n id="save" class="button primary-button" (click)="saveChanges()" mat-dialog-close>Save</button>
+            <button i18n id="save" class="button primary-button" (click)="saveChanges()" mat-dialog-close>
+                <div *ngIf="mode === 0 || mode === 2">Save</div>
+                <div *ngIf="mode === 1">Join</div>
+            </button>
         </div>
     </div>
 </div>
