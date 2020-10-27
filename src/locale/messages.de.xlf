@@ -312,7 +312,7 @@
       <!-- DONE THIS FAR -->
       <trans-unit id="9d95dd85a62572b1f16347a0f628237ea00ad009" datatype="html">
         <source>Personal Room of <x id="INTERPOLATION" equiv-text="{{ displayName }}"/></source>
-        <source>Persönlicher Raum von <x id="INTERPOLATION" equiv-text="{{ displayName }}"/></source>
+        <target>Persönlicher Raum von <x id="INTERPOLATION" equiv-text="{{ displayName }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/overview-page/overview-page.component.html</context>
           <context context-type="linenumber">7</context>
@@ -573,7 +573,7 @@
       <!-- DONE THIS FAR -->
       <trans-unit id="c552bbb4e2c0d466132b6aeb8d076f139d8b7a28" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ timestampToHMS(message.time) }}"/></source>
-        <target><x id="INTERPOLATION" equiv-text="{{ timestampToHMS(message.time) }}" Uhr/></target>
+        <target><x id="INTERPOLATION" equiv-text="{{ timestampToHMS(message.time) }}"/> Uhr</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/chat/chat.component.html</context>
           <context context-type="linenumber">20</context>
