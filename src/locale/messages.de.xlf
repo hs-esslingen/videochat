@@ -355,9 +355,9 @@
         </context-group>
       </trans-unit>
       <!-- DONE THIS FAR -->
-      <trans-unit id="a13b23a28f6b0d08583a9ad50f03c85b2404a232" datatype="html">
-        <source>Connect with </source>
-        <target>Verbinden mit </target>
+      <trans-unit id="connectToMoodle" datatype="html">
+        <source>Connect to <x id="TAG_IMG" ctype="image" equiv-text="&lt;img/&gt;"/></source>
+        <target>Mit <x id="TAG_IMG" ctype="image" equiv-text="&lt;img/&gt;"/> verbinden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/overview-page/overview-page.component.html</context>
           <context context-type="linenumber">45</context>
@@ -681,6 +681,7 @@
       <!-- DONE THIS FAR -->
       <trans-unit id="ac888ac08bf7a924a9cd73324b075dcc787f611f" datatype="html">
         <source>Missing Enrollment</source>
+        <target>Fehlende Einschreibung</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/moodle-error-popup/moodle-error-popup.component.html</context>
           <context context-type="linenumber">1</context>
