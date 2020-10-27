@@ -22,7 +22,7 @@
         <app-audio *ngFor="let id of getKeys(users)" [audio]="users[id].consumers?.audio?.track"></app-audio>
 
         <app-toolbar id="toolbar" [class.hidden]="isToolbarHidden"></app-toolbar>
-        <img id="no_video_img" *ngIf="connection.state === 1 && numWebcams === 0 && screenShareUser == null" alt="No ones there" />
+        <img id="no_video_img" *ngIf="connection.state === 1 && numWebcams === 0 && screenShareUser == null" alt="No one is there" />
     </div>
 
     <app-chat
