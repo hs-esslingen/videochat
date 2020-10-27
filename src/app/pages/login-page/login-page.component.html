@@ -6,7 +6,7 @@
         <div id="login">
             <button i18n type="submit" id="btn_login" class="form-element button primary-button" name="btn_login" (click)="onSSOLogin()">SSO Login</button>
             <div *ngIf="!prodction" i18n class="oder">or</div>
-            <label *ngIf="!prodction" i18n for="email">e-mail</label>
+            <label *ngIf="!prodction" i18n for="email">E-Mail</label>
             <input *ngIf="!prodction" type="email" id="email" class="textbox form-element" placeholder="{{universityEmail}}" i18n-placeholder [formControl]="email" [email]="true" (keydown.enter)="onLogin()"/>
             <div *ngIf="email.invalid && (email.touched) && email.errors && !email.errors.required">
                 <div *ngIf="email.errors.email" i18n>Invalid e-mail address!</div>

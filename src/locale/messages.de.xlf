@@ -46,8 +46,8 @@
         </context-group>
       </trans-unit>
       <!-- DONE THIS FAR -->
-      <trans-unit id="ee0c2e9d884c597f9a82fe7c9e770d75c54d2f45" datatype="html">
-        <source>e-mail</source>
+      <trans-unit id="6d3b88a3ae6ff3d987f86395605397ec736dee9c" datatype="html">
+        <source>E-Mail</source>
         <target>E-Mail</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/login-page/login-page.component.html</context>
@@ -109,7 +109,7 @@
         <target>Logout</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/header/header.component.html</context>
-          <context context-type="linenumber">9</context>
+          <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
       <!-- DONE THIS FAR -->
@@ -369,7 +369,7 @@
         <target>Kontakt</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/footer/footer.component.html</context>
-          <context context-type="linenumber">4</context>
+          <context context-type="linenumber">6</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/contacts-page/contacts-page.component.html</context>
@@ -382,7 +382,7 @@
         <target>Datenschutz</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/footer/footer.component.html</context>
-          <context context-type="linenumber">5</context>
+          <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
       <!-- DONE THIS FAR -->
@@ -391,7 +391,7 @@
         <target>Impressum</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/footer/footer.component.html</context>
-          <context context-type="linenumber">6</context>
+          <context context-type="linenumber">8</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/imprint-page/imprint-page.component.html</context>
@@ -462,9 +462,15 @@
         </context-group>
       </trans-unit>
       <!-- DONE THIS FAR -->
-      <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
-        <source>Save</source>
-        <target>Übernehmen</target>
+      <trans-unit id="b6bb41968438175586d28640fbfe81b8066c8d2c" datatype="html">
+        <source>
+                <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div&gt;"/>Save<x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/>
+                <x id="START_TAG_DIV_1" ctype="x-div" equiv-text="&lt;div&gt;"/>Join<x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/>
+            </source>
+        <target>
+                <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div&gt;"/>Übernehmen<x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/>
+                <x id="START_TAG_DIV_1" ctype="x-div" equiv-text="&lt;div&gt;"/>Beitreten<x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/>
+        </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/settings-master/settings-master.component.html</context>
           <context context-type="linenumber">36</context>
