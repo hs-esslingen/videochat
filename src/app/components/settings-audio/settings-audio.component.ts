@@ -24,7 +24,9 @@ export class SettingsAudioComponent implements OnInit {
 
   constructor(private localMedia: LocalMediaService) {}
 
-  async ngOnInit() {
+  async ngOnInit() {}
+
+  async initAudio() {
     localStorage.getItem('autoGainControl') === 'true' ? (this.autoGainControl = true) : (this.autoGainControl = false);
 
     try {

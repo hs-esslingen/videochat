@@ -1,13 +1,17 @@
-import {Component, OnInit, Inject} from '@angular/core';
+import {AfterViewInit} from '@angular/core';
+import {Component, OnInit, Inject, ViewChild, ElementRef} from '@angular/core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {LocalMediaService} from 'src/app/helper/local-media.service';
 import {MediaService} from 'src/app/helper/media.service';
+import {SettingsAudioComponent} from '../settings-audio/settings-audio.component';
 
 @Component({
   selector: 'app-settings-master',
   templateUrl: './settings-master.component.html',
   styleUrls: ['./settings-master.component.scss'],
 })
-export class SettingsMasterComponent implements OnInit {
+export class SettingsMasterComponent implements OnInit, AfterViewInit {
+  @ViewChild('audioSettings') audioSettings!: SettingsAudioComponent;
   settingPage!: settingPages | undefined;
   roomID: string | undefined;
   mode!: settingMode;
@@ -22,17 +26,20 @@ export class SettingsMasterComponent implements OnInit {
 
   // Variables for video-settings
   selectedVideoStream: string | undefined;
+  videoDevices: MediaDeviceInfo[] | undefined;
+  videoTrack: MediaStream | undefined;
 
   constructor(
     readonly mediaService: MediaService,
     public dialogRef: MatDialogRef<SettingsMasterComponent>,
     @Inject(MAT_DIALOG_DATA)
-    public data: SettingsMasterComponentData
+    public data: SettingsMasterComponentData,
+    private localMedia: LocalMediaService
   ) {
     dialogRef.disableClose = true;
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.mode = this.data.mode;
     if (this.data.roomID !== undefined) this.roomID = this.data.roomID;
 
@@ -65,6 +72,42 @@ export class SettingsMasterComponent implements OnInit {
         console.log('An unexpected error has occured!');
         break;
     }
+  }
+
+  async ngAfterViewInit() {
+    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+    //Add 'implements ' to the class.
+    try {
+      const videoStream = await this.localMedia.getVideoTrack();
+      const videoTracks = videoStream.getVideoTracks();
+      this.videoTrack = new MediaStream(videoTracks);
+      if (videoTracks.length > 0) {
+        this.selectedVideoStream = videoTracks[0].label;
+      }
+    } catch (error) {
+      this.selectedVideoStream = 'none';
+    }
+
+    this.videoDevices = await this.localMedia.getVideoCapabilites();
+    await this.audioSettings.initAudio();
+  }
+
+  async changeVideoStream(label: string) {
+    const videoTracks = this.videoTrack?.getVideoTracks();
+    if (videoTracks && videoTracks.length > 0) videoTracks[0].stop();
+    if (label === 'none') {
+      this.videoTrack = undefined;
+      this.selectedVideoStream = 'none';
+      this.localMedia.closeVideo();
+      return;
+    }
+    const video = await this.localMedia.getVideoTrack(label);
+
+    const newVideoTracks = video.getVideoTracks();
+    this.videoTrack = video;
+    if (newVideoTracks.length > 0) this.selectedVideoStream = newVideoTracks[0].label;
+
+    console.log(this.selectedVideoStream);
   }
 
   discardChanges(): void {

@@ -22,9 +22,9 @@
             <app-settings-user *ngIf="settingPage == 0 || (modules.tabs === false && modules.userSettings === true)">
             </app-settings-user>
             <app-settings-video *ngIf="settingPage == 1 || (modules.tabs === false && modules.videoSettings === true)"
-                [disableSelection]="modules.tabs" (selectedVideoStreamEvent)="selectedVideoStream = $event">
+                [disableSelection]="modules.tabs" [selectedVideoStream]="selectedVideoStream" [videoDevices]="videoDevices" [videoTrack]="videoTrack">
             </app-settings-video>
-            <app-settings-audio
+            <app-settings-audio #audioSettings
                 *ngIf="settingPage == 2 || (modules.tabs === false && modules.audioSettings?.display === true)"
                 [displayAGC]="modules.audioSettings?.displayAGC" [disableSelection]="modules.tabs"
                 (audioDevicesEvent)="audioDevices = $event"></app-settings-audio>
