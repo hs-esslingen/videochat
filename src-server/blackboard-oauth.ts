@@ -30,8 +30,6 @@ export function setupBlackboard(app: express.Application) {
         displayName: 'User',
         email: 'unknown@test.de',
       };
-      console.log(accessToken);
-      console.log(profile);
       const request = await fetch(process.env.OAUTH_URL + '/learn/api/public/v1/users', {
         headers: {Authorization: 'Bearer ' + accessToken},
       });
