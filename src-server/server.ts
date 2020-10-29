@@ -18,6 +18,7 @@ import {setupAdLogin} from './azure-ad';
 import * as helmet from 'helmet';
 import * as Negotiator from 'negotiator';
 import {setupBlackboard} from './blackboard-oauth';
+import fetch from 'node-fetch';
 
 export const logger = getLogger('server');
 initLogger();
@@ -180,8 +181,8 @@ app.get('/auth/check', async (req, res) => {
           headers: {Authorization: 'Basic ' + Buffer.from(process.env.OAUTH_CLIENT_ID + ':' + process.env.OAUTH_CLIENT_SECRET).toString('base64')},
         });
         if (request.status !== 200) {
-          req.logout();
           res.status(401).send('Unauthorized');
+          req.logout();
           return;
         }
       }
