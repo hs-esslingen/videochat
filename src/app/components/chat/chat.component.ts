@@ -55,8 +55,6 @@ export class ChatComponent implements OnInit {
   }
 
   timestampToHMS(timestamp: number): string {
-    console.log(window.navigator.language);
-
     const date: Date = new Date(timestamp);
     let hour: string | number = date.getHours();
     let minute: string | number = date.getMinutes();
