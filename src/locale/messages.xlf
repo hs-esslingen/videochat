@@ -450,13 +450,6 @@
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="c552bbb4e2c0d466132b6aeb8d076f139d8b7a28" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ timestampToHMS(message.time) }}"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/chat/chat.component.html</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="b5d7a9fd9d0a341decdc8b1a89d4f551d09cf2f6" datatype="html">
         <source>Write a message...</source>
         <context-group purpose="location">

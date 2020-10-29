@@ -63,6 +63,14 @@ export class ChatComponent implements OnInit {
     return hour + ':' + minute;
   }
 
+  timestampToLocaleTimeString(timestamp: number): string {
+    const date: Date = new Date(timestamp);
+    const currentLocale = window.navigator.language;
+    const timeString: string = date.toLocaleTimeString(currentLocale, {hour: '2-digit', minute: '2-digit'});
+    // if (currentLocale === 'de-DE') timeString += ' Uhr';
+    return timeString;
+  }
+
   sendMessage(): void {
     if (this.newMessage && this.newMessage.trim() !== '') {
       this.chatService.sendMessage(this.newMessage, this.childData.id !== 'public_chat' ? this.childData.id : undefined);
