@@ -3,7 +3,7 @@ import {ChatService} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {Poll} from 'src/app/helper/poll.service';
-import {User, UserSignal, CurrentUser, UserConnectionState, MicrophoneState} from 'src/app/model/user';
+import {User, UserSignal, CurrentUser, UserConnectionState} from 'src/app/model/user';
 import {SettingsMasterComponent, settingMode} from '../settings-master/settings-master.component';
 import {RoomService} from 'src/app/helper/room.service';
 import {SignalService} from '../../helper/signal.service';
