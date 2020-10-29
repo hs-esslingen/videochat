@@ -1,5 +1,5 @@
 @import '~@angular/material/theming';
-@import 'src/styles/themes/hse-theme/hse-colors.scss';
+@import '../../colors.scss';
 @import 'src/styles/themes/general-theme/general-theme.scss';
 
 // This is the theme for Hochschule Esslingen - University of Applied Sciences!
@@ -97,7 +97,7 @@ $hse-pictures: (
 );
 
 //////////////////////////////////////
-//Makes the Sytles available globally
+//Makes the Styles available globally
 /////////////////////////////////////
 
 // Primary and secondary colors

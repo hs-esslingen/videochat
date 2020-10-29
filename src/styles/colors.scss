@@ -1,0 +1,100 @@
+$grey-colors: (
+  lighter_grey_2: #9e9e9e,
+  lighter_grey_1: #555555,
+  // Chat-Label
+    default_grey: #2b2b2b,
+  // Chat-Label-Nickname
+    darker_grey_1: #212121,
+);
+
+$green-colors: (
+  // User-Label-Voting-Up-Status
+    lighter_green_1: #43a047,
+  // User-abel-Voting-Up
+    default_green: #25591d,
+  // Vote-Up-Button, User-Label-Voting-Up-Nickname
+    darker_green_1: #124016
+);
+
+$yellow-colors: (
+  // User-Label-Signaling-Status
+    lighter_yellow_1: #fdd835,
+  // User-Label-Signaling
+    default_yellow: #9e9824,
+  // Signaling-Button, User-Label-Signaling-Nickname
+    darker_yellow_1: #6d6919
+);
+
+$red-colors: (
+  // User-Label-Voting-Down-Status
+    lighter_red_1: #e53935,
+  // User-Label-Voting-Down
+    default_red: #b71c1c,
+  // Vote-Down-Button, User-Label-Voting-Down-Nickname
+    darker_red_1: #620f0f
+);
+
+$blue-colors: (
+  // Chat_Links, HSE-Voice-Level
+    default_blue: #bed7ff
+);
+
+//////////////////////////////////////
+// Colors for Hochschule Esslingen //
+////////////////////////////////////
+$hse-blue-colors: (
+  // Moodle-Login-Preview-Hover, Setting-Button(s), Scrollbar-Handle-On-Hover, User-Label-Status
+    lighter_blue_3: #264986,
+  // Header, Button(s)
+    lighter_blue_2: #193058,
+  // Login-Page-Textbox, Moodle-Login
+    lighter_blue_1: #172c50,
+  // Background
+    default_blue: #0c1729,
+  // User-Label-Nickname
+    darker_blue_1: #0d1629,
+  // Sidebar, Chat, Detail-Bar, Input-Fields
+    darker_blue_2: #080e1a
+);
+
+$hse-red-colors: (
+  // General-Button-Hover
+    lighter_red_1: #d11800,
+  // General-Button-Background, General-Button-Active
+    default_red: #b61601,
+  // Close-Chat-Button
+    darker_red_1: #6f0e0e
+);
+
+///////////////////////////////////////
+// Colors for the Gannon University //
+/////////////////////////////////////
+$gu-maroon-colors: (
+  // Login-Page-Textbox, Moodle-Login [Victor E. Knight]
+    lighter_maroon_3: #b20d35,
+  // User-Label-Status [Primary Color Palette—Print (PMS 202)]
+    lighter_maroon_2: #862633,
+  // Header, Button(s) [Main-page primary color]
+    lighter_maroon_1: #97002e,
+  // Background [Main-page darker button (websave)]
+    default_maroon: #990000,
+  // User-Label-Nickname [Main-page-Darker-Chat-Button]
+    darker_maroon_1: #800000,
+  // Sidebar, Chat, Detail-Bar, Input-Fields [Primar Color Palette — Web from Style-Guide]
+    darker_maroon_2: #660000
+);
+
+$gu-gold-colors: (
+  // Main page secondary color
+    lighter_gold_1: #fbaf3f,
+  // Primary Color Palette—Web  (#ffbc40 wäre kontraastreicher)
+    default_gold: #f2af32,
+  // Victor E. Knight
+    darker_gold_1: #f9a72b
+);
+
+$gu-grey-colors: (
+  // Main page background color
+    lighter_grey_1: #383838,
+  default_grey: #333333
+);
