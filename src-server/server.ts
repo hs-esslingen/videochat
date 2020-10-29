@@ -169,16 +169,30 @@ app.get('/auth/moodle', (req, res) => {
   `);
 });
 
-app.get('/auth/check', (req, res) => {
+app.get('/auth/check', async (req, res) => {
   // @ts-ignore email exists exists in user
-  if (req.isAuthenticated())
+  if (req.isAuthenticated()) {
+    if (process.env.UNIVERSITY === 'gannon') {
+      // @ts-ignore
+      const accessToken = req.user?.accessToken;
+      if (accessToken != null) {
+        const request = await fetch(process.env.OAUTH_URL + '/learn/api/public/v1/oauth2/tokeninfo', {
+          headers: {Authorization: 'Basic ' + Buffer.from(process.env.OAUTH_CLIENT_ID + ':' + process.env.OAUTH_CLIENT_SECRET).toString('base64')},
+        });
+        if (request.status !== 200) {
+          req.logout();
+          res.status(401).send('Unauthorized');
+          return;
+        }
+      }
+    }
     res.json({
       // @ts-ignore email exists exists in user
       email: req.user.email,
       // @ts-ignore displayName exists in user
       displayName: req.user.displayName || req.user.email.split('@')[0],
     });
-  else res.status(401).send('Unauthorized');
+  } else res.status(401).send('Unauthorized');
 });
 
 app.get('/auth/logout', (req, res) => {
