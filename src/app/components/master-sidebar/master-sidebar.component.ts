@@ -60,12 +60,8 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
         .filter(user => user.state === UserConnectionState.CONNECTED);
 
       this.activeUsers.sort((user_1, user_2) => {
-        return user_2.signal + Math.min(user_2.microphoneState, 1) * 10 - (user_1.signal + Math.min(user_1.microphoneState, 1) * 10);
-      }); // ==> Most important status to the beginning of the array
-      this.activeUsers.forEach(user => {
-        if (user.microphoneState === MicrophoneState.TALKING) this.activeUsers.shift;
+        return user_2.signal + Math.min(user_2.microphoneState, 1) * 10 - (user_1.signal + Math.min(user_1.microphoneState, 1) * 10); // ==> Most important status to the beginning of the array
       });
-      // .sort((user_1, user_2) => user_1.microphoneState - user_2.microphoneState);
       this.ref.detectChanges();
     });
   }
