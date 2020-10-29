@@ -22,6 +22,7 @@
             <app-settings-user *ngIf="settingPage == 0 || (modules.tabs === false && modules.userSettings === true)">
             </app-settings-user>
             <app-settings-video *ngIf="settingPage == 1 || (modules.tabs === false && modules.videoSettings === true)"
+                (changeVideoStreamEvent)="changeVideoStream($event)"
                 [disableSelection]="modules.tabs" [selectedVideoStream]="selectedVideoStream" [videoDevices]="videoDevices" [videoTrack]="videoTrack">
             </app-settings-video>
             <app-settings-audio #audioSettings
