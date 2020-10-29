@@ -53,11 +53,11 @@ export class RoomService {
 
     signal.subscribe(data => {
       this.currentUser.signal = data;
+      this.triggerSubject();
     });
 
     chat.subscribe(data => {
       this.chats = data;
-      this.triggerSubject();
     });
   }
 
