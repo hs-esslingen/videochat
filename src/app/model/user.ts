@@ -60,9 +60,9 @@ export enum UserRole {
 
 export enum UserSignal {
   NONE = 0,
-  RAISED_HAND = 1,
+  VOTED_DOWN = 1,
   VOTED_UP = 2,
-  VOTED_DOWN = 3,
+  RAISED_HAND = 3,
 }
 export enum UserConnectionState {
   CONNECTED = 0,

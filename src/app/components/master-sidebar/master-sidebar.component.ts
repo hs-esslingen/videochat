@@ -3,12 +3,11 @@ import {ChatService} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {Poll} from 'src/app/helper/poll.service';
-import {User, UserSignal, CurrentUser, UserConnectionState} from 'src/app/model/user';
+import {User, UserSignal, CurrentUser, UserConnectionState, MicrophoneState} from 'src/app/model/user';
 import {SettingsMasterComponent, settingMode} from '../settings-master/settings-master.component';
 import {RoomService} from 'src/app/helper/room.service';
 import {SignalService} from '../../helper/signal.service';
 import {Chat} from 'src/app/model/chat';
-import {SoundService} from 'src/app/helper/sound.service';
 import {MediaService} from 'src/app/helper/media.service';
 
 @Component({
@@ -21,7 +20,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   currentUser?: CurrentUser;
   users: {[key: string]: User} = {};
   // Inputs for options
-  @Input() autoGainControl!: boolean;
+  @Input() autoGainControl!: boolean; // NEEDED?
   @Input() roomID!: string;
 
   @Output() sidebarSetDetailEvent = new EventEmitter<{element: Chat; type: 'chat'} | {element: Poll; type: 'poll'}>();
@@ -44,8 +43,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private room: RoomService,
     private ref: ChangeDetectorRef,
-    private signal: SignalService,
-    private sound: SoundService
+    private signal: SignalService
   ) {}
 
   ngOnInit(): void {
@@ -60,6 +58,14 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
       this.activeUsers = Object.keys(this.users)
         .map(userId => this.users[userId])
         .filter(user => user.state === UserConnectionState.CONNECTED);
+
+      this.activeUsers.sort((user_1, user_2) => {
+        return user_2.signal + Math.min(user_2.microphoneState, 1) * 10 - (user_1.signal + Math.min(user_1.microphoneState, 1) * 10);
+      }); // ==> Most important status to the beginning of the array
+      this.activeUsers.forEach(user => {
+        if (user.microphoneState === MicrophoneState.TALKING) this.activeUsers.shift;
+      });
+      // .sort((user_1, user_2) => user_1.microphoneState - user_2.microphoneState);
       this.ref.detectChanges();
     });
   }

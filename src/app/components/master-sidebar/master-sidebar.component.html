@@ -38,8 +38,8 @@
     <h4 i18n>Current Users</h4>
     <label i18n>You</label>
     <div id="You" class="object-label user" [class.talking]="currentUser?.microphoneState === 2"
-        [class.signaling]="currentUser?.signal === 1" [class.votingUp]="currentUser?.signal === 2"
-        [class.votingDown]="currentUser?.signal === 3" [class.micActive]="currentUser?.microphoneState >= 1">
+        [class.signaling]="currentUser?.signal === 3" [class.votingUp]="currentUser?.signal === 2"
+        [class.votingDown]="currentUser?.signal === 1" [class.micActive]="currentUser?.microphoneState >= 1">
         <div class="status"></div>
         <div class="nickname">{{ currentUser?.nickname }}</div>
         <div class="signal" *ngIf="currentUser?.microphoneState >= 1">
@@ -48,7 +48,7 @@
     </div>
     <div id="user-actions">
         <button id="raise-hand" class="small round-button" (click)="raiseHand()"
-            [class.active]="currentUser?.signal === 1" matTooltip="raise hand (h)" i18n-matTooltip>
+            [class.active]="currentUser?.signal === 3" matTooltip="raise hand (h)" i18n-matTooltip>
             <i class="material-icons">pan_tool</i>
         </button>
         <button id="vote-up" class="small round-button" (click)="thumbsUp()" [class.active]="currentUser?.signal === 2"
@@ -56,7 +56,7 @@
             <i class="material-icons">thumb_up</i>
         </button>
         <button id="vote-down" class="small round-button" (click)="thumbsDown()"
-            [class.active]="currentUser?.signal === 3" matTooltip="vote down (d)" i18n-matTooltip>
+            [class.active]="currentUser?.signal === 1" matTooltip="vote down (d)" i18n-matTooltip>
             <i class="material-icons">thumb_down</i>
         </button>
     </div>
@@ -64,8 +64,8 @@
     <label>Others</label>
     <div id="participants">
         <div *ngFor="let user of activeUsers" class="object-label" [matMenuTriggerFor]="userMenu"
-            [class.talking]="user.microphoneState === 2" [class.signaling]="user.signal === 1"
-            [class.votingUp]="user.signal === 2" [class.votingDown]="user.signal === 3"
+            [class.talking]="user.microphoneState === 2" [class.signaling]="user.signal === 3"
+            [class.votingUp]="user.signal === 2" [class.votingDown]="user.signal === 1"
             [class.micActive]="user.microphoneState >= 1">
             <div class="status"></div>
             <div class="nickname">{{ user.nickname }}</div>

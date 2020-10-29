@@ -354,6 +354,7 @@ export class MediaService {
                 )
                   this.removeConsumer(foundUser, type as 'audio' | 'video' | 'screen');
               });
+              this.triggerSubject();
             }
           }
           break;
@@ -448,7 +449,7 @@ export class MediaService {
 
     const consume = await this.api.addConsumer(this.roomId as string, this.recvTransport.id, this.device.rtpCapabilities, producerId as string);
 
-    console.log('getting conumer');
+    console.log('getting consumer');
     const consumer: Consumer = await new Promise(async res => {
       const consumer = await this.recvTransport.consume({
         id: consume.id,
@@ -456,7 +457,7 @@ export class MediaService {
         producerId,
         rtpParameters: consume.rtpParameters,
       });
-      console.log('got conumer');
+      console.log('got consumer');
       res(consumer);
     });
 
