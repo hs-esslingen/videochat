@@ -29,6 +29,7 @@ export function setupBlackboard(app: express.Application) {
         refreshToken,
         displayName: 'User',
         email: 'unknown@test.de',
+        id: '',
       };
       const request = await fetch(process.env.OAUTH_URL + '/learn/api/public/v1/users', {
         headers: {Authorization: 'Bearer ' + accessToken},
@@ -38,6 +39,7 @@ export function setupBlackboard(app: express.Application) {
       if (data.results?.length >= 1) {
         user.displayName = data.results[0].name.given + ' ' + data.results[0].name.family;
         user.email = data.results[0].userName + '@gannon.edu';
+        user.id = data.results[0].id;
       }
       return done(null, user);
     }

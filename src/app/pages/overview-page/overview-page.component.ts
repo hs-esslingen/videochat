@@ -22,7 +22,7 @@ export class AllowUriComponent {
 export class OverviewPageComponent implements OnInit {
   roomId!: string;
   moodleIsLoggedIn = false;
-  moodleCourses!: {
+  courses!: {
     fullname: string;
     id: number;
     visible: number;
@@ -31,27 +31,30 @@ export class OverviewPageComponent implements OnInit {
   displayName!: string;
   email!: string;
   universityFull = university.full;
+  university = university.abbreviated;
 
   constructor(readonly router: Router, private moodle: MoodleService, readonly api: ApiService, private dialog: MatDialog) {}
 
   async ngOnInit() {
-    if (window.localStorage.getItem('moodleToken')) {
-      this.moodleIsLoggedIn = true;
-      const token = window.localStorage.getItem('moodleToken');
-      try {
-        this.moodleCourses = await this.api.getMoodleCourses(token as string);
-      } catch (error) {
-        if (error.error === 'invalidtoken') {
-          this.moodleIsLoggedIn = false;
-          window.localStorage.removeItem('moodleToken');
+    if (university.abbreviated === 'HSE') {
+      if (window.localStorage.getItem('moodleToken')) {
+        this.moodleIsLoggedIn = true;
+        const token = window.localStorage.getItem('moodleToken');
+        try {
+          this.courses = await this.api.getMoodleCourses(token as string);
+        } catch (error) {
+          if (error.error === 'invalidtoken') {
+            this.moodleIsLoggedIn = false;
+            window.localStorage.removeItem('moodleToken');
+          }
         }
       }
+    } else {
+      this.courses = await this.api.getBlackboardCourses();
     }
-
     this.displayName = window.localStorage.getItem('displayName') as string;
     this.email = (window.localStorage.getItem('email') as string).split('@')[0];
   }
-
   gotoRoom() {
     if (this.roomId !== '' && !this.roomId.includes('/')) {
       this.router.navigate([this.roomId]);
@@ -70,7 +73,7 @@ export class OverviewPageComponent implements OnInit {
       if (res) {
         this.moodleIsLoggedIn = true;
         const token = window.localStorage.getItem('moodleToken');
-        this.moodleCourses = await this.api.getMoodleCourses(token as string);
+        this.courses = await this.api.getMoodleCourses(token as string);
       }
     });
   }

@@ -92,6 +92,17 @@ export class ApiService {
     return this.moodleCourses;
   }
 
+  async getBlackboardCourses() {
+    if (this.moodleCourses == null)
+      this.moodleCourses = (await this.http.get('/api/blackboard/courses').toPromise()) as {
+        fullname: string;
+        id: number;
+        visible: number;
+        shortname: string;
+      }[];
+    return this.moodleCourses;
+  }
+
   checkMoodleEnrolment(courseId: string, token: string | null | undefined) {
     return this.http
       .post('/api/moodle/check-enrolment', {

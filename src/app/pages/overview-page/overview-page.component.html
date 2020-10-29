@@ -8,44 +8,56 @@
             <i class="material-icons">navigate_next</i>
         </a>
     </div>
-
-    <h3 class="center">Moodle:</h3>
-    <div class="center rooms" *ngIf="moodleIsLoggedIn">
-        <a class="room" *ngFor="let course of moodleCourses" [routerLink]="'/moodle/' + course.id">
-            <div class="name">{{ course.fullname }}</div>
-            <div class="grow"></div>
-            <i class="material-icons">navigate_next</i>
-        </a>
-    </div>
-
-    <div class="center" id="moodle-login-outer" *ngIf="!moodleIsLoggedIn">
-        <div class="preview rooms">
-            <a class="room">
-                <div i18n class="name">Information Technology</div>
-                <div class="grow"></div>
-                <i class="material-icons">navigate_next</i>
-            </a>
-            <a class="room">
-                <div i18n class="name">Human–Computer Interaction</div>
-                <div class="grow"></div>
-                <i class="material-icons">navigate_next</i>
-            </a>
-            <a class="room">
-                <div i18n class="name">Model Design and Simulation</div>
-                <div class="grow"></div>
-                <i class="material-icons">navigate_next</i>
-            </a>
-            <a class="room">
-                <div i18n class="name">Object-oriented Systems II</div>
+    <ng-template [ngIf]="university == 'HSE'">
+        <h3 class="center">Moodle:</h3>
+        <div class="center rooms" *ngIf="moodleIsLoggedIn">
+            <a class="room" *ngFor="let course of courses" [routerLink]="'/moodle/' + course.id">
+                <div class="name">{{ course.fullname }}</div>
                 <div class="grow"></div>
                 <i class="material-icons">navigate_next</i>
             </a>
         </div>
-        <button class="button" id="moodle-login" (click)="moodleLogin()">
-            <span i18n>Connect with </span>
-            <img src="/assets/img/Moodle-Logo.png" alt="" />
-            <span i18n></span>
-        </button>
-    </div>
+
+        <div class="center" id="moodle-login-outer" *ngIf="!moodleIsLoggedIn">
+            <div class="preview rooms">
+                <a class="room">
+                    <div i18n class="name">Information Technology</div>
+                    <div class="grow"></div>
+                    <i class="material-icons">navigate_next</i>
+                </a>
+                <a class="room">
+                    <div i18n class="name">Human–Computer Interaction</div>
+                    <div class="grow"></div>
+                    <i class="material-icons">navigate_next</i>
+                </a>
+                <a class="room">
+                    <div i18n class="name">Model Design and Simulation</div>
+                    <div class="grow"></div>
+                    <i class="material-icons">navigate_next</i>
+                </a>
+                <a class="room">
+                    <div i18n class="name">Object-oriented Systems II</div>
+                    <div class="grow"></div>
+                    <i class="material-icons">navigate_next</i>
+                </a>
+            </div>
+            <button class="button" id="moodle-login" (click)="moodleLogin()">
+                <span i18n>Connect with </span>
+                <img src="/assets/img/Moodle-Logo.png" alt="" />
+                <span i18n></span>
+            </button>
+        </div>
+    </ng-template>
+    <ng-template [ngIf]="university == 'GU'">
+        <h3 class="center">Blackboard:</h3>
+        <div class="center rooms" >
+            <a class="room" *ngFor="let course of courses" [routerLink]="'/' + course.id">
+                <div class="name">{{ course.fullname }}</div>
+                <div class="grow"></div>
+                <i class="material-icons">navigate_next</i>
+            </a>
+        </div>
+    </ng-template>
+
 </main>
 <app-footer></app-footer>

@@ -136,6 +136,30 @@ export class Api {
       }
     });
 
+    this.api.get('/blackboard/courses', async (req, res) => {
+      try {
+        // @ts-ignore
+        const request = await fetch(process.env.OAUTH_URL + '/learn/api/public/v3//courses', {
+          // @ts-ignore
+          headers: {Authorization: 'Bearer ' + req.user?.accessToken},
+        });
+        const data = await request.json();
+        const courses = data.results
+          .filter((item: unknown) => Object.prototype.hasOwnProperty.call(item, 'enrollment'))
+          .map((item: any) => {
+            return {
+              fullname: item.name,
+              id: item.id,
+              shortname: item.name,
+            };
+          });
+        console.log(courses);
+        res.json(courses);
+      } catch (error) {
+        res.status(400).send(error);
+      }
+    });
+
     this.api.get('/moodle/courses', async (req, res) => {
       try {
         const params = new URLSearchParams();
