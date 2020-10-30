@@ -36,9 +36,8 @@ $gu-secondary: (
 // See _theming.scss under "Background palette for dark themes."
 $gu-dark-theme-background: (
   background: map-get($gu-maroon-colors, lighter_maroon_2),
-  card: map-get($gu-maroon-colors, lighter_maroon_3),
-  // card: map-get($gu-grey-colors, lighter_grey_1),
-    dialog: map-get($gu-maroon-colors, lighter_maroon_2),
+  card: map-get($gu-grey-colors, lighter_grey_1),
+  dialog: map-get($gu-maroon-colors, lighter_maroon_2),
 );
 $gu-dark-theme-background: map-merge($mat-dark-theme-background, $gu-dark-theme-background);
 
