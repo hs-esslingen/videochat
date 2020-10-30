@@ -207,10 +207,5 @@ $app-labels: map-get($app-theme, labels);
         background-color: mat-color($app-labels, vote-down-label-status);
       }
     }
-
-    &#leave-room {
-      color: mat-color($app-secondary, darker_1-contrast);
-      background-color: mat-color($app-secondary, darker_1);
-    }
   }
 }
