@@ -34,7 +34,19 @@ export function setupShibboleth(app: express.Application) {
   passport.use(samlStrategy);
 
   app.get('/auth/sso', passport.authenticate('saml', {failureRedirect: '/auth/fail'}), (req, res) => {
-    res.redirect('/auth/check-sso');
+    logger.info('SSO Login', req.user);
+
+    res.send(`<html>
+          <head>
+            <title>SSO Login Callback</title>
+          </head>
+          <body>
+            <p>Please close this Window!</p>
+            <script type="text/javascript">
+              window.close();
+            </script>
+          </body>
+          </html>`);
   });
 
   app.post('/auth/callback', passport.authenticate('saml', {failureRedirect: '/auth/fail'}), (req, res) => {

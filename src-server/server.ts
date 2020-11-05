@@ -111,12 +111,8 @@ if (process.env.NODE_ENV === 'production') {
   } else {
     setupShibboleth(app);
   }
-  app.get('/auth/check-sso', (req, res) => {
-    if (req.isAuthenticated()) res.json({token: 'asdasd'});
-    else res.redirect('/auth/sso');
-  });
 } else {
-  app.get('/auth/check-sso', (req, res) => {
+  app.get('/auth/sso', (req, res) => {
     res.send('SSO login is disabled in DEBUG mode');
   });
 }
@@ -173,16 +169,17 @@ app.get('/auth/moodle', (req, res) => {
 app.get('/auth/check', async (req, res) => {
   // @ts-ignore email exists exists in user
   if (req.isAuthenticated()) {
-    if (process.env.UNIVERSITY === 'gannon') {
+    if (process.env.UNIVERSITY === 'gannon' && process.env.UNIVERSITY_GU_PROVIDER === 'BLACKBOARD') {
       // @ts-ignore
       const accessToken = req.user?.accessToken;
       if (accessToken != null) {
-        const request = await fetch(process.env.OAUTH_URL + '/learn/api/public/v1/oauth2/tokeninfo', {
+        const request = await fetch(process.env.OAUTH_URL + '/learn/api/public/v1/oauth2/tokeninfo?access_token=' + accessToken, {
           headers: {Authorization: 'Basic ' + Buffer.from(process.env.OAUTH_CLIENT_ID + ':' + process.env.OAUTH_CLIENT_SECRET).toString('base64')},
         });
         if (request.status !== 200) {
-          res.status(401).send('Unauthorized');
+          logger.debug('Blackboard session check failed', await request.json());
           req.logout();
+          res.status(401).send('Unauthorized');
           return;
         }
       }

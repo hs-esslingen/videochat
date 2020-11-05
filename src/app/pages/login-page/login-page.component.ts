@@ -80,7 +80,7 @@ export class LoginPageComponent implements OnInit {
     const xPosition = (window.innerWidth - popupWidth) / 2;
     const yPosition = (window.innerHeight - popupHeight) / 2;
     const url = new URL(window.location.href);
-    const loginUrl = url.origin + '/auth/check-sso';
+    const loginUrl = url.origin + '/auth/sso';
     localStorage.removeItem('token');
     this.loginWindow = window.open(
       loginUrl,

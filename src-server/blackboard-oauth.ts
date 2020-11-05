@@ -8,6 +8,7 @@ import fetch from 'node-fetch';
 export const logger = getLogger('blackboard');
 
 export function setupBlackboard(app: express.Application) {
+  console.log('Basic ' + Buffer.from(process.env.OAUTH_CLIENT_ID + ':' + process.env.OAUTH_CLIENT_SECRET).toString('base64'));
   const oauthStrategy = new OAuth2Strategy(
     {
       authorizationURL: process.env.OAUTH_URL + '/learn/api/public/v1/oauth2/authorizationcode',
@@ -17,13 +18,14 @@ export function setupBlackboard(app: express.Application) {
       customHeaders: {
         Authorization: 'Basic ' + Buffer.from(process.env.OAUTH_CLIENT_ID + ':' + process.env.OAUTH_CLIENT_SECRET).toString('base64'),
       },
-
-      pkce: false,
+      state: true,
+      pkce: true,
       callbackURL: process.env.CALLBACK_URL,
-      scope: 'read',
+      scope: 'offline read',
     },
-    async (accessToken: string, refreshToken: string, profile: OAuth2Strategy.Metadata, done: VerifyCallback) => {
-      logger.debug('Parsing', profile);
+    async (accessToken: string, refreshToken: string, results: any, profile: OAuth2Strategy.Metadata, done: VerifyCallback) => {
+      logger.trace('Login callback results: ', results);
+      logger.trace('Login callback accessToken: ', accessToken);
       const user = {
         accessToken,
         refreshToken,
@@ -31,11 +33,14 @@ export function setupBlackboard(app: express.Application) {
         email: 'unknown@test.de',
         id: '',
       };
+
       const request = await fetch(process.env.OAUTH_URL + '/learn/api/public/v1/users', {
         headers: {Authorization: 'Bearer ' + accessToken},
       });
 
       const data = await request.json();
+      logger.trace('Parsing user data:', JSON.stringify(data, null, 1));
+
       if (data.results?.length >= 1) {
         user.displayName = data.results[0].name.given + ' ' + data.results[0].name.family;
         user.email = data.results[0].userName + '@gannon.edu';
@@ -47,7 +52,20 @@ export function setupBlackboard(app: express.Application) {
   passport.use(oauthStrategy);
 
   app.get('/auth/sso', passport.authenticate('oauth2', {failureRedirect: '/auth/fail'}), (req, res) => {
-    res.redirect('/auth/check-sso');
+    // @ts-ignore
+    logger.info('SSO Login ', req.user.displayName, req.user.email);
+
+    res.send(`<html>
+          <head>
+            <title>SSO Login Callback</title>
+          </head>
+          <body>
+            <p>Please close this Window!</p>
+            <script type="text/javascript">
+              window.close();
+            </script>
+          </body>
+          </html>`);
   });
 
   app.post('/auth/callback', passport.authenticate('oauth2', {failureRedirect: '/auth/fail'}), (req, res) => {

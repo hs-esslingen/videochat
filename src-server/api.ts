@@ -144,6 +144,7 @@ export class Api {
           headers: {Authorization: 'Bearer ' + req.user?.accessToken},
         });
         const data = await request.json();
+        logger.trace(data);
         const courses = data.results
           .filter((item: unknown) => Object.prototype.hasOwnProperty.call(item, 'enrollment'))
           .map((item: any) => {
@@ -153,7 +154,7 @@ export class Api {
               shortname: item.name,
             };
           });
-        console.log(courses);
+        logger.debug(courses);
         res.json(courses);
       } catch (error) {
         res.status(400).send(error);
