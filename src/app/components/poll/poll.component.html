@@ -1,1 +1,55 @@
-<p>poll works!</p>
+<div id="content">
+    <div id="header">
+        <h4 *ngIf="childData.title !== undefined" i18n>{{childData.title}}</h4>
+        <h4 *ngIf="childData.title === undefined" i18n>New Poll</h4>
+
+        <label>Name of the poll:</label>
+        <textarea cdkTextareaAutosize [(ngModel)]="childData.title" placeholder="Enter answer option here..."></textarea>
+    </div>
+
+    <div id="questions">
+        <div *ngFor="let question of childData.questions; let i = index"  class="question">
+            <div id="question-header">
+                <label>Question {{i + 1}}:</label>
+                <!-- <button id="hide" class="primary-button" (click)="closeChatEvent.emit({element: childData, type: 'chat'})"> -->
+                <button id="hide" class="primary-button">
+                    <i class="material-icons">clear</i>
+                </button>
+            </div>
+            
+            <ng-container *ngIf="(childData.owner === currentUser) && (childData.releaseStatus === false)">
+                <textarea cdkTextareaAutosize [(ngModel)]="question.questionText" placeholder="Enter your question here..."></textarea>
+                <div *ngFor="let answer of question.answers" class="answer">
+                    <mat-radio-button *ngIf="question.type === 'Single Choice'">
+                        <textarea cdkTextareaAutosize [(ngModel)]="answer.text" placeholder="Enter answer option here..."></textarea>
+                    </mat-radio-button>
+                    <mat-checkbox *ngIf="question.type === 'Multiple Choice'">
+                        <textarea cdkTextareaAutosize [(ngModel)]="answer.text" placeholder="Enter answer option here..."></textarea>
+                    </mat-checkbox>
+                    <!-- <textarea *ngIf="question.type === 'Free Text'" disabled cdkTextareaAutosize placeholder="Your answer goes here..."></textarea> -->
+                </div>
+                <p class="primary-button">Add another answer</p>
+            </ng-container>
+            <ng-container *ngIf="childData.owner !== currentUser">
+                <p>{{question.questionText}}</p>
+                <!-- <textarea *ngIf="question.type === 'Free Text'" cdkTextareaAutosize [(ngModel)]="question.solution" placeholder="Your answer goes here..."></textarea> -->
+                <div *ngFor="let answer of question.answers" class="answer">
+                    <mat-radio-button *ngIf="question.type === 'Single Choice'">{{answer.text}}</mat-radio-button>
+                    <mat-checkbox *ngIf="question.type === 'Multiple Choice'">{{answer.text}}</mat-checkbox>
+                </div>
+            </ng-container>
+        </div>
+        <ng-container *ngIf="childData.owner === currentUser && childData.releaseStatus === false">
+            <!-- <mat-select [value]="" (selectionChange)="question.type = $event"> -->
+            <mat-select id="add-question" class="primary-button">
+                <mat-option [value]="type" *ngFor="let type of questionsTypes">{{type}}</mat-option>
+            </mat-select>
+        </ng-container>
+    </div>
+
+    <div id="poll-actions">
+        <button id="close" class="button secondary-button">Cancel</button>
+        <button id="save" class="button secondary-button">Save</button>
+        <button id="publish" class="button primary-button">Publish</button>
+    </div>
+</div>

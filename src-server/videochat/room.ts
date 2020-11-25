@@ -436,7 +436,7 @@ export class Room {
 
   initWebsocket(ws: WebSocket, initData: WebsocketUserInfo, sessionId: string, {email, displayName}: {email: string; displayName: string}) {
     const transports: WebRtcTransport[] = [];
-    let role: UserRole = UserRole.USER;
+    let role: UserRole = UserRole.MODERATOR; // SWITCH BACK!
     if (this.roomId.includes('moodle⛳')) {
       try {
         const decodedMoodleToken = jwt.decode(initData.moodleToken as string) as {users: MoodleUser[]; courseId: string; roomName: string};
