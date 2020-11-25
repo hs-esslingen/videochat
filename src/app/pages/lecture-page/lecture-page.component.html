@@ -34,7 +34,12 @@
         (closeChatEvent)="setSidebarDetail($event)"
     >
     </app-chat>
-    <app-poll *ngIf="detailType === 'poll'" class="detail"></app-poll>
+    <app-poll
+        *ngIf="detailType === 'poll'"
+        class="detail"
+        [childData]="sidebarDetail"
+    >
+    </app-poll>
 
     <app-master
         id="master"

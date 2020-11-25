@@ -2,13 +2,14 @@ import {Component, OnInit, Output, EventEmitter, OnDestroy, ChangeDetectorRef, I
 import {ChatService} from '../../helper/chat.service';
 import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
-import {Poll} from 'src/app/helper/poll.service';
 import {User, UserSignal, CurrentUser, UserConnectionState} from 'src/app/model/user';
 import {SettingsMasterComponent, settingMode} from '../settings-master/settings-master.component';
 import {RoomService} from 'src/app/helper/room.service';
 import {SignalService} from '../../helper/signal.service';
 import {Chat} from 'src/app/model/chat';
 import {MediaService} from 'src/app/helper/media.service';
+import {Poll} from 'src/app/model/poll';
+import {PollService} from 'src/app/helper/poll.service';
 
 @Component({
   selector: 'app-master',
@@ -16,9 +17,6 @@ import {MediaService} from 'src/app/helper/media.service';
   styleUrls: ['./master-sidebar.component.scss'],
 })
 export class MasterSidebarComponent implements OnInit, OnDestroy {
-  detailOpen?: boolean;
-  currentUser?: CurrentUser;
-  users: {[key: string]: User} = {};
   // Inputs for options
   @Input() autoGainControl!: boolean; // NEEDED?
   @Input() roomID!: string;
@@ -32,14 +30,21 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   chatSubscription?: Subscription;
   roomSubscription?: Subscription;
 
+  // Variables for users
+  users: {[key: string]: User} = {};
   activeUsers: User[] = [];
+  currentUser?: CurrentUser;
 
   //Variables for polls
   polls: Poll[] = [];
 
+  // Other variables
+  detailOpen?: boolean;
+
   constructor(
     readonly mediaService: MediaService,
     readonly chatService: ChatService,
+    readonly pollService: PollService,
     private dialog: MatDialog,
     private room: RoomService,
     private ref: ChangeDetectorRef,
@@ -80,14 +85,15 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     this.detailOpen = !this.detailOpen;
     if (obj instanceof Chat) obj.newMessage = false;
     if (obj instanceof Chat) this.sidebarSetDetailEvent.emit({element: obj, type: 'chat'});
-    // if (obj instanceof Poll) this.sidebarSetDetailEvent.emit({element: obj, type: 'poll'});
+    if (obj instanceof Poll) this.sidebarSetDetailEvent.emit({element: obj, type: 'poll'});
   }
 
   createPoll(): void {
-    console.log("You've created a new poll!");
+    // console.log("You've created a new poll!");
+    const poll = this.pollService.addPoll();
+    this.setSidebarDetailType(poll);
   }
 
-  // PUSH NEWLY CREATED CHAT TO CHAT SERVICE?
   openChat(user: User): void {
     let foundElement = this.chats[user.id];
     if (foundElement == null || foundElement.hidden) foundElement = this.chatService.addChat(user);
