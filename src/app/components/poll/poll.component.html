@@ -1,18 +1,28 @@
 <div id="content">
     <div id="header">
-        <h4 *ngIf="childData.title !== undefined" i18n>{{childData.title}}</h4>
-        <h4 *ngIf="childData.title === undefined" i18n>New Poll</h4>
+        <div class="horizontal">
+            <h4 *ngIf="childData.title !== undefined" i18n>{{childData.title}}</h4>
+            <h4 *ngIf="childData.title === undefined" i18n>New Poll</h4>
+            <div id="close">
+                <!-- <button id="hide" class="primary-button" (click)="closeChatEvent.emit({element: childData, type: 'chat'})"> -->
+                <button id="hide" class="primary-button">
+                    <i class="material-icons">clear</i>
+                </button>
+            </div>
+        </div>
 
-        <label>Name of the poll:</label>
-        <textarea cdkTextareaAutosize [(ngModel)]="childData.title" placeholder="Enter answer option here..."></textarea>
+        <div class="horizontal">
+            <label>Name of the poll:</label>
+            <textarea cdkTextareaAutosize [(ngModel)]="childData.title" placeholder="Set a name of your poll..."></textarea>
+        </div>
     </div>
 
     <div id="questions">
         <div *ngFor="let question of childData.questions; let i = index"  class="question">
-            <div id="question-header">
+            <div id="question-header" class="horizontal">
                 <label>Question {{i + 1}}:</label>
                 <!-- <button id="hide" class="primary-button" (click)="closeChatEvent.emit({element: childData, type: 'chat'})"> -->
-                <button id="hide" class="primary-button">
+                <button id="remove-question">
                     <i class="material-icons">clear</i>
                 </button>
             </div>
@@ -27,8 +37,13 @@
                         <textarea cdkTextareaAutosize [(ngModel)]="answer.text" placeholder="Enter answer option here..."></textarea>
                     </mat-checkbox>
                     <!-- <textarea *ngIf="question.type === 'Free Text'" disabled cdkTextareaAutosize placeholder="Your answer goes here..."></textarea> -->
+                    <button id="remove-answer">
+                        <i class="material-icons">clear</i>
+                    </button>
                 </div>
-                <p class="primary-button">Add another answer</p>
+                <button id="add-answer" class="primary-button" (click)="question.answers.push({})">
+                    Add another answer
+                </button>
             </ng-container>
             <ng-container *ngIf="childData.owner !== currentUser">
                 <p>{{question.questionText}}</p>

@@ -10,15 +10,23 @@ export class Poll {
   ) {}
 }
 
-export interface Question {
-  type: QuestionType;
-  questionText: string;
-  answers: Answer[];
-  solution: string | undefined;
+export class Question {
+  constructor(
+    // Nee ich will hier keinen Einzeiler
+    public type: QuestionType,
+    public questionText: string,
+    public answers: Answer[],
+    public solution: string | undefined
+  ) {}
+
+  addAnswer(): void {
+    console.log('Add answer!');
+    this.answers.push({});
+  }
 }
 
 export interface Answer {
-  text: string;
+  text?: string;
 }
 
 export enum QuestionType {
