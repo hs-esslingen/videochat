@@ -1,6 +1,6 @@
 export class Poll {
   constructor(
-    public id?: string,
+    public id: string,
     public title?: string,
     public releaseStatus?: boolean,
     public owner?: string, // Maybe User ID
@@ -30,7 +30,7 @@ export interface Answer {
 }
 
 export enum QuestionType {
-  SINGLE_CHOICE = 'Single Choice',
-  MULTIPLE_CHOICE = 'Multiple Choice',
-  FREE_TEXT = 'Free Text',
+  SINGLE_CHOICE = 'SINGLE_CHOICE',
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+  FREE_TEXT = 'FREE_TEXT',
 }

@@ -39,6 +39,8 @@ import {LinkifyPipe} from './helper/linkify.pipe';
 import {SettingsVideoComponent} from './components/settings-video/settings-video.component';
 import {SettingsAudioComponent} from './components/settings-audio/settings-audio.component';
 import {SettingsUserComponent} from './components/settings-user/settings-user.component';
+import {PollQuestionComponent} from './components/poll-question/poll-question.component';
+import {TimestampPipe} from './helper/timestamp.pipe';
 
 @NgModule({
   declarations: [
@@ -67,6 +69,8 @@ import {SettingsUserComponent} from './components/settings-user/settings-user.co
     SettingsVideoComponent,
     SettingsAudioComponent,
     SettingsUserComponent,
+    PollQuestionComponent,
+    TimestampPipe,
   ],
   imports: [
     BrowserModule,

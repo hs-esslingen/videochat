@@ -21,7 +21,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   @Input() autoGainControl!: boolean; // NEEDED?
   @Input() roomID!: string;
 
-  @Output() sidebarSetDetailEvent = new EventEmitter<{element: Chat; type: 'chat'} | {element: Poll; type: 'poll'}>();
+  @Output() sidebarSetDetailEvent = new EventEmitter<{element?: string; type: 'chat'} | {element?: string; type: 'poll'}>();
   @Output() sidebarNicknameEvent = new EventEmitter<string>();
   @Output() sidebarDisconnectEvent = new EventEmitter<null>();
 
@@ -84,8 +84,8 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     // console.log('setSidebarDetailType reached');
     this.detailOpen = !this.detailOpen;
     if (obj instanceof Chat) obj.newMessage = false;
-    if (obj instanceof Chat) this.sidebarSetDetailEvent.emit({element: obj, type: 'chat'});
-    if (obj instanceof Poll) this.sidebarSetDetailEvent.emit({element: obj, type: 'poll'});
+    if (obj instanceof Chat) this.sidebarSetDetailEvent.emit({element: obj.id, type: 'chat'});
+    if (obj instanceof Poll) this.sidebarSetDetailEvent.emit({element: obj.id, type: 'poll'});
   }
 
   createPoll(): void {

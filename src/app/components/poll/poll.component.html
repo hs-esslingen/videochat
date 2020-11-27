@@ -1,10 +1,10 @@
 <div id="content">
     <div id="header">
         <div class="horizontal">
-            <h4 *ngIf="childData.title !== undefined" i18n>{{childData.title}}</h4>
-            <h4 *ngIf="childData.title === undefined" i18n>New Poll</h4>
+            <h4 *ngIf="poll.title !== undefined" i18n>{{poll.title}}</h4>
+            <h4 *ngIf="poll.title === undefined" i18n>New Poll</h4>
             <div id="close">
-                <!-- <button id="hide" class="primary-button" (click)="closeChatEvent.emit({element: childData, type: 'chat'})"> -->
+                <!-- <button id="hide" class="primary-button" (click)="closeChatEvent.emit({element: poll, type: 'chat'})"> -->
                 <button id="hide" class="primary-button">
                     <i class="material-icons">clear</i>
                 </button>
@@ -13,48 +13,15 @@
 
         <div class="horizontal">
             <label>Name of the poll:</label>
-            <textarea cdkTextareaAutosize [(ngModel)]="childData.title" placeholder="Set a name of your poll..."></textarea>
+            <textarea cdkTextareaAutosize [(ngModel)]="poll.title" placeholder="Set a name of your poll..."></textarea>
         </div>
     </div>
 
     <div id="questions">
-        <div *ngFor="let question of childData.questions; let i = index"  class="question">
-            <div id="question-header" class="horizontal">
-                <label>Question {{i + 1}}:</label>
-                <!-- <button id="hide" class="primary-button" (click)="closeChatEvent.emit({element: childData, type: 'chat'})"> -->
-                <button id="remove-question">
-                    <i class="material-icons">clear</i>
-                </button>
-            </div>
-            
-            <ng-container *ngIf="(childData.owner === currentUser) && (childData.releaseStatus === false)">
-                <textarea cdkTextareaAutosize [(ngModel)]="question.questionText" placeholder="Enter your question here..."></textarea>
-                <div *ngFor="let answer of question.answers" class="answer">
-                    <mat-radio-button *ngIf="question.type === 'Single Choice'">
-                        <textarea cdkTextareaAutosize [(ngModel)]="answer.text" placeholder="Enter answer option here..."></textarea>
-                    </mat-radio-button>
-                    <mat-checkbox *ngIf="question.type === 'Multiple Choice'">
-                        <textarea cdkTextareaAutosize [(ngModel)]="answer.text" placeholder="Enter answer option here..."></textarea>
-                    </mat-checkbox>
-                    <!-- <textarea *ngIf="question.type === 'Free Text'" disabled cdkTextareaAutosize placeholder="Your answer goes here..."></textarea> -->
-                    <button id="remove-answer">
-                        <i class="material-icons">clear</i>
-                    </button>
-                </div>
-                <button id="add-answer" class="primary-button" (click)="question.answers.push({})">
-                    Add another answer
-                </button>
-            </ng-container>
-            <ng-container *ngIf="childData.owner !== currentUser">
-                <p>{{question.questionText}}</p>
-                <!-- <textarea *ngIf="question.type === 'Free Text'" cdkTextareaAutosize [(ngModel)]="question.solution" placeholder="Your answer goes here..."></textarea> -->
-                <div *ngFor="let answer of question.answers" class="answer">
-                    <mat-radio-button *ngIf="question.type === 'Single Choice'">{{answer.text}}</mat-radio-button>
-                    <mat-checkbox *ngIf="question.type === 'Multiple Choice'">{{answer.text}}</mat-checkbox>
-                </div>
-            </ng-container>
+        <div *ngFor="let question of poll.questions; let i = index"  class="question">
+            <app-poll-question [question]="question"></app-poll-question>
         </div>
-        <ng-container *ngIf="childData.owner === currentUser && childData.releaseStatus === false">
+        <ng-container *ngIf="poll.owner === currentUser && poll.releaseStatus === false">
             <!-- <mat-select [value]="" (selectionChange)="question.type = $event"> -->
             <mat-select id="add-question" class="primary-button">
                 <mat-option [value]="type" *ngFor="let type of questionsTypes">{{type}}</mat-option>

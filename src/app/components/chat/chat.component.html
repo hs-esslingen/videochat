@@ -1,9 +1,9 @@
 <div id="content">
     <div id="header">
-        <h4 *ngIf="childData.id !== undefined" i18n>Your chat with {{ users[childData.id]?.nickname }}</h4>
-        <h4 *ngIf="childData.id === undefined" i18n>Public Chat</h4>
+        <h4 *ngIf="childData !== undefined" i18n>Your chat with {{ users[childData]?.nickname }}</h4>
+        <h4 *ngIf="childData === undefined" i18n>Public Chat</h4>
         <div id="close">
-            <button *ngIf="childData.id !== undefined" id="delete" class="secondary-button" (click)="deleteChat()">
+            <button *ngIf="childData !== undefined" id="delete" class="secondary-button" (click)="deleteChat()">
                 <i class="material-icons">delete_outline</i>
             </button>
             <button id="hide" class="primary-button" (click)="closeChatEvent.emit({element: childData, type: 'chat'})"><i
@@ -12,12 +12,12 @@
     </div>
 
     <div id="messages">
-        <div *ngFor="let message of childData.messages" class="message">
+        <div *ngFor="let message of chat.messages" class="message">
             <div class="messageInfo">
                 <label
                 [class.user]="message.from === currentUser?.id">{{ message.from === currentUser?.id ? currentUser?.nickname : users[message.from]?.nickname }}
                 </label>
-                <p i18n [class.user]="message.from === currentUser?.id">{{ timestampToHMS(message.time) }}</p>
+                <p i18n [class.user]="message.from === currentUser?.id" [innerHTML]="message.time | timestamp"></p>
             </div>
 
             <p class="chat-message" [innerHTML]="message.message | linkify | sanitizeHtml"></p>
