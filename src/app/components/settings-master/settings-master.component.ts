@@ -1,5 +1,5 @@
 import {AfterViewInit} from '@angular/core';
-import {Component, OnInit, Inject, ViewChild, ElementRef} from '@angular/core';
+import {Component, OnInit, Inject, ViewChild} from '@angular/core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {LocalMediaService} from 'src/app/helper/local-media.service';
 import {MediaService} from 'src/app/helper/media.service';
