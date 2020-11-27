@@ -23,6 +23,11 @@ export class PollService {
       false,
       false
     );
+    this.polls[poll.id] = poll;
     return poll;
+  }
+
+  public getPoll(id: string): Poll {
+    return this.polls[id];
   }
 }

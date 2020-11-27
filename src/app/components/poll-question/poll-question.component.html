@@ -1,0 +1,41 @@
+<div id="question-header" class="horizontal">
+    <ng-container *ngIf="editMode">
+        <textarea cdkTextareaAutosize [(ngModel)]="question.questionText" placeholder="Enter your question here..."></textarea>
+    </ng-container>
+    <ng-container *ngIf="!editMode">
+        <div cdkTextareaAutosize [(ngModel)]="question.questionText" placeholder="Enter your question here..."></div>
+    </ng-container>
+    <!-- <button id="hide" class="primary-button" (click)="closeChatEvent.emit({element: childData, type: 'chat'})"> -->
+    <button id="remove-question">
+        <i class="material-icons">clear</i>
+    </button>
+</div>
+
+<ng-container *ngIf="editMode">
+    <div *ngFor="let answer of question.answers" class="answer">
+        <mat-radio-button *ngIf="question.type === 'SINGLE_CHOICE'">
+            <textarea cdkTextareaAutosize [(ngModel)]="answer.text" placeholder="Enter answer option here..."></textarea>
+        </mat-radio-button>
+        <mat-checkbox *ngIf="question.type === 'MULTIPLE_CHOICE'">
+            <textarea cdkTextareaAutosize [(ngModel)]="answer.text" placeholder="Enter answer option here..."></textarea>
+        </mat-checkbox>
+        <!-- <textarea *ngIf="question.type === 'FREE_TEXT'" disabled cdkTextareaAutosize placeholder="Your answer goes here..."></textarea> -->
+        <button id="remove-answer">
+            <i class="material-icons">clear</i>
+        </button>
+    </div>
+    <button id="add-answer" class="primary-button" (click)="question.answers.push({})">
+        Add another answer
+    </button>
+</ng-container>
+<ng-container *ngIf="!editMode">
+    <p>{{question.questionText}}</p>
+    <!-- <textarea *ngIf="question.type === 'FREE_TEXT'" cdkTextareaAutosize [(ngModel)]="question.solution" placeholder="Your answer goes here..."></textarea> -->
+    <div *ngFor="let answer of question.answers" class="answer">
+        <mat-radio-button *ngIf="question.type === 'SINGLE_CHOICE'">{{answer.text}}</mat-radio-button>
+        <mat-checkbox *ngIf="question.type === 'MULTIPLE_CHOICE'">{{answer.text}}</mat-checkbox>
+    </div>
+</ng-container>
+<button id="add-answer" class="primary-button" (click)="editMode = !editMode">
+    test
+</button>

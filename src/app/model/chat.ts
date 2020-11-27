@@ -4,7 +4,6 @@ export class Chat {
     public messages: Message[] = [],
     public newMessage: boolean = false,
     public partnerId?: string,
-    public opened: boolean = false,
     public hidden: boolean = false
   ) {}
 }

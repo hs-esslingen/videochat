@@ -13,6 +13,7 @@ export class ChatService {
   private userId: string;
   private roomId: string;
   private chatSubject: Subject<{[id: string]: Chat}>;
+  private openChat?: string;
 
   constructor(private api: ApiService, private ws: WsService) {
     this.chatSubject = new Subject();
@@ -41,6 +42,11 @@ export class ChatService {
 
   public getChats(): {[id: string]: Chat} {
     return this.chats;
+  }
+
+  public getChat(id: string): Chat {
+    if (id == null) return this.chats['public_chat'];
+    return this.chats[id];
   }
 
   public subscribe(callback: (v: {[id: string]: Chat}) => void): Subscription {
@@ -76,10 +82,9 @@ export class ChatService {
     if (chat.id == null) this.chats['public_chat'].newMessage = false;
     else this.chats[chat.id].newMessage = false;
   }
-  public chatToggleOpen(chat: Chat): void {
-    if (chat.id == null) this.chats['public_chat'].opened = !this.chats['public_chat'].opened;
-    else this.chats[chat.id].opened = !this.chats[chat.id].opened;
-    console.log('Opened / Closed Chat with ' + chat.id);
+
+  public setOpenChat(chatId?: string): void {
+    this.openChat = chatId;
   }
 
   private addMessage(message: Message) {
@@ -90,11 +95,12 @@ export class ChatService {
       // private chat
       if (this.chats[partner] == null) this.chats[partner] = new Chat(partner);
       chat = this.chats[partner];
+      if (this.openChat !== partner) chat.newMessage = true;
     } else {
       chat = this.chats['public_chat'];
+      if (this.openChat !== 'public_chat') chat.newMessage = true;
     }
     chat.messages.push(message);
-    if (!chat.opened) chat.newMessage = true;
     chat.hidden = false;
   }
 
