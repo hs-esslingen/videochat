@@ -23,6 +23,35 @@
 
         <app-toolbar id="toolbar" [class.hidden]="isToolbarHidden"></app-toolbar>
         <img id="no_video_img" *ngIf="connection.state === 1 && numWebcams === 0 && screenShareUser == null" alt="No ones there" />
+
+        <div id="status">
+            <div id="no-user" class="infobox" *ngIf="connection.state === 1 && users != undefined && getKeys(users).length === 0">
+                <h2 i18n>Currently you are the only one in this room!</h2>
+                <input type="text" readonly [value]="roomUrl" (click)="$event.target.focus(); $event.target.select()" />
+            </div>
+            <div id="duplicate-session" class="infobox" *ngIf="connection.duplicateSession">
+                <h2 i18n>There is already a connection to this room</h2>
+                <button i18n class="button" (click)="reload()">Try again</button>
+            </div>
+            <div class="infobox" *ngIf="connection.moodleError">
+                <h2 i18n>Connection to room failed</h2>
+                <button i18n class="button" (click)="reload()">Try again</button>
+            </div>
+            <div class="infobox" *ngIf="connection.state === 3">
+                <h2 i18n>Lost connection</h2>
+                <div class="spinner">
+                    <mat-spinner diameter="30"></mat-spinner>
+                    <span i18n>Reconnecting...</span>
+                </div>
+            </div>
+            <div class="infobox" *ngIf="connection.state === 0">
+                <h2 i18n>Connecting to the room</h2>
+                <div class="spinner">
+                    <mat-spinner diameter="30"></mat-spinner>
+                    <span i18n>Please wait...</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <app-chat
@@ -34,12 +63,7 @@
         (closeChatEvent)="setSidebarDetail($event)"
     >
     </app-chat>
-    <app-poll
-        *ngIf="detailType === 'poll'"
-        class="detail"
-        [childData]="sidebarDetail"
-    >
-    </app-poll>
+    <app-poll *ngIf="detailType === 'poll'" class="detail" [childData]="sidebarDetail"> </app-poll>
 
     <app-master
         id="master"
@@ -49,33 +73,4 @@
         (sidebarToggleAutogainEvent)="mediaService.toggleAutoGainControl()"
         [class.detail-open]="detailType != undefined"
     ></app-master>
-</div>
-
-<div id="status">
-    <div id="no-user" class="infobox" *ngIf="connection.state === 1 && users != undefined && getKeys(users).length === 0">
-        <h2 i18n>Currently you are the only one in this room!</h2>
-        <input type="text" readonly [value]="roomUrl" (click)="$event.target.focus(); $event.target.select()" />
-    </div>
-    <div id="duplicate-session" class="infobox" *ngIf="connection.duplicateSession">
-        <h2 i18n>There is already a connection to this room</h2>
-        <button i18n class="button" (click)="reload()">Try again</button>
-    </div>
-    <div class="infobox" *ngIf="connection.moodleError">
-        <h2 i18n>Connection to room failed</h2>
-        <button i18n class="button" (click)="reload()">Try again</button>
-    </div>
-    <div class="infobox" *ngIf="connection.state === 3">
-        <h2 i18n>Lost connection</h2>
-        <div class="spinner">
-            <mat-spinner diameter="30"></mat-spinner>
-            <span i18n>Reconnecting...</span>
-        </div>
-    </div>
-    <div class="infobox" *ngIf="connection.state === 0">
-        <h2 i18n>Connecting to the room</h2>
-        <div class="spinner">
-            <mat-spinner diameter="30"></mat-spinner>
-            <span i18n>Please wait...</span>
-        </div>
-    </div>
 </div>
