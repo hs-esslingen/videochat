@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Poll, QuestionType} from '../model/poll';
+import {Poll, Question, QuestionType} from '../model/poll';
 
 @Injectable({
   providedIn: 'root',
@@ -16,13 +16,8 @@ export class PollService {
       false,
       undefined,
       [
-        {questionText: 'Magst du Bratwurst?', type: QuestionType.SINGLE_CHOICE, answers: [{text: 'Ja'}, {text: 'Nein'}], solution: undefined},
-        {
-          questionText: 'Wer ist Deutsch?',
-          type: QuestionType.MULTIPLE_CHOICE,
-          answers: [{text: 'Merkel'}, {text: 'Tobi'}, {text: 'Trump'}],
-          solution: undefined,
-        },
+        new Question(QuestionType.SINGLE_CHOICE, 'Magst du Bratwurst?', [{text: 'Ja'}, {text: 'Nein'}], undefined),
+        new Question(QuestionType.MULTIPLE_CHOICE, 'Wer ist Deutsch?', [{text: 'Merkel'}, {text: 'Tobi'}, {text: 'Trump'}], undefined),
         // {questionText: 'Worauf haste bock?', type: QuestionType.FREE_TEXT, answers: [], solution: undefined},
       ],
       false,
