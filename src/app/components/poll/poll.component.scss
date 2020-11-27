@@ -15,7 +15,7 @@ textarea {
   border-radius: 4px;
   font-size: 14px;
   font-family: 'Open Sans', sans-serif;
-
+  width: calc(100% - 16px);
   &:focus {
     outline: none;
   }
@@ -25,7 +25,7 @@ textarea {
 
 #content {
   width: 100%;
-  height: 100%;
+  height: calc(100% - 50px);
   display: flex;
   flex-direction: column;
 
@@ -34,6 +34,12 @@ textarea {
   .horizontal {
     display: flex;
     justify-content: space-between;
+  }
+
+  .title {
+    background-color: mat-color($app-primary, lighter_2);
+    border-radius: 4px;
+    padding: 0px 8px;
   }
 
   #header {
@@ -66,13 +72,6 @@ textarea {
     overflow-y: auto;
     padding-top: 8px;
 
-    .question {
-      background-color: mat-color($app-primary, lighter_2);
-      border-radius: 4px;
-      margin: 0px 8px 16px 8px;
-      padding: 8px 8px;
-    }
-
     /* width */
     &::-webkit-scrollbar {
       width: 12px;
@@ -85,20 +84,29 @@ textarea {
 
     /* Handle */
     &::-webkit-scrollbar-thumb {
-      background: map-get($app-individual, app-sidebar);
+      background: map-get($app-primary, lighter_2);
       border-radius: 6px;
       border: 2px solid;
-      border-color: mat-color($app-primary, darker_2);
+      border-color: mat-color($app-primary, lighter_2);
     }
 
     /* Handle on hover */
     &::-webkit-scrollbar-thumb:hover {
-      background: mat-color($app-primary, lighter_3);
+      background: mat-color($app-primary, lighter_2);
     }
   }
 
-  #poll-actions {
-    background-color: mat-color($app-primary, lighter_2);
-    height: 50px;
+  .add-element {
+    margin-right: auto;
+    margin-left: auto;
+    display: flex;
+    padding: 8px;
+    border-radius: 20px;
+    margin-right: auto;
+    margin-left: auto;
   }
+}
+#poll-actions {
+  background-color: mat-color($app-primary, lighter_2);
+  height: 50px;
 }
