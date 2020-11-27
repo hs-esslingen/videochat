@@ -12,7 +12,7 @@ textarea {
   padding: 8px;
   margin: 8px 8px 2px 0px;
   min-height: 18px;
-  border-radius: 17px;
+  border-radius: 4px;
   font-size: 14px;
   font-family: 'Open Sans', sans-serif;
 
@@ -68,7 +68,7 @@ textarea {
 
     .question {
       background-color: mat-color($app-primary, lighter_2);
-      border-radius: 17px;
+      border-radius: 4px;
       margin: 0px 8px 16px 8px;
       padding: 8px 8px;
     }
