@@ -28,4 +28,8 @@ export class PollComponent implements OnInit, OnChanges {
       this.poll = this.pollService.getPoll(this.childData);
     }
   }
+
+  addElement() {
+    this.pollService.addElement(this.poll.id);
+  }
 }

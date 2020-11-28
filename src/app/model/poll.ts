@@ -10,19 +10,12 @@ export class Poll {
   ) {}
 }
 
-export class Question {
-  constructor(
-    // Nee ich will hier keinen Einzeiler
-    public type: QuestionType,
-    public questionText: string,
-    public answers: Answer[],
-    public solution: string | undefined
-  ) {}
-
-  addAnswer(): void {
-    console.log('Add answer!');
-    this.answers.push({});
-  }
+export interface Question {
+  id: string;
+  type: QuestionType;
+  questionText: string;
+  answers: Answer[];
+  solution: string | undefined;
 }
 
 export interface Answer {

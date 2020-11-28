@@ -40,6 +40,7 @@ textarea {
     background-color: mat-color($app-primary, lighter_2);
     border-radius: 4px;
     padding: 0px 8px;
+    margin: 0 8px 8px 8px;
   }
 
   #header {
@@ -102,8 +103,8 @@ textarea {
     display: flex;
     padding: 8px;
     border-radius: 20px;
-    margin-right: auto;
-    margin-left: auto;
+    margin: 8px auto 32px auto;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   }
 }
 #poll-actions {

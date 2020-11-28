@@ -4,7 +4,7 @@
             <div class="title">
                 <textarea cdkTextareaAutosize [(ngModel)]="question.questionText" placeholder="Enter your question here..."></textarea>
             </div>
-            <button id="remove-question">
+            <button id="remove-question" (click)="deleteElement()">
                 <i class="material-icons">delete</i>
             </button>
         </ng-container>
@@ -44,6 +44,14 @@
             <button id="remove-answer">
                 <i class="material-icons">clear</i>
             </button>
+        </div>
+        <div class="answer">
+            <mat-radio-button disabled *ngIf="question.type === 'SINGLE_CHOICE'">
+                <textarea cdkTextareaAutosize [(ngModel)]="newElement" placeholder="Enter answer option here..."></textarea>
+            </mat-radio-button>
+            <mat-checkbox disabled *ngIf="question.type === 'MULTIPLE_CHOICE'">
+                <textarea cdkTextareaAutosize [(ngModel)]="newElement" placeholder="Enter answer option here..."></textarea>
+            </mat-checkbox>
         </div>
     </div>
     <div *ngIf="!editMode" class="answers">
