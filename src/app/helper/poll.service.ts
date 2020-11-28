@@ -16,8 +16,20 @@ export class PollService {
       false,
       undefined,
       [
-        new Question(QuestionType.SINGLE_CHOICE, 'Magst du Bratwurst?', [{text: 'Ja'}, {text: 'Nein'}], undefined),
-        new Question(QuestionType.MULTIPLE_CHOICE, 'Wer ist Deutsch?', [{text: 'Merkel'}, {text: 'Tobi'}, {text: 'Trump'}], undefined),
+        {
+          type: QuestionType.SINGLE_CHOICE,
+          questionText: 'Magst du Bratwurst?',
+          answers: [{text: 'Ja'}, {text: 'Nein'}],
+          solution: undefined,
+          id: Math.random().toString(36).substr(2, 8),
+        },
+        {
+          type: QuestionType.MULTIPLE_CHOICE,
+          questionText: 'Wer ist Deutsch?',
+          answers: [{text: 'Merkel'}, {text: 'Tobi'}, {text: 'Trump'}],
+          solution: undefined,
+          id: Math.random().toString(36).substr(2, 8),
+        },
         // {questionText: 'Worauf haste bock?', type: QuestionType.FREE_TEXT, answers: [], solution: undefined},
       ],
       false,
@@ -29,5 +41,15 @@ export class PollService {
 
   public getPoll(id: string): Poll {
     return this.polls[id];
+  }
+
+  public addElement(id: string): Question {
+    const newQuestion = {type: QuestionType.SINGLE_CHOICE, questionText: '', answers: [], solution: undefined, id: Math.random().toString(36).substr(2, 8)};
+    this.polls[id].questions.push(newQuestion);
+    return newQuestion;
+  }
+
+  public deleteElement(pollId: string, questionId: string) {
+    this.polls[pollId].questions = this.polls[pollId].questions.filter(item => item.id !== questionId);
   }
 }
