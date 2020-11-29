@@ -217,6 +217,7 @@ export class Room {
   }
 
   submitPollResponse(sessionID: string, result: PollResults) {
+    console.log(result);
     if (this.users[sessionID] == null) throw new Error('User is not inizialized');
     if (this.polls[result.pollId] == null) throw new Error('Poll does not exist');
     const user = this.users[sessionID];
@@ -280,6 +281,7 @@ export class Room {
       title: poll.title,
       state: poll.state,
       owner: poll.owner,
+      responded: poll.responders?.includes(uid || ''),
       questions: poll.questions?.map(pollQuestion => {
         // hide solution and answers of others
         let results = undefined;

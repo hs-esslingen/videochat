@@ -115,6 +115,23 @@ export class PollService {
     this.pollSubject.next(Object.values(this.polls));
   }
 
+  public async submitPoll(pollId: string, data: {[key: string]: string | string[] | {[key: string]: boolean}}) {
+    // transform data
+    for (const key in data) {
+      const obj = data[key];
+      if (typeof obj === 'object' && !Array.isArray(obj)) {
+        const items = Object.keys(obj).filter(item => obj[item]);
+        data[key] = items;
+      }
+    }
+    await this.api.submitPollResponse(this.roomId, {
+      pollId: pollId,
+      questions: data as {[questionId: string]: string | string[]},
+    });
+    this.forms[pollId].disable();
+    this.polls[pollId].responded = true;
+  }
+
   public getPoll(id: string): Poll {
     return this.polls[id];
   }

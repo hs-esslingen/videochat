@@ -1,4 +1,4 @@
-import {Input, OnChanges, SimpleChanges} from '@angular/core';
+import {EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {PollService} from 'src/app/helper/poll.service';
@@ -12,11 +12,12 @@ import {CurrentUser} from 'src/app/model/user';
 })
 export class PollComponent implements OnInit, OnChanges {
   @Input() childData!: string;
-  poll!: Poll;
   @Input() currentUser?: CurrentUser;
+  questionsTypes!: string[];
+  poll!: Poll;
   form?: FormGroup;
 
-  questionsTypes!: string[];
+  @Output() closePollEvent = new EventEmitter<{element: string; type: 'poll'}>();
 
   constructor(private pollService: PollService) {
     pollService.subscribe(() => {
@@ -53,7 +54,8 @@ export class PollComponent implements OnInit, OnChanges {
   }
 
   async submitPoll() {
-    console.log(this.form?.valid);
-    console.log(this.form?.value);
+    if (this.form?.valid) {
+      this.pollService.submitPoll(this.poll.id, this.form.value);
+    }
   }
 }
