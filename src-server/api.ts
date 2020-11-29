@@ -182,7 +182,7 @@ export class Api {
         const data = await request.json();
         const courses = data.results
           .filter((item: unknown) => Object.prototype.hasOwnProperty.call(item, 'enrollment'))
-          .map((item: any) => {
+          .map((item: {name: string; id: string}) => {
             return {
               fullname: item.name,
               id: item.id,
