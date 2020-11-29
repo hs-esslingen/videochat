@@ -20,8 +20,14 @@ export interface Question {
   solution: string | undefined;
 }
 
+export interface PollResults {
+  pollId: string;
+  questions: {[questionId: string]: string | string[]};
+}
+
 export interface Answer {
   text?: string;
+  id: string;
 }
 
 export enum PollState {

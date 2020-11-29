@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Poll, PollState, Question, QuestionType} from '../model/poll';
+import {WsService} from './ws.service';
 
 @Injectable({
   providedIn: 'root',
@@ -7,7 +8,18 @@ import {Poll, PollState, Question, QuestionType} from '../model/poll';
 export class PollService {
   private polls: {[id: string]: Poll} = {};
 
-  constructor() {}
+  constructor(ws: WsService) {
+    ws.messageSubject.subscribe(message => {
+      switch (message.type) {
+        case 'poll-update':
+          break;
+        case 'poll-publish':
+          break;
+        case 'poll-close':
+          break;
+      }
+    });
+  }
 
   public addPoll(): Poll {
     const poll = new Poll(
@@ -20,14 +32,21 @@ export class PollService {
         {
           type: QuestionType.SINGLE_CHOICE,
           questionText: 'Magst du Bratwurst?',
-          answers: [{text: 'Ja'}, {text: 'Nein'}],
+          answers: [
+            {text: 'Ja', id: Math.random().toString(36).substr(2, 8)},
+            {text: 'Nein', id: Math.random().toString(36).substr(2, 8)},
+          ],
           solution: undefined,
           id: Math.random().toString(36).substr(2, 8),
         },
         {
           type: QuestionType.MULTIPLE_CHOICE,
           questionText: 'Wer ist Deutsch?',
-          answers: [{text: 'Merkel'}, {text: 'Tobi'}, {text: 'Trump'}],
+          answers: [
+            {text: 'Merkel', id: Math.random().toString(36).substr(2, 8)},
+            {text: 'Tobi', id: Math.random().toString(36).substr(2, 8)},
+            {text: 'Trump', id: Math.random().toString(36).substr(2, 8)},
+          ],
           solution: undefined,
           id: Math.random().toString(36).substr(2, 8),
         },

@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {TransportOptions, RtpParameters, RtpCapabilities, DtlsParameters, IceParameters} from 'mediasoup-client/lib/types';
 import {User, UserSignal, MicrophoneState} from '../model/user';
 import {Message} from '../model/chat';
+import {Poll, PollResults} from '../model/poll';
 
 @Injectable({
   providedIn: 'root',
@@ -196,6 +197,34 @@ export class ApiService {
         to,
       })
       .toPromise() as Promise<object>;
+  }
+
+  public publishPoll(roomId: string, poll: Poll) {
+    return this.http
+      .post(`/api/room/${roomId}/poll-publish`, {
+        poll,
+      })
+      .toPromise() as Promise<object>;
+  }
+
+  public submitPollResponse(roomId: string, pollResults: PollResults) {
+    return this.http
+      .post(`/api/room/${roomId}/poll-response-submit`, {
+        pollResults,
+      })
+      .toPromise() as Promise<object>;
+  }
+
+  public closePoll(roomId: string, pollId: string) {
+    return this.http
+      .post(`/api/room/${roomId}/poll-publish`, {
+        pollId,
+      })
+      .toPromise() as Promise<object>;
+  }
+
+  public getPolls(roomId: string) {
+    return this.http.get(`/api/room/${roomId}/polls`).toPromise() as Promise<Poll[]>;
   }
 
   public setUserSignal(roomId: string, signal: UserSignal) {
