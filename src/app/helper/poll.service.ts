@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Poll, Question, QuestionType} from '../model/poll';
+import {Poll, PollState, Question, QuestionType} from '../model/poll';
 
 @Injectable({
   providedIn: 'root',
@@ -12,8 +12,9 @@ export class PollService {
   public addPoll(): Poll {
     const poll = new Poll(
       '2',
+      new Date(Date.now()).toISOString(),
       undefined,
-      false,
+      PollState.CREATED,
       undefined,
       [
         {

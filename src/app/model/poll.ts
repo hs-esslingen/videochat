@@ -1,12 +1,14 @@
 export class Poll {
   constructor(
     public id: string,
+    public createdAt: string,
     public title?: string,
-    public releaseStatus?: boolean,
-    public owner?: string, // Maybe User ID
+    public state: PollState = 0,
+    public owner?: string, // User ID
     public questions: Question[] = [],
     public newMessage: boolean = false,
-    public opened: boolean = false
+    public opened: boolean = false,
+    public publishedAt?: string
   ) {}
 }
 
@@ -20,6 +22,12 @@ export interface Question {
 
 export interface Answer {
   text?: string;
+}
+
+export enum PollState {
+  CREATED = 0,
+  RELEASED = 1,
+  CLOSED = 2,
 }
 
 export enum QuestionType {
