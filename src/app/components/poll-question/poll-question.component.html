@@ -33,7 +33,7 @@
                 >
             </mat-select>
         </mat-form-field>
-        <div *ngFor="let answer of getEditQuestions(question.answers.length); let index = index" class="answer">
+        <div *ngFor="let answer of colums; let index = index" class="answer">
             <mat-radio-button disabled *ngIf="question.type === 'SINGLE_CHOICE'">
                 <textarea
                     (click)="addAnswer(index)"

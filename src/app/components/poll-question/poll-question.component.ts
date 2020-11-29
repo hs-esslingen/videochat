@@ -12,23 +12,27 @@ export class PollQuestionComponent implements OnInit {
   @Input() pollId!: string;
   @Input() editMode = true;
   newElement = '';
+  colums: object[] = [];
 
   constructor(private pollService: PollService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.colums = new Array(this.question.answers.length + 1);
+  }
 
   deleteElement() {
     this.pollService.deleteElement(this.pollId, this.question.id);
   }
 
-  getEditQuestions(answers: number) {
-    return new Array(answers + 1);
+  updateAnswersLength() {
+    this.colums = new Array(this.question.answers.length + 1);
   }
 
   addAnswer(index: number) {
     if (index === this.question.answers.length) {
       this.question.answers.push({text: this.newElement, id: Math.random().toString(36).substr(2, 8)});
       this.newElement = '';
+      this.updateAnswersLength();
     }
   }
   changeEvent(value: string, index: number) {
@@ -37,5 +41,6 @@ export class PollQuestionComponent implements OnInit {
 
   deleteAnswer(index: number) {
     this.question.answers.splice(index, 1);
+    this.updateAnswersLength();
   }
 }
