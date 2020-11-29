@@ -3,7 +3,7 @@ import * as mediasoup from 'mediasoup';
 import * as WebSocket from 'ws';
 import {MyWebSocket} from './server';
 import {getLogger} from 'log4js';
-import {Room, UserRole, MoodleUser} from './videochat/room';
+import {Room, UserRole, MoodleUser, Poll, PollResults} from './videochat/room';
 import fetch from 'node-fetch';
 import * as bodyParser from 'body-parser';
 import * as jwt from 'jsonwebtoken';
@@ -64,6 +64,42 @@ export class Api {
       try {
         const messages = Room.getRoom(req.params.roomId).getMessages(req.sessionID as string);
         res.json(messages);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+    });
+
+    this.api.post('/room/:roomId/poll-publish', async (req, res) => {
+      try {
+        Room.getRoom(req.params.roomId).publishPoll(req.sessionID as string, req.body.poll as Poll);
+        res.status(201).send();
+      } catch (e) {
+        res.status(500).send(e);
+      }
+    });
+
+    this.api.post('/room/:roomId/poll-response-submit', async (req, res) => {
+      try {
+        Room.getRoom(req.params.roomId).submitPollResponse(req.sessionID as string, req.body.result as PollResults);
+        res.status(201).send();
+      } catch (e) {
+        res.status(500).send(e);
+      }
+    });
+
+    this.api.post('/room/:roomId/poll-close', async (req, res) => {
+      try {
+        Room.getRoom(req.params.roomId).closePoll(req.sessionID as string, req.body.pollId);
+        res.status(201).send();
+      } catch (e) {
+        res.status(500).send(e);
+      }
+    });
+
+    this.api.get('/room/:roomId/polls', async (req, res) => {
+      try {
+        const polls = Room.getRoom(req.params.roomId).getPolls(req.sessionID as string);
+        res.json(polls);
       } catch (e) {
         res.status(500).send(e);
       }

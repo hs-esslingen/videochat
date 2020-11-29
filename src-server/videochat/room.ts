@@ -17,6 +17,7 @@ export class Room {
   private producers: {[id: string]: mediasoup.types.Producer} = {};
   private websockets: WebSocket[] = [];
   private users: {[sessionId: string]: User} = {};
+  private polls: {[pollId: string]: Poll} = {};
   private currentScreenshare?: mediasoup.types.Producer;
   private audioLevelObserver: AudioLevelObserver | undefined;
   private checkConnectionInterval: NodeJS.Timeout;
@@ -149,7 +150,6 @@ export class Room {
 
     const m: Message = {
       from: user.id,
-      // send to User.id
       to,
       time: Date.now(),
       message,
@@ -195,6 +195,99 @@ export class Room {
 
     this.messages.push(m);
     return;
+  }
+
+  publishPoll(sessionID: string, poll: Poll) {
+    if (this.users[sessionID] == null) throw new Error('User is not inizialized');
+    const user = this.users[sessionID];
+    if (user.role !== UserRole.MODERATOR) throw new Error('User is not moderator');
+    poll.publishedAt = new Date(Date.now()).toISOString();
+    poll.owner = user.id;
+    this.polls[poll.id] = poll;
+
+    this.broadcastMessage(
+      {
+        type: 'poll-published',
+        data: this.getPublicPoll(poll),
+      },
+      sessionID
+    );
+  }
+
+  submitPollResponse(sessionID: string, result: PollResults) {
+    if (this.users[sessionID] == null) throw new Error('User is not inizialized');
+    if (this.polls[result.pollId] == null) throw new Error('Poll does not exist');
+    const user = this.users[sessionID];
+    const poll = this.polls[result.pollId];
+    if (poll.responders?.includes(user.id)) throw new Error('User already responded to that poll');
+    if (!poll.responders) poll.responders = [];
+    poll.responders.push(user.id);
+    Object.keys(result.questions).forEach(questionId => {
+      const question = poll.questions.find(question => question.id === questionId);
+      if (question != null) {
+        if (question.results == null) question.results = {};
+        // TODO: check type of result
+        question.results[user.id] = result.questions[questionId];
+      }
+    });
+    const moderators = Object.values(this.users).filter(user => user.role === UserRole.MODERATOR);
+    moderators.forEach(moderator => {
+      moderator.ws?.send(
+        JSON.stringify({
+          type: 'poll-update',
+          data: poll,
+        })
+      );
+    });
+  }
+
+  closePoll(sessionID: string, pollId: string) {
+    if (this.users[sessionID] == null) throw new Error('User is not inizialized');
+    if (this.polls[pollId] == null) throw new Error('Poll does not exist');
+    if (this.polls[pollId].state !== PollState.RELEASED) throw new Error('Poll is not released');
+
+    this.polls[pollId].state = PollState.CLOSED;
+
+    this.broadcastMessage(
+      {
+        type: 'poll-closed',
+        data: pollId,
+      },
+      sessionID
+    );
+  }
+
+  getPolls(sessionID: string) {
+    if (this.users[sessionID] == null) throw new Error('User is not inizialized');
+    const user = this.users[sessionID];
+
+    let polls = Object.values(this.polls);
+    if (user.role === UserRole.USER) {
+      polls = polls.filter(poll => poll.state === PollState.RELEASED && !poll.responders?.includes(user.id));
+      return polls.map(poll => this.getPublicPoll(poll));
+    }
+
+    return polls;
+  }
+
+  getPublicPoll(poll: Poll) {
+    return {
+      id: poll.id,
+      createdAt: poll.createdAt,
+      publishedAt: poll.publishedAt,
+      title: poll.title,
+      state: poll.state,
+      owner: poll.owner,
+      questions: poll.questions?.map(pollQuestion => {
+        // hide solution and answers
+        return {
+          id: pollQuestion.id,
+          type: pollQuestion.type,
+          questionText: pollQuestion.questionText,
+          answers: pollQuestion.answers,
+        };
+      }),
+    };
   }
 
   async createTransport(sessionID: string) {
@@ -736,6 +829,47 @@ export interface Message {
 export interface MoodleUser {
   email: string;
   role: UserRole;
+}
+
+export interface Poll {
+  id: string;
+  createdAt: string;
+  title?: string;
+  state?: PollState;
+  owner?: string; // User ID
+  responders?: string[];
+  questions: PollQuestion[];
+  publishedAt?: string;
+}
+
+export interface PollQuestion {
+  id: string;
+  type: QuestionType;
+  questionText: string;
+  answers: PollAnswer[];
+  results: {[uid: string]: string | string[]};
+  solution: string | undefined;
+}
+
+export interface PollResults {
+  pollId: string;
+  questions: {[questionId: string]: string | string[]};
+}
+
+export interface PollAnswer {
+  text?: string;
+}
+
+export enum QuestionType {
+  SINGLE_CHOICE = 'SINGLE_CHOICE',
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+  FREE_TEXT = 'FREE_TEXT',
+}
+
+export enum PollState {
+  CREATED = 0,
+  RELEASED = 1,
+  CLOSED = 2,
 }
 
 export enum UserSignal {
