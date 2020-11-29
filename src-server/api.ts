@@ -80,9 +80,10 @@ export class Api {
 
     this.api.post('/room/:roomId/poll-response-submit', async (req, res) => {
       try {
-        Room.getRoom(req.params.roomId).submitPollResponse(req.sessionID as string, req.body.result as PollResults);
+        Room.getRoom(req.params.roomId).submitPollResponse(req.sessionID as string, req.body.pollResults as PollResults);
         res.status(201).send();
       } catch (e) {
+        console.error(e);
         res.status(500).send(e);
       }
     });

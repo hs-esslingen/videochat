@@ -8,6 +8,8 @@ export class Poll {
     public questions: Question[] = [],
     public newMessage: boolean = false,
     public opened: boolean = false,
+    public responders: string[] = [],
+    public responded: boolean = false,
     public publishedAt?: string
   ) {}
 }

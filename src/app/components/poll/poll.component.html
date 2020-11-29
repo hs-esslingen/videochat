@@ -5,8 +5,7 @@
             <h4 i18n *ngIf="poll.state == 0">New Poll</h4>
             <h4 i18n *ngIf="poll.state != 0">{{ poll.title }}</h4>
             <div id="close">
-                <!-- <button id="hide" class="primary-button" (click)="closeChatEvent.emit({element: poll, type: 'chat'})"> -->
-                <button id="hide" class="primary-button">
+                <button id="hide" class="primary-button" (click)="closePollEvent.emit({element: childData, type: 'poll'})">
                     <i class="material-icons">clear</i>
                 </button>
             </div>
@@ -34,5 +33,5 @@
     <button *ngIf="poll.state == 0" id="close" class="button secondary-button">Cancel</button>
     <button *ngIf="poll.state == 0" id="save" class="button secondary-button">Save</button>
     <button *ngIf="poll.state == 0" id="publish" (click)="publishPoll()" class="button primary-button">Publish</button>
-    <button *ngIf="poll.state == 1" id="submit" (click)="submitPoll()" class="button primary-button">Submit</button>
+    <button *ngIf="poll.state == 1 && !poll.responded" id="submit" (click)="submitPoll()" class="button primary-button">Submit</button>
 </div>
