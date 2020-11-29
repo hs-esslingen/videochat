@@ -33,7 +33,7 @@ export interface CurrentUser {
   microphoneState: MicrophoneState;
   screenshareState: ScreenshareState;
   cameraState: CameraState;
-  userRole: UserRole;
+  role: UserRole;
   signal: UserSignal;
 }
 

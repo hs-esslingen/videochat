@@ -9,6 +9,7 @@ import {LocalMediaService} from './local-media.service';
 import {SignalService} from './signal.service';
 import {ChatService} from './chat.service';
 import {Chat} from '../model/chat';
+import {PollService} from './poll.service';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +28,8 @@ export class RoomService {
     private api: ApiService,
     private localMedia: LocalMediaService,
     private signal: SignalService,
-    private chat: ChatService
+    private chat: ChatService,
+    private poll: PollService
   ) {
     this.roomSubject = new Subject();
     this.currentUser = this.initCurrentUser();
@@ -70,7 +72,7 @@ export class RoomService {
       screenshareState: ScreenshareState.DISABLED,
       signal: UserSignal.NONE,
       stream: {},
-      userRole: UserRole.USER,
+      role: UserRole.USER,
     };
   }
 
@@ -107,10 +109,11 @@ export class RoomService {
     try {
       this.roomId = roomId;
       this.currentUser.nickname = this.api.displayName;
-      this.currentUser.id = await this.ws.init(roomId, this.api.displayName, moodleToken);
+      Object.assign(this.currentUser, await this.ws.init(roomId, this.api.displayName, moodleToken));
       this.signal.init(roomId);
       await this.mediaSevice.init(roomId, isWebcamDisabled, this.currentUser.id);
       await this.chat.init(this.roomId, this.currentUser.id);
+      await this.poll.init(this.roomId, this.currentUser.id, this.currentUser.role);
 
       setTimeout(() => {
         this.connection = {

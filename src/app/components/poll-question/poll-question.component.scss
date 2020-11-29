@@ -64,6 +64,8 @@ $app-individual: map-get($app-theme, individual);
     }
     .mat-radio-label-content {
       width: 100%;
+      line-height: 24px;
+      white-space: break-spaces;
     }
     .mat-radio-label {
       align-items: flex-start;
@@ -71,6 +73,7 @@ $app-individual: map-get($app-theme, individual);
     .mat-checkbox-layout,
     .mat-checkbox-label {
       width: 100%;
+      white-space: break-spaces;
     }
     // .mat-checkbox-label {
     //   width: 100%;
@@ -79,13 +82,12 @@ $app-individual: map-get($app-theme, individual);
   }
   textarea {
     width: calc(100% - 8px);
+    padding: 2px 0 2px 0;
     color: mat-color($app-primary, darker_2-contrast);
     background-color: transparent;
     border: none;
     border-bottom: 3px solid transparent;
-    // width: calc(100% - 16px);
     flex-grow: 1;
-    // border-radius: 4px;
     font-size: 14px;
     font-family: 'Open Sans', sans-serif;
 

@@ -69,6 +69,9 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
       });
       this.ref.detectChanges();
     });
+    this.pollService.subscribe(data => {
+      this.polls = data;
+    });
   }
 
   getKeys(obj: object) {
@@ -89,8 +92,8 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   }
 
   createPoll(): void {
-    // console.log("You've created a new poll!");
-    const poll = this.pollService.addPoll();
+    let poll = this.polls.find(poll => poll.title == null || poll.title === '');
+    if (!poll) poll = this.pollService.addPoll();
     this.setSidebarDetailType(poll);
   }
 

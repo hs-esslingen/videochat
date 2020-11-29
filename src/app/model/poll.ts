@@ -18,6 +18,7 @@ export interface Question {
   questionText: string;
   answers: Answer[];
   solution: string | undefined;
+  results?: {[uid: string]: string | string[]};
 }
 
 export interface PollResults {
