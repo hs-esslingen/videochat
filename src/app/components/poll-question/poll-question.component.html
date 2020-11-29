@@ -33,25 +33,31 @@
                 >
             </mat-select>
         </mat-form-field>
-        <div *ngFor="let answer of question.answers" class="answer">
+        <div *ngFor="let answer of getEditQuestions(question.answers.length); let index = index" class="answer">
             <mat-radio-button disabled *ngIf="question.type === 'SINGLE_CHOICE'">
-                <textarea cdkTextareaAutosize [(ngModel)]="answer.text" placeholder="Enter answer option here..."></textarea>
+                <textarea
+                    (click)="addAnswer(index)"
+                    (keydown)="addAnswer(index)"
+                    (change)="changeEvent($event.srcElement.value, index)"
+                    cdkTextareaAutosize
+                    [(ngModel)]="question.answers.length != index ? question.answers[index].text : newElement"
+                    placeholder="Enter answer option here..."
+                ></textarea>
             </mat-radio-button>
             <mat-checkbox disabled *ngIf="question.type === 'MULTIPLE_CHOICE'">
-                <textarea cdkTextareaAutosize [(ngModel)]="answer.text" placeholder="Enter answer option here..."></textarea>
+                <textarea
+                    (click)="addAnswer(index)"
+                    (keydown)="addAnswer(index)"
+                    (change)="changeEvent($event.srcElement.value, index)"
+                    cdkTextareaAutosize
+                    [(ngModel)]="question.answers.length != index ? question.answers[index].text : newElement"
+                    placeholder="Enter answer option here..."
+                ></textarea>
             </mat-checkbox>
             <!-- <textarea *ngIf="question.type === 'FREE_TEXT'" disabled cdkTextareaAutosize placeholder="Your answer goes here..."></textarea> -->
-            <button id="remove-answer">
+            <button id="remove-answer" *ngIf="question.answers.length != index" (click)="deleteAnswer(index)">
                 <i class="material-icons">clear</i>
             </button>
-        </div>
-        <div class="answer">
-            <mat-radio-button disabled *ngIf="question.type === 'SINGLE_CHOICE'">
-                <textarea cdkTextareaAutosize [(ngModel)]="newElement" placeholder="Enter answer option here..."></textarea>
-            </mat-radio-button>
-            <mat-checkbox disabled *ngIf="question.type === 'MULTIPLE_CHOICE'">
-                <textarea cdkTextareaAutosize [(ngModel)]="newElement" placeholder="Enter answer option here..."></textarea>
-            </mat-checkbox>
         </div>
     </div>
     <div *ngIf="!editMode" class="answers">

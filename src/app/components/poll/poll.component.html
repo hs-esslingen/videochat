@@ -14,14 +14,14 @@
 
     <div id="questions">
         <div class="title">
-            <!-- <label>Name of the poll:</label> -->
+            <label>Name of the poll:</label>
             <textarea cdkTextareaAutosize [(ngModel)]="poll.title" placeholder="Set a name of your poll..."></textarea>
         </div>
         <ng-container *ngFor="let question of poll.questions; let i = index">
             <app-poll-question [question]="question" [pollId]="poll.id"></app-poll-question>
         </ng-container>
 
-        <ng-container *ngIf="poll.owner === currentUser && poll.releaseStatus === false">
+        <ng-container *ngIf="poll.owner === currentUser && poll.state === 0">
             <button class="add-element primary-button" (click)="addElement()"><i class="material-icons">add</i>Add Element</button>
         </ng-container>
     </div>

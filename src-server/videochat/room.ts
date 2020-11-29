@@ -201,6 +201,7 @@ export class Room {
     if (this.users[sessionID] == null) throw new Error('User is not inizialized');
     const user = this.users[sessionID];
     if (user.role !== UserRole.MODERATOR) throw new Error('User is not moderator');
+    if (this.polls[poll.id] != null && this.polls[poll.id].state !== PollState.CREATED) throw new Error('Poll is already published');
     poll.publishedAt = new Date(Date.now()).toISOString();
     poll.owner = user.id;
     this.polls[poll.id] = poll;
@@ -858,6 +859,7 @@ export interface PollResults {
 
 export interface PollAnswer {
   text?: string;
+  id: string;
 }
 
 export enum QuestionType {
