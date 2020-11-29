@@ -264,14 +264,14 @@ export class Room {
 
     let polls = Object.values(this.polls);
     if (user.role === UserRole.USER) {
-      polls = polls.filter(poll => poll.state === PollState.RELEASED && !poll.responders?.includes(user.id));
-      return polls.map(poll => this.getPublicPoll(poll));
+      polls = polls.filter(poll => poll.state === PollState.RELEASED || poll.responders?.includes(user.id));
+      return polls.map(poll => this.getPublicPoll(poll, user.id));
     }
 
     return polls;
   }
 
-  getPublicPoll(poll: Poll) {
+  getPublicPoll(poll: Poll, uid?: string) {
     return {
       id: poll.id,
       createdAt: poll.createdAt,
@@ -280,12 +280,17 @@ export class Room {
       state: poll.state,
       owner: poll.owner,
       questions: poll.questions?.map(pollQuestion => {
-        // hide solution and answers
+        // hide solution and answers of others
+        let results = undefined;
+        if (uid && pollQuestion.results) {
+          results = pollQuestion.results[uid];
+        }
         return {
           id: pollQuestion.id,
           type: pollQuestion.type,
           questionText: pollQuestion.questionText,
           answers: pollQuestion.answers,
+          results,
         };
       }),
     };
