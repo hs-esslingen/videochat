@@ -5,6 +5,7 @@
     "node/no-unpublished-require": 0,
     "node/no-unpublished-import": 0,
     "@typescript-eslint/ban-ts-ignore": 0,
+    "@typescript-eslint/ban-ts-comment": 0,
     "eqeqeq": ["error", "smart"]
   },
   "env": {
