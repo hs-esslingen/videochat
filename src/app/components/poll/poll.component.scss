@@ -46,10 +46,9 @@ textarea {
   #header {
     display: flex;
     flex-direction: column;
-    padding: 8px;
 
     h4 {
-      margin: 8px auto 8px 0px;
+      margin: 12px auto 8px 8px;
       line-height: 18px;
     }
 
@@ -71,6 +70,7 @@ textarea {
   #questions {
     width: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
     padding-top: 8px;
 
     /* width */

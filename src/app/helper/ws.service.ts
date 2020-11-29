@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {State, Connection} from '../model/connection';
-import {MicrophoneState} from '../model/user';
+import {MicrophoneState, UserRole} from '../model/user';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +22,7 @@ export class WsService {
     this.connectionSubject = new Subject();
   }
 
-  public init(roomId: string, nickname: string, moodleToken?: string): Promise<string> {
+  public init(roomId: string, nickname: string, moodleToken?: string): Promise<{id: string; role: UserRole}> {
     return new Promise((res, rej) => {
       this.connect()
         .then(() => {
@@ -35,7 +35,7 @@ export class WsService {
                   state: this.state,
                 });
                 this.state = State.CONNECTED;
-                res(msg.data.id);
+                res(msg.data);
                 sub.unsubscribe();
                 break;
               case 'error-failed':

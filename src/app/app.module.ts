@@ -41,6 +41,7 @@ import {SettingsAudioComponent} from './components/settings-audio/settings-audio
 import {SettingsUserComponent} from './components/settings-user/settings-user.component';
 import {PollQuestionComponent} from './components/poll-question/poll-question.component';
 import {TimestampPipe} from './helper/timestamp.pipe';
+import {PollQuestionResultComponent} from './components/poll-question-result/poll-question-result.component';
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import {TimestampPipe} from './helper/timestamp.pipe';
     SettingsUserComponent,
     PollQuestionComponent,
     TimestampPipe,
+    PollQuestionResultComponent,
   ],
   imports: [
     BrowserModule,

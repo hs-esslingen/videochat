@@ -204,11 +204,12 @@ export class Room {
     if (this.polls[poll.id] != null && this.polls[poll.id].state !== PollState.CREATED) throw new Error('Poll is already published');
     poll.publishedAt = new Date(Date.now()).toISOString();
     poll.owner = user.id;
+    poll.state = PollState.RELEASED;
     this.polls[poll.id] = poll;
 
     this.broadcastMessage(
       {
-        type: 'poll-published',
+        type: 'poll-publish',
         data: this.getPublicPoll(poll),
       },
       sessionID
@@ -251,7 +252,7 @@ export class Room {
 
     this.broadcastMessage(
       {
-        type: 'poll-closed',
+        type: 'poll-close',
         data: pollId,
       },
       sessionID
@@ -615,6 +616,7 @@ export class Room {
         type: 'init',
         data: {
           id: user.id,
+          role: user.role,
         },
       })
     );
@@ -853,7 +855,7 @@ export interface PollQuestion {
   type: QuestionType;
   questionText: string;
   answers: PollAnswer[];
-  results: {[uid: string]: string | string[]};
+  results?: {[uid: string]: string | string[]};
   solution: string | undefined;
 }
 

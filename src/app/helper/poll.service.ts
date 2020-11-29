@@ -1,29 +1,69 @@
 import {Injectable} from '@angular/core';
+import {FormControl, FormGroup, Validators, ValidationErrors, AbstractControl} from '@angular/forms';
+import {Subject, Subscription} from 'rxjs';
 import {Poll, PollState, Question, QuestionType} from '../model/poll';
+import {UserRole} from '../model/user';
+import {ApiService} from './api.service';
 import {WsService} from './ws.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PollService {
+  private pollSubject: PollSubject;
   private polls: {[id: string]: Poll} = {};
+  private roomId!: string;
+  private uid!: string;
+  private forms: {[id: string]: FormGroup} = {};
+  protected userRole!: UserRole;
 
-  constructor(ws: WsService) {
+  constructor(private ws: WsService, private api: ApiService) {
+    this.pollSubject = new Subject();
     ws.messageSubject.subscribe(message => {
       switch (message.type) {
         case 'poll-update':
-          break;
         case 'poll-publish':
+          {
+            const poll = message.data as Poll;
+            if (this.polls[poll.id]) {
+              this.polls[poll.id] = Object.assign(this.polls[poll.id], poll);
+            } else {
+              this.polls[poll.id] = poll;
+            }
+            this.pollSubject.next(Object.values(this.polls));
+          }
           break;
         case 'poll-close':
+          if (this.polls[message.data]) {
+            this.polls[message.data].state = PollState.CLOSED;
+            this.pollSubject.next(Object.values(this.polls));
+          }
           break;
       }
     });
   }
 
+  public subscribe(callback: (v: Poll[]) => void): Subscription {
+    return this.pollSubject.subscribe({
+      next: callback,
+    });
+  }
+
+  public async init(roomId: string, uid: string, role: UserRole) {
+    this.roomId = roomId;
+    this.uid = uid;
+    this.userRole = role;
+    this.polls = {};
+    this.polls = await (await this.api.getPolls(roomId)).reduce((obj: {[id: string]: Poll}, poll) => {
+      obj[poll.id] = poll;
+      return obj;
+    }, {});
+    this.pollSubject.next(Object.values(this.polls));
+  }
+
   public addPoll(): Poll {
     const poll = new Poll(
-      '2',
+      Math.random().toString(36).substr(2, 8),
       new Date(Date.now()).toISOString(),
       undefined,
       PollState.CREATED,
@@ -56,11 +96,63 @@ export class PollService {
       false
     );
     this.polls[poll.id] = poll;
+    this.pollSubject.next(Object.values(this.polls));
     return poll;
+  }
+
+  public beforePublishPoll(poll: Poll): boolean {
+    if (!poll.title || poll.title === '') return false;
+    for (const question of poll.questions) {
+      if (question.questionText === '') return false;
+      if (question.type !== QuestionType.FREE_TEXT && question.answers.length === 0) return false;
+    }
+    return true;
+  }
+
+  public async publishPoll(poll: Poll) {
+    await this.api.publishPoll(this.roomId, poll);
+    this.polls[poll.id].state = PollState.RELEASED;
+    this.pollSubject.next(Object.values(this.polls));
   }
 
   public getPoll(id: string): Poll {
     return this.polls[id];
+  }
+
+  public getForm(id: string): FormGroup {
+    const poll = this.polls[id];
+    if (poll && poll.state >= PollState.RELEASED) {
+      if (this.forms[id]) return this.forms[id];
+
+      this.forms[id] = new FormGroup(
+        poll.questions.reduce((prev, question) => {
+          if (question.type === QuestionType.MULTIPLE_CHOICE) {
+            prev[question.id] = new FormGroup(
+              question.answers.reduce((prev, answer) => {
+                prev[answer.id] = new FormControl('');
+                return prev;
+              }, {} as {[key: string]: FormControl}),
+              (control: AbstractControl): ValidationErrors | null => {
+                if (control instanceof FormGroup) {
+                  for (const key of Object.keys(control.controls)) {
+                    if (control.controls[key].value === true) return null;
+                  }
+                  return {
+                    requireCheckboxesToBeChecked: true,
+                  };
+                }
+                return null;
+              }
+            );
+          } else {
+            prev[question.id] = new FormControl('', Validators.required);
+          }
+          return prev;
+        }, {} as {[key: string]: FormControl | FormGroup})
+      );
+      return this.forms[id];
+    }
+    throw new Error('poll is not released');
   }
 
   public addElement(id: string): Question {
@@ -73,3 +165,5 @@ export class PollService {
     this.polls[pollId].questions = this.polls[pollId].questions.filter(item => item.id !== questionId);
   }
 }
+
+export type PollSubject = Subject<Poll[]>;

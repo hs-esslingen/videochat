@@ -1,8 +1,7 @@
 <div id="scroll">
     <h4 i18n>Chats</h4>
     <ng-container *ngFor="let id of getKeys(chats)">
-        <div *ngIf="!chats[id].hidden" class="object-label chat" [class.messaged]="chats[id]?.newMessage"
-            (click)="setSidebarDetailType(chats[id])">
+        <div *ngIf="!chats[id].hidden" class="object-label chat" [class.messaged]="chats[id]?.newMessage" (click)="setSidebarDetailType(chats[id])">
             <div class="status"></div>
             <div class="nickname">{{ chats[id]?.id ? users[id]?.nickname : 'Public Chat' }}</div>
             <div class="signal">
@@ -13,23 +12,19 @@
     </ng-container>
 
     <!--------------------------------------------------------------------------------------------------------->
-    <!-- <ng-container *ngIf="polls.length != 0 || currentUser?.userRole == 1"> -->
-        <ng-container> <!-- Replace by above line, when Live-->
+    <ng-container *ngIf="polls.length != 0 || currentUser?.role == 1">
         <h4>Polls</h4>
         <ng-container *ngFor="let poll of polls">
             <div class="object-label chat" (click)="setSidebarDetailType(poll)">
                 <div class="status"></div>
-                <div class="nickname">{{ poll.title }}</div>
+                <div class="nickname">{{ poll.title || 'Draft' }}</div>
                 <div class="signal">
-                    <!-- <i *ngIf="!chat.newMessage" class="material-icons">chat_bubble_outline</i> -->
-                    <!-- <i *ngIf="chat.newMessage" class="material-icons">chat</i> -->
                     <i class="material-icons">poll</i>
                 </div>
             </div>
         </ng-container>
-    <!--------------------------------------------------------------------------------------------------------->
-        <!-- <ng-container *ngIf="currentUser?.userRole == 1"> -->
-        <ng-container> <!-- Replace by above line, when Live-->
+        <!--------------------------------------------------------------------------------------------------------->
+        <ng-container *ngIf="currentUser?.role == 1">
             <div class="object-label chat" (click)="createPoll()">
                 <div class="status"></div>
                 <div class="nickname">Add a new poll</div>
@@ -43,9 +38,15 @@
 
     <h4 i18n>Current Users</h4>
     <label i18n>You</label>
-    <div id="You" class="object-label user" [class.talking]="currentUser?.microphoneState === 2"
-        [class.signaling]="currentUser?.signal === 3" [class.votingUp]="currentUser?.signal === 2"
-        [class.votingDown]="currentUser?.signal === 1" [class.micActive]="currentUser?.microphoneState >= 1">
+    <div
+        id="You"
+        class="object-label user"
+        [class.talking]="currentUser?.microphoneState === 2"
+        [class.signaling]="currentUser?.signal === 3"
+        [class.votingUp]="currentUser?.signal === 2"
+        [class.votingDown]="currentUser?.signal === 1"
+        [class.micActive]="currentUser?.microphoneState >= 1"
+    >
         <div class="status"></div>
         <div class="nickname">{{ currentUser?.nickname }}</div>
         <div class="signal" *ngIf="currentUser?.microphoneState >= 1">
@@ -53,26 +54,43 @@
         </div>
     </div>
     <div id="user-actions">
-        <button id="raise-hand" class="small round-button" (click)="raiseHand()"
-            [class.active]="currentUser?.signal === 3" matTooltip="raise hand (h)" i18n-matTooltip>
+        <button
+            id="raise-hand"
+            class="small round-button"
+            (click)="raiseHand()"
+            [class.active]="currentUser?.signal === 3"
+            matTooltip="raise hand (h)"
+            i18n-matTooltip
+        >
             <i class="material-icons">pan_tool</i>
         </button>
-        <button id="vote-up" class="small round-button" (click)="thumbsUp()" [class.active]="currentUser?.signal === 2"
-            matTooltip="vote up (u)" i18n-toolTip>
+        <button id="vote-up" class="small round-button" (click)="thumbsUp()" [class.active]="currentUser?.signal === 2" matTooltip="vote up (u)" i18n-toolTip>
             <i class="material-icons">thumb_up</i>
         </button>
-        <button id="vote-down" class="small round-button" (click)="thumbsDown()"
-            [class.active]="currentUser?.signal === 1" matTooltip="vote down (d)" i18n-matTooltip>
+        <button
+            id="vote-down"
+            class="small round-button"
+            (click)="thumbsDown()"
+            [class.active]="currentUser?.signal === 1"
+            matTooltip="vote down (d)"
+            i18n-matTooltip
+        >
             <i class="material-icons">thumb_down</i>
         </button>
     </div>
 
     <label>Others</label>
     <div id="participants">
-        <div *ngFor="let user of activeUsers" class="object-label" [matMenuTriggerFor]="userMenu"
-            [class.talking]="user.microphoneState === 2" [class.signaling]="user.signal === 3"
-            [class.votingUp]="user.signal === 2" [class.votingDown]="user.signal === 1"
-            [class.micActive]="user.microphoneState >= 1">
+        <div
+            *ngFor="let user of activeUsers"
+            class="object-label"
+            [matMenuTriggerFor]="userMenu"
+            [class.talking]="user.microphoneState === 2"
+            [class.signaling]="user.signal === 3"
+            [class.votingUp]="user.signal === 2"
+            [class.votingDown]="user.signal === 1"
+            [class.micActive]="user.microphoneState >= 1"
+        >
             <div class="status"></div>
             <div class="nickname">{{ user.nickname }}</div>
             <div class="signal" *ngIf="user.microphoneState >= 1">
@@ -92,5 +110,5 @@
     </button>
     <button id="leave-room" class="big round-button" (click)="leaveRoom()" matTooltip="leave current room" i18n-matTooltip>
         <i class="material-icons">directions_run</i>
-        </button>
+    </button>
 </div>
