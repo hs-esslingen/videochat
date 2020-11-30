@@ -567,7 +567,7 @@ export class Room {
         ws.close();
         return;
       }
-    } else if (displayName === this.roomId) {
+    } else if (email.split('@')[0] === this.roomId) {
       role = UserRole.MODERATOR;
     }
 
