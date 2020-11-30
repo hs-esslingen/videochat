@@ -538,7 +538,7 @@ export class Room {
 
   initWebsocket(ws: WebSocket, initData: WebsocketUserInfo, sessionId: string, {email, displayName}: {email: string; displayName: string}) {
     const transports: WebRtcTransport[] = [];
-    let role: UserRole = UserRole.MODERATOR; // SWITCH BACK!
+    let role: UserRole = UserRole.USER;
     if (this.roomId.includes('moodle⛳')) {
       try {
         const decodedMoodleToken = jwt.decode(initData.moodleToken as string) as {users: MoodleUser[]; courseId: string; roomName: string};
@@ -567,6 +567,8 @@ export class Room {
         ws.close();
         return;
       }
+    } else if (displayName === this.roomId) {
+      role = UserRole.MODERATOR;
     }
 
     let user: User;

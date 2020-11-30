@@ -1,38 +1,70 @@
-import {EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from '@angular/core';
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {Subscription} from 'rxjs';
 import {PollService} from 'src/app/helper/poll.service';
+import {RoomService} from 'src/app/helper/room.service';
 import {Poll, QuestionType} from 'src/app/model/poll';
-import {CurrentUser} from 'src/app/model/user';
+import {CurrentUser, User, UserRole} from 'src/app/model/user';
 
 @Component({
   selector: 'app-poll',
   templateUrl: './poll.component.html',
   styleUrls: ['./poll.component.scss'],
 })
-export class PollComponent implements OnInit, OnChanges {
+export class PollComponent implements OnInit, OnChanges, OnDestroy {
   @Input() childData!: string;
-  @Input() currentUser?: CurrentUser;
+  @Input() currentUser!: CurrentUser;
+  @Input() users: {[id: string]: User} = {};
+  showResults = false;
   questionsTypes!: string[];
   poll!: Poll;
   form?: FormGroup;
+  waitigForResponse: string[] = [];
+  oldNumberOfUsers = 0;
+
+  pollSubscription?: Subscription;
+  roomSubscription?: Subscription;
 
   @Output() closePollEvent = new EventEmitter<{element: string; type: 'poll'}>();
 
-  constructor(private pollService: PollService) {
-    pollService.subscribe(() => {
-      if (this.poll.state === 1 && !this.form) {
-        this.form = pollService.getForm(this.childData);
-      }
-    });
-  }
+  constructor(private pollService: PollService, private roomService: RoomService) {}
 
   ngOnInit(): void {
+    this.pollSubscription = this.pollService.subscribe(() => {
+      if (this.poll.state === 1 && !this.form) {
+        this.form = this.pollService.getForm(this.childData);
+      }
+      if (this.poll.state >= 1 && this.currentUser.role === UserRole.MODERATOR) {
+        this.showResults = true;
+      }
+
+      this.calculateWaitigForResponse(true);
+    });
+    this.roomSubscription = this.roomService.subscribe(data => {
+      this.calculateWaitigForResponse();
+    });
+
     this.poll = this.pollService.getPoll(this.childData);
     if (this.poll.state === 1) {
       this.form = this.pollService.getForm(this.childData);
+      if (this.poll.responded) this.form.disable();
     }
     this.questionsTypes = Object.values(QuestionType);
+  }
+
+  calculateWaitigForResponse(force = false) {
+    const userArray = Object.values(this.users);
+    if (this.poll.state >= 1 && this.currentUser.role === UserRole.MODERATOR && (userArray.length !== this.oldNumberOfUsers || force)) {
+      this.oldNumberOfUsers = userArray.length;
+      this.waitigForResponse = userArray.filter(user => !this.poll.responders.includes(user.id) && user.userRole === UserRole.USER).map(user => user.nickname);
+    }
+  }
+
+  ngOnDestroy(): void {
+    console.log('unsubscribe');
+    this.roomSubscription?.unsubscribe();
+    this.pollSubscription?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -42,7 +74,16 @@ export class PollComponent implements OnInit, OnChanges {
       if (this.poll.state === 1) {
         this.form = this.pollService.getForm(this.childData);
       }
+      if (this.poll.state >= 1 && this.currentUser.role === UserRole.MODERATOR) {
+        this.showResults = true;
+      } else {
+        this.showResults = false;
+      }
     }
+  }
+
+  trackById(index: number, item: {id: string}): string {
+    return item.id;
   }
 
   addElement() {

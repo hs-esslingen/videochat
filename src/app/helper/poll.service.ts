@@ -28,7 +28,7 @@ export class PollService {
             if (this.polls[poll.id]) {
               this.polls[poll.id] = Object.assign(this.polls[poll.id], poll);
             } else {
-              this.polls[poll.id] = poll;
+              this.polls[poll.id] = Poll.fromJson(poll);
             }
             this.pollSubject.next(Object.values(this.polls));
           }
@@ -54,6 +54,7 @@ export class PollService {
     this.uid = uid;
     this.userRole = role;
     this.polls = {};
+    //TODO: fill FormGroup to show questions
     this.polls = await (await this.api.getPolls(roomId)).reduce((obj: {[id: string]: Poll}, poll) => {
       obj[poll.id] = poll;
       return obj;
@@ -62,39 +63,24 @@ export class PollService {
   }
 
   public addPoll(): Poll {
-    const poll = new Poll(
-      Math.random().toString(36).substr(2, 8),
-      new Date(Date.now()).toISOString(),
-      undefined,
-      PollState.CREATED,
-      undefined,
-      [
+    const poll: Poll = Poll.fromJson({
+      id: Math.random().toString(36).substr(2, 8),
+      createdAt: new Date(Date.now()).toISOString(),
+      title: '',
+      state: PollState.CREATED,
+      owner: this.uid,
+      questions: [
         {
           type: QuestionType.SINGLE_CHOICE,
-          questionText: 'Magst du Bratwurst?',
-          answers: [
-            {text: 'Ja', id: Math.random().toString(36).substr(2, 8)},
-            {text: 'Nein', id: Math.random().toString(36).substr(2, 8)},
-          ],
+          questionText: '',
+          answers: [],
           solution: undefined,
           id: Math.random().toString(36).substr(2, 8),
         },
-        {
-          type: QuestionType.MULTIPLE_CHOICE,
-          questionText: 'Wer ist Deutsch?',
-          answers: [
-            {text: 'Merkel', id: Math.random().toString(36).substr(2, 8)},
-            {text: 'Tobi', id: Math.random().toString(36).substr(2, 8)},
-            {text: 'Trump', id: Math.random().toString(36).substr(2, 8)},
-          ],
-          solution: undefined,
-          id: Math.random().toString(36).substr(2, 8),
-        },
-        // {questionText: 'Worauf haste bock?', type: QuestionType.FREE_TEXT, answers: [], solution: undefined},
       ],
-      false,
-      false
-    );
+      responded: false,
+      responders: [],
+    });
     this.polls[poll.id] = poll;
     this.pollSubject.next(Object.values(this.polls));
     return poll;

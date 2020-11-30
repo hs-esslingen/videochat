@@ -60,6 +60,7 @@
             </button>
         </div>
     </div>
+
     <div *ngIf="!editMode && form" class="answers" [formGroup]="form">
         <div class="answer" *ngIf="question.type === 'FREE_TEXT'">
             <textarea [formControlName]="question.id" cdkTextareaAutosize placeholder="Your answer goes here..."></textarea>

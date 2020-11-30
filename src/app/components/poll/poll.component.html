@@ -17,11 +17,18 @@
             <label>Name of the poll:</label>
             <textarea cdkTextareaAutosize [(ngModel)]="poll.title" placeholder="Set a name of your poll..."></textarea>
         </div>
-        <ng-container *ngFor="let question of poll.questions; let i = index">
-            <app-poll-question [question]="question" [pollId]="poll.id" [editMode]="poll.state == 0" [form]="form"></app-poll-question>
-            <ng-container *ngIf="currentUser.userRole === 1 && (poll.state === 1 || poll.state === 2)">
-                <app-poll-question-result [question]="question"></app-poll-question-result>
-            </ng-container>
+        <div *ngIf="poll.state >= 1 && currentUser.role == 1" class="card">
+            <div *ngIf="waitigForResponse.length == 0">Poll complete</div>
+            <div *ngIf="waitigForResponse.length == 0">{{ poll.responders.length }} responses</div>
+            <div *ngIf="waitigForResponse.length > 0" class="awaitngResponseTitle">Awating response from:</div>
+            <div *ngFor="let nickname of waitigForResponse">{{ nickname }}</div>
+        </div>
+        <div *ngIf="!showResults && poll.responded" class="card">
+            <div>The Poll was submitted sucessfully</div>
+        </div>
+        <ng-container *ngFor="let question of poll.questions; let i = index; trackBy: trackById">
+            <app-poll-question *ngIf="!showResults" [question]="question" [pollId]="poll.id" [editMode]="poll.state == 0" [form]="form"></app-poll-question>
+            <app-poll-question-result *ngIf="showResults" [question]="question" [users]="users" [currentUser]="currentUser"></app-poll-question-result>
         </ng-container>
 
         <ng-container *ngIf="poll.state === 0">
@@ -30,8 +37,9 @@
     </div>
 </div>
 <div id="poll-actions">
-    <button *ngIf="poll.state == 0" id="close" class="button secondary-button">Cancel</button>
-    <button *ngIf="poll.state == 0" id="save" class="button secondary-button">Save</button>
+    <!-- <button *ngIf="poll.state == 0" id="close" class="button secondary-button">Cancel</button>
+    <button *ngIf="poll.state == 0" id="save" class="button secondary-button">Save</button> -->
+    <button *ngIf="showResults" id="submit" (click)="showResults = !showResults" class="button primary-button">Test</button>
     <button *ngIf="poll.state == 0" id="publish" (click)="publishPoll()" class="button primary-button">Publish</button>
-    <button *ngIf="poll.state == 1 && !poll.responded" id="submit" (click)="submitPoll()" class="button primary-button">Submit</button>
+    <button *ngIf="poll.state == 1 && !poll.responded && !showResults" id="submit" (click)="submitPoll()" class="button primary-button">Submit</button>
 </div>

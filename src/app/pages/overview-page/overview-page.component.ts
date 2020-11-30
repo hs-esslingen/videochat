@@ -50,7 +50,11 @@ export class OverviewPageComponent implements OnInit {
         }
       }
     } else {
-      this.courses = await this.api.getBlackboardCourses();
+      try {
+        this.courses = await this.api.getBlackboardCourses();
+      } catch (error) {
+        console.log('fetching blackboad courses failed');
+      }
     }
     this.displayName = window.localStorage.getItem('displayName') as string;
     this.email = (window.localStorage.getItem('email') as string).split('@')[0];

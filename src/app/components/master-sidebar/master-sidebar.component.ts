@@ -10,6 +10,7 @@ import {Chat} from 'src/app/model/chat';
 import {MediaService} from 'src/app/helper/media.service';
 import {Poll} from 'src/app/model/poll';
 import {PollService} from 'src/app/helper/poll.service';
+import {Connection} from 'src/app/model/connection';
 
 @Component({
   selector: 'app-master',
@@ -38,6 +39,8 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   //Variables for polls
   polls: Poll[] = [];
 
+  connection?: Connection;
+
   // Other variables
   detailOpen?: boolean;
 
@@ -58,6 +61,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
 
     this.room.subscribe(data => {
       this.currentUser = data.currentUser;
+      this.connection = data.connection;
       this.users = data.users;
       this.chats = data.chats;
       this.activeUsers = Object.keys(this.users)
@@ -84,6 +88,8 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   }
 
   setSidebarDetailType(obj: Chat | Poll): void {
+    console.log();
+
     // console.log('setSidebarDetailType reached');
     this.detailOpen = !this.detailOpen;
     if (obj instanceof Chat) obj.newMessage = false;
