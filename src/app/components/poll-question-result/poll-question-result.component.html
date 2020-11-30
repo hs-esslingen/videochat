@@ -1,18 +1,17 @@
 <div id="result">
-    <ul id="q-graph">
-        <!-- <li *ngFor="let option of answers" class="option">
-            {{ question.results }}
-            <ul>
-                <li class="bar" style="height: 111px"><p>val</p></li>
-            </ul>
-        </li> -->
-
-        <!-- <li id="ticks">
-            <div class="tick" style="height: 59px"><p>5</p></div>
-            <div class="tick" style="height: 59px"><p>4</p></div>
-            <div class="tick" style="height: 59px"><p>3</p></div>
-            <div class="tick" style="height: 59px"><p>2</p></div>
-            <div class="tick" style="height: 59px"><p>1</p></div>
-        </li> -->
-    </ul>
+    <div class="question">{{ question.questionText }}</div>
+    <ng-container *ngIf="question.type === 'FREE_TEXT'">
+        <div class="text-answer" *ngFor="let result of question.results | keyvaluePipe">
+            <div class="nickname" *ngIf="currentUser.id === result.key">{{ currentUser.nickname }}:</div>
+            <div class="nickname" *ngIf="currentUser.id !== result.key">{{ users[result.key].nickname }}:</div>
+            <div>{{ result.value }}</div>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="question.type !== 'FREE_TEXT'">
+        <div class="answer" *ngFor="let answer of question.answers; trackBy: trackById">
+            <div class="bg" [style.width.%]="((results[answer.id] || []).length / totalResponses || 0) * 100"></div>
+            <div class="text">{{ answer.text }}</div>
+            <div class="percentage">{{ ((results[answer.id] || []).length / totalResponses || 0) * 100 }}%</div>
+        </div>
+    </ng-container>
 </div>

@@ -36,6 +36,16 @@ textarea {
     justify-content: space-between;
   }
 
+  .card {
+    background-color: mat-color($app-primary, lighter_2);
+    border-radius: 4px;
+    padding: 8px 8px 8px 8px;
+    margin: 0px 8px 8px 8px;
+    .awaitngResponseTitle {
+      margin-bottom: 4px;
+    }
+  }
+
   .title {
     background-color: mat-color($app-primary, lighter_2);
     border-radius: 4px;
@@ -110,4 +120,12 @@ textarea {
 #poll-actions {
   background-color: mat-color($app-primary, lighter_2);
   height: 50px;
+  button {
+    margin-top: 4px;
+    padding: 10px 12px;
+  }
+  .primary-button {
+    float: right;
+    margin-right: 8px;
+  }
 }

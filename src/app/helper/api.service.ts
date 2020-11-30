@@ -223,8 +223,8 @@ export class ApiService {
       .toPromise() as Promise<object>;
   }
 
-  public getPolls(roomId: string) {
-    return this.http.get(`/api/room/${roomId}/polls`).toPromise() as Promise<Poll[]>;
+  public async getPolls(roomId: string) {
+    return (await (this.http.get(`/api/room/${roomId}/polls`).toPromise() as Promise<Poll[]>)).map(data => Poll.fromJson(data));
   }
 
   public setUserSignal(roomId: string, signal: UserSignal) {

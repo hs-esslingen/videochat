@@ -24,7 +24,7 @@
             </div>
         </ng-container>
         <!--------------------------------------------------------------------------------------------------------->
-        <ng-container *ngIf="currentUser?.role == 1">
+        <ng-container *ngIf="currentUser?.role == 1 && this.connection.state == 1">
             <div class="object-label chat" (click)="createPoll()">
                 <div class="status"></div>
                 <div class="nickname">Add a new poll</div>

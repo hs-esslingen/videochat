@@ -1,7 +1,64 @@
+@import 'theme';
+
+$app-individual: map-get($app-theme, individual);
+
 .option {
   height: 100px;
 }
 
 .bar {
   width: 10px;
+}
+#result {
+  background-color: mat-color($app-primary, lighter_2);
+  border-radius: 4px;
+  padding: 8px 8px 8px 8px;
+  margin: 0px 8px 8px 8px;
+}
+.question {
+  margin-bottom: 8px;
+}
+
+.nickname:not(:first-of-type) {
+  margin-top: 4px;
+}
+.answer {
+  display: flex;
+  position: relative;
+  padding: 4px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  border: 1px solid #660000;
+
+  .bg {
+    transition: width 0.4s ease-in-out;
+    background-color: mat-color($app-primary, darker_2);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  .text {
+    z-index: 1;
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .percentage {
+    z-index: 1;
+  }
+}
+
+.text-answer {
+  position: relative;
+  padding: 4px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  border: 1px solid #660000;
 }

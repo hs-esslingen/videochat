@@ -6,12 +6,27 @@ export class Poll {
     public state: PollState = 0,
     public owner?: string, // User ID
     public questions: Question[] = [],
-    public newMessage: boolean = false,
-    public opened: boolean = false,
     public responders: string[] = [],
     public responded: boolean = false,
     public publishedAt?: string
   ) {}
+  static fromJson({id, createdAt, title, state, owner, questions, responders, responded, publishedAt}: Poll) {
+    return new Poll(id, createdAt, title, state, owner, questions, responders, responded, publishedAt);
+  }
+  // update(poll: Poll): void {
+  //   this.id = poll.id;
+  //   this.createdAt = poll.createdAt;
+  //   this.title = poll.title;
+  //   this.state = poll.state;
+  //   this.owner = poll.owner;
+  //   this.responders = poll.responders;
+  //   this.responded = poll.responded;
+  //   this.publishedAt = poll.publishedAt;
+  //   this.questions.forEach(existingQuestion => {
+  //     const newQuestion = poll.questions.find(q => existingQuestion.id === q.id);
+  //     existingQuestion.results;
+  //   });
+  // }
 }
 
 export interface Question {
