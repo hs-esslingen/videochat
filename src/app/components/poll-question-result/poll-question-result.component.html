@@ -1,7 +1,7 @@
 <div id="result">
     <div class="question">{{ question.questionText }}</div>
     <ng-container *ngIf="question.type === 'FREE_TEXT'">
-        <div class="text-answer" *ngFor="let result of question.results | keyvaluePipe">
+        <div class="text-answer" *ngFor="let result of question.results || {} | keyvaluePipe">
             <div class="nickname" *ngIf="currentUser.id === result.key">{{ currentUser.nickname }}:</div>
             <div class="nickname" *ngIf="currentUser.id !== result.key">{{ users[result.key].nickname }}:</div>
             <div>{{ result.value }}</div>
