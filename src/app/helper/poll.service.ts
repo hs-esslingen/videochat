@@ -91,6 +91,9 @@ export class PollService {
     for (const question of poll.questions) {
       if (question.questionText === '') return false;
       if (question.type !== QuestionType.FREE_TEXT && question.answers.length === 0) return false;
+      for (const answer of question.answers) {
+        if (answer.text == null || answer.text === '') return false;
+      }
     }
     return true;
   }
