@@ -1,6 +1,6 @@
 import {EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from '@angular/core';
 import {Component, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {PollService} from 'src/app/helper/poll.service';
 import {RoomService} from 'src/app/helper/room.service';
@@ -41,7 +41,7 @@ export class PollComponent implements OnInit, OnChanges, OnDestroy {
 
       this.calculateWaitigForResponse(true);
     });
-    this.roomSubscription = this.roomService.subscribe(data => {
+    this.roomSubscription = this.roomService.subscribe(() => {
       this.calculateWaitigForResponse();
     });
 

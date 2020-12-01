@@ -1,5 +1,5 @@
 import {TestBed} from '@angular/core/testing';
-import {Poll, PollState} from '../model/poll';
+import {PollState} from '../model/poll';
 import {UserRole} from '../model/user';
 import {ApiService} from './api.service';
 
