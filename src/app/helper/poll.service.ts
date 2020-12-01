@@ -19,7 +19,7 @@ export class PollService {
 
   constructor(private ws: WsService, private api: ApiService) {
     this.pollSubject = new Subject();
-    ws.messageSubject.subscribe(message => {
+    ws.subscribeMessage(message => {
       switch (message.type) {
         case 'poll-update':
         case 'poll-publish':
@@ -158,9 +158,9 @@ export class PollService {
     throw new Error('poll is not released');
   }
 
-  public addElement(id: string): Question {
+  public addElement(pollId: string): Question {
     const newQuestion = {type: QuestionType.SINGLE_CHOICE, questionText: '', answers: [], solution: undefined, id: Math.random().toString(36).substr(2, 8)};
-    this.polls[id].questions.push(newQuestion);
+    this.polls[pollId].questions.push(newQuestion);
     return newQuestion;
   }
 

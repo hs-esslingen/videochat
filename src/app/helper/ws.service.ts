@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Subject} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {State, Connection} from '../model/connection';
 import {MicrophoneState, UserRole} from '../model/user';
@@ -12,7 +12,7 @@ export class WsService {
   public state: State = State.DISCONNECTED;
   public connectionSubject: Subject<Connection>;
   private pingTimeout?: number;
-  public messageSubject: Subject<{
+  private messageSubject: Subject<{
     type: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
@@ -20,6 +20,18 @@ export class WsService {
   constructor() {
     this.messageSubject = new Subject();
     this.connectionSubject = new Subject();
+  }
+
+  public subscribeMessage(
+    callback: (v: {
+      type: string;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      data: any;
+    }) => void
+  ): Subscription {
+    return this.messageSubject.subscribe({
+      next: callback,
+    });
   }
 
   public init(roomId: string, nickname: string, moodleToken?: string): Promise<{id: string; role: UserRole}> {
