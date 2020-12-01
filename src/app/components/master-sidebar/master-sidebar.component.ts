@@ -10,7 +10,7 @@ import {Chat} from 'src/app/model/chat';
 import {MediaService} from 'src/app/helper/media.service';
 import {Poll} from 'src/app/model/poll';
 import {PollService} from 'src/app/helper/poll.service';
-import {Connection} from 'src/app/model/connection';
+import {Connection, State} from 'src/app/model/connection';
 
 @Component({
   selector: 'app-master',
@@ -39,7 +39,7 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
   //Variables for polls
   polls: Poll[] = [];
 
-  connection?: Connection;
+  connection: Connection;
 
   // Other variables
   detailOpen?: boolean;
@@ -52,7 +52,13 @@ export class MasterSidebarComponent implements OnInit, OnDestroy {
     private room: RoomService,
     private ref: ChangeDetectorRef,
     private signal: SignalService
-  ) {}
+  ) {
+    this.connection = {
+      state: State.DISCONNECTED,
+      duplicateSession: false,
+      moodleError: false,
+    };
+  }
 
   ngOnInit(): void {
     // Checks, if there are (public-)chats for the session, that are cached by the server. (Keeps data if the user refreshes or rejoins)
