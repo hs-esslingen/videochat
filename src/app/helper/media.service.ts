@@ -314,7 +314,7 @@ export class MediaService {
   }
 
   private setupWebsocket() {
-    this.ws.messageSubject?.subscribe(msg => {
+    this.ws.subscribeMessage(msg => {
       switch (msg.type) {
         case 'add-user':
           {

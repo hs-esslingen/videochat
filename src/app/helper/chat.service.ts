@@ -19,7 +19,7 @@ export class ChatService {
     this.chatSubject = new Subject();
     this.userId = '';
     this.roomId = '';
-    ws.messageSubject.subscribe(e => {
+    ws.subscribeMessage(e => {
       if (e.type === 'message') {
         const message = e.data as Message;
         this.addMessage(message);
