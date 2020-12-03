@@ -39,6 +39,33 @@ describe('PollService', () => {
 
   it('beforePublishPoll should be false', () => {
     const poll = service.addPoll();
+    poll.title = 'test';
+    poll.questions[0].questionText = 'test question';
+    poll.questions[0].answers = [];
+    expect(service.beforePublishPoll(poll)).toBe(false);
+  });
+
+  it('beforePublishPoll should be false', () => {
+    const poll = service.addPoll();
+    poll.title = '';
+    poll.questions[0].questionText = 'test question';
+    poll.questions[0].answers = [{text: 'test answer', id: '#####'}];
+    expect(service.beforePublishPoll(poll)).toBe(false);
+  });
+
+  it('beforePublishPoll should be false', () => {
+    const poll = service.addPoll();
+    poll.title = 'test';
+    poll.questions[0].questionText = '';
+    poll.questions[0].answers = [{text: 'test answer', id: '#####'}];
+    expect(service.beforePublishPoll(poll)).toBe(false);
+  });
+
+  it('beforePublishPoll should be false', () => {
+    const poll = service.addPoll();
+    poll.title = 'test';
+    poll.questions[0].questionText = 'test question';
+    poll.questions[0].answers = [{text: '', id: '#####'}];
     expect(service.beforePublishPoll(poll)).toBe(false);
   });
 

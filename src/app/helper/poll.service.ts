@@ -54,7 +54,7 @@ export class PollService {
     this.uid = uid;
     this.userRole = role;
     this.polls = {};
-    //TODO: fill FormGroup to show questions
+    // improvement fill FormGroup to show questions
     this.polls = await (await this.api.getPolls(roomId)).reduce((obj: {[id: string]: Poll}, poll) => {
       obj[poll.id] = poll;
       return obj;
